@@ -97,6 +97,8 @@ export interface Claimable {
   first_published_at: string | null;
   last_verified_at: string | null;
   closed_at: string | null;
+  deadline_verified_at?: string | null;
+  review_age_days?: number;
   created_at: string;
   updated_at: string;
 }
@@ -117,8 +119,26 @@ export interface Source {
   last_run_at: string | null;
   last_success_at: string | null;
   failure_count: number;
+  health_state?: string;
+  last_content_change_at?: string | null;
+  last_error_category?: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
+}
+
+export interface ContentCluster {
+  id: string;
+  canonical_hash: string;
+  cluster_title: string | null;
+  canonical_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContentClusterMember {
+  cluster_id: string;
+  source_document_id: string;
+  assigned_at: string;
 }
 
 export interface UserCompanyWatchlist {
