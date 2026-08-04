@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Consumer Affairs Updates</title>
+    <link>https://consumeraffairs.example.gov.in</link>
+    <description>Standard RSS 2.0 feed used to validate the generic RSS adapter</description>
+    <language>en-in</language>
+    <lastBuildDate>Mon, 20 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <item>
+      <title>Regulator orders refund for cancelled service plans</title>
+      <link>https://consumeraffairs.example.gov.in/releases/refund-order-2026</link>
+      <description>&lt;p&gt;The regulator directed providers to &lt;b&gt;refund&lt;/b&gt; affected subscribers within 60 days.&lt;/p&gt;</description>
+      <pubDate>Mon, 20 Jul 2026 10:00:00 GMT</pubDate>
+      <guid isPermaLink="false">GEN-2026-0001</guid>
+    </item>
+    <item>
+      <title>Routine advisory on seasonal price monitoring</title>
+      <link>https://consumeraffairs.example.gov.in/releases/price-monitoring-advisory</link>
+      <description>Routine administrative advisory with no consumer claim impact.</description>
+      <pubDate>Sun, 19 Jul 2026 08:30:00 GMT</pubDate>
+      <guid isPermaLink="false">GEN-2026-0002</guid>
+    </item>
+    <item>
+      <title>Compensation window opens for delayed deliveries</title>
+      <link>https://consumeraffairs.example.gov.in/releases/compensation-window</link>
+      <description>Eligible consumers may file claims with proof of purchase by 30 September 2026.</description>
+      <pubDate>Sat, 18 Jul 2026 14:45:00 GMT</pubDate>
+      <guid isPermaLink="false">GEN-2026-0003</guid>
+    </item>
+  </channel>
+</rss>

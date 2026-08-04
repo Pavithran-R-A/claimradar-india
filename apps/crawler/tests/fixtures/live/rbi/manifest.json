@@ -1,0 +1,41 @@
+{
+  "source": "rbi",
+  "capturedAt": "2026-07-27",
+  "capturedBy": "Wave 2 live source commissioning (Task #25)",
+  "files": {
+    "feed.xml": {
+      "originalUrl": "https://www.rbi.org.in/pressreleases_rss.xml",
+      "originalSha256": "ac6ed4dc78b710b04eededfe4fcc86aec831f8a6c43843e47dc43984d222647f",
+      "originalSizeBytes": 91759,
+      "notes": [
+        "Subset of the live RBI press-release RSS feed captured 2026-07-27 (10 items live; 4 real items kept: prid 63245, 63244, 63243, 63237).",
+        "Real-world quirks preserved: CDATA-wrapped titles, CDATA descriptions containing raw HTML tables/links, and pubDate WITHOUT a timezone designator ('Mon, 27 Jul 2026 18:30:00').",
+        "Real CDATA descriptions (large HTML tables) were TRUNCATED to representative snippets; the rbidocs.rbi.org.in PDF link inside item 1's description is real and kept.",
+        "Item 5 is SYNTHESIZED from the real prid=63236 item: its pubDate replaced with 'date not available' as the malformed-date regression case; title suffixed '(malformed date)'.",
+        "Item 6 is SYNTHESIZED: duplicate of item 3's link (prid=63243) with an edited title, added as the duplicate-link regression case.",
+        "Rupee entity in live feed retained as &#8377; in item 1; elsewhere replaced with 'Rs.' where live bytes were mojibake. XML pretty-printed (live feed is single-line)."
+      ]
+    },
+    "detail.html": {
+      "originalUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63243",
+      "originalSha256": "8f788ef67f81013e3cebfc4e04d7af8f114d913f5203453098fb8a2d7b4b826c",
+      "originalSizeBytes": 107600,
+      "notes": [
+        "TRUNCATED sanitized copy of the real 107 KB press-release page: retains the tablebg layout, the real uppercase-.PDF rbidocs link, 'Date : Jul 27, 2026' cell, bold title cell and the first paragraphs of the penalty text.",
+        "Removed: site chrome (header/menu/footer), all scripts, ASP.NET viewstate/hidden fields.",
+        "Mojibake in the live page (rupee symbol and typographic quotes rendered as corrupt bytes) replaced with 'Rs.' / plain ASCII quotes.",
+        "Only official institutional names retained; no personal data."
+      ]
+    },
+    "press.pdf": {
+      "originalUrl": "https://rbidocs.rbi.org.in/rdocs/PressRelease/PDFs/PR76376917CB8E0A04AFF87BF7A0A19B1C3DB.PDF",
+      "originalSha256": null,
+      "notes": [
+        "SYNTHETIC minimal valid single-page PDF (950 bytes, PDF 1.4, valid xref) carrying the real press-release title/date; verified parseable with pdfjs-dist.",
+        "The real linked .PDF URL serves a JavaScript bot-challenge interstitial (text/html) to non-browser clients; per policy the access control was NOT bypassed, so no original content hash is available.",
+        "A sibling official PDF on the same host (rdocs/content/pdfs/GSEC27072026_E.pdf) was retrievable (HTTP 200, application/pdf, 403,589 bytes, sha256 1f539987ea1bbc8bb2631905b7f4a18a2035c739ca81d16d55c02c2fb2a1bdb2) but is too large to commit."
+      ]
+    }
+  },
+  "accessNotes": "Old registry feedUrl pointed to a single press-release DETAIL page (BS_PressReleaseDisplay.aspx?prid=56133), not a feed. Official RSS index at rbi.org.in/scripts/rss.aspx lists pressreleases_rss.xml, which is live with ETag + Last-Modified + HTTP 304 conditional GET support. No access control bypassed."
+}

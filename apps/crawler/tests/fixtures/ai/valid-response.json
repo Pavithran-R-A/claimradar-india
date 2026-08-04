@@ -1,0 +1,83 @@
+{
+  "is_relevant": true,
+  "company_names": ["XYZ Electronics Ltd"],
+  "legal_case_title": "NCDRC Consumer Refund Order - XYZ Electronics",
+  "case_number": "CC/2024/001234",
+  "authority": "National Consumer Disputes Redressal Commission",
+  "document_type": "group_compensation_order",
+  "procedural_status": "final",
+  "claimability_status": "refund_ordered",
+  "affected_group": "All consumers who purchased XYZ washing machines between January 2023 and December 2024",
+  "geographic_scope": "India",
+  "relevant_period_start": "2023-01-01",
+  "relevant_period_end": "2024-12-31",
+  "relief_type": "Refund",
+  "relief_description": "Full refund directed to all affected consumers who purchased defective washing machines",
+  "official_amount": 25000000,
+  "amount_currency": "INR",
+  "proof_requirements": ["Purchase receipt", "Product serial number"],
+  "action_required": "Consumers must submit a claim form with proof of purchase at the designated portal",
+  "official_claim_url": "https://ncdrc.gov.in/claims/xyz-electronics-2026",
+  "deadline": "2027-01-31",
+  "appeal_or_pending_issue": null,
+  "reason_not_publicly_claimable": null,
+  "evidence": [
+    {
+      "field": "affected_group",
+      "excerpt": "All consumers who purchased XYZ washing machines between January 2023 and December 2024",
+      "page": null,
+      "start_offset": 120,
+      "end_offset": 195
+    },
+    {
+      "field": "relief_type",
+      "excerpt": "Full refund directed to all affected consumers",
+      "page": null,
+      "start_offset": 200,
+      "end_offset": 250
+    },
+    {
+      "field": "official_amount",
+      "excerpt": "Rs. 2.5 crore",
+      "page": null,
+      "start_offset": 300,
+      "end_offset": 315
+    },
+    {
+      "field": "deadline",
+      "excerpt": "Claims must be submitted by 31 January 2027",
+      "page": null,
+      "start_offset": 400,
+      "end_offset": 445
+    },
+    {
+      "field": "action_required",
+      "excerpt": "Consumers must submit a claim form with proof of purchase at the designated portal",
+      "page": null,
+      "start_offset": 500,
+      "end_offset": 580
+    },
+    {
+      "field": "procedural_status",
+      "excerpt": "This is a final order",
+      "page": null,
+      "start_offset": 600,
+      "end_offset": 620
+    },
+    {
+      "field": "official_claim_url",
+      "excerpt": "https://ncdrc.gov.in/claims/xyz-electronics-2026",
+      "page": null,
+      "start_offset": 700,
+      "end_offset": 755
+    },
+    {
+      "field": "appeal_or_pending_issue",
+      "excerpt": "No appeal has been filed",
+      "page": null,
+      "start_offset": 800,
+      "end_offset": 825
+    }
+  ],
+  "confidence": 0.92
+}

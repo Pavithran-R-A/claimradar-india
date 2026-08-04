@@ -1,0 +1,55 @@
+{
+  "is_relevant": true,
+  "company_names": ["Fabricated Corp"],
+  "legal_case_title": "Fabricated Consumer Refund Case",
+  "case_number": "CC/2025/999999",
+  "authority": "National Consumer Disputes Redressal Commission",
+  "document_type": "group_compensation_order",
+  "procedural_status": "final",
+  "claimability_status": "refund_ordered",
+  "affected_group": "All customers of Fabricated Corp who purchased Product X",
+  "geographic_scope": "India",
+  "relevant_period_start": "2024-01-01",
+  "relevant_period_end": "2025-12-31",
+  "relief_type": "Refund",
+  "relief_description": "Complete refund to all affected customers",
+  "official_amount": 10000000,
+  "amount_currency": "INR",
+  "proof_requirements": ["Invoice", "Identity proof"],
+  "action_required": "Submit claim form online",
+  "official_claim_url": "https://example.com/claim/fabricated-corp",
+  "deadline": "2027-06-30",
+  "appeal_or_pending_issue": null,
+  "reason_not_publicly_claimable": null,
+  "evidence": [
+    {
+      "field": "affected_group",
+      "excerpt": "All customers of Fabricated Corp who purchased Product X are eligible for a full refund as per the commission directive",
+      "page": null,
+      "start_offset": 0,
+      "end_offset": 100
+    },
+    {
+      "field": "relief_type",
+      "excerpt": "The commission has ordered a complete refund of Rs. 1 crore to all affected consumers without any deduction",
+      "page": null,
+      "start_offset": 100,
+      "end_offset": 200
+    },
+    {
+      "field": "official_amount",
+      "excerpt": "A total sum of Rs. 1 crore shall be disbursed among eligible claimants within 90 days of this order",
+      "page": null,
+      "start_offset": 200,
+      "end_offset": 300
+    },
+    {
+      "field": "deadline",
+      "excerpt": "All claims must be filed before the deadline of June 30, 2027 as stipulated by the honourable commission",
+      "page": null,
+      "start_offset": 300,
+      "end_offset": 400
+    }
+  ],
+  "confidence": 0.88
+}

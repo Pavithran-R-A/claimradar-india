@@ -1,0 +1,39 @@
+{
+  "source": "sebi",
+  "capturedAt": "2026-07-27",
+  "capturedBy": "Wave 2 live source commissioning (Task #25)",
+  "files": {
+    "feed.xml": {
+      "originalUrl": "https://www.sebi.gov.in/sebirss.xml",
+      "originalSha256": "0b87eabb03509eb68f3d9cdb9f821a2227a4a9b72f2c7ee4996239fe092eb430",
+      "originalSizeBytes": 17247,
+      "notes": [
+        "Subset of the live SEBI RSS feed captured 2026-07-27 (30 items live; 4 real items kept verbatim, incl. channel ttl/lastBuildDate).",
+        "Real-world quirk preserved: pubDate format '24 Jul, 2026 +0530' is NOT RFC-822 and is rejected by JavaScript Date parsing (real malformed-date case).",
+        "Item 5 is SYNTHESIZED from the real Hexa Tradex item (103044): its pubDate was emptied to add an explicit missing-date case; title suffixed '(missing date)'.",
+        "Item 6 is SYNTHESIZED: duplicate of item 1's link (103046) with an edited title, added as the duplicate-link regression case.",
+        "Sanitization: recovery-proceeding items containing individual names with PAN identifiers were deliberately EXCLUDED (personal data minimization). XML pretty-printed (live feed is single-line)."
+      ]
+    },
+    "detail.html": {
+      "originalUrl": "https://www.sebi.gov.in/enforcement/orders/jul-2026/final-order-in-the-matter-of-front-running-by-madhav-stock-vision-pvt-ltd-and-others_103046.html",
+      "originalSha256": "fea780f489c1f2cd3627462d045a53856826f1cf61a8490f189698fdcf5536b3",
+      "originalSizeBytes": 8405,
+      "notes": [
+        "Sanitized copy of the real order detail page: retains head title/meta, breadcrumb, h1 title, date_value (Jul 24, 2026), order category and the linked order PDF URL.",
+        "The live page embeds the PDF via an <iframe src='../../../web/?file=...pdf'>; the fixture exposes the same PDF URL as a plain <a href> so the PDF-link extraction path is exercised.",
+        "Removed: all script tags (jQuery, menus, analytics), stylesheets, marquee/side-menu/footer chrome.",
+        "Entity names are from the public SEBI enforcement order (official record); no private personal data retained."
+      ]
+    },
+    "linkedPdf": {
+      "originalUrl": "https://www.sebi.gov.in/sebi_data/attachdocs/jul-2026/1784905586189.pdf",
+      "originalSha256": "5e2bba18970ddede3e366fccafd19a3f6c86b07ccb2f734e9f7b1eeff205a597",
+      "originalSizeBytes": 918438,
+      "notes": [
+        "Real linked order PDF verified live (HTTP 200, application/pdf, 918 KB). NOT committed as a fixture due to size; the RBI fixture set carries the minimal-PDF regression case instead."
+      ]
+    }
+  },
+  "accessNotes": "Registry URL sebi_data/attachdocs/rss-feeds/press-release.xml returns HTTP 404 (dead since ~2022 per Last-Modified). Official live feed is /sebirss.xml. No access control encountered or bypassed."
+}

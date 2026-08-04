@@ -1,0 +1,31 @@
+{
+  "name": "claimradar-india",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm -r build",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run --passWithNoTests",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "crawler:daily": "pnpm --filter @claimradar/crawler dev -- daily",
+    "crawler:source": "pnpm --filter @claimradar/crawler dev -- source",
+    "crawler:health": "pnpm --filter @claimradar/crawler dev -- health",
+    "crawler:fixtures": "pnpm --filter @claimradar/crawler test",
+    "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
+    "test:phase-4b-acceptance": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm test:inventory-acceptance && pnpm build",
+    "report:inventory-validation": "pnpm --filter @claimradar/crawler dev -- health"
+  },
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.4.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}

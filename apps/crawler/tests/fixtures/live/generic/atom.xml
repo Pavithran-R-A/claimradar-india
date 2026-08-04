@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Public Notices Atom Feed</title>
+  <link href="https://notices.example.gov.in/feed" rel="self" />
+  <link href="https://notices.example.gov.in" />
+  <updated>2026-07-21T09:00:00Z</updated>
+  <id>tag:notices.example.gov.in,2026:feed</id>
+  <entry>
+    <title>Penalty notice issued to service provider for billing violations</title>
+    <link href="https://notices.example.gov.in/notices/penalty-billing-2026" />
+    <id>tag:notices.example.gov.in,2026:penalty-billing-2026</id>
+    <updated>2026-07-20T10:00:00Z</updated>
+    <summary>A penalty was imposed for systematic overbilling; affected customers will be credited.</summary>
+  </entry>
+  <entry>
+    <title>Annual report publication notice</title>
+    <link href="https://notices.example.gov.in/notices/annual-report-2026" />
+    <id>tag:notices.example.gov.in,2026:annual-report-2026</id>
+    <updated>2026-07-18T16:20:00Z</updated>
+    <summary>Routine notice announcing publication of the annual report.</summary>
+  </entry>
+</feed>

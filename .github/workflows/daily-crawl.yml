@@ -1,0 +1,78 @@
+name: Daily Crawl
+
+on:
+  schedule:
+    - cron: '17 0 * * *' # 00:17 UTC daily (non-round minute to reduce contention)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no publishing)'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: daily-crawl
+  cancel-in-progress: false # Don't cancel running crawls
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run crawler tests
+        run: pnpm --filter @claimradar/crawler test
+
+      - name: Run daily crawl
+        run: pnpm crawler:daily ${{ inputs.dry_run == 'true' && '-- --dry-run' || '' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'none' }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          CRAWLER_USER_AGENT: 'ClaimRadar India Bot/1.0 (+https://claimradar.in)'
+          LIVE_ADAPTERS_ENABLED: 'true'
+          AI_DAILY_REQUEST_BUDGET: ${{ vars.AI_DAILY_REQUEST_BUDGET || '40' }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+      - name: Upload run summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawl-summary
+          path: crawl-summary.json
+          if-no-files-found: ignore
+
+    # Note: GitHub Actions scheduled workflows can occasionally be delayed.
+    # They are not exact-time guarantees.

@@ -1,0 +1,24 @@
+{
+  "source": "generic",
+  "capturedAt": "2026-07-27",
+  "capturedBy": "Wave 2 live source commissioning (Task #25)",
+  "files": {
+    "rss2.xml": {
+      "originalUrl": null,
+      "originalSha256": null,
+      "notes": [
+        "FULLY SYNTHETIC standards-conformant RSS 2.0 feed (example.gov.in domain) used to validate the generic RSS adapter: RFC-822 GMT dates, guid, HTML-encoded description.",
+        "No real source content; no personal data."
+      ]
+    },
+    "atom.xml": {
+      "originalUrl": null,
+      "originalSha256": null,
+      "notes": [
+        "FULLY SYNTHETIC standards-conformant Atom 1.0 feed (example.gov.in domain) used to validate the generic adapter's Atom handling: link@href, entry id, ISO-8601 updated timestamps.",
+        "No real source content; no personal data."
+      ]
+    }
+  },
+  "accessNotes": "Synthetic fixtures only; no live endpoint is associated with the generic adapter."
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rss version="2.0">
+  <channel>
+    <ttl>60</ttl>
+    <title>SEBI RSS Feed</title>
+    <description>SEBI RSS Feed</description>
+    <link>https://www.sebi.gov.in/sebirss.xml</link>
+    <lastBuildDate>27 Jul 2026 20:00:02</lastBuildDate>
+    <pubDate>27 Jul 2026 20:00:02 +0530</pubDate>
+    <item>
+      <title>Final Order in the matter of front running by Madhav Stock Vision Pvt. Ltd. and Others</title>
+      <description>Final Order in the matter of front running by Madhav Stock Vision Pvt. Ltd. and Others</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/final-order-in-the-matter-of-front-running-by-madhav-stock-vision-pvt-ltd-and-others_103046.html</link>
+      <pubDate>24 Jul, 2026 +0530</pubDate>
+    </item>
+    <item>
+      <title>Ex Parte Interim Order in the matter of Unregistered Investment Advisory and Unregistered Portfolio Management Services activities by Stark Investments and Ors.</title>
+      <description>Ex Parte Interim Order in the matter of Unregistered Investment Advisory and Unregistered Portfolio Management Services activities by Stark Investments and Ors.</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/ex-parte-interim-order-in-the-matter-of-unregistered-investment-advisory-and-unregistered-portfolio-management-services-activities-by-stark-investments-and-ors-_103040.html</link>
+      <pubDate>24 Jul, 2026 +0530</pubDate>
+    </item>
+    <item>
+      <title>Order in the matter of Nalwa Sons Investments Limited</title>
+      <description>Order in the matter of Nalwa Sons Investments Limited</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/order-in-the-matter-of-nalwa-sons-investments-limited_103045.html</link>
+      <pubDate>24 Jul, 2026 +0530</pubDate>
+    </item>
+    <item>
+      <title>Adjudication Order in the matter of Eastern Financiers Limited</title>
+      <description>Adjudication Order in the matter of Eastern Financiers Limited</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/adjudication-order-in-the-matter-of-eastern-financiers-limited_103018.html</link>
+      <pubDate>22 Jul, 2026 +0530</pubDate>
+    </item>
+    <item>
+      <title>Order in the matter of Hexa Tradex Limited (missing date)</title>
+      <description>Order in the matter of Hexa Tradex Limited</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/order-in-the-matter-of-hexa-tradex-limited_103044.html</link>
+      <pubDate></pubDate>
+    </item>
+    <item>
+      <title>Final Order in the matter of front running by Madhav Stock Vision Pvt. Ltd. and Others (duplicate link)</title>
+      <description>Duplicate of the first item for deduplication regression coverage</description>
+      <link>https://www.sebi.gov.in/enforcement/orders/jul-2026/final-order-in-the-matter-of-front-running-by-madhav-stock-vision-pvt-ltd-and-others_103046.html</link>
+      <pubDate>24 Jul, 2026 +0530</pubDate>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,39 @@
+name: Source Health Check
+
+on:
+  schedule:
+    - cron: '43 2 * * 1' # Monday 02:43 UTC (weekly)
+  workflow_dispatch:
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run source health checks
+        run: pnpm crawler:health
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CRAWLER_USER_AGENT: 'ClaimRadar India Bot/1.0 (+https://claimradar.in)'
+          LIVE_ADAPTERS_ENABLED: 'true'
+
+    # Note: This workflow does NOT make AI calls unless specifically enabled.
+    # It only tests source availability and feed validity.

@@ -1,0 +1,31 @@
+{
+  "source": "pib",
+  "capturedAt": "2026-07-27",
+  "capturedBy": "Wave 2 live source commissioning (Task #25)",
+  "files": {
+    "feed.xml": {
+      "originalUrl": "https://www.pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3&reg=3",
+      "originalSha256": "30637883adbe1688e0bceba38bc1a79c706e7fb432612eedbe97723e8357a1ca",
+      "originalSizeBytes": 4060,
+      "notes": [
+        "Subset of the live PIB English all-ministries RSS feed captured 2026-07-27 (20 items live; 4 real items kept verbatim).",
+        "Real-world quirk preserved: PIB items carry NO pubDate and NO guid (missing-date case is real, not synthesized).",
+        "Real-world quirk preserved: leading space in the first item title.",
+        "Item 5 is SYNTHESIZED: duplicate of item 1's link (PRID=2290176) with an edited title, added as the duplicate-link regression case.",
+        "UTF-8 BOM present in the live response was dropped; XML pretty-printed for readability (live feed is single-line)."
+      ]
+    },
+    "detail.html": {
+      "originalUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2290176",
+      "originalSha256": "3afc9ef5c36b73c30e158153638a7fcb0dea25f271a722fe30a448b2615ebdc1",
+      "originalSizeBytes": 325429,
+      "notes": [
+        "TRUNCATED sanitized copy of the real 325 KB detail page: retains title h2#Titleh2, subtitle h3, #PrDateTime release timestamp, og:* meta tags and a representative slice of the crop-area data table.",
+        "Removed: all scripts (Google Analytics, boomerang/mPulse telemetry), inline styles, navigation chrome, social share widgets, hidden form fields.",
+        "Mojibake in the live page ('Posted On' label and title prefix rendered as corrupt bytes) replaced with plain ASCII equivalents.",
+        "No personal data beyond official PIB Delhi attribution."
+      ]
+    }
+  },
+  "accessNotes": "Feed endpoint returns HTTP 403 (Akamai) to non-browser User-Agents including the declared crawler UA; captured with a standard browser UA for commissioning diagnostics only. No CAPTCHA or access control was bypassed."
+}

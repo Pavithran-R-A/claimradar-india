@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Press Information Bureau - India</title>
+    <link>https://pib.gov.in</link>
+    <description>Official press releases from the Government of India</description>
+    <item>
+      <title>NCDRC orders refund to consumers for defective home appliances</title>
+      <link>https://pib.gov.in/PressReleasePage.aspx?PRID=2000001</link>
+      <pubDate>Mon, 15 Jul 2026 10:30:00 GMT</pubDate>
+      <description>The National Consumer Disputes Redressal Commission directed XYZ Electronics to refund Rs. 2.5 crore to affected consumers who purchased defective washing machines between January 2023 and December 2024.</description>
+      <guid>PIB-2000001</guid>
+    </item>
+    <item>
+      <title>Consumer Protection Authority orders compensation for misleading advertisements</title>
+      <link>https://pib.gov.in/PressReleasePage.aspx?PRID=2000002</link>
+      <pubDate>Tue, 16 Jul 2026 09:00:00 GMT</pubDate>
+      <description>The Central Consumer Protection Authority has ordered ABC Foods Ltd to pay Rs. 50 lakh compensation to consumers affected by misleading health claims on their packaged juice products.</description>
+      <guid>PIB-2000002</guid>
+    </item>
+    <item>
+      <title>Appointment of new Secretary, Ministry of Consumer Affairs</title>
+      <link>https://pib.gov.in/PressReleasePage.aspx?PRID=2000003</link>
+      <pubDate>Wed, 17 Jul 2026 11:00:00 GMT</pubDate>
+      <description>Shri Rajesh Kumar has been appointed as the new Secretary of the Ministry of Consumer Affairs, Food and Public Distribution.</description>
+      <guid>PIB-2000003</guid>
+    </item>
+    <item>
+      <title>National seminar on consumer rights awareness</title>
+      <link>https://pib.gov.in/PressReleasePage.aspx?PRID=2000004</link>
+      <pubDate>Thu, 18 Jul 2026 08:00:00 GMT</pubDate>
+      <description>A national seminar on consumer rights awareness will be held in New Delhi on July 25, 2026, organized by the Department of Consumer Affairs.</description>
+      <guid>PIB-2000004</guid>
+    </item>
+    <item>
+      <title>Consumer forum awards compensation to individual complainant in insurance dispute</title>
+      <link>https://pib.gov.in/PressReleasePage.aspx?PRID=2000005</link>
+      <pubDate>Fri, 19 Jul 2026 12:00:00 GMT</pubDate>
+      <description>The District Consumer Forum awarded Rs. 2 lakh compensation to Shri Ramesh Sharma for deficiency in service by National Insurance Company Ltd in settling his health insurance claim.</description>
+      <guid>PIB-2000005</guid>
+    </item>
+  </channel>
+</rss>

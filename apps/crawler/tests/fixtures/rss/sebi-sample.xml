@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Securities and Exchange Board of India</title>
+    <link>https://sebi.gov.in</link>
+    <description>Official announcements from SEBI</description>
+    <item>
+      <title>SEBI orders penalty and refund to investors in fraudulent collective investment scheme</title>
+      <link>https://sebi.gov.in/enforcement/orders/2026/refund-cis-fraud</link>
+      <pubDate>Mon, 22 Jul 2026 10:00:00 GMT</pubDate>
+      <description>SEBI has imposed a penalty of Rs. 10 crore on ABC Capital and ordered refund of Rs. 50 crore to affected investors who were misled by the collective investment scheme operated between 2020 and 2024.</description>
+      <guid>SEBI-ORD-2026-001</guid>
+    </item>
+    <item>
+      <title>Policy circular on revised margin requirements for derivatives trading</title>
+      <link>https://sebi.gov.in/circulars/2026/margin-derivatives</link>
+      <pubDate>Tue, 23 Jul 2026 09:30:00 GMT</pubDate>
+      <description>SEBI issues guidelines issued on revised margin requirements for equity derivatives trading effective from August 1, 2026.</description>
+      <guid>SEBI-CIR-2026-045</guid>
+    </item>
+    <item>
+      <title>Routine administrative order - renewal of registration for stock brokers</title>
+      <link>https://sebi.gov.in/admin/renewal-brokers-2026</link>
+      <pubDate>Wed, 24 Jul 2026 11:00:00 GMT</pubDate>
+      <description>Routine administrative order for renewal of registration certificates for stock brokers under SEBI (Stock Brokers) Regulations.</description>
+      <guid>SEBI-ADM-2026-012</guid>
+    </item>
+  </channel>
+</rss>

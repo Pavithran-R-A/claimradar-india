@@ -1,0 +1,8 @@
+# Captured live fixtures must stay byte-faithful to their manifests; do not reformat.
+apps/crawler/tests/fixtures/live/
+
+# Build output and dependencies
+node_modules/
+dist/
+.next/
+pnpm-lock.yaml
