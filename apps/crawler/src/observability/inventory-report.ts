@@ -8,11 +8,11 @@
 import type { IDatabaseWriter } from '../pipeline/db-writer.js';
 
 export interface InventoryReportParams {
-  days?: number;
-  from?: string;
-  to?: string;
-  storage?: IDatabaseWriter;
-  fixtureData?: InventoryFixtureRecord[];
+  days?: number | undefined;
+  from?: string | undefined;
+  to?: string | undefined;
+  storage?: IDatabaseWriter | undefined;
+  fixtureData?: InventoryFixtureRecord[] | undefined;
 }
 
 export interface InventoryFixtureRecord {

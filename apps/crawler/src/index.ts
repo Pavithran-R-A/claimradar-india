@@ -3,6 +3,7 @@ import { loadCrawlerEnv } from './env.js';
 import { createAdminClient } from '@claimradar/database';
 import type { Source } from '@claimradar/database';
 import type { SourceDefinition } from '@claimradar/source-registry';
+import type { IDatabaseWriter } from './pipeline/db-writer.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
@@ -383,7 +384,7 @@ async function main() {
       const from = fromArg ? fromArg.split('=')[1] : fromIdx >= 0 ? args[fromIdx + 1] : undefined;
       const to = toArg ? toArg.split('=')[1] : toIdx >= 0 ? args[toIdx + 1] : undefined;
 
-      let storage: DatabaseWriter | undefined;
+      let storage: IDatabaseWriter | undefined;
       try {
         storage = new DatabaseWriter();
       } catch {
