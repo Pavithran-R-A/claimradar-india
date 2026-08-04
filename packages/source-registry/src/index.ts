@@ -68,4 +68,21 @@ export const rbiRssSource: SourceDefinition = {
   rateLimit: { requestsPerMinute: 10 },
 };
 
-export const initialSources: SourceDefinition[] = [pibRssSource, sebiRssSource, rbiRssSource];
+export const genericRssSource: SourceDefinition = {
+  id: 'generic-rss',
+  name: 'Generic Public RSS Feed',
+  domain: 'cci.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.cci.gov.in',
+  feedUrl: 'https://www.cci.gov.in/rss.xml',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const initialSources: SourceDefinition[] = [
+  pibRssSource,
+  sebiRssSource,
+  rbiRssSource,
+  genericRssSource,
+];

@@ -187,3 +187,18 @@ export async function getPublishedCompanies(): Promise<
 
   return Array.from(companyMap.values());
 }
+
+export async function getPublishedCompanyBySlug(
+  slug: string,
+): Promise<{ name: string; slug: string; sector: string; activeClaimCount: number } | null> {
+  const companies = await getPublishedCompanies();
+  return companies.find((c) => c.slug === slug) || null;
+}
+
+export async function getPublishedSectorBySlug(
+  slug: string,
+): Promise<{ name: string; slug: string } | null> {
+  const found = PUBLISHED_FIXTURE_DATASET.find((c) => c.sectorSlug === slug);
+  if (!found) return null;
+  return { name: found.sector, slug: found.sectorSlug };
+}
