@@ -23,6 +23,12 @@ export const crawlerEnvSchema = z.object({
 
 export type CrawlerEnv = z.infer<typeof crawlerEnvSchema>;
 
-export function loadCrawlerEnv(): CrawlerEnv {
-  return crawlerEnvSchema.parse(process.env);
+export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
+  const env = { ...process.env };
+  if (options?.dryRun) {
+    env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
+    env.SUPABASE_SERVICE_ROLE_KEY =
+      env.SUPABASE_SERVICE_ROLE_KEY || 'dummy-dryrun-service-role-key';
+  }
+  return crawlerEnvSchema.parse(env);
 }

@@ -547,7 +547,7 @@ async function processSource(params: {
 // ---------------------------------------------------------------------------
 
 export async function runPipeline(options: PipelineOptions): Promise<CrawlSummary> {
-  const env = loadCrawlerEnv();
+  const env = loadCrawlerEnv({ dryRun: options.dryRun });
   const runId = randomUUID();
   const logger = createLogger(runId);
   const summary = createEmptySummary(runId);
