@@ -12,7 +12,7 @@ Previous reports incorrectly marked Phase 4B as fully passed. This document repl
 
 ### Multi-Environment Status Breakdown
 
-- **Offline Test Suite:** 27 test files / 225 tests passed / 0 failed / 0 skipped (Duration: 29.99s, Exit Code: 0)
+- **Offline Test Suite:** 28 test files / 231 tests passed / 0 failed / 0 skipped (Duration: 30.37s, Exit Code: 0)
 - **Live External Source Ratio:** 2/4 commissioned (SEBI 200, RBI 200; PIB 403; Generic RSS pending commissioning test)
 - **Local Supabase Stack:** `BLOCKED_LOCAL_ENVIRONMENT` (Docker Desktop daemon npipe missing interactive session)
 - **Public Product Status:** Informational Pages: `PASS` | Public Directory Routes: `PARTIAL / PLACEHOLDER`

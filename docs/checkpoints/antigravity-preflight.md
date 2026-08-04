@@ -26,8 +26,8 @@
 | `pnpm format`                    | ✅ Pass | Prettier code style verified across all workspace files    |
 | `pnpm lint`                      | ✅ Pass | 0 ESLint errors/warnings across monorepo                   |
 | `pnpm typecheck`                 | ✅ Pass | All 10 workspace projects pass typecheck cleanly           |
-| `pnpm test`                      | ✅ Pass | 27 test files / 225 tests passed (0 failed / 0 skipped)    |
-| `pnpm test:inventory-acceptance` | ✅ Pass | 27 test files / 225 tests passed (0 failed / 0 skipped)    |
+| `pnpm test`                      | ✅ Pass | 28 test files / 231 tests passed (0 failed / 0 skipped)    |
+| `pnpm test:inventory-acceptance` | ✅ Pass | 28 test files / 231 tests passed (0 failed / 0 skipped)    |
 | `pnpm build`                     | ✅ Pass | Next.js 15 app and workspace packages compile static pages |
 
 ---
