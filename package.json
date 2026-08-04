@@ -12,10 +12,11 @@
     "crawler:daily": "pnpm --filter @claimradar/crawler dev -- daily",
     "crawler:source": "pnpm --filter @claimradar/crawler dev -- source",
     "crawler:health": "pnpm --filter @claimradar/crawler dev -- health",
-    "crawler:fixtures": "pnpm --filter @claimradar/crawler test",
+    "crawler:preflight": "pnpm --filter @claimradar/crawler dev -- preflight",
     "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
-    "test:phase-4b-acceptance": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm test:inventory-acceptance && pnpm build",
-    "report:inventory-validation": "pnpm --filter @claimradar/crawler dev -- health"
+    "test:phase-4b-offline": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "test:phase-4b-acceptance": "node scripts/phase-4b-acceptance-runner.mjs",
+    "report:inventory-validation": "pnpm --filter @claimradar/crawler dev -- inventory-report"
   },
   "engines": {
     "node": ">=24 <25",

@@ -363,6 +363,97 @@ async function main() {
       );
       break;
     }
+    case 'inventory-report': {
+      const { generateInventoryReport, formatInventoryReport } =
+        await import('./observability/inventory-report.js');
+      const { DatabaseWriter } = await import('./pipeline/db-writer.js');
+      const daysArg = args.find((a) => a.startsWith('--days='));
+      const fromArg = args.find((a) => a.startsWith('--from='));
+      const toArg = args.find((a) => a.startsWith('--to='));
+
+      const daysIdx = args.indexOf('--days');
+      const fromIdx = args.indexOf('--from');
+      const toIdx = args.indexOf('--to');
+
+      const days = daysArg
+        ? parseInt(daysArg.split('=')[1]!, 10)
+        : daysIdx >= 0
+          ? parseInt(args[daysIdx + 1]!, 10)
+          : undefined;
+      const from = fromArg ? fromArg.split('=')[1] : fromIdx >= 0 ? args[fromIdx + 1] : undefined;
+      const to = toArg ? toArg.split('=')[1] : toIdx >= 0 ? args[toIdx + 1] : undefined;
+
+      let storage: DatabaseWriter | undefined;
+      try {
+        storage = new DatabaseWriter();
+      } catch {
+        // Missing credentials, storage will be undefined and generateInventoryReport will report status cleanly
+      }
+
+      const report = await generateInventoryReport({
+        days,
+        from,
+        to,
+        storage,
+      });
+      console.log(formatInventoryReport(report));
+      break;
+    }
+    case 'preflight': {
+      console.log('=============================================================================');
+      console.log('  CLAIMRADAR INDIA — CRAWLER INGESTION PREFLIGHT AUDIT');
+      console.log('=============================================================================');
+
+      const envArg = args.find((a) => a.startsWith('--environment='));
+      const envIdx = args.indexOf('--environment');
+      const environment = envArg
+        ? envArg.split('=')[1]
+        : envIdx >= 0
+          ? args[envIdx + 1]
+          : 'staging';
+
+      console.log(`Target Environment:     ${environment}`);
+
+      // Policy Rule 1: AUTO_VERIFY_CLAIMABLES must be false
+      const autoVerify = process.env.AUTO_VERIFY_CLAIMABLES === 'true';
+      console.log(
+        `AUTO_VERIFY_CLAIMABLES: ${autoVerify ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
+      );
+
+      // Policy Rule 2: ENABLE_BILLING must be false
+      const enableBilling = process.env.ENABLE_BILLING === 'true';
+      console.log(
+        `ENABLE_BILLING:         ${enableBilling ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
+      );
+
+      // Environment & Credential Check
+      const hasUrl = Boolean(process.env.SUPABASE_URL);
+      const hasKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+      console.log(
+        `SUPABASE_URL Declared:  ${hasUrl ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
+      );
+      console.log(`SERVICE_ROLE_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`);
+
+      // Compliance Identity
+      const ua = process.env.CRAWLER_USER_AGENT ?? 'ClaimRadarBot/0.1 (+https://claimradar.in/bot)';
+      console.log(`Crawler Identity (UA):  ${ua}`);
+
+      if (autoVerify || enableBilling) {
+        console.error(
+          '\n❌ PREFLIGHT REFUSED: Policy violations detected (AUTO_VERIFY or BILLING enabled).',
+        );
+        process.exit(1);
+      }
+
+      if (!hasUrl || !hasKey) {
+        console.log('\n⚠️ PREFLIGHT NOTICE: Staging credentials not present in local environment.');
+        console.log('                    Live database ingestion is SKIPPED.');
+        process.exit(0);
+      }
+
+      console.log('\n✅ PREFLIGHT PASSED: Ready for staging ingestion.');
+      break;
+    }
     default:
       console.log('ClaimRadar Crawler');
       console.log('');
@@ -374,6 +465,8 @@ async function main() {
       console.log('  health             Run source health checks');
       console.log('  reprocess --document=X  Reprocess a specific document');
       console.log('  retry-queued       Retry deferred AI extraction candidates');
+      console.log('  inventory-report   Print 30-day inventory validation metrics report');
+      console.log('  preflight          Run ingestion preflight safety checks');
       console.log('');
       console.log('Options:');
       console.log('  --dry-run          Fetch and process without publishing');

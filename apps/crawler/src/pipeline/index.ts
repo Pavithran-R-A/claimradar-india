@@ -22,7 +22,7 @@ import { runAllValidators } from '../validation/runner.js';
 import { computeClaimabilityScore } from '../validation/scorer.js';
 import { decidePublication } from '../publication/policy.js';
 import { extractionSchema } from '@claimradar/claim-schema';
-import { DatabaseWriter } from './db-writer.js';
+import { DatabaseWriter, InMemoryDryRunWriter, type IDatabaseWriter } from './db-writer.js';
 import { createLogger, type Logger } from '../observability/logger.js';
 import {
   createEmptySummary,
@@ -40,6 +40,7 @@ export interface PipelineOptions {
   dryRun: boolean;
   sourceFilter?: string;
   skipAI: boolean;
+  storage?: IDatabaseWriter;
 }
 
 // ---------------------------------------------------------------------------
@@ -99,7 +100,7 @@ interface SourceStats {
 
 async function processSource(params: {
   source: Source;
-  db: DatabaseWriter;
+  db: IDatabaseWriter;
   runId: string;
   logger: Logger;
   summary: CrawlSummary;
@@ -556,13 +557,21 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
 
   logger.info('pipeline', 'Pipeline started', { dryRun: options.dryRun, skipAI: options.skipAI });
 
-  // Database
-  const db = new DatabaseWriter();
+  // Database / Storage Adapter
+  const db: IDatabaseWriter =
+    options.storage ?? (options.dryRun ? new InMemoryDryRunWriter() : new DatabaseWriter());
 
   // Create crawl_runs record
   let crawlRunId: string | null = null;
   if (!options.dryRun) {
-    crawlRunId = await db.createCrawlRun('running');
+    try {
+      crawlRunId = await db.createCrawlRun('running');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Database error creating crawl_run';
+      logger.error('pipeline', msg);
+      summary.errorCount++;
+      return summary;
+    }
   }
 
   // AI setup
@@ -594,28 +603,35 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   let sources: Source[];
   try {
     sources = await db.getEnabledSources();
-  } catch {
-    // If DB is unreachable, fall back to source-registry seed data
-    const { initialSources } = await import('@claimradar/source-registry');
-    sources = initialSources.map((s) => ({
-      id: s.id,
-      name: s.name,
-      domain: s.domain,
-      base_url: s.baseUrl,
-      source_type: s.sourceType,
-      adapter_name: s.adapterType,
-      trust_level: s.trustLevel,
-      enabled: true,
-      fetch_frequency_hours: 24,
-      rate_limit_per_minute: s.rateLimit.requestsPerMinute,
-      robots_checked_at: null,
-      terms_checked_at: null,
-      last_run_at: null,
-      last_success_at: null,
-      failure_count: 0,
-      metadata: s.config ?? {},
-      created_at: new Date().toISOString(),
-    }));
+  } catch (err) {
+    if (options.dryRun) {
+      const { initialSources } = await import('@claimradar/source-registry');
+      sources = initialSources.map((s) => ({
+        id: s.id,
+        name: s.name,
+        domain: s.domain,
+        base_url: s.baseUrl,
+        source_type: s.sourceType,
+        adapter_name: s.adapterType,
+        trust_level: s.trustLevel,
+        enabled: true,
+        fetch_frequency_hours: 24,
+        rate_limit_per_minute: s.rateLimit.requestsPerMinute,
+        robots_checked_at: null,
+        terms_checked_at: null,
+        last_run_at: null,
+        last_success_at: null,
+        failure_count: 0,
+        metadata: s.feedUrl ? { feedUrl: s.feedUrl } : {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+    } else {
+      const msg = err instanceof Error ? err.message : 'Failed to fetch sources from database';
+      logger.error('pipeline', msg);
+      summary.errorCount++;
+      return summary;
+    }
   }
 
   // Apply source filter
