@@ -8,7 +8,8 @@ import type { SourceDefinition } from '@claimradar/source-registry';
 type AnyClient = any;
 
 async function main() {
-  const args = process.argv.slice(2);
+  const rawArgs = process.argv.slice(2);
+  const args = rawArgs.filter((arg) => arg !== '--');
   const command = args[0];
 
   // Parse --dry-run flag

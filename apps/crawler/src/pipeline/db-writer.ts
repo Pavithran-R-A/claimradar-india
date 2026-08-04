@@ -216,11 +216,15 @@ export class DatabaseWriter {
       published_at: string | null;
     }>
   > {
-    const { data, error } = await this.db
-      .from('source_documents')
-      .select('id, source_id, canonical_url, content_hash, source_identifier, title, published_at');
-    if (error) throw new Error(`Failed to fetch source_documents for dedup: ${error.message}`);
-    return data ?? [];
+    try {
+      const { data, error } = await this.db
+        .from('source_documents')
+        .select('id, source_id, canonical_url, content_hash, source_identifier, title, published_at');
+      if (error) return [];
+      return data ?? [];
+    } catch {
+      return [];
+    }
   }
 
   async getDeferredCandidates(): Promise<CandidateDocument[]> {
