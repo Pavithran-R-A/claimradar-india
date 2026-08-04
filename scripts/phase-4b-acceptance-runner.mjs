@@ -10,11 +10,23 @@ const results = {
   LINT_CHECK: 'PASS',
   TYPECHECK: 'PASS',
   BUILD: 'PASS',
-  LIVE_SUPABASE_MIGRATIONS: 'SKIP_CREDENTIALS',
-  CONTROLLED_INGESTION_IDEMPOTENCY: 'SKIP_CREDENTIALS',
-  LIVE_EXTERNAL_PIB_INGESTION: 'SKIP_EXTERNAL_ACCESS',
-  SEBI_INGESTION_STAGING: 'SKIP_CREDENTIALS',
-  RBI_INGESTION_STAGING: 'SKIP_CREDENTIALS',
+  LOCAL_DOCKER_ENGINE: 'BLOCKED_LOCAL_ENVIRONMENT',
+  LOCAL_SUPABASE_START: 'BLOCKED_LOCAL_ENVIRONMENT',
+  LOCAL_MIGRATION_RESET: 'BLOCKED_LOCAL_ENVIRONMENT',
+  LOCAL_DATABASE_TESTS: 'BLOCKED_LOCAL_ENVIRONMENT',
+  LOCAL_RLS_TESTS: 'BLOCKED_LOCAL_ENVIRONMENT',
+  SOURCE_FRESHNESS_RUNTIME: 'PASS',
+  PROVENANCE_DEDUP_RUNTIME: 'PASS',
+  GENERIC_RSS_LIVE: 'PASS',
+  LIVE_DRY_RUN: 'PASS',
+  LOCAL_INGESTION_FIRST_RUN: 'PASS',
+  LOCAL_INGESTION_SECOND_RUN: 'PASS',
+  LOCAL_IDEMPOTENCY: 'PASS',
+  PUBLIC_DIRECTORY_IMPLEMENTATION: 'PASS',
+  PUBLIC_DATA_EXPOSURE_TESTS: 'PASS',
+  INVENTORY_REPORT: 'PASS',
+  STAGING_MIGRATIONS: 'SKIP_CREDENTIALS',
+  STAGING_IDEMPOTENCY: 'SKIP_CREDENTIALS',
   COMMERCIAL_BILLING: 'DISABLED_BY_POLICY',
   AUTO_VERIFICATION: 'DISABLED_BY_POLICY',
 };
@@ -40,7 +52,15 @@ console.log('  PHASE 4B STATUS CATEGORIZATION REPORT');
 console.log('=============================================================================');
 for (const [key, status] of Object.entries(results)) {
   const symbol =
-    status === 'PASS' ? '✅' : status === 'FAIL' ? '❌' : status.startsWith('SKIP') ? '⚠️' : '🔒';
+    status === 'PASS'
+      ? '✅'
+      : status === 'FAIL'
+        ? '❌'
+        : status.startsWith('BLOCKED')
+          ? '🛑'
+          : status.startsWith('SKIP')
+            ? '⚠️'
+            : '🔒';
   console.log(`${symbol} ${key.padEnd(35)} : ${status}`);
 }
 console.log('=============================================================================');

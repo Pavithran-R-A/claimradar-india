@@ -12,16 +12,23 @@ Previous reports incorrectly marked Phase 4B as fully passed. This document repl
 
 ### Multi-Environment Status Breakdown
 
-| Phase 4B Requirement                          | Offline Test Suite | Live External Sources | Local Supabase Stack | Staging / Prod Supabase | Status Category        |
-| :-------------------------------------------- | :----------------- | :-------------------- | :------------------- | :---------------------- | :--------------------- |
-| **Pipeline Storage Isolation & Dry-Run**      | ✅ PASS            | N/A                   | N/A                  | N/A                     | `PASS`                 |
-| **Atom/RSS Description Normalization**        | ✅ PASS            | ✅ PASS (SEBI/RBI)    | N/A                  | N/A                     | `PASS`                 |
-| **Source Freshness & Provenance Dedup**       | ✅ PASS            | N/A                   | N/A                  | N/A                     | `PASS`                 |
-| **Live Network Request Audit (PIB/SEBI/RBI)** | ✅ PASS            | ⚠️ PARTIAL (PIB 403)  | N/A                  | N/A                     | `SKIP_EXTERNAL_ACCESS` |
-| **Live Database Ingestion & Idempotency**     | N/A                | N/A                   | ⚠️ NO STACK          | ⚠️ MISSING CREDS        | `SKIP_CREDENTIALS`     |
-| **Inventory Validation Reporting**            | ✅ PASS            | N/A                   | N/A                  | N/A                     | `PASS`                 |
-| **Commercial Billing / Monetization**         | N/A                | N/A                   | N/A                  | N/A                     | `DISABLED_BY_POLICY`   |
-| **Automatic Record Verification**             | N/A                | N/A                   | N/A                  | N/A                     | `DISABLED_BY_POLICY`   |
+- **Offline Test Suite:** 27 test files / 225 tests passed / 0 failed / 0 skipped (Duration: 29.99s, Exit Code: 0)
+- **Live External Source Ratio:** 2/4 commissioned (SEBI 200, RBI 200; PIB 403; Generic RSS pending commissioning test)
+- **Local Supabase Stack:** `BLOCKED_LOCAL_ENVIRONMENT` (Docker Desktop daemon npipe missing interactive session)
+- **Public Product Status:** Informational Pages: `PASS` | Public Directory Routes: `PARTIAL / PLACEHOLDER`
+
+| Phase 4B Requirement                          | Offline Test Suite  | Live External Sources | Local Supabase Stack     | Staging / Prod Supabase | Status Category             |
+| :-------------------------------------------- | :------------------ | :-------------------- | :----------------------- | :---------------------- | :-------------------------- |
+| **Pipeline Storage Isolation & Dry-Run**      | ✅ PASS             | N/A                   | N/A                      | N/A                     | `PASS`                      |
+| **Atom/RSS Description Normalization**        | ✅ PASS             | ✅ PASS (SEBI/RBI)    | N/A                      | N/A                     | `PASS`                      |
+| **Source Freshness & Provenance Dedup**       | ✅ PASS (Runtime)   | N/A                   | N/A                      | N/A                     | `PASS`                      |
+| **Live Network Request Audit (PIB/SEBI/RBI)** | ✅ PASS             | ⚠️ 2/4 Commissioned   | N/A                      | N/A                     | `SKIP_EXTERNAL_ACCESS`      |
+| **Local Database Migration & RLS**            | N/A                 | N/A                   | ⚠️ Docker Engine Stopped | N/A                     | `BLOCKED_LOCAL_ENVIRONMENT` |
+| **Live Database Ingestion & Idempotency**     | N/A                 | N/A                   | ⚠️ BLOCKED LOCAL ENV     | ⚠️ MISSING CREDS        | `SKIP_CREDENTIALS`          |
+| **Inventory Validation Reporting**            | ✅ PASS             | N/A                   | N/A                      | N/A                     | `PASS`                      |
+| **Public Directory Implementation**           | ✅ PASS (Skeletons) | N/A                   | N/A                      | N/A                     | `PARTIAL / PLACEHOLDER`     |
+| **Commercial Billing / Monetization**         | N/A                 | N/A                   | N/A                      | N/A                     | `DISABLED_BY_POLICY`        |
+| **Automatic Record Verification**             | N/A                 | N/A                   | N/A                      | N/A                     | `DISABLED_BY_POLICY`        |
 
 ---
 

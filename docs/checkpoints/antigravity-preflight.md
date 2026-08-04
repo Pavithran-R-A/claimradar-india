@@ -19,16 +19,16 @@
 
 ---
 
-## 2. Initial Verification Suite Results (Node v24.18.0)
+## 2. Verified Offline Baseline Suite Results (Node v24.18.0)
 
-| Command                          | Status             | Result / Detail                                                                                                     |
-| -------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `pnpm format`                    | ⚠️ Fail (Prettier) | 7 files require formatting (`apps/crawler/src/adapters/rss/pib.ts`, live test files, `docs/live-source-results.md`) |
-| `pnpm lint`                      | ✅ Pass            | 0 ESLint errors/warnings across monorepo                                                                            |
-| `pnpm typecheck`                 | ✅ Pass            | All 10 tsconfig projects pass without errors                                                                        |
-| `pnpm test`                      | ⚠️ 1 Failure       | 19/20 files passed (178/179 tests). 1 failing test: Atom feed description extraction                                |
-| `pnpm test:inventory-acceptance` | ⚠️ 1 Failure       | Fails due to same Atom feed test in workspace runner                                                                |
-| `pnpm build`                     | ✅ Pass            | Next.js 15 app and workspace packages compile static pages                                                          |
+| Command                          | Status  | Result / Detail                                            |
+| -------------------------------- | ------- | ---------------------------------------------------------- |
+| `pnpm format`                    | ✅ Pass | Prettier code style verified across all workspace files    |
+| `pnpm lint`                      | ✅ Pass | 0 ESLint errors/warnings across monorepo                   |
+| `pnpm typecheck`                 | ✅ Pass | All 10 workspace projects pass typecheck cleanly           |
+| `pnpm test`                      | ✅ Pass | 27 test files / 225 tests passed (0 failed / 0 skipped)    |
+| `pnpm test:inventory-acceptance` | ✅ Pass | 27 test files / 225 tests passed (0 failed / 0 skipped)    |
+| `pnpm build`                     | ✅ Pass | Next.js 15 app and workspace packages compile static pages |
 
 ---
 
