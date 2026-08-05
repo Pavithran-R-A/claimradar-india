@@ -1,10 +1,29 @@
+import { execSync } from 'node:child_process';
 import { createAdminClient } from '@claimradar/database';
 
-process.env.NEXT_PUBLIC_SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
-process.env.SUPABASE_SERVICE_ROLE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+function ensureLocalSupabaseEnv() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:54321';
+  }
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const output = execSync('npx supabase status --output json', { encoding: 'utf8' });
+      const status = JSON.parse(output);
+      if (status && status.SERVICE_ROLE_KEY) {
+        process.env.SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY;
+      }
+    } catch (_err) {
+      // Fallback to local default if command fails
+      if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error(
+          'SUPABASE_SERVICE_ROLE_KEY environment variable is required to run local ingestion verification.',
+        );
+      }
+    }
+  }
+}
+
+ensureLocalSupabaseEnv();
 
 const supabase = createAdminClient();
 
@@ -113,12 +132,10 @@ async function runLocalDatabaseIngestionTest() {
       }
 
       // 3. Junction Linking
-      await db
-        .from('content_cluster_members')
-        .upsert(
-          { cluster_id: clusterId, source_document_id: docId },
-          { onConflict: 'cluster_id,source_document_id' },
-        );
+      await db.from('content_cluster_members').upsert(
+        { cluster_id: clusterId, source_document_id: docId },
+        { onConflict: 'cluster_id,source_document_id' },
+      );
     }
 
     return {
