@@ -1,0 +1,64 @@
+# ClaimRadar India — New Device Preflight Checkpoint
+
+**Preflight Date:** August 5, 2026
+**Executed By:** Qoder agent (Task #2 — transferred pnpm monorepo onboarding)
+**Execution Environment:** Windows 22H2, PowerShell 7, single working tree (no remotes)
+
+---
+
+## Preflight Inventory (16 Items)
+
+| # | Item | Verified Value / Status |
+| :- | :--- | :--- |
+| 1 | **Repo root** | `C:\Users\Pavithran\Downloads\chat-1` (`git rev-parse --show-toplevel` confirmed) |
+| 2 | **Current branch** | `master` at preflight start; later `qoder/complete-claimradar` created from updated HEAD |
+| 3 | **`git status --short --branch`** | At start: exactly 2 modified files — `apps/crawler/scripts/verify-local-database-ingestion.ts`, `scripts/verify-local-database-ingestion.mjs`. No untracked non-ignored files. Clean after commit `ba3ed0a` |
+| 4 | **`git log --oneline --decorate --all -n 50`** | 14 total commits, all on `master` (single branch), HEAD at `142e970` pre-commit, linear history from `04ceb57` (verified baseline) to `142e970` (local Supabase verification + idempotency) |
+| 5 | **Remote configuration** | `git remote -v` → **no remotes configured**. Transfer was filesystem-based; nothing has been or will be pushed |
+| 6 | **Latest commit hash** | Baseline: `142e970` — `feat(database): complete local Supabase verification and database idempotency`. New after preflight commit: `ba3ed0a` |
+| 7 | **Node version** | `v24.19.0` (via fnm; activated with `fnm env --use-on-cd`) |
+| 8 | **pnpm version** | `11.18.0` |
+| 9 | **Docker version + engine state** | Docker Desktop `4.85.0` installed; CLI client `29.6.2`. Engine **NOT running** — daemon responds "Docker Desktop is unable to start"; `com.docker.service` is Stopped (Manual). **Status: BLOCKED_LOCAL_ENVIRONMENT** — requires user admin action (`wsl --update` + starting `com.docker.service` in an elevated shell) |
+| 10 | **Supabase CLI version** | `2.111.0` (via `npx supabase --version`) |
+| 11 | **Handoff file location** | `ClaimRadar_India_Complete_Project_Handoff_2026-07-27.md` — **MISSING** (not transferred to this device; `Test-Path` = false). Substitute context document present and read: `docs/checkpoints/phase-4b-status.md` |
+| 12 | **AGENTS.md / Qoder rules read** | **Confirmed read**: `AGENTS.md` (63 lines — TS strict, secrets policy, Zod validation, RLS, testing discipline) and all six rule files: `.qoder/rules/architecture.md`, `design-system.md`, `legal-content.md`, `security.md`, `seo-performance.md`, `testing.md` |
+| 13 | **Clean working tree state** | After committing the two modified verifier files with explicit staging (`git add <file>` for each), the working tree is clean (`git status --short` empty, `git diff --check` exit 0). No hooks bypassed; `git add .` never used |
+| 14 | **Tracked secrets status** | **CLEAN.** Tracked-file scan (`git grep` for JWT `eyJ...` patterns and secret/password/api-key assignments, excluding `pnpm-lock.yaml`) found **no committed secrets**. Notably, the pre-existing uncommitted diffs *removed* a hardcoded local Supabase demo service-role JWT from both verifier scripts (now resolved at runtime from `npx supabase status`); zero residue of that key in tracked files. Local untracked artifacts remain safely git-ignored: `apps/web/.env` (ignored by `.gitignore:15:.env`) and `supabase/.temp/` (ignored by `supabase/.gitignore:3:.temp`). No secret values were printed or committed during this preflight |
+| 15 | **Git history preservation** | **Full, not shallow** (`git rev-parse --is-shallow-repository` = false; 14 commits reachable). `git fsck --no-progress` completed with **no errors or corruption** |
+| 16 | **Worktree execution status** | **Single working tree** (`git worktree list` → one entry). Git worktree execution **not used** — rationale: single-user repo with no remotes; branch-based work (`master` → `qoder/complete-claimradar`) is sufficient and simpler to reason about |
+
+---
+
+## Actions Taken During Preflight
+
+1. Reviewed both uncommitted diffs (`git diff --stat`: 2 files, +77 / −18).
+2. Committed ONLY those two files on `master` (explicit staging) as `ba3ed0a`:
+   `fix(crawler): resolve service role key from local supabase status instead of hardcoded fallback`
+   - Replaces hardcoded local demo service-role JWT fallback with `ensureLocalSupabaseEnv()` that reads the key from `npx supabase status --output json` and fails loudly when unavailable.
+   - Minor formatting normalization of query-builder chains.
+3. Created and switched to branch `qoder/complete-claimradar` from updated HEAD (`git switch -c`).
+4. Authored this checkpoint (committed on `qoder/complete-claimradar`).
+
+**No push was performed** (no remote exists; no authorization given). No global git config modified. No `reset --hard`, `clean -fd`, or `--no-verify` used.
+
+---
+
+## Discrepancies vs Reported Baseline
+
+| Discrepancy | Reported | Observed on This Device | Impact / Note |
+| :--- | :--- | :--- | :--- |
+| `README.md` | Implied present | **Missing** from repo root | Cosmetic; no build impact. Candidate for restoration |
+| Handoff document | `ClaimRadar_India_Complete_Project_Handoff_2026-07-27.md` | **Not transferred** | `docs/checkpoints/phase-4b-status.md` used as substitute context |
+| Git remote | May have existed on source device | **None configured** | Push unavailable; all work stays local until remote is authorized |
+| CI trigger branch | `.github/workflows/ci.yml` triggers on `main` | Active branch is `master` | CI will not trigger on pushes of current branch; reconcile branch name or workflow trigger when a remote is set up |
+| Offline test file count | 28 files (phase-4b-status report) | **31** tracked `*.test.ts` / `*.spec.ts` files | Growth since the report; no failures implied — re-run needed once environment permits |
+| Docker engine | Active on source device (`PASSED_LOCAL_DATABASE_STACK`) | **Not running** (BLOCKED_LOCAL_ENVIRONMENT) | Local Supabase stack (`supabase start`, `db reset`, pgTAP) unavailable until WSL/service fix |
+
+---
+
+## Environment Unblock Checklist (User Admin Actions)
+
+- [ ] Run `wsl --update` in an elevated shell.
+- [ ] Start `com.docker.service` (currently Stopped/Manual) from an elevated shell: `Start-Service com.docker.service`.
+- [ ] Launch Docker Desktop and confirm engine reaches running state.
+- [ ] Re-run `npx supabase start` to restore the local database stack.
