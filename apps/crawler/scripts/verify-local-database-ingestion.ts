@@ -12,7 +12,7 @@ function ensureLocalSupabaseEnv() {
       if (status && status.SERVICE_ROLE_KEY) {
         process.env.SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY;
       }
-    } catch (_err) {
+    } catch {
       // Fallback to local default if command fails
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         throw new Error(
@@ -132,10 +132,12 @@ async function runLocalDatabaseIngestionTest() {
       }
 
       // 3. Junction Linking
-      await db.from('content_cluster_members').upsert(
-        { cluster_id: clusterId, source_document_id: docId },
-        { onConflict: 'cluster_id,source_document_id' },
-      );
+      await db
+        .from('content_cluster_members')
+        .upsert(
+          { cluster_id: clusterId, source_document_id: docId },
+          { onConflict: 'cluster_id,source_document_id' },
+        );
     }
 
     return {
