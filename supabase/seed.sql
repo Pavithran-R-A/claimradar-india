@@ -256,30 +256,23 @@ ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
 -- Demo Users
--- NOTE: These require corresponding auth.users entries to exist.
--- In local development, create them via Supabase Auth before seeding.
+-- Seed auth.users first so profile foreign keys and triggers are satisfied.
 -- =============================================================================
 
-INSERT INTO profiles (id, email, display_name, role, subscription_tier, onboarding_completed) VALUES
-  ('11111111-1111-1111-1111-111111111111',
-   'demo-free@example.com',
-   'Demo Free User',
-   'user',
-   'free',
-   true),
-  ('22222222-2222-2222-2222-222222222222',
-   'demo-admin@example.com',
-   'Demo Admin User',
-   'admin',
-   'enterprise',
-   true),
-  ('33333333-3333-3333-3333-333333333333',
-   'demo-editor@example.com',
-   'Demo Editor User',
-   'editor',
-   'pro',
-   true)
+INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token) VALUES
+  ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'demo-free@example.com', '$2a$10$abcdefghijklmnopqrstuvwxyz012345', now(), NULL, NULL, '{"provider":"email","providers":["email"]}', '{"display_name":"Demo Free User"}', now(), now(), '', '', '', ''),
+  ('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'demo-admin@example.com', '$2a$10$abcdefghijklmnopqrstuvwxyz012345', now(), NULL, NULL, '{"provider":"email","providers":["email"]}', '{"display_name":"Demo Admin User"}', now(), now(), '', '', '', ''),
+  ('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'demo-editor@example.com', '$2a$10$abcdefghijklmnopqrstuvwxyz012345', now(), NULL, NULL, '{"provider":"email","providers":["email"]}', '{"display_name":"Demo Editor User"}', now(), now(), '', '', '', '')
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO profiles (id, email, display_name, role, subscription_tier, onboarding_completed) VALUES
+  ('11111111-1111-1111-1111-111111111111', 'demo-free@example.com', 'Demo Free User', 'user', 'free', true),
+  ('22222222-2222-2222-2222-222222222222', 'demo-admin@example.com', 'Demo Admin User', 'admin', 'enterprise', true),
+  ('33333333-3333-3333-3333-333333333333', 'demo-editor@example.com', 'Demo Editor User', 'editor', 'pro', true)
+ON CONFLICT (id) DO UPDATE SET
+  role = EXCLUDED.role,
+  subscription_tier = EXCLUDED.subscription_tier,
+  onboarding_completed = EXCLUDED.onboarding_completed;
 
 -- =============================================================================
 -- Demo Notification Preferences

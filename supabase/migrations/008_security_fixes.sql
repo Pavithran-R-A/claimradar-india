@@ -8,7 +8,7 @@
 CREATE OR REPLACE FUNCTION prevent_role_escalation()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
-  IF NEW.role IS DISTINCT FROM OLD.role THEN
+  IF (SELECT auth.uid()) IS NOT NULL AND NEW.role IS DISTINCT FROM OLD.role THEN
     RAISE EXCEPTION 'role cannot be changed via client API';
   END IF;
   RETURN NEW;
@@ -144,3 +144,24 @@ CREATE TRIGGER trg_updated_at BEFORE UPDATE ON correction_requests
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 CREATE TRIGGER trg_updated_at BEFORE UPDATE ON takedown_requests
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- =============================================================================
+-- 7. Grant schema and table privileges to anon, authenticated, and service_role
+-- =============================================================================
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+
+-- Revoke all default table privileges first to ensure clean state
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM anon, authenticated, service_role;
+
+-- Anon: SELECT only
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+
+-- Authenticated & Service Role: SELECT, INSERT, UPDATE, DELETE (exact 4 privileges)
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated, service_role;
+
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated, service_role;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO anon;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO authenticated, service_role;

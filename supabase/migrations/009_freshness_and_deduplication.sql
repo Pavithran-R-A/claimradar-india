@@ -58,3 +58,7 @@ DROP POLICY IF EXISTS cluster_members_select_staff ON content_cluster_members;
 DROP POLICY IF EXISTS cluster_members_manage_staff ON content_cluster_members;
 CREATE POLICY cluster_members_select_staff ON content_cluster_members FOR SELECT TO authenticated USING (is_staff());
 CREATE POLICY cluster_members_manage_staff ON content_cluster_members FOR ALL TO authenticated USING (is_staff()) WITH CHECK (is_staff());
+
+REVOKE ALL ON content_clusters, content_cluster_members FROM anon, authenticated, service_role;
+GRANT SELECT ON content_clusters, content_cluster_members TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON content_clusters, content_cluster_members TO authenticated, service_role;

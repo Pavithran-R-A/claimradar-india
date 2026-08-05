@@ -505,11 +505,11 @@ CREATE POLICY source_health_events_admin ON source_health_events FOR ALL TO auth
 -- =============================================================================
 
 ALTER TABLE review_assignments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY ra_select_editor ON review_assignments FOR SELECT TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY ra_select_editor ON review_assignments FOR SELECT TO authenticated USING (is_admin());
 CREATE POLICY ra_manage_admin ON review_assignments FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 ALTER TABLE legal_reviews ENABLE ROW LEVEL SECURITY;
-CREATE POLICY lr_select_editor ON legal_reviews FOR SELECT TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+CREATE POLICY lr_select_editor ON legal_reviews FOR SELECT TO authenticated USING (is_admin());
 CREATE POLICY lr_manage_admin ON legal_reviews FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 ALTER TABLE correction_requests ENABLE ROW LEVEL SECURITY;

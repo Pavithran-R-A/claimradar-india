@@ -31,6 +31,7 @@ export default tseslint.config(
       '**/*.js',
       '**/*.d.ts',
       'scripts/**',
+      'supabase/**',
       'vitest.workspace.ts',
     ],
   },

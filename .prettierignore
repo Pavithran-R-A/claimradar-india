@@ -6,3 +6,5 @@ node_modules/
 dist/
 .next/
 pnpm-lock.yaml
+supabase/.temp/
+scripts/verify-local-database-ingestion.mjs
