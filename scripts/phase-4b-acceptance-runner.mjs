@@ -41,10 +41,9 @@ const STATUS = Object.freeze({
 });
 
 // Statuses that represent skipped/deferred/unevaluable checks rather than
-// executed PASS verdicts. The "100%" claim is only made when every
-// non-skip-like status is PASS.
+// executed verdicts. PARTIAL is intentionally NOT in this set: it is an
+// executed verdict that did not fully pass, so it blocks the "100%" claim.
 const SKIP_LIKE = new Set([
-  STATUS.PARTIAL,
   STATUS.NOT_IMPLEMENTED,
   STATUS.PRESENT_UNVERIFIED,
   STATUS.NOT_EXECUTED,
