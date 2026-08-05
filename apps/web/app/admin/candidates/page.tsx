@@ -1,36 +1,32 @@
 import Link from 'next/link';
 import { Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
-
-function statusVariant(status: string): 'info' | 'success' | 'danger' | 'neutral' | 'warning' {
-  switch (status) {
-    case 'pending':
-    case 'running':
-      return 'info';
-    case 'completed':
-    case 'success':
-    case 'approved':
-    case 'published':
-      return 'success';
-    case 'failed':
-    case 'error':
-    case 'rejected':
-      return 'danger';
-    case 'deferred':
-    case 'queued':
-      return 'warning';
-    default:
-      return 'neutral';
-  }
-}
+import { requireRoles } from '@/lib/auth';
+import { ErrorBanner, FilterChips, PageHeader, statusVariant } from '../_lib/ui';
+import { ALL_STAFF } from '../_lib/roles';
 
 const PAGE_SIZE = 25;
+
+const AI_OPTIONS = ['', 'pending', 'completed', 'failed', 'skipped', 'deferred'].map((v) => ({
+  value: v,
+  label: v || 'All AI',
+}));
+const VALIDATION_OPTIONS = ['', 'pending', 'passed', 'failed', 'skipped'].map((v) => ({
+  value: v,
+  label: v || 'All validation',
+}));
+const DECISION_OPTIONS = ['', 'pending', 'approved', 'rejected', 'deferred'].map((v) => ({
+  value: v,
+  label: v || 'All decisions',
+}));
 
 export default async function CandidatesPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  await requireRoles(ALL_STAFF);
+
   const sp = await searchParams;
   const page = Math.max(1, parseInt((sp.page as string) ?? '1', 10));
   const offset = (page - 1) * PAGE_SIZE;
@@ -81,63 +77,48 @@ export default async function CandidatesPage({
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
+  function queryFor(extra: string): string {
+    const params = new URLSearchParams();
+    if (aiFilter) params.set('ai_status', aiFilter);
+    if (valFilter) params.set('validation', valFilter);
+    if (pubFilter) params.set('publication', pubFilter);
+    if (extra) params.set('page', extra);
+    const qs = params.toString();
+    return qs ? `/admin/candidates?${qs}` : '/admin/candidates';
+  }
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-text-primary">Candidates</h1>
-      <p className="mt-1 text-sm text-text-secondary">{totalCount} total</p>
+      <PageHeader title="Candidates" subtitle={`${totalCount} total`} />
 
       {/* Filters */}
-      <div className="mt-4 flex flex-wrap gap-4">
-        <div>
-          <label className="block text-xs text-text-muted mb-1">AI Status</label>
-          <select
-            defaultValue={aiFilter}
-            className="h-9 rounded-md border border-border bg-surface px-2 text-sm text-text-primary"
-            onChange={undefined}
-          >
-            <option value="">All</option>
-            {['pending', 'completed', 'failed', 'skipped', 'deferred'].map((v) => (
-              <option key={v} value={v}>
-                {v}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-xs text-text-muted mb-1">Validation</label>
-          <select
-            defaultValue={valFilter}
-            className="h-9 rounded-md border border-border bg-surface px-2 text-sm text-text-primary"
-            onChange={undefined}
-          >
-            <option value="">All</option>
-            {['pending', 'passed', 'failed', 'skipped'].map((v) => (
-              <option key={v} value={v}>
-                {v}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-xs text-text-muted mb-1">Publication</label>
-          <select
-            defaultValue={pubFilter}
-            className="h-9 rounded-md border border-border bg-surface px-2 text-sm text-text-primary"
-            onChange={undefined}
-          >
-            <option value="">All</option>
-            {['pending', 'approved', 'rejected', 'deferred'].map((v) => (
-              <option key={v} value={v}>
-                {v}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="mt-4 space-y-2">
+        <FilterChips
+          paramName="ai_status"
+          currentValue={aiFilter}
+          options={AI_OPTIONS}
+          basePath="/admin/candidates"
+          extraParams={{ validation: valFilter, publication: pubFilter }}
+        />
+        <FilterChips
+          paramName="validation"
+          currentValue={valFilter}
+          options={VALIDATION_OPTIONS}
+          basePath="/admin/candidates"
+          extraParams={{ ai_status: aiFilter, publication: pubFilter }}
+        />
+        <FilterChips
+          paramName="publication"
+          currentValue={pubFilter}
+          options={DECISION_OPTIONS}
+          basePath="/admin/candidates"
+          extraParams={{ ai_status: aiFilter, validation: valFilter }}
+        />
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-danger/20 bg-danger/5 p-4 text-danger">
-          <p className="text-sm">{error}</p>
+        <div className="mt-4">
+          <ErrorBanner message={error} />
         </div>
       )}
 
@@ -154,13 +135,13 @@ export default async function CandidatesPage({
                 <th className="pb-2 pr-4 font-medium">AI Status</th>
                 <th className="pb-2 pr-4 font-medium">Confidence</th>
                 <th className="pb-2 pr-4 font-medium">Validation</th>
-                <th className="pb-2 pr-4 font-medium">Publication</th>
+                <th className="pb-2 pr-4 font-medium">Decision</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {candidates.map((cand) => (
                 <tr key={cand.id} className="text-text-primary hover:bg-surface">
-                  <td className="py-2 pr-4 max-w-[200px] truncate">
+                  <td className="max-w-[200px] truncate py-2 pr-4">
                     <Link
                       href={`/admin/candidates/${cand.id}`}
                       className="text-trust-primary hover:underline"
@@ -200,7 +181,7 @@ export default async function CandidatesPage({
         <div className="mt-6 flex items-center gap-2">
           {page > 1 && (
             <Link
-              href={`/admin/candidates?page=${page - 1}${aiFilter ? `&ai_status=${aiFilter}` : ''}${valFilter ? `&validation=${valFilter}` : ''}${pubFilter ? `&publication=${pubFilter}` : ''}`}
+              href={queryFor(String(page - 1))}
               className="rounded-md border border-border px-3 py-1.5 text-sm text-text-secondary hover:bg-surface"
             >
               Previous
@@ -211,7 +192,7 @@ export default async function CandidatesPage({
           </span>
           {page < totalPages && (
             <Link
-              href={`/admin/candidates?page=${page + 1}${aiFilter ? `&ai_status=${aiFilter}` : ''}${valFilter ? `&validation=${valFilter}` : ''}${pubFilter ? `&publication=${pubFilter}` : ''}`}
+              href={queryFor(String(page + 1))}
               className="rounded-md border border-border px-3 py-1.5 text-sm text-text-secondary hover:bg-surface"
             >
               Next

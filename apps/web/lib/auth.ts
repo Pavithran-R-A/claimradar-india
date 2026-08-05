@@ -2,6 +2,22 @@ import type { User } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 
+/**
+ * Staff roles recognised by the admin panel role matrix.
+ * - researcher: read-only triage of candidates and sources
+ * - editor: claim editing, review assignments, publication approval
+ * - legal_reviewer: formal legal reviews and takedown handling
+ * - admin: everything, including users, roles and settings
+ */
+export const STAFF_ROLES = ['admin', 'editor', 'legal_reviewer', 'researcher'] as const;
+
+export type StaffRole = (typeof STAFF_ROLES)[number];
+
+/** Type guard for arbitrary role strings coming from the profiles table. */
+export function isStaffRole(role: string | null | undefined): role is StaffRole {
+  return typeof role === 'string' && (STAFF_ROLES as readonly string[]).includes(role);
+}
+
 export interface Profile {
   id: string;
   email: string;
@@ -59,6 +75,20 @@ export async function requireAuth(): Promise<User> {
     redirect('/login');
   }
   return user;
+}
+
+/**
+ * Require membership in one of the given staff roles.
+ * Redirects to home when unauthenticated, not a staff member, or lacking
+ * every one of the allowed roles. Use this for per-page server-side
+ * enforcement of the admin role matrix.
+ */
+export async function requireRoles(roles: readonly StaffRole[]): Promise<Profile> {
+  const profile = await getUserProfile();
+  if (!profile || !isStaffRole(profile.role) || !roles.includes(profile.role)) {
+    redirect('/');
+  }
+  return profile;
 }
 
 /**

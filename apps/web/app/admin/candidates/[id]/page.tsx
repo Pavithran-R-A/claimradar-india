@@ -1,43 +1,37 @@
 import Link from 'next/link';
 import { Card, Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
+import { requireRoles } from '@/lib/auth';
 import type {
   CandidateDocument,
   SourceDocument,
   AiRun,
   ValidationResult,
 } from '@claimradar/database';
+import { approveCandidate, promoteCandidate, rejectCandidate } from '../../actions';
+import { ActionButton, ActionForm } from '../../_components/action-controls';
+import { ALL_STAFF, EDITORIAL } from '../../_lib/roles';
+import { ErrorBanner, formatDateTime, statusVariant } from '../../_lib/ui';
 
-function statusVariant(status: string): 'info' | 'success' | 'danger' | 'neutral' | 'warning' {
-  switch (status) {
-    case 'pending':
-    case 'running':
-      return 'info';
-    case 'completed':
-    case 'success':
-    case 'approved':
-    case 'passed':
-      return 'success';
-    case 'failed':
-    case 'error':
-    case 'rejected':
-      return 'danger';
-    case 'deferred':
-    case 'queued':
-    case 'skipped':
-      return 'warning';
-    default:
-      return 'neutral';
-  }
+interface CandidateEvent {
+  id: string;
+  action: string;
+  claimable_id: string | null;
+  reason: string | null;
+  created_at: string;
 }
 
 export default async function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const profile = await requireRoles(ALL_STAFF);
+  const canDecide = EDITORIAL.includes(profile.role as (typeof EDITORIAL)[number]);
+
   const { id } = await params;
 
   let candidate: CandidateDocument | null = null;
   let sourceDoc: SourceDocument | null = null;
   let aiRuns: AiRun[] = [];
   let validations: ValidationResult[] = [];
+  let events: CandidateEvent[] = [];
   let error: string | null = null;
 
   try {
@@ -50,7 +44,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
       candidate = candRes.data;
 
       if (candidate) {
-        const [srcRes, aiRes, valRes] = await Promise.all([
+        const [srcRes, aiRes, valRes, eventsRes] = await Promise.all([
           supabase
             .from('source_documents')
             .select('*')
@@ -66,11 +60,17 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
             .select('*')
             .eq('candidate_document_id', id)
             .order('created_at', { ascending: false }),
+          supabase
+            .from('publication_events')
+            .select('id, action, claimable_id, reason, created_at')
+            .eq('candidate_document_id', id)
+            .order('created_at', { ascending: false }),
         ]);
 
         sourceDoc = srcRes.data ?? null;
         aiRuns = aiRes.data ?? [];
         validations = valRes.data ?? [];
+        events = eventsRes.data ?? [];
       }
     }
   } catch (e) {
@@ -83,12 +83,16 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         <Link href="/admin/candidates" className="text-sm text-trust-primary hover:underline">
           &larr; Back to Candidates
         </Link>
-        <div className="mt-4 rounded-lg border border-danger/20 bg-danger/5 p-4 text-danger">
-          <p className="text-sm">{error ?? 'Candidate not found'}</p>
+        <div className="mt-4">
+          <ErrorBanner message={error ?? 'Candidate not found'} />
         </div>
       </div>
     );
   }
+
+  const promotionEvent = events.find((e) => e.action === 'candidate_promoted');
+  const rejectionEvent = events.find((e) => e.action === 'candidate_rejected');
+  const blockingFailures = validations.filter((v) => !v.passed);
 
   return (
     <div>
@@ -103,6 +107,100 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         </Badge>
       </div>
 
+      {/* Publication workflow */}
+      <Card className="mt-6">
+        <h2 className="text-sm font-semibold text-text-secondary">Publication Workflow</h2>
+
+        {candidate.publication_decision === 'pending' && canDecide && (
+          <div className="mt-3 flex flex-wrap items-start gap-6">
+            <ActionButton
+              action={approveCandidate.bind(null, candidate.id)}
+              label="Approve candidate"
+              pendingLabel="Approving…"
+            />
+            <ActionForm
+              action={rejectCandidate.bind(null, candidate.id)}
+              submitLabel="Reject candidate"
+              pendingLabel="Rejecting…"
+              variant="danger"
+              className="max-w-md"
+            >
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Rejection reason
+              </label>
+              <textarea
+                name="reason"
+                required
+                minLength={3}
+                maxLength={1000}
+                rows={2}
+                placeholder="Why should this candidate not be published?"
+                className="mb-2 min-h-[60px] w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-1 focus:ring-trust-primary"
+              />
+            </ActionForm>
+          </div>
+        )}
+
+        {candidate.publication_decision === 'pending' && !canDecide && (
+          <p className="mt-3 text-sm text-text-muted">
+            Awaiting an editorial decision (editor or admin role required to approve or reject).
+          </p>
+        )}
+
+        {candidate.publication_decision === 'approved' && !promotionEvent && (
+          <div className="mt-3">
+            <p className="text-sm text-text-secondary">
+              Approved. Promotion creates a <strong>draft</strong> claimable for human review —
+              AUTO_VERIFY_CLAIMABLES is off, so nothing is auto-verified or auto-published.
+            </p>
+            {canDecide && (
+              <div className="mt-3">
+                <ActionButton
+                  action={promoteCandidate.bind(null, candidate.id)}
+                  label="Promote to draft claimable"
+                  pendingLabel="Promoting…"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {promotionEvent?.claimable_id && (
+          <p className="mt-3 text-sm text-text-secondary">
+            Promoted to{' '}
+            <Link
+              href={`/admin/claimables/${promotionEvent.claimable_id}`}
+              className="text-trust-primary hover:underline"
+            >
+              draft claimable
+            </Link>{' '}
+            on {formatDateTime(promotionEvent.created_at)}.
+          </p>
+        )}
+
+        {candidate.publication_decision === 'rejected' && (
+          <p className="mt-3 text-sm text-text-secondary">
+            Rejected{rejectionEvent?.reason ? `: “${rejectionEvent.reason}”` : ''}
+            {rejectionEvent ? ` (${formatDateTime(rejectionEvent.created_at)})` : ''}
+          </p>
+        )}
+      </Card>
+
+      {/* Validation failure summary */}
+      {blockingFailures.length > 0 && (
+        <div
+          className="mt-4 rounded-lg border border-deadline/30 bg-deadline-background p-4 text-sm text-deadline"
+          role="note"
+        >
+          <p className="font-semibold">{blockingFailures.length} failing validator(s)</p>
+          <ul className="mt-1 list-inside list-disc text-xs">
+            {blockingFailures.map((v) => (
+              <li key={v.id}>{v.validator_name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Source info */}
       {sourceDoc && (
         <Card className="mt-6">
@@ -114,19 +212,19 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
             href={sourceDoc.canonical_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 text-sm text-trust-primary hover:underline break-all"
+            className="mt-1 break-all text-sm text-trust-primary hover:underline"
           >
             {sourceDoc.canonical_url}
           </a>
           <p className="mt-2 text-xs text-text-muted">
-            Retrieved: {new Date(sourceDoc.retrieved_at).toLocaleString('en-IN')}
+            Retrieved: {formatDateTime(sourceDoc.retrieved_at)}
           </p>
           {sourceDoc.raw_text && (
             <details className="mt-4">
               <summary className="cursor-pointer text-sm text-text-secondary hover:text-text-primary">
                 Raw Text Excerpt
               </summary>
-              <pre className="mt-2 max-h-64 overflow-auto rounded-md bg-background p-3 text-xs text-text-secondary whitespace-pre-wrap">
+              <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-md bg-background p-3 text-xs text-text-secondary">
                 {sourceDoc.raw_text.slice(0, 2000)}
                 {sourceDoc.raw_text.length > 2000 ? '\n... (truncated)' : ''}
               </pre>
@@ -194,7 +292,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
       {candidate.ai_extracted_data && (
         <Card className="mt-6">
           <h2 className="text-sm font-semibold text-text-secondary">AI Extracted Data</h2>
-          <pre className="mt-3 max-h-96 overflow-auto rounded-md bg-background p-3 text-xs text-text-secondary whitespace-pre-wrap">
+          <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap rounded-md bg-background p-3 text-xs text-text-secondary">
             {JSON.stringify(candidate.ai_extracted_data, null, 2)}
           </pre>
         </Card>
@@ -206,7 +304,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
           <summary className="cursor-pointer text-sm font-semibold text-text-secondary hover:text-text-primary">
             AI Raw Output (click to expand)
           </summary>
-          <pre className="mt-3 max-h-96 overflow-auto rounded-md border border-border bg-surface p-3 text-xs text-text-secondary whitespace-pre-wrap">
+          <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap rounded-md border border-border bg-surface p-3 text-xs text-text-secondary">
             {JSON.stringify(candidate.ai_raw_output, null, 2)}
           </pre>
         </details>
@@ -271,12 +369,10 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
                   <span className="text-sm font-medium text-text-primary">
                     {val.validator_name}
                   </span>
-                  <span className="text-xs text-text-muted">
-                    {new Date(val.created_at).toLocaleString('en-IN')}
-                  </span>
+                  <span className="text-xs text-text-muted">{formatDateTime(val.created_at)}</span>
                 </div>
                 {Object.keys(val.details).length > 0 && (
-                  <pre className="mt-2 text-xs text-text-secondary whitespace-pre-wrap">
+                  <pre className="mt-2 whitespace-pre-wrap text-xs text-text-secondary">
                     {JSON.stringify(val.details, null, 2)}
                   </pre>
                 )}
