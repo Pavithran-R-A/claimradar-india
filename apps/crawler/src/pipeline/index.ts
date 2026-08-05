@@ -412,7 +412,7 @@ async function processSource(params: {
           featureFlags: { AUTO_VERIFY_CLAIMABLES: env.AUTO_VERIFY_CLAIMABLES },
         });
 
-        // Update candidate record
+        // Update candidate record and audit events in DB
         if (!options.dryRun) {
           await db.updateCandidateDocument(candidateId, {
             ai_extraction_status: 'completed',
@@ -464,19 +464,19 @@ async function processSource(params: {
             actor_id: null,
             reason: pubDecision.reasons.join('; '),
           });
+        }
 
-          // Update summary counters
-          switch (pubDecision.action) {
-            case 'auto_publish':
-              summary.recordsPublished++;
-              break;
-            case 'human_review':
-              summary.recordsQueued++;
-              break;
-            case 'reject':
-              summary.recordsRejected++;
-              break;
-          }
+        // Update summary counters (runs in both dry-run and live modes)
+        switch (pubDecision.action) {
+          case 'auto_publish':
+            summary.recordsPublished++;
+            break;
+          case 'human_review':
+            summary.recordsQueued++;
+            break;
+          case 'reject':
+            summary.recordsRejected++;
+            break;
         }
 
         logger.info('candidate', `Candidate processed: ${doc.url}`, {
