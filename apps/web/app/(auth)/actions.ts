@@ -1,15 +1,31 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { safeNextPath } from '@/lib/app-auth';
+
+const credentialsSchema = z.object({
+  email: z.string().trim().email(),
+  password: z.string().min(1, 'Password is required.'),
+});
+
+const emailSchema = z.object({
+  email: z.string().trim().email('Enter a valid email address.'),
+});
 
 export async function signIn(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const parsed = credentialsSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
 
-  if (!email || !password) {
-    return { error: 'Email and password are required.' };
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message ?? 'Email and password are required.' };
   }
+
+  const { email, password } = parsed.data;
+  const next = safeNextPath(formData.get('next') as string | null);
 
   const supabase = await getSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -18,7 +34,7 @@ export async function signIn(formData: FormData) {
     return { error: error.message };
   }
 
-  redirect('/');
+  redirect(next);
 }
 
 export async function signUp(formData: FormData) {
@@ -38,7 +54,7 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/onboarding`,
     },
   });
 
@@ -78,6 +94,9 @@ export async function resetPassword(formData: FormData) {
   };
 }
 
+/**
+ * Update the password after following a reset link (used by /reset-password).
+ */
 export async function updatePassword(formData: FormData) {
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
@@ -102,4 +121,33 @@ export async function updatePassword(formData: FormData) {
   }
 
   redirect('/login');
+}
+
+/**
+ * Resend the account verification email. Used from the verify-email page when
+ * the original message never arrived or its link expired.
+ */
+export async function resendVerification(formData: FormData) {
+  const parsed = emailSchema.safeParse({ email: formData.get('email') });
+  if (!parsed.success) {
+    return { error: parsed.error.errors[0]?.message ?? 'Enter a valid email address.' };
+  }
+
+  const supabase = await getSupabaseServerClient();
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: parsed.data.email,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/onboarding`,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return {
+    message:
+      'If an unverified account exists for that email, a new verification link is on its way.',
+  };
 }

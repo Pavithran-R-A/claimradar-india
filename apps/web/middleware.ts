@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
 // Routes that need auth session refresh
-const authRequiredPrefixes = ['/app', '/admin'];
+const authRequiredPrefixes = ['/app', '/admin', '/onboarding'];
 const authCallbackPrefix = '/auth/callback';
 
 export async function middleware(request: NextRequest) {
@@ -16,6 +16,10 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
+
+  // Expose the current pathname to server components (used for return-path
+  // redirects after login) via a request header.
+  request.headers.set('x-pathname', pathname);
 
   // Only refresh auth session on routes that need it
   const needsAuth =
