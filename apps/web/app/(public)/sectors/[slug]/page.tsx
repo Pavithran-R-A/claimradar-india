@@ -1,20 +1,21 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import {
-  getPublishedSectorBySlug,
-  getPublishedClaimables,
-} from '../../../../lib/claimables-repository';
+import { getPublishedSectorBySlug, getPublishedClaimables } from '@/lib/claimables-repository';
+import { DataUnavailableNotice, DemoDataBanner } from '@/components/repository-states';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
 }
 
+// Detail content comes from the live publication database.
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const sector = await getPublishedSectorBySlug(slug);
-  if (!sector) {
+  const outcome = await getPublishedSectorBySlug(slug);
+  if (!outcome.ok || !outcome.data) {
     return {
       title: 'Sector Not Found — ClaimRadar India',
       robots: { index: false, follow: false },
@@ -22,10 +23,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${sector.name} Sector — Public Claimables & Disgorgements | ClaimRadar India`,
-    description: `Official regulatory orders, disgorgement schemes, and public claimable notices in the ${sector.name} sector in India.`,
+    title: `${outcome.data.name} Sector — Public Claimables & Disgorgements | ClaimRadar India`,
+    description: `Published regulatory orders, disgorgement schemes, and public claimable notices in the ${outcome.data.name} sector in India.`,
     alternates: {
-      canonical: `https://claimradar.in/sectors/${sector.slug}`,
+      canonical: `https://claimradar.in/sectors/${outcome.data.slug}`,
     },
   };
 }
@@ -35,17 +36,27 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
   const { page: pageStr } = await searchParams;
   const page = pageStr ? parseInt(pageStr, 10) : 1;
 
-  const sector = await getPublishedSectorBySlug(slug);
+  const outcome = await getPublishedSectorBySlug(slug);
 
-  if (!sector) {
+  if (outcome.ok && !outcome.data) {
     notFound();
   }
 
-  const { items: claimables, totalPages } = await getPublishedClaimables({
-    sectorSlug: slug,
-    page,
-    limit: 10,
-  });
+  const claimablesOutcome = outcome.ok
+    ? await getPublishedClaimables({ sectorSlug: slug, page, limit: 10 })
+    : null;
+
+  if (!outcome.ok || !outcome.data) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <DataUnavailableNotice
+          message={!outcome.ok ? outcome.error : 'This sector is no longer listed.'}
+        />
+      </div>
+    );
+  }
+
+  const sector = outcome.data;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -62,24 +73,30 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
         <span className="text-gray-900 font-medium">{sector.name}</span>
       </nav>
 
+      {outcome.demo && <DemoDataBanner />}
+
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{sector.name} Sector</h1>
         <p className="mt-2 text-gray-600">
-          Official regulatory orders, refund schemes, and public compensation frameworks in the{' '}
+          Published regulatory orders, refund schemes, and public compensation frameworks in the{' '}
           {sector.name} industry.
         </p>
       </header>
 
       {/* Published Records */}
       <section>
-        {claimables.length === 0 ? (
+        {!claimablesOutcome || !claimablesOutcome.ok ? (
+          <DataUnavailableNotice
+            message={claimablesOutcome && !claimablesOutcome.ok ? claimablesOutcome.error : ''}
+          />
+        ) : claimablesOutcome.data.items.length === 0 ? (
           <div className="rounded-lg bg-white p-8 text-center text-gray-500 border border-gray-200">
             No published public notices currently active in this sector.
           </div>
         ) : (
           <div className="space-y-4">
-            {claimables.map((c) => (
+            {claimablesOutcome.data.items.map((c) => (
               <div
                 key={c.id}
                 className="rounded-lg bg-white p-6 shadow-sm border border-gray-200 hover:border-blue-300 transition-colors"
@@ -103,14 +120,14 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {claimablesOutcome?.ok && claimablesOutcome.data.totalPages > 1 && (
           <nav className="mt-8 flex justify-center space-x-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            {Array.from({ length: claimablesOutcome.data.totalPages }, (_, i) => i + 1).map((p) => (
               <Link
                 key={p}
                 href={`/sectors/${slug}?page=${p}`}
                 className={`px-3 py-1 rounded-md text-sm font-medium ${
-                  p === page
+                  p === claimablesOutcome.data.page
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}

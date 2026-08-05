@@ -1,18 +1,27 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { PublishedClaimable } from '@/lib/claimables-repository';
 import { getPublishedClaimableBySlug } from '@/lib/claimables-repository';
+import { DataUnavailableNotice, DemoDataBanner } from '@/components/repository-states';
 
 interface DetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Detail content comes from the live publication database.
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const claim = await getPublishedClaimableBySlug(slug);
-  if (!claim) {
-    return { title: 'Claim Not Found | ClaimRadar India' };
+  const outcome = await getPublishedClaimableBySlug(slug);
+  if (!outcome.ok || !outcome.data) {
+    return {
+      title: 'Claim Not Found | ClaimRadar India',
+      robots: { index: false, follow: false },
+    };
   }
+  const claim = outcome.data;
   return {
     title: `${claim.title} — Official Claim Details | ClaimRadar India`,
     description: `${claim.statusExplanation} Verification and official source links for ${claim.companyName}.`,
@@ -24,9 +33,9 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 
 export default async function ClaimableDetailPage({ params }: DetailPageProps) {
   const { slug } = await params;
-  const claim = await getPublishedClaimableBySlug(slug);
+  const outcome = await getPublishedClaimableBySlug(slug);
 
-  if (!claim) {
+  if (outcome.ok && !outcome.data) {
     notFound();
   }
 
@@ -41,6 +50,26 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
         </Link>
       </div>
 
+      {!outcome.ok ? (
+        <DataUnavailableNotice message={outcome.error} />
+      ) : outcome.data ? (
+        <ClaimableDetail claim={outcome.data} demo={outcome.demo} />
+      ) : null}
+
+      <div className="mt-8 p-4 rounded-xl bg-slate-100 text-xs text-slate-600 text-center">
+        <strong>Independent Information Disclaimer:</strong> ClaimRadar India is an independent
+        informational tracking service. We are not a law firm, claim filing agent, or government
+        authority. Submit all claims directly via official government/company portals.
+      </div>
+    </div>
+  );
+}
+
+function ClaimableDetail({ claim, demo }: { claim: PublishedClaimable; demo: boolean }) {
+  return (
+    <>
+      {demo && <DemoDataBanner />}
+
       <article className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
         <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -51,10 +80,14 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
               className={`text-xs font-bold px-3 py-1 rounded-full ${
                 claim.status === 'closing_soon'
                   ? 'bg-amber-100 text-amber-900'
-                  : 'bg-emerald-100 text-emerald-900'
+                  : claim.status === 'under_review'
+                    ? 'bg-sky-100 text-sky-900'
+                    : claim.status === 'closed'
+                      ? 'bg-slate-200 text-slate-700'
+                      : 'bg-emerald-100 text-emerald-900'
               }`}
             >
-              {claim.status === 'closing_soon' ? 'Closing Soon' : 'Active'}
+              {claim.statusDetail}
             </span>
           </div>
 
@@ -62,6 +95,14 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
           <p className="text-sm font-medium text-slate-600">
             Company: <span className="text-slate-900 font-semibold">{claim.companyName}</span>
           </p>
+          {claim.companySlug && (
+            <Link
+              href={`/companies/${claim.companySlug}`}
+              className="mt-2 inline-block text-xs font-semibold text-blue-600 hover:text-blue-800"
+            >
+              View all notices for this company &rarr;
+            </Link>
+          )}
         </div>
 
         <div className="p-6 sm:p-8 space-y-6 text-slate-700">
@@ -101,49 +142,64 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
               Official Claim Action Route
             </h2>
             <p className="text-sm text-slate-800 mb-3">{claim.actionRoute}</p>
-            <a
-              href={claim.officialRouteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-            >
-              Access Official Filing Portal &rarr;
-            </a>
+            {claim.officialRouteUrl ? (
+              <a
+                href={claim.officialRouteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              >
+                Access Official Filing Portal &rarr;
+              </a>
+            ) : (
+              <p className="text-xs text-slate-500">
+                No official claim portal URL is recorded for this listing yet. Refer to the source
+                documents below.
+              </p>
+            )}
           </div>
 
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Required Proof Documents
-            </h2>
-            <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
-              {claim.proofRequirements.map((req, idx) => (
-                <li key={idx}>{req}</li>
-              ))}
-            </ul>
-          </div>
+          {claim.proofRequirements.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Required Proof Documents
+              </h2>
+              <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
+                {claim.proofRequirements.map((req, idx) => (
+                  <li key={idx}>{req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div>
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
               Official Sources & Evidence
             </h2>
-            <div className="space-y-2">
-              {claim.officialSources.map((src, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-lg border border-slate-200 text-xs flex justify-between items-center"
-                >
-                  <span className="font-semibold text-slate-800">{src.name}</span>
-                  <a
-                    href={src.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+            {claim.officialSources.length === 0 ? (
+              <p className="text-xs text-slate-500">
+                Source documents for this record have not been linked yet.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {claim.officialSources.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-lg border border-slate-200 text-xs flex justify-between items-center"
                   >
-                    View Official Order
-                  </a>
-                </div>
-              ))}
-            </div>
+                    <span className="font-semibold text-slate-800">{src.name}</span>
+                    <a
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      View Official Order
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="pt-4 border-t border-slate-100 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
@@ -152,12 +208,6 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
           </div>
         </div>
       </article>
-
-      <div className="p-4 rounded-xl bg-slate-100 text-xs text-slate-600 text-center">
-        <strong>Independent Information Disclaimer:</strong> ClaimRadar India is an independent
-        informational tracking service. We are not a law firm, claim filing agent, or government
-        authority. Submit all claims directly via official government/company portals.
-      </div>
-    </div>
+    </>
   );
 }
