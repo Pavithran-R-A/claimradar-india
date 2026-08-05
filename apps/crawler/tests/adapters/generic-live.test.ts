@@ -12,6 +12,7 @@ const fixtureDir = resolve(__dirname, '..', 'fixtures', 'live', 'generic');
 const rss2Path = resolve(fixtureDir, 'rss2.xml');
 const rss2Xml = readFileSync(rss2Path, 'utf-8');
 const atomXml = readFileSync(resolve(fixtureDir, 'atom.xml'), 'utf-8');
+const liveFeedXml = readFileSync(resolve(fixtureDir, 'feed.xml'), 'utf-8');
 
 describe('Generic RSS adapter fixture regression', () => {
   describe('standard RSS 2.0 feed', () => {
@@ -88,6 +89,47 @@ describe('Generic RSS adapter fixture regression', () => {
     it('should normalize atom <updated> timestamps to ISO 8601', () => {
       expect(documents[0]!.publishedAt).toBe('2026-07-20T10:00:00.000Z');
       expect(documents[1]!.publishedAt).toBe('2026-07-18T16:20:00.000Z');
+    });
+  });
+
+  describe('commissioned live feed (W3C News)', () => {
+    let documents: DiscoveredDocument[] = [];
+
+    beforeAll(async () => {
+      documents = await discoverFromFeedXml(liveFeedXml);
+    });
+
+    it('should report the live channel title', async () => {
+      await expect(parseFeedTitle(liveFeedXml)).resolves.toBe('W3C - News');
+    });
+
+    it('should discover all 4 preserved items', () => {
+      expect(documents).toHaveLength(4);
+    });
+
+    it('should extract absolute w3.org links and titles', () => {
+      expect(documents[0]!.url).toBe(
+        'https://www.w3.org/news/2026/group-note-further-aligning-w3cs-program-of-technical-work-with-human-rights/',
+      );
+      for (const doc of documents) {
+        expect(new URL(doc.url).hostname).toBe('www.w3.org');
+        expect(doc.title).toBeTruthy();
+      }
+    });
+
+    it('should normalize RFC-822 +0000 pubDates to ISO 8601', () => {
+      expect(documents[0]!.publishedAt).toBe('2026-08-04T09:16:00.000Z');
+      expect(documents[3]!.publishedAt).toBe('2026-07-30T08:17:00.000Z');
+    });
+
+    it('should map permalink guids to sourceIdentifier', () => {
+      expect(documents[0]!.sourceIdentifier).toBe(documents[0]!.url);
+    });
+
+    it('should extract CDATA descriptions without markup', () => {
+      expect(documents[1]!.description).toContain('ECMAScript APIs in WebIDL');
+      expect(documents[1]!.description).not.toContain('<p>');
+      expect(documents[1]!.description).not.toContain('<div');
     });
   });
 

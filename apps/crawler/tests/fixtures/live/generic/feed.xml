@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+  <channel>
+    <language>en</language>
+    <title>W3C - News</title>
+    <description>W3C News</description>
+    <pubDate>Tue, 04 Aug 2026 09:16:27 +0000</pubDate>
+    <generator>Laminas_Feed_Writer 2 (https://getlaminas.org)</generator>
+    <link>https://www.w3.org/news/</link>
+    <atom:link rel="self" type="application/rss+xml" href="https://www.w3.org/news/feed/"/>
+    <item>
+      <title>Group Note: Further Aligning W3C's Program of Technical Work with Human Rights</title>
+      <description><![CDATA[In this document, the Advisory Board lists examples of how human rights and technical standards setting map to each other, points to existing W3C work in this area, and provides concrete proposals to further the alignment between the W3C’s technical work and human rights.]]></description>
+      <pubDate>Tue, 04 Aug 2026 09:16:00 +0000</pubDate>
+      <link>https://www.w3.org/news/2026/group-note-further-aligning-w3cs-program-of-technical-work-with-human-rights/</link>
+      <guid>https://www.w3.org/news/2026/group-note-further-aligning-w3cs-program-of-technical-work-with-human-rights/</guid>
+      <category><![CDATA[news]]></category>
+      <content:encoded><![CDATA[            <div class="component component--text">
+                    <p>The W3C <a href="https://www.w3.org/groups/other/ab">Advisory Board (AB)</a> published a Group Note of <a href="https://www.w3.org/TR/2026/NOTE-furthering-human-rights-20260804/">Further Aligning W3C's Program of Technical Work with Human Rights</a>. There is a clear link between human rights and technical standards setting. In this position paper, the AB lists examples of how the two map, points to existing W3C work in this area, and provides concrete proposals to further the alignment between the W3C’s technical work and human rights.</p><p>This document summarizes the AB’s current thinking, as of 4 August 2026. This Group Note is endorsed by the AB, but is not endorsed by W3C itself nor its Members.</p>
+            </div>
+    ]]></content:encoded>
+      <slash:comments>0</slash:comments>
+    </item>
+    <item>
+      <title>W3C Invites Implementations of WebTransport</title>
+      <description><![CDATA[This document defines a set of ECMAScript APIs in WebIDL to allow data to be sent and received between a browser and server.]]></description>
+      <pubDate>Thu, 30 Jul 2026 08:25:00 +0000</pubDate>
+      <link>https://www.w3.org/news/2026/w3c-invites-implementations-of-webtransport/</link>
+      <guid>https://www.w3.org/news/2026/w3c-invites-implementations-of-webtransport/</guid>
+      <category><![CDATA[news]]></category>
+      <content:encoded><![CDATA[            <div class="component component--text">
+                    <p>The <a href="https://www.w3.org/groups/wg/webtransport/">WebTransport Working Group</a> has published <a href="https://www.w3.org/TR/2026/CR-webtransport-20260730/">WebTransport</a> as a W3C Candidate Recommendation Snapshot. This document defines a set of ECMAScript APIs in WebIDL to allow data to be sent and received between a browser and server. This specification is being developed in conjunction with protocol specifications developed by the IETF WEBTRANS Working Group.</p><p>Comments are welcome via <a href="https://github.com/w3c/webtransport/issues/">Github issues</a> by <strong>30 October 2026</strong>.</p>
+            </div>
+    ]]></content:encoded>
+      <slash:comments>0</slash:comments>
+    </item>
+    <item>
+      <title>Group Note Draft: Verifiable Credentials Overview v1.1</title>
+      <description><![CDATA[The family of W3C Recommendations for Verifiable Credentials, described in this overview document, provides a mechanism to express these sorts of credentials on the Web in a way that is cryptographically secure, privacy respecting, and machine-verifiable.]]></description>
+      <pubDate>Thu, 30 Jul 2026 08:20:00 +0000</pubDate>
+      <link>https://www.w3.org/news/2026/group-note-draft-verifiable-credentials-overview-v1-1/</link>
+      <guid>https://www.w3.org/news/2026/group-note-draft-verifiable-credentials-overview-v1-1/</guid>
+      <category><![CDATA[news]]></category>
+      <content:encoded><![CDATA[            <div class="component component--text">
+                    <p>The <a href="https://www.w3.org/groups/wg/vc/">Verifiable Credentials Working Group</a> has published the first draft of a Group Note titled <a href="https://www.w3.org/TR/2026/DNOTE-vc-overview-1.1-20260730/">Verifiable Credentials Overview v1.1</a>. Credentials are a part of our daily lives; driver’s licenses are used to assert that we are capable of operating a motor vehicle, university degrees can be used to assert our level of education, government-issued passports enable us to travel between countries, and trade authorities issue certificates containing various informations on a product. The family of W3C Recommendations for Verifiable Credentials, described in this overview document, provides a mechanism to express these sorts of credentials on the Web in a way that is cryptographically secure, privacy respecting, and machine-verifiable.</p>
+            </div>
+    ]]></content:encoded>
+      <slash:comments>0</slash:comments>
+    </item>
+    <item>
+      <title>Group Note Draft: EPUB Accessibility 1.2 Explainer</title>
+      <description><![CDATA[The EPUB Accessibility 1.2 Explainer provides information on how to understand and evaluate the accessible publications conformance requirements of EPUB Accessibility 1.2 against reflowable EPUB publications.]]></description>
+      <pubDate>Thu, 30 Jul 2026 08:17:00 +0000</pubDate>
+      <link>https://www.w3.org/news/2026/group-note-draft-epub-accessibility-1-2-explainer/</link>
+      <guid>https://www.w3.org/news/2026/group-note-draft-epub-accessibility-1-2-explainer/</guid>
+      <category><![CDATA[news]]></category>
+      <content:encoded><![CDATA[            <div class="component component--text">
+                    <p>The <a href="https://www.w3.org/groups/wg/pm/">Publishing Maintenance Working Group</a> has published the first draft of a Group Note titled <a href="https://www.w3.org/TR/2026/DNOTE-epub-a11y-explain-12-20260730/">EPUB Accessibility 1.2 Explainer</a>, which provides information on how to understand and evaluate the accessible publications conformance requirements of <a href="https://www.w3.org/TR/epub-a11y-12/">EPUB Accessibility 1.2</a> against reflowable EPUB publications.</p>
+            </div>
+    ]]></content:encoded>
+      <slash:comments>0</slash:comments>
+    </item>
+  </channel>
+</rss>

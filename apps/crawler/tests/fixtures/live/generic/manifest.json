@@ -1,8 +1,19 @@
 {
   "source": "generic",
-  "capturedAt": "2026-07-27",
-  "capturedBy": "Wave 2 live source commissioning (Task #25)",
+  "capturedAt": "2026-08-05",
+  "capturedBy": "Task #9 new-device live dry run (generic RSS recommissioning)",
   "files": {
+    "feed.xml": {
+      "originalUrl": "https://www.w3.org/news/feed/",
+      "originalSha256": "f16522e27e5e48e3acea939041ca5c95f385a18a19d69ed9ae78b45989f27de3",
+      "originalSizeBytes": 47835,
+      "notes": [
+        "REAL sanitized capture of the commissioned W3C News RSS feed (2026-08-05, 25 items live; 4 real items kept verbatim incl. channel metadata, CDATA descriptions and content:encoded HTML).",
+        "Commissioned as the replacement live endpoint for the generic adapter after https://www.cci.gov.in/rss.xml failed the TLS handshake with UNABLE_TO_VERIFY_LEAF_SIGNATURE (server omits the Sectigo intermediate certificate).",
+        "Feed served HTTP 200 application/rss+xml with ETag to the declared crawler User-Agent; strict TLS verification, no redirects, no access control encountered or bypassed.",
+        "Sanitization: content is public W3C news with no personal data; subset reduced to 4 items, otherwise verbatim."
+      ]
+    },
     "rss2.xml": {
       "originalUrl": null,
       "originalSha256": null,
@@ -20,5 +31,5 @@
       ]
     }
   },
-  "accessNotes": "Synthetic fixtures only; no live endpoint is associated with the generic adapter."
+  "accessNotes": "The previously configured CCI endpoint (https://www.cci.gov.in/rss.xml) presents an incomplete TLS chain (leaf only, missing Sectigo intermediate) and is disabled from scheduled crawling. The generic adapter is now commissioned against the publicly permitted W3C News feed; no access control was encountered or bypassed."
 }

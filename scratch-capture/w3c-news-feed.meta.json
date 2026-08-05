@@ -1,0 +1,14 @@
+{
+  "requestedUrl": "https://www.w3.org/news/feed/",
+  "finalUrl": "https://www.w3.org/news/feed/",
+  "redirected": false,
+  "httpStatus": 200,
+  "contentType": "application/rss+xml",
+  "bodySizeBytes": 47835,
+  "sha256": "f16522e27e5e48e3acea939041ca5c95f385a18a19d69ed9ae78b45989f27de3",
+  "etag": "\"011593e4c6515afde8afed5b5b5a7e3b-gzip\"",
+  "lastModified": null,
+  "durationMs": 581,
+  "capturedAt": "2026-08-05T09:44:32.780Z",
+  "userAgent": "ClaimRadar India Bot/1.0 (+https://claimradar.in)"
+}

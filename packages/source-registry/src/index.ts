@@ -68,15 +68,41 @@ export const rbiRssSource: SourceDefinition = {
   rateLimit: { requestsPerMinute: 10 },
 };
 
-export const genericRssSource: SourceDefinition = {
-  id: 'generic-rss',
-  name: 'Generic Public RSS Feed',
+// Decommissioned 2026-08-05 (new-device live dry run): https://www.cci.gov.in/rss.xml
+// fails the TLS handshake with UNABLE_TO_VERIFY_LEAF_SIGNATURE — the server presents only
+// the leaf certificate (CN=cci.gov.in <- Sectigo Public Server Authentication CA DV R36)
+// and omits the intermediate, so the chain cannot be verified. This is a server-side
+// misconfiguration we must not work around (TLS verification stays strict; no
+// NODE_TLS_REJECT_UNAUTHORIZED=0). The endpoint is disabled from scheduled crawling by
+// being removed from initialSources; the definition is kept for provenance only.
+export const cciRssSourceDisabled: SourceDefinition = {
+  id: 'cci-rss',
+  name: 'Competition Commission of India RSS (disabled — untrusted TLS chain)',
   domain: 'cci.gov.in',
   sourceType: SourceType.RSS,
   adapterType: 'rss',
   baseUrl: 'https://www.cci.gov.in',
   feedUrl: 'https://www.cci.gov.in/rss.xml',
   trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+// Commissioned 2026-08-05 as the replacement live endpoint for the generic RSS adapter.
+// Suitability: publicly permitted official RSS 2.0 feed of the W3C (World Wide Web
+// Consortium) news channel; verified live over strict TLS — HTTP 200
+// application/rss+xml, 25 items with RFC-822 pubDates, GUIDs and absolute links, ETag
+// support, no redirects, and no bot-blocking for the declared crawler User-Agent.
+// Unlike the previous CCI endpoint (which never got past the TLS handshake), it
+// exercises the full adapter path: discover -> fetch detail pages -> extract.
+export const genericRssSource: SourceDefinition = {
+  id: 'generic-rss',
+  name: 'W3C News RSS (Generic Adapter)',
+  domain: 'www.w3.org',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.w3.org',
+  feedUrl: 'https://www.w3.org/news/feed/',
+  trustLevel: 'reputable',
   rateLimit: { requestsPerMinute: 10 },
 };
 
