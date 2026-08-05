@@ -1,95 +1,687 @@
-import { execSync } from 'node:child_process';
+/**
+ * Phase 4B acceptance runner — evidence-driven.
+ *
+ * Every status below is derived from real evidence gathered during THIS run:
+ *   - an executed command's exit code
+ *   - parsed test output (vitest JSON reporter / pgTAP output)
+ *   - a database verification script's result
+ *   - a filesystem artifact probe
+ *   - an explicit environment probe (docker info / supabase status / env flags)
+ *
+ * No status is hardcoded. The runner never executes live network crawls and
+ * never attempts to start local Supabase itself. When the local Docker engine
+ * or local Supabase stack is unavailable, database-dependent keys are
+ * reported as BLOCKED_LOCAL_ENVIRONMENT.
+ */
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-console.log('=============================================================================');
-console.log('  CLAIMRADAR INDIA — PHASE 4B ACCEPTANCE AUDIT & RUNNER');
-console.log('=============================================================================');
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const results = {
-  OFFLINE_BASELINE: 'PASS',
-  DOCKER_ENGINE: 'PASS',
-  LOCAL_SUPABASE_START: 'PASS',
-  LOCAL_MIGRATION_RESET_FIRST: 'PASS',
-  LOCAL_MIGRATION_RESET_SECOND: 'PASS',
-  LOCAL_DB_LINT: 'PASS',
-  LOCAL_PGTAP: 'PASS',
-  LOCAL_RLS_ANON: 'PASS',
-  LOCAL_RLS_USER_ISOLATION: 'PASS',
-  LOCAL_RLS_STAFF: 'PASS',
-  LOCAL_RLS_ROLE_ESCALATION: 'PASS',
-  SOURCE_FRESHNESS_UNIT: 'PASS',
-  SOURCE_FRESHNESS_SCHEMA: 'PASS',
-  SOURCE_FRESHNESS_DATABASE: 'PASS',
-  SOURCE_FRESHNESS_PIPELINE: 'PASS',
-  SOURCE_FRESHNESS_PUBLICATION: 'PASS',
-  PROVENANCE_DEDUP_UNIT: 'PASS',
-  PROVENANCE_DEDUP_SCHEMA: 'PASS',
-  PROVENANCE_DEDUP_DATABASE: 'PASS',
-  PROVENANCE_CLUSTER_REVERSAL: 'PASS',
-  PIB_LIVE: 'SKIP_EXTERNAL_ACCESS',
-  SEBI_LIVE: 'PASS',
-  RBI_LIVE: 'PASS',
-  GENERIC_RSS_FIXTURE: 'PASS',
-  GENERIC_RSS_LIVE: 'PASS',
-  ALL_FOUR_SOURCE_DRY_RUN: 'PASS',
-  IN_MEMORY_IDEMPOTENCY: 'PASS',
-  POSTGRESQL_FIXTURE_IDEMPOTENCY: 'PASS',
-  POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY: 'SKIP_CREDENTIALS',
-  PUBLIC_DIRECTORY_CODE: 'PASS',
-  PUBLIC_DIRECTORY_LOCAL_DATABASE: 'PASS',
-  PUBLIC_EXPOSURE_LOCAL_DATABASE: 'PASS',
-  SEO_LOCAL_DATABASE: 'PASS',
-  INVENTORY_REPORT_DATABASE: 'PASS',
-  STAGING_MIGRATIONS: 'SKIP_CREDENTIALS',
-  STAGING_RLS: 'SKIP_CREDENTIALS',
-  STAGING_INGESTION: 'SKIP_CREDENTIALS',
-  STAGING_IDEMPOTENCY: 'SKIP_CREDENTIALS',
-  COMMERCIAL_BILLING: 'DISABLED_BY_POLICY',
-  AUTO_VERIFICATION: 'DISABLED_BY_POLICY',
-};
+// ---------------------------------------------------------------------------
+// Status vocabulary (complete Phase 4B vocabulary)
+// ---------------------------------------------------------------------------
+const STATUS = Object.freeze({
+  PASS: 'PASS',
+  PARTIAL: 'PARTIAL',
+  FAIL: 'FAIL',
+  NOT_IMPLEMENTED: 'NOT_IMPLEMENTED',
+  PRESENT_UNVERIFIED: 'PRESENT_UNVERIFIED',
+  NOT_EXECUTED: 'NOT_EXECUTED',
+  BLOCKED_LOCAL_ENVIRONMENT: 'BLOCKED_LOCAL_ENVIRONMENT',
+  SKIP_CREDENTIALS: 'SKIP_CREDENTIALS',
+  SKIP_EXTERNAL_ACCESS: 'SKIP_EXTERNAL_ACCESS',
+  DISABLED_BY_POLICY: 'DISABLED_BY_POLICY',
+  // Reserved vocabulary for publication-pipeline gating (no Phase 4B key maps
+  // to these yet; statuses are only ever assigned with real evidence).
+  AWAITING_VALIDATION_PERIOD: 'AWAITING_VALIDATION_PERIOD',
+  AWAITING_USER_APPROVAL: 'AWAITING_USER_APPROVAL',
+});
 
-let offlinePassed = false;
-try {
-  console.log(
-    '\n--> Executing offline verification suite (format, lint, typecheck, vitest, build)...',
-  );
-  execSync('pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build', {
-    stdio: 'inherit',
+// Statuses that represent skipped/deferred/unevaluable checks rather than
+// executed PASS verdicts. The "100%" claim is only made when every
+// non-skip-like status is PASS.
+const SKIP_LIKE = new Set([
+  STATUS.PARTIAL,
+  STATUS.NOT_IMPLEMENTED,
+  STATUS.PRESENT_UNVERIFIED,
+  STATUS.NOT_EXECUTED,
+  STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+  STATUS.SKIP_CREDENTIALS,
+  STATUS.SKIP_EXTERNAL_ACCESS,
+  STATUS.DISABLED_BY_POLICY,
+  STATUS.AWAITING_VALIDATION_PERIOD,
+  STATUS.AWAITING_USER_APPROVAL,
+]);
+
+// Canonical, ordered acceptance key set (40 keys).
+const KEY_ORDER = [
+  'OFFLINE_BASELINE',
+  'DOCKER_ENGINE',
+  'LOCAL_SUPABASE_START',
+  'LOCAL_MIGRATION_RESET_FIRST',
+  'LOCAL_MIGRATION_RESET_SECOND',
+  'LOCAL_DB_LINT',
+  'LOCAL_PGTAP',
+  'LOCAL_RLS_ANON',
+  'LOCAL_RLS_USER_ISOLATION',
+  'LOCAL_RLS_STAFF',
+  'LOCAL_RLS_ROLE_ESCALATION',
+  'SOURCE_FRESHNESS_UNIT',
+  'SOURCE_FRESHNESS_SCHEMA',
+  'SOURCE_FRESHNESS_DATABASE',
+  'SOURCE_FRESHNESS_PIPELINE',
+  'SOURCE_FRESHNESS_PUBLICATION',
+  'PROVENANCE_DEDUP_UNIT',
+  'PROVENANCE_DEDUP_SCHEMA',
+  'PROVENANCE_DEDUP_DATABASE',
+  'PROVENANCE_CLUSTER_REVERSAL',
+  'PIB_LIVE',
+  'SEBI_LIVE',
+  'RBI_LIVE',
+  'GENERIC_RSS_FIXTURE',
+  'GENERIC_RSS_LIVE',
+  'ALL_FOUR_SOURCE_DRY_RUN',
+  'IN_MEMORY_IDEMPOTENCY',
+  'POSTGRESQL_FIXTURE_IDEMPOTENCY',
+  'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
+  'PUBLIC_DIRECTORY_CODE',
+  'PUBLIC_DIRECTORY_LOCAL_DATABASE',
+  'PUBLIC_EXPOSURE_LOCAL_DATABASE',
+  'SEO_LOCAL_DATABASE',
+  'INVENTORY_REPORT_DATABASE',
+  'STAGING_MIGRATIONS',
+  'STAGING_RLS',
+  'STAGING_INGESTION',
+  'STAGING_IDEMPOTENCY',
+  'COMMERCIAL_BILLING',
+  'AUTO_VERIFICATION',
+];
+
+const results = new Map();
+function record(key, status, evidence) {
+  if (!Object.values(STATUS).includes(status)) {
+    throw new Error(`Internal error: status "${status}" is not in the Phase 4B vocabulary.`);
+  }
+  if (!KEY_ORDER.includes(key)) {
+    throw new Error(`Internal error: unknown acceptance key "${key}".`);
+  }
+  if (results.has(key)) {
+    throw new Error(`Internal error: duplicate record for key "${key}".`);
+  }
+  results.set(key, { status, evidence });
+}
+
+// ---------------------------------------------------------------------------
+// Command execution helper
+// ---------------------------------------------------------------------------
+function tailLines(text, count) {
+  const lines = String(text)
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0);
+  return lines.slice(-count).join('\n');
+}
+
+function runStep(label, command, { timeoutMs = 600_000, cwd = REPO_ROOT } = {}) {
+  console.log(`\n--> ${label}`);
+  console.log(`    $ ${command}`);
+  const started = Date.now();
+  const res = spawnSync(command, {
+    shell: true,
+    cwd,
+    timeout: timeoutMs,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
     env: process.env,
+    windowsHide: true,
   });
-  offlinePassed = true;
-  console.log('--> Offline verification suite PASSED successfully.');
-} catch (err) {
-  results.OFFLINE_TESTS = 'FAIL';
-  console.error('--> Offline suite FAILED:', err.message);
-}
-
-console.log('\n=============================================================================');
-console.log('  PHASE 4B STATUS CATEGORIZATION REPORT');
-console.log('=============================================================================');
-for (const [key, status] of Object.entries(results)) {
-  const symbol =
-    status === 'PASS'
-      ? '✅'
-      : status === 'FAIL'
-        ? '❌'
-        : status.startsWith('BLOCKED')
-          ? '🛑'
-          : status.startsWith('SKIP')
-            ? '⚠️'
-            : '🔒';
-  console.log(`${symbol} ${key.padEnd(35)} : ${status}`);
-}
-console.log('=============================================================================');
-
-const hasSkippedCredentials = Object.values(results).some((s) => s === 'SKIP_CREDENTIALS');
-if (hasSkippedCredentials || !offlinePassed) {
-  console.log('\n[NOTICE] Phase 4B offline and local database stack PASSED 100%.');
+  const elapsedSeconds = ((Date.now() - started) / 1000).toFixed(1);
+  const timedOut = Boolean(res.error) && /time/i.test(String(res.error?.message ?? ''));
+  const exitCode = res.error && res.status === null ? null : res.status;
+  const ok = exitCode === 0;
   console.log(
-    '         Staging credential-dependent checks (staging Supabase ingestion) were SKIPPED',
+    `    exited ${exitCode ?? 'ERR'} after ${elapsedSeconds}s${timedOut ? ' (timed out)' : ''}`,
   );
-  console.log('         pending disposable staging environment credentials.\n');
-  process.exit(0);
-} else {
-  console.log('\n✅ All Phase 4B acceptance criteria PASSED.\n');
-  process.exit(0);
+  if (!ok) {
+    const detail = tailLines(`${res.stderr ?? ''}\n${res.stdout ?? ''}`, 12);
+    if (detail) {
+      console.log(`    --- last output lines ---\n${detail}\n    -------------------------`);
+    }
+  }
+  return { ok, exitCode, timedOut, stdout: res.stdout ?? '', stderr: res.stderr ?? '' };
 }
+
+console.log('=============================================================================');
+console.log('  CLAIMRADAR INDIA — PHASE 4B ACCEPTANCE RUNNER (EVIDENCE-DRIVEN)');
+console.log('=============================================================================');
+
+// ---------------------------------------------------------------------------
+// 1. Up-front environment probes: Docker engine and local Supabase
+// ---------------------------------------------------------------------------
+const docker = runStep('Environment probe: Docker engine', 'docker info', { timeoutMs: 30_000 });
+record(
+  'DOCKER_ENGINE',
+  docker.ok ? STATUS.PASS : STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+  docker.ok
+    ? '`docker info` exited 0 — Docker engine reachable.'
+    : '`docker info` did not exit 0 — Docker engine unavailable on this device.',
+);
+
+let supabaseUp = false;
+let supabaseBlockReason = '';
+if (!docker.ok) {
+  supabaseBlockReason = 'Docker engine probe failed; local Supabase requires Docker';
+  record(
+    'LOCAL_SUPABASE_START',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    `${supabaseBlockReason}. The runner does not attempt ` +
+      '`supabase start` itself (policy: no self-managed stack startup).',
+  );
+} else {
+  const supabaseStatus = runStep('Environment probe: local Supabase', 'npx supabase status', {
+    timeoutMs: 120_000,
+  });
+  supabaseUp = supabaseStatus.ok;
+  supabaseBlockReason = '`npx supabase status` did not exit 0 — local Supabase stack not running';
+  record(
+    'LOCAL_SUPABASE_START',
+    supabaseUp ? STATUS.PASS : STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    supabaseUp
+      ? '`npx supabase status` exited 0 — local Supabase stack is running.'
+      : `${supabaseBlockReason}. The runner does not attempt ` +
+          '`supabase start` itself (policy: no self-managed stack startup).',
+  );
+}
+const dbBlockedEvidence = (detail) =>
+  `${supabaseBlockReason} — ${detail}. Will execute when the local stack is up.`;
+
+// ---------------------------------------------------------------------------
+// 2. Offline suite: format, lint, typecheck, unit tests (vitest), build
+// ---------------------------------------------------------------------------
+const vitestJsonPath = resolve(REPO_ROOT, 'node_modules', '.cache', 'phase-4b-vitest-results.json');
+mkdirSync(dirname(vitestJsonPath), { recursive: true });
+
+const offlineSteps = [
+  ['format', 'pnpm format', 600_000],
+  ['lint', 'pnpm lint', 600_000],
+  ['typecheck', 'pnpm typecheck', 900_000],
+  [
+    'unit tests (vitest, JSON reporter)',
+    `pnpm exec vitest run --passWithNoTests --reporter=json --outputFile="${vitestJsonPath}"`,
+    900_000,
+  ],
+  ['build', 'pnpm build', 1_200_000],
+];
+const offlineStepResults = [];
+for (const [label, command, timeoutMs] of offlineSteps) {
+  offlineStepResults.push({
+    label,
+    result: runStep(`Offline suite: ${label}`, command, { timeoutMs }),
+  });
+}
+const offlineAllOk = offlineStepResults.every(({ result }) => result.ok);
+const offlineEvidence = offlineStepResults
+  .map(({ label, result }) => `${label}: exit ${result.exitCode ?? 'ERR'}`)
+  .join('; ');
+record(
+  'OFFLINE_BASELINE',
+  offlineAllOk ? STATUS.PASS : STATUS.FAIL,
+  `Executed: pnpm format / lint / typecheck / vitest run / build. ${offlineEvidence}.`,
+);
+
+// ---------------------------------------------------------------------------
+// 3. Parse vitest JSON output to map unit-level keys
+// ---------------------------------------------------------------------------
+let vitestResults = null;
+if (existsSync(vitestJsonPath)) {
+  try {
+    vitestResults = JSON.parse(readFileSync(vitestJsonPath, 'utf8')).testResults ?? [];
+  } catch {
+    vitestResults = null;
+  }
+}
+
+function findVitestFile(fragment) {
+  if (!vitestResults) return null;
+  const wanted = fragment.split('/').join(sep);
+  const wantedForward = fragment.split(sep).join('/');
+  return (
+    vitestResults.find((entry) => {
+      const name = String(entry.name ?? '');
+      return name.includes(fragment) || name.includes(wanted) || name.includes(wantedForward);
+    }) ?? null
+  );
+}
+
+function unitKeyStatus(key, fragment, evidencePrefix) {
+  if (!vitestResults) {
+    record(key, STATUS.NOT_EXECUTED, 'No vitest JSON output available for this run.');
+    return;
+  }
+  const entry = findVitestFile(fragment);
+  if (!entry) {
+    record(
+      key,
+      STATUS.NOT_EXECUTED,
+      `No test file matching "${fragment}" appears in this run's vitest output.`,
+    );
+    return;
+  }
+  const relative = entry.name.replace(REPO_ROOT, '').replace(/^[\\/]+/, '');
+  const failing = entry.assertionResults?.filter((a) => a.status === 'failed').length;
+  if (entry.status === 'passed') {
+    record(key, STATUS.PASS, `${evidencePrefix} vitest: "${relative}" status=passed.`);
+  } else {
+    record(key, STATUS.FAIL, `${evidencePrefix} vitest: "${relative}" status=${entry.status}.`);
+  }
+  return failing;
+}
+
+unitKeyStatus(
+  'SOURCE_FRESHNESS_UNIT',
+  'tests/freshness/freshness.test.ts',
+  'Unit-level freshness rules.',
+);
+unitKeyStatus(
+  'PROVENANCE_DEDUP_UNIT',
+  'tests/deduplication/provenance-dedup.test.ts',
+  'Unit-level provenance-safe deduplication.',
+);
+unitKeyStatus(
+  'IN_MEMORY_IDEMPOTENCY',
+  'tests/pipeline/ingestion-idempotency.test.ts',
+  'In-memory dry-run double-ingestion idempotency.',
+);
+unitKeyStatus(
+  'GENERIC_RSS_FIXTURE',
+  'tests/adapters/generic-commissioning.test.ts',
+  'Generic RSS adapter against committed XML fixture (no network).',
+);
+
+// PROVENANCE_CLUSTER_REVERSAL: only partially implied by unit tests (Rule 10
+// splitCluster covers reversal in memory; no database-level reversal executed).
+const dedupUnitEntry = findVitestFile('tests/deduplication/provenance-dedup.test.ts');
+if (!vitestResults) {
+  record('PROVENANCE_CLUSTER_REVERSAL', STATUS.NOT_EXECUTED, 'No vitest JSON output for this run.');
+} else if (!dedupUnitEntry) {
+  record(
+    'PROVENANCE_CLUSTER_REVERSAL',
+    STATUS.NOT_EXECUTED,
+    'provenance-dedup.test.ts not present in this run’s vitest output.',
+  );
+} else if (dedupUnitEntry.status !== 'passed') {
+  record(
+    'PROVENANCE_CLUSTER_REVERSAL',
+    STATUS.FAIL,
+    'provenance-dedup.test.ts did not pass in this run, so reversal evidence is absent.',
+  );
+} else {
+  record(
+    'PROVENANCE_CLUSTER_REVERSAL',
+    STATUS.PARTIAL,
+    'Partially implied: vitest "tests/deduplication/provenance-dedup.test.ts" (Rule 10 splitCluster) ' +
+      'verifies reversal at unit level only; no database-level cluster reversal was executed.',
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 4. Local Supabase database path
+// ---------------------------------------------------------------------------
+const pgtapKeyMap = [
+  ['LOCAL_RLS_ANON', '002_public_rls.test.sql'],
+  ['LOCAL_RLS_USER_ISOLATION', '003_user_rls.test.sql'],
+  ['LOCAL_RLS_STAFF', '004_staff_rls.test.sql'],
+  ['LOCAL_RLS_ROLE_ESCALATION', '006_role_escalation.test.sql'],
+  ['SOURCE_FRESHNESS_SCHEMA', '008_freshness_schema.test.sql'],
+  ['PROVENANCE_DEDUP_SCHEMA', '007_deduplication_constraints.test.sql'],
+];
+
+if (!supabaseUp) {
+  record(
+    'LOCAL_MIGRATION_RESET_FIRST',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('`supabase db reset` (run 1) not attempted'),
+  );
+  record(
+    'LOCAL_MIGRATION_RESET_SECOND',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('`supabase db reset` (run 2) not attempted'),
+  );
+  record(
+    'LOCAL_DB_LINT',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('`supabase db lint` not attempted'),
+  );
+  record(
+    'LOCAL_PGTAP',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('`supabase test db` not attempted'),
+  );
+  for (const [key, file] of pgtapKeyMap) {
+    record(
+      key,
+      STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+      dbBlockedEvidence(`derives from pgTAP suite supabase/tests/${file}`),
+    );
+  }
+  record(
+    'SOURCE_FRESHNESS_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('database-level freshness verification requires the local stack'),
+  );
+  record(
+    'PROVENANCE_DEDUP_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('derives from scripts/verify-local-database-ingestion.mjs'),
+  );
+  record(
+    'POSTGRESQL_FIXTURE_IDEMPOTENCY',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence(
+      'would run `node scripts/verify-local-database-ingestion.mjs` (pnpm verify:local-ingestion)',
+    ),
+  );
+  record(
+    'PUBLIC_DIRECTORY_LOCAL_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('database-backed public directory check requires the local stack'),
+  );
+  record(
+    'PUBLIC_EXPOSURE_LOCAL_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('database-backed public exposure check requires the local stack'),
+  );
+  record(
+    'SEO_LOCAL_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('database-backed SEO check requires the local stack'),
+  );
+  record(
+    'INVENTORY_REPORT_DATABASE',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence('database-backed inventory report check requires the local stack'),
+  );
+} else {
+  const reset1 = runStep('Local DB: migration reset (run 1)', 'npx supabase db reset', {
+    timeoutMs: 900_000,
+  });
+  record(
+    'LOCAL_MIGRATION_RESET_FIRST',
+    reset1.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`npx supabase db reset\` (run 1) exit ${reset1.exitCode ?? 'ERR'}.`,
+  );
+
+  const reset2 = runStep('Local DB: migration reset (run 2)', 'npx supabase db reset', {
+    timeoutMs: 900_000,
+  });
+  record(
+    'LOCAL_MIGRATION_RESET_SECOND',
+    reset2.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`npx supabase db reset\` (run 2) exit ${reset2.exitCode ?? 'ERR'}.`,
+  );
+
+  const dbLint = runStep('Local DB: migration lint', 'npx supabase db lint', {
+    timeoutMs: 300_000,
+  });
+  record(
+    'LOCAL_DB_LINT',
+    dbLint.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`npx supabase db lint\` exit ${dbLint.exitCode ?? 'ERR'}.`,
+  );
+
+  const pgtap = runStep('Local DB: pgTAP suite', 'npx supabase test db', { timeoutMs: 600_000 });
+  record(
+    'LOCAL_PGTAP',
+    pgtap.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`npx supabase test db\` exit ${pgtap.exitCode ?? 'ERR'} over supabase/tests/*.sql.`,
+  );
+  const pgtapOutput = `${pgtap.stdout}\n${pgtap.stderr}`;
+  for (const [key, file] of pgtapKeyMap) {
+    if (!pgtap.ok) {
+      record(key, STATUS.FAIL, `pgTAP suite failed overall (exit ${pgtap.exitCode ?? 'ERR'}).`);
+    } else if (pgtapOutput.includes(file)) {
+      record(
+        key,
+        STATUS.PASS,
+        `pgTAP suite exited 0 and its output references supabase/tests/${file}.`,
+      );
+    } else {
+      record(
+        key,
+        STATUS.NOT_EXECUTED,
+        `pgTAP suite exited 0 but supabase/tests/${file} was not observed in its output.`,
+      );
+    }
+  }
+
+  const verify = runStep(
+    'Local DB: ingestion idempotency verifier',
+    'node scripts/verify-local-database-ingestion.mjs',
+    { timeoutMs: 300_000 },
+  );
+  record(
+    'POSTGRESQL_FIXTURE_IDEMPOTENCY',
+    verify.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`node scripts/verify-local-database-ingestion.mjs\` (pnpm verify:local-ingestion) exit ` +
+      `${verify.exitCode ?? 'ERR'}.`,
+  );
+  record(
+    'PROVENANCE_DEDUP_DATABASE',
+    verify.ok ? STATUS.PARTIAL : STATUS.FAIL,
+    verify.ok
+      ? 'Partially implied: scripts/verify-local-database-ingestion.mjs proves database-level ' +
+          'document/cluster dedup on double ingestion; provenance semantics beyond hash reuse are ' +
+          'not exercised at database level.'
+      : 'scripts/verify-local-database-ingestion.mjs failed, so database-level dedup evidence is absent.',
+  );
+
+  // Database-backed keys for which no automated verifier exists yet.
+  const notImplementedDb = [
+    ['SOURCE_FRESHNESS_DATABASE', 'runtime freshness state queries against local Postgres'],
+    ['PUBLIC_DIRECTORY_LOCAL_DATABASE', 'database-backed public directory rendering check'],
+    ['PUBLIC_EXPOSURE_LOCAL_DATABASE', 'database-backed public exposure check'],
+    ['SEO_LOCAL_DATABASE', 'database-backed SEO/sitemap rendering check'],
+    ['INVENTORY_REPORT_DATABASE', 'database-backed inventory report check'],
+  ];
+  for (const [key, detail] of notImplementedDb) {
+    record(
+      key,
+      STATUS.NOT_IMPLEMENTED,
+      `Local stack is up, but no automated verifier exists for ${detail}. ` +
+        'TODO: add an evidence-producing verification step.',
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 5. Code-artifact probes (no database required)
+// ---------------------------------------------------------------------------
+const publicRouteGroup = resolve(REPO_ROOT, 'apps', 'web', 'app', '(public)');
+if (existsSync(publicRouteGroup)) {
+  const routeDirs = readdirSync(publicRouteGroup, { withFileTypes: true }).filter((entry) =>
+    entry.isDirectory(),
+  );
+  if (routeDirs.length > 0) {
+    record(
+      'PUBLIC_DIRECTORY_CODE',
+      STATUS.PRESENT_UNVERIFIED,
+      `File probe: apps/web/app/(public) exists with ${routeDirs.length} route directories ` +
+        `(e.g. ${routeDirs
+          .slice(0, 4)
+          .map((d) => d.name)
+          .join(', ')}); code present but no ` +
+        'automated runtime verification was executed in this run.',
+    );
+  } else {
+    record(
+      'PUBLIC_DIRECTORY_CODE',
+      STATUS.NOT_IMPLEMENTED,
+      'apps/web/app/(public) exists but contains no route directories. TODO: implement public pages.',
+    );
+  }
+} else {
+  record(
+    'PUBLIC_DIRECTORY_CODE',
+    STATUS.NOT_IMPLEMENTED,
+    'apps/web/app/(public) not found. TODO: implement the public directory.',
+  );
+}
+
+record(
+  'SOURCE_FRESHNESS_PIPELINE',
+  STATUS.NOT_IMPLEMENTED,
+  'No pipeline-level freshness verifier exists. TODO: add an end-to-end freshness pipeline check.',
+);
+record(
+  'SOURCE_FRESHNESS_PUBLICATION',
+  STATUS.NOT_IMPLEMENTED,
+  'No publication-level freshness verifier exists. TODO: add a freshness-driven publication check.',
+);
+
+// ---------------------------------------------------------------------------
+// 6. Live-source keys — intentionally NOT executed by this runner
+// ---------------------------------------------------------------------------
+record(
+  'PIB_LIVE',
+  STATUS.SKIP_EXTERNAL_ACCESS,
+  'Policy: this runner performs no external access; PIB live crawl requires a human-supervised run.',
+);
+for (const key of ['SEBI_LIVE', 'RBI_LIVE', 'GENERIC_RSS_LIVE', 'ALL_FOUR_SOURCE_DRY_RUN']) {
+  record(
+    key,
+    STATUS.NOT_EXECUTED,
+    'Runner policy: no live network crawls are executed here. Run the crawler ' +
+      '(pnpm crawler:source with LIVE_ADAPTERS_ENABLED) for live evidence.',
+  );
+}
+record(
+  'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
+  STATUS.SKIP_CREDENTIALS,
+  'Requires live-source credentials, which are not present in this environment.',
+);
+
+// ---------------------------------------------------------------------------
+// 7. Staging keys — credentials intentionally absent
+// ---------------------------------------------------------------------------
+for (const key of [
+  'STAGING_MIGRATIONS',
+  'STAGING_RLS',
+  'STAGING_INGESTION',
+  'STAGING_IDEMPOTENCY',
+]) {
+  record(
+    key,
+    STATUS.SKIP_CREDENTIALS,
+    'No disposable staging Supabase credentials configured (see docs/staging-supabase-setup.md).',
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 8. Policy flags — read from the real environment/config at runtime
+// ---------------------------------------------------------------------------
+function parseEnvFile(filePath) {
+  if (!existsSync(filePath)) return null;
+  const entries = {};
+  for (const line of readFileSync(filePath, 'utf8').split(/\r?\n/)) {
+    const match = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/.exec(line);
+    if (!match) continue;
+    entries[match[1]] = match[2].replace(/^["']|["']$/g, '');
+  }
+  return entries;
+}
+
+const envSources = [
+  ['process.env', process.env],
+  ['.env.local', parseEnvFile(resolve(REPO_ROOT, '.env.local'))],
+  ['.env', parseEnvFile(resolve(REPO_ROOT, '.env'))],
+  ['apps/web/.env.local', parseEnvFile(resolve(REPO_ROOT, 'apps', 'web', '.env.local'))],
+  ['apps/web/.env', parseEnvFile(resolve(REPO_ROOT, 'apps', 'web', '.env'))],
+  ['apps/crawler/.env.local', parseEnvFile(resolve(REPO_ROOT, 'apps', 'crawler', '.env.local'))],
+  ['apps/crawler/.env', parseEnvFile(resolve(REPO_ROOT, 'apps', 'crawler', '.env'))],
+];
+
+function resolveFlag(name) {
+  for (const [sourceName, values] of envSources) {
+    if (values && values[name] !== undefined && values[name] !== '') {
+      return { name, value: values[name], source: sourceName };
+    }
+  }
+  return { name, value: null, source: null };
+}
+
+function isTruthy(value) {
+  return /^(1|true|yes|on)$/i.test(String(value ?? '').trim());
+}
+
+function recordPolicyKey(key, flagNames, policyName) {
+  const resolved = flagNames.map(resolveFlag);
+  const enabledFlags = resolved.filter((flag) => isTruthy(flag.value));
+  const description = resolved
+    .map((flag) =>
+      flag.source ? `${flag.name}=${flag.value} (${flag.source})` : `${flag.name}=unset`,
+    )
+    .join('; ');
+  if (enabledFlags.length > 0) {
+    record(
+      key,
+      STATUS.FAIL,
+      `${policyName} must be disabled by policy, but ${enabledFlags
+        .map((flag) => `${flag.name}=${flag.value} (${flag.source})`)
+        .join('; ')}. Full probe: ${description}.`,
+    );
+  } else {
+    record(
+      key,
+      STATUS.DISABLED_BY_POLICY,
+      `Runtime flag probe: ${description}; packages/config defaultFeatureFlags set ` +
+        `${flagNames.join('/')}=false.`,
+    );
+  }
+}
+
+recordPolicyKey('COMMERCIAL_BILLING', ['ENABLE_BILLING', 'NEXT_PUBLIC_ENABLE_BILLING'], 'Billing');
+recordPolicyKey('AUTO_VERIFICATION', ['AUTO_VERIFY_CLAIMABLES'], 'Automatic claim verification');
+
+// ---------------------------------------------------------------------------
+// Summary
+// ---------------------------------------------------------------------------
+console.log('\n=============================================================================');
+console.log('  PHASE 4B STATUS REPORT (every status cites evidence from this run)');
+console.log('=============================================================================');
+for (const key of KEY_ORDER) {
+  const { status, evidence } = results.get(key);
+  console.log(`${key.padEnd(36)} ${status.padEnd(25)} ${evidence}`);
+}
+console.log('=============================================================================');
+
+const counts = new Map();
+for (const { status } of results.values()) {
+  counts.set(status, (counts.get(status) ?? 0) + 1);
+}
+console.log(
+  `  Counts: ${[...counts.entries()].map(([status, count]) => `${status}=${count}`).join(', ')}`,
+);
+
+const failures = [...results.entries()].filter(([, entry]) => entry.status === STATUS.FAIL);
+if (failures.length > 0) {
+  console.error(
+    `\n  ${failures.length} executed check(s) FAILED: ${failures.map(([key]) => key).join(', ')}`,
+  );
+  console.error('  Phase 4B acceptance: FAIL (exit 1).\n');
+  process.exit(1);
+}
+
+const executed = [...results.values()].filter(({ status }) => !SKIP_LIKE.has(status));
+const allExecutedPass =
+  executed.length > 0 && executed.every(({ status }) => status === STATUS.PASS);
+if (allExecutedPass) {
+  console.log(`\n  All ${executed.length} executed acceptance checks PASSED 100%.\n`);
+} else {
+  console.log('\n  No executed check FAILED, but not every check reached PASS:');
+  console.log('  PARTIAL / PRESENT_UNVERIFIED / NOT_IMPLEMENTED / NOT_EXECUTED /');
+  console.log('  BLOCKED_LOCAL_ENVIRONMENT / SKIP_* / DISABLED_BY_POLICY entries above');
+  console.log('  require follow-up evidence before full acceptance can be claimed.\n');
+}
+process.exit(0);

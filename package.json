@@ -16,6 +16,7 @@
     "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
     "test:phase-4b-offline": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:phase-4b-acceptance": "node scripts/phase-4b-acceptance-runner.mjs",
+    "verify:local-ingestion": "node scripts/verify-local-database-ingestion.mjs",
     "report:inventory-validation": "pnpm --filter @claimradar/crawler dev -- inventory-report"
   },
   "engines": {
