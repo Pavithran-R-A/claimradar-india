@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master, 'qoder/**']
   pull_request:
-    branches: [main]
+    branches: [master, 'qoder/**']
 
 concurrency:
   group: ci-${{ github.ref }}
