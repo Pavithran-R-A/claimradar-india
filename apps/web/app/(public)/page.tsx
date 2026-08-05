@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FaqAccordion, HeroCard } from '@/components/landing/interactive';
 import {
@@ -18,6 +19,20 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'ClaimRadar India — Track Refunds, Compensation & Claim Opportunities',
+  description:
+    'ClaimRadar India aggregates refund, compensation and claim opportunities from official Indian sources — regulators, courts and public notices — so you never miss what you may be owed.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'ClaimRadar India — Track Refunds, Compensation & Claim Opportunities',
+    description:
+      'ClaimRadar India aggregates refund, compensation and claim opportunities from official Indian sources so you never miss what you may be owed.',
+    url: '/',
+    type: 'website',
+  },
+};
 
 /* -------------------------------------------------------------------------- */
 /*  Demo seed data                                                             */
@@ -166,7 +181,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/signup"
+              href="/register"
               className="inline-flex h-12 items-center rounded-lg bg-trust-primary px-8 text-base font-semibold text-white shadow-lg shadow-trust-primary/20 transition-all hover:bg-trust-primary-hover hover:shadow-xl"
             >
               Check My Matches — Free
@@ -361,7 +376,7 @@ export default function LandingPage() {
                 push alerts the moment a new refund, compensation or claim opportunity is published.
               </p>
               <Link
-                href="/signup"
+                href="/register"
                 className="mt-6 inline-flex h-10 items-center rounded-md bg-trust-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
               >
                 Create Free Watchlist
@@ -575,7 +590,7 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link
-                href="/signup"
+                href="/register"
                 className="mt-8 inline-flex h-10 w-full items-center justify-center rounded-md border border-border text-sm font-medium text-text-primary transition-colors hover:bg-surface-strong"
               >
                 Get Started
@@ -607,7 +622,7 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link
-                href="/signup"
+                href="/register"
                 className="mt-8 inline-flex h-10 w-full items-center justify-center rounded-md bg-trust-primary text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
               >
                 Upgrade to Plus
@@ -655,7 +670,7 @@ export default function LandingPage() {
             opportunities are published for companies you care about.
           </p>
           <Link
-            href="/signup"
+            href="/register"
             className="mt-8 inline-flex h-12 items-center rounded-lg bg-trust-primary px-8 text-base font-semibold text-white shadow-lg shadow-trust-primary/20 transition-all hover:bg-trust-primary-hover hover:shadow-xl"
           >
             Create Free Watchlist

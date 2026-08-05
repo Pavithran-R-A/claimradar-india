@@ -35,7 +35,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
             Back to Home
           </Link>
           <Link
-            href="/signup"
+            href="/register"
             className="inline-flex h-10 items-center rounded-md border border-border px-5 text-sm font-semibold text-text-primary transition-colors hover:bg-surface"
           >
             Create Free Account
@@ -50,5 +50,6 @@ export function generateComingSoonMetadata(title: string, description: string): 
   return {
     title: `${title} — Coming Soon — ClaimRadar India`,
     description,
+    robots: { index: false, follow: false },
   };
 }

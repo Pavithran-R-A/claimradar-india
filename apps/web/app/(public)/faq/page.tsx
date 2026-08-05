@@ -1,7 +1,20 @@
-'use client';
-
-import { FaqAccordion } from '@/components/landing/interactive';
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { FaqAccordion } from '@/components/landing/interactive';
+
+export const metadata: Metadata = {
+  title: 'FAQ | ClaimRadar India',
+  description:
+    'Answers to common questions about ClaimRadar India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+  alternates: { canonical: '/faq' },
+  openGraph: {
+    title: 'FAQ | ClaimRadar India',
+    description:
+      'Answers to common questions about ClaimRadar India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+    url: '/faq',
+    type: 'website',
+  },
+};
 
 const faqItems = [
   {
