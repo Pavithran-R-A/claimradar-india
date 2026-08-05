@@ -95,7 +95,7 @@ export default function AboutPage() {
           Start tracking opportunities that matter to you.
         </p>
         <Link
-          href="/signup"
+          href="/register"
           className="mt-4 inline-flex h-10 items-center rounded-md bg-trust-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
         >
           Create Free Account

@@ -43,7 +43,7 @@ export default function PricingPage() {
             Browse all opportunities and stay informed with weekly digests.
           </p>
           <Link
-            href="/signup"
+            href="/register"
             className="mt-8 inline-flex h-11 w-full items-center justify-center rounded-lg border border-border text-sm font-semibold text-text-primary transition-colors hover:bg-surface-strong"
           >
             Get Started
@@ -64,7 +64,7 @@ export default function PricingPage() {
             Unlimited watchlists, real-time alerts and deep source insights.
           </p>
           <Link
-            href="/signup"
+            href="/register"
             className="mt-8 inline-flex h-11 w-full items-center justify-center rounded-lg bg-trust-primary text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
           >
             Upgrade to Plus

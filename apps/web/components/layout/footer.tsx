@@ -8,7 +8,7 @@ const footerColumns = [
       { href: '/companies', label: 'Companies' },
       { href: '/closing-soon', label: 'Closing soon' },
       { href: '/sectors', label: 'Sectors' },
-      { href: '/deadlines', label: 'States' },
+      { href: '/states', label: 'States' },
       { href: '/guides', label: 'Guides' },
     ],
   },
@@ -90,7 +90,7 @@ export function Footer() {
               >
                 support@claimradar.example
               </a>
-              <Link href="/sitemap" className="transition-colors hover:text-text-secondary">
+              <Link href="/sitemap.xml" className="transition-colors hover:text-text-secondary">
                 Sitemap
               </Link>
               <span>Made for consumers in India</span>

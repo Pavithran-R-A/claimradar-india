@@ -104,7 +104,7 @@ export default function HowItWorksPage() {
           Create a free account and build your watchlist today.
         </p>
         <Link
-          href="/signup"
+          href="/register"
           className="mt-4 inline-flex h-10 items-center rounded-md bg-trust-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
         >
           Create Free Account

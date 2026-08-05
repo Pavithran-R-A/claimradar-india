@@ -94,7 +94,7 @@ export function Header() {
               Sign In
             </Link>
             <Link
-              href="/signup"
+              href="/register"
               className="inline-flex h-9 items-center rounded-md bg-trust-primary px-4 text-sm font-medium text-white hover:bg-trust-primary-hover transition-colors"
             >
               Check My Matches
@@ -111,7 +111,7 @@ export function Header() {
               <Search className="h-5 w-5" />
             </button>
             <Link
-              href="/signup"
+              href="/register"
               className="inline-flex h-9 items-center rounded-md bg-trust-primary px-3 text-xs font-medium text-white hover:bg-trust-primary-hover transition-colors"
             >
               Check Matches
