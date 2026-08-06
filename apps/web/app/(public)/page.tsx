@@ -157,9 +157,9 @@ export default async function LandingPage() {
       </section>
 
       {/* Demo data notice banner when using fallback mock data */}
-      {!ok && claimables.isDemoData && (
+      {claimables.ok && claimables.demo && (
         <div className="mx-auto max-w-content px-4 pt-6 sm:px-6 lg:px-8">
-          <DemoDataBanner message={claimables.message} />
+          <DemoDataBanner />
         </div>
       )}
 
@@ -197,12 +197,15 @@ export default async function LandingPage() {
         {latest.length > 0 ? (
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {latest.map((item) => (
-              <ClaimableCard key={item.id} item={item} />
+              <ClaimableCard key={item.id} claim={item} />
             ))}
           </div>
         ) : (
           <div className="mt-8">
-            <EmptyDirectoryNotice message="No published claim opportunities found." />
+            <EmptyDirectoryNotice
+              title="No published opportunities found"
+              body="No published claim opportunities are currently listed. Please check back as new official notices are verified."
+            />
           </div>
         )}
       </section>
@@ -236,7 +239,7 @@ export default async function LandingPage() {
 
             <div className="mt-8 divide-y divide-border rounded-card border border-border bg-surface shadow-card">
               {closingSoon.map((item) => (
-                <ClaimableRow key={item.id} item={item} />
+                <ClaimableRow key={item.id} claim={item} />
               ))}
             </div>
           </div>
@@ -273,7 +276,7 @@ export default async function LandingPage() {
                     {sector.name}
                   </span>
                   <span className="mt-2 text-xs text-text-muted">
-                    {sector.count} {sector.count === 1 ? 'record' : 'records'}
+                    {sector.activeClaimCount} {sector.activeClaimCount === 1 ? 'record' : 'records'}
                   </span>
                 </Link>
               ))}
@@ -305,7 +308,7 @@ export default async function LandingPage() {
                     {comp.name}
                   </span>
                   <span className="mt-2 text-xs text-text-muted">
-                    {comp.count} {comp.count === 1 ? 'record' : 'records'}
+                    {comp.activeClaimCount} {comp.activeClaimCount === 1 ? 'record' : 'records'}
                   </span>
                 </Link>
               ))}
