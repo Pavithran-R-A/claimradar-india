@@ -1,8 +1,8 @@
 # ClaimRadar India — Provenance-Safe Deduplication Specification
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Status:** Implemented & Verified Offline  
-**Last Updated:** August 5, 2026
+**Last Updated:** August 6, 2026
 
 ---
 
@@ -25,7 +25,7 @@ ClaimRadar India tracks legal and regulatory claim opportunities across multiple
 
 ## 2. Multi-Stage Deduplication Pipeline
 
-The deduplication orchestrator ([`apps/crawler/src/deduplication/index.ts`](file:///C:/Users/Pavithran%20R%20A/Documents/Qoder/2026-07-27/chat-1/apps/crawler/src/deduplication/index.ts)) evaluates four strategies in order:
+The deduplication orchestrator (`apps/crawler/src/deduplication/index.ts`) evaluates four strategies in order:
 
 ```
 [ New Document ]
@@ -79,3 +79,14 @@ The deduplication orchestrator ([`apps/crawler/src/deduplication/index.ts`](file
 ```
 
 If an administrative error occurs, the cluster link between `SOURCE DOC #2` and `CLAIMABLE CLUSTER` can be removed or reassigned without losing any raw text, HTML, or metadata.
+
+---
+
+## 5. Verification Coverage (Offline)
+
+Enforced by `apps/crawler/tests/deduplication/provenance-dedup.test.ts` (8 tests, all passing), covering every scenario in the table above plus:
+
+- **Scenario 5 (updated order):** an amended order with a new SHA-256 hash is ingested as a new document and cluster member; the original order row and its official URL are preserved untouched.
+- **Reversibility:** splitting a cluster preserves every member document and every official URL; no split operation ever deletes source documents or drops provenance.
+
+Database-level cluster persistence (`content_clusters`, `content_cluster_members`) is exercised by the local Supabase verification path and is reported as `BLOCKED_LOCAL_ENVIRONMENT` until Docker/WSL2 is available (see `docs/checkpoints/qoder-local-live-source-idempotency.md`).

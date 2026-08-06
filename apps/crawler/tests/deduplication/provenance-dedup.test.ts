@@ -139,4 +139,84 @@ describe('Provenance-Safe Deduplication Runtime Module', () => {
     expect(res1.clusterId).toBe(res2.clusterId);
     expect(res2.isNewCluster).toBe(false);
   });
+
+  it('Scenario 5: Updated order (different hash, new URL) becomes a new document and cluster; original preserved', () => {
+    const originalOrder = {
+      documentId: 'doc-order-v1',
+      sourceId: 'sebi-rss',
+      url: 'https://sebi.gov.in/orders/2026/order-77-v1.pdf',
+      canonicalUrl: 'https://sebi.gov.in/orders/2026/order-77-v1.pdf',
+      contentHash: 'hash-order-v1',
+      title: 'SEBI Order 77 (original deadline 2026-09-01)',
+    };
+    const updatedOrder = {
+      documentId: 'doc-order-v2',
+      sourceId: 'sebi-rss',
+      url: 'https://sebi.gov.in/orders/2026/order-77-v2.pdf',
+      canonicalUrl: 'https://sebi.gov.in/orders/2026/order-77-v2.pdf',
+      contentHash: 'hash-order-v2',
+      title: 'SEBI Order 77 (deadline extended to 2026-10-15)',
+    };
+
+    const res1 = assignToCluster(state, originalOrder);
+    const res2 = assignToCluster(state, updatedOrder);
+
+    // Distinct content hash + distinct official URL => distinct cluster; neither
+    // document is dropped, so both versions remain as preserved provenance.
+    expect(res1.clusterId).not.toBe(res2.clusterId);
+    expect(res2.isNewCluster).toBe(true);
+    expect(state.clusters.size).toBe(2);
+    expect(state.docToClusterMap.get('doc-order-v1')).toBe(res1.clusterId);
+    expect(state.docToClusterMap.get('doc-order-v2')).toBe(res2.clusterId);
+  });
+
+  it('Reversibility: splitting preserves every official URL and never deletes member documents', () => {
+    const docs = [
+      {
+        documentId: 'doc-rev-sebi',
+        sourceId: 'sebi-rss',
+        url: 'https://sebi.gov.in/orders/rev.pdf',
+        canonicalUrl: 'https://sebi.gov.in/orders/rev.pdf',
+        contentHash: 'hash-rev-shared',
+        title: 'SEBI Order (primary)',
+      },
+      {
+        documentId: 'doc-rev-pib',
+        sourceId: 'pib-rss',
+        url: 'https://pib.gov.in/release-rev.html',
+        canonicalUrl: 'https://pib.gov.in/release-rev.html',
+        contentHash: 'hash-rev-shared',
+        title: 'PIB Release (mirror)',
+      },
+      {
+        documentId: 'doc-rev-rbi',
+        sourceId: 'rbi-rss',
+        url: 'https://rbi.org.in/notice-rev.html',
+        canonicalUrl: 'https://rbi.org.in/notice-rev.html',
+        contentHash: 'hash-rev-shared',
+        title: 'RBI Notice (mirror)',
+      },
+    ];
+    for (const doc of docs) assignToCluster(state, doc);
+    expect(state.clusters.size).toBe(1); // all three grouped
+
+    const split = splitCluster(state, 'doc-rev-pib');
+
+    // Every document still maps to a cluster — no provenance row orphaned.
+    for (const doc of docs) {
+      expect(state.docToClusterMap.has(doc.documentId)).toBe(true);
+    }
+    // The split document has its own cluster; the original cluster keeps the
+    // remaining two members (grouping reversal does not destroy the group).
+    expect(state.docToClusterMap.get('doc-rev-pib')).toBe(split.newClusterId);
+    const oldCluster = state.clusters.get(split.oldClusterId!);
+    expect(oldCluster?.memberDocumentIds).toEqual(['doc-rev-sebi', 'doc-rev-rbi']);
+    const newCluster = state.clusters.get(split.newClusterId);
+    expect(newCluster?.memberDocumentIds).toEqual(['doc-rev-pib']);
+    // The split is reversible in effect: re-assigning the document merges it back.
+    const remerge = assignToCluster(state, docs[0]!);
+    const reassigned = assignToCluster(state, docs[1]!);
+    expect(reassigned.clusterId).toBe(remerge.clusterId);
+    expect(reassigned.isNewCluster).toBe(false);
+  });
 });

@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { cn } from '@claimradar/design-system';
 import { ChevronDown } from 'lucide-react';
 
@@ -9,14 +8,22 @@ interface FaqItem {
   answer: string;
 }
 
+/**
+ * Progressive-enhancement accordion built on native <details>/<summary>:
+ * keyboard operable and readable without JS. Token-based colours adapt to
+ * the active theme.
+ */
 export function FaqAccordion({ items }: { items: FaqItem[] }) {
   return (
     <div className="mx-auto max-w-3xl divide-y divide-border">
       {items.map((item, i) => (
         <details key={i} className="group py-4">
-          <summary className="flex cursor-pointer items-center justify-between gap-4 py-2 text-left text-base font-medium text-text-primary [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-2 text-left text-base font-medium text-text-primary [&::-webkit-details-marker]:hidden">
             {item.question}
-            <ChevronDown className="h-5 w-5 shrink-0 text-text-muted transition-transform group-open:rotate-180" />
+            <ChevronDown
+              aria-hidden
+              className="h-5 w-5 shrink-0 text-text-muted transition-transform duration-base group-open:rotate-180 motion-reduce:transition-none"
+            />
           </summary>
           <div className="mt-2 text-sm leading-relaxed text-text-secondary">{item.answer}</div>
         </details>

@@ -1,26 +1,27 @@
 import Link from 'next/link';
+import { brandConfig } from '@claimradar/config';
 
 const footerColumns = [
   {
     title: 'Discover',
     links: [
-      { href: '/claimables', label: 'Latest claimables' },
-      { href: '/companies', label: 'Companies' },
+      { href: '/claimables', label: 'Claimables directory' },
+      { href: '/new', label: 'Newly published' },
       { href: '/closing-soon', label: 'Closing soon' },
+      { href: '/deadlines', label: 'Deadline calendar' },
+      { href: '/companies', label: 'Companies' },
       { href: '/sectors', label: 'Sectors' },
-      { href: '/states', label: 'States' },
-      { href: '/guides', label: 'Guides' },
     ],
   },
   {
     title: 'Product',
     links: [
       { href: '/how-it-works', label: 'How it works' },
-      { href: '/pricing', label: 'Pricing' },
-      { href: '/claimables', label: 'Watchlists' },
-      { href: '/updates', label: 'Alerts' },
       { href: '/methodology', label: 'Methodology' },
       { href: '/sources', label: 'Sources' },
+      { href: '/guides', label: 'Guides' },
+      { href: '/glossary', label: 'Glossary' },
+      { href: '/faq', label: 'FAQ' },
     ],
   },
   {
@@ -38,7 +39,6 @@ const footerColumns = [
     title: 'Legal',
     links: [
       { href: '/terms', label: 'Terms' },
-      { href: '/privacy', label: 'Privacy' },
       { href: '/refund-policy', label: 'Refund policy' },
       { href: '/subscription-policy', label: 'Subscription policy' },
       { href: '/cookie-policy', label: 'Cookie policy' },
@@ -47,17 +47,37 @@ const footerColumns = [
   },
 ] as const;
 
+/**
+ * Multi-column civic footer on the deep-ink scale. Closes every public page
+ * with the independence disclaimer — a mandatory product constraint.
+ */
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface">
-      <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Column grid */}
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
+    <footer className="bg-ink-950 text-white">
+      <div className="mx-auto max-w-content px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(4,1fr)]">
+          {/* Brand column */}
+          <div>
+            <p className="flex items-center gap-2.5 text-lg font-bold">
+              <span
+                aria-hidden
+                className="inline-flex h-8 w-8 items-center justify-center rounded-field bg-ink-800 text-xs font-bold text-brand-bright ring-1 ring-ink-700"
+              >
+                CR
+              </span>
+              {brandConfig.siteName}
+            </p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
+              An independent information platform tracking refund, compensation and claim
+              opportunities from official Indian sources.
+            </p>
+          </div>
+
           {footerColumns.map((col) => (
-            <div key={col.title}>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-muted">
+            <nav key={col.title} aria-label={`Footer — ${col.title}`}>
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {col.title}
               </h3>
               <ul className="space-y-2.5">
@@ -65,38 +85,48 @@ export function Footer() {
                   <li key={link.href + link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                      className="text-sm text-slate-300 transition-colors duration-fast hover:text-brand-bright"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 
-        {/* Footer bottom */}
-        <div className="mt-12 border-t border-border pt-8">
-          <p className="text-sm leading-relaxed text-text-muted">
-            ClaimRadar India is an independent information platform. It is not affiliated with the
-            Government of India, any court, regulator or listed company unless expressly stated.
+        {/* Independence disclaimer */}
+        <div className="mt-12 rounded-card border border-ink-700 bg-ink-900 p-5">
+          <p className="text-sm leading-relaxed text-slate-300">
+            <strong className="font-semibold text-white">Independent platform.</strong>{' '}
+            {brandConfig.siteName} is not affiliated with the Government of India, any court,
+            tribunal, regulator or company. We publish information from official sources and do not
+            file claims on anyone&apos;s behalf. A listing never guarantees eligibility or
+            compensation — always verify with the linked official source before acting.
           </p>
-          <div className="mt-6 flex flex-col gap-4 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <a
-                href="mailto:support@claimradar.example"
-                className="transition-colors hover:text-text-secondary"
-              >
-                support@claimradar.example
-              </a>
-              <Link href="/sitemap.xml" className="transition-colors hover:text-text-secondary">
-                Sitemap
-              </Link>
-              <span>Made for consumers in India</span>
-            </div>
-            <p>© {year} ClaimRadar India. All rights reserved.</p>
+        </div>
+
+        {/* Bottom row */}
+        <div className="mt-8 flex flex-col gap-4 border-t border-ink-800 pt-8 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a
+              href={`mailto:${brandConfig.supportEmail}`}
+              className="transition-colors duration-fast hover:text-slate-200"
+            >
+              {brandConfig.supportEmail}
+            </a>
+            <Link
+              href="/sitemap.xml"
+              className="transition-colors duration-fast hover:text-slate-200"
+            >
+              Sitemap
+            </Link>
+            <span>Made for consumers in India</span>
           </div>
+          <p>
+            © {year} {brandConfig.siteName}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

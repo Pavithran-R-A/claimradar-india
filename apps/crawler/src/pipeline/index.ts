@@ -5,6 +5,7 @@
  */
 
 import { randomUUID } from 'node:crypto';
+import { writeFileSync } from 'node:fs';
 import { loadCrawlerEnv } from '../env.js';
 import { getAdapter } from '../adapters/registry.js';
 import type { CrawlContext } from '../adapters/types.js';
@@ -31,6 +32,8 @@ import {
   type CrawlSummary,
 } from '../observability/summary.js';
 import { initSentry, captureError } from '../observability/sentry.js';
+import { createAlertSink } from '../observability/alerts.js';
+import { classifyError } from '../observability/failure-categories.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -96,6 +99,7 @@ interface SourceStats {
   unchanged: number;
   duplicates: number;
   candidates: number;
+  errors: number;
 }
 
 async function processSource(params: {
@@ -108,15 +112,18 @@ async function processSource(params: {
   options: PipelineOptions;
   aiExtractor: AIExtractor | null;
   crawlRunSourceId: string | null;
+  alertSink: ReturnType<typeof createAlertSink>;
 }): Promise<void> {
   const { source, db, runId, logger, summary, env, options, aiExtractor, crawlRunSourceId } =
     params;
+  const alertSink = params.alertSink;
   const stats: SourceStats = {
     discovered: 0,
     fetched: 0,
     unchanged: 0,
     duplicates: 0,
     candidates: 0,
+    errors: 0,
   };
 
   try {
@@ -487,6 +494,7 @@ async function processSource(params: {
         });
       } catch (docError) {
         summary.errorCount++;
+        stats.errors++;
         logger.error('document', `Document processing failed: ${doc.url}`, {
           sourceId: source.id,
           error: docError instanceof Error ? docError.message : 'unknown',
@@ -511,6 +519,12 @@ async function processSource(params: {
       });
     }
     summary.sourcesSucceeded++;
+    summary.perSource.push({
+      sourceId: source.id,
+      sourceName: source.name,
+      status: 'succeeded',
+      ...stats,
+    });
     logger.info('source', `Source completed: ${source.name}`, {
       sourceId: source.id,
       ...stats,
@@ -518,9 +532,27 @@ async function processSource(params: {
   } catch (sourceError) {
     summary.sourcesFailed++;
     summary.errorCount++;
+    stats.errors++;
+    const errorMessage = sourceError instanceof Error ? sourceError.message : 'unknown';
+    const category = classifyError(errorMessage);
+    summary.perSource.push({
+      sourceId: source.id,
+      sourceName: source.name,
+      status: 'failed',
+      ...stats,
+    });
     logger.error('source', `Source failed: ${source.name}`, {
       sourceId: source.id,
-      error: sourceError instanceof Error ? sourceError.message : 'unknown',
+      error: errorMessage,
+      errorCode: category,
+    });
+    alertSink.emit({
+      alertType: 'crawl-source-failure',
+      severity: 'warning',
+      message: `Source ${source.name} failed during crawl`,
+      category,
+      sourceId: source.id,
+      runId,
     });
     if (crawlRunSourceId && !options.dryRun) {
       await db.updateCrawlRunSource(crawlRunSourceId, {
@@ -551,11 +583,36 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   const runId = randomUUID();
   const logger = createLogger(runId);
   const summary = createEmptySummary(runId);
+  const alertSink = createAlertSink({
+    sink: env.ALERT_SINK,
+    dedupWindowMinutes: env.ALERT_DEDUP_WINDOW_MINUTES,
+  });
 
   // Sentry (optional)
   await initSentry(env.SENTRY_DSN);
 
-  logger.info('pipeline', 'Pipeline started', { dryRun: options.dryRun, skipAI: options.skipAI });
+  // Policy guard audit — staging must never auto-verify, bill, or notify customers.
+  const guardViolations: string[] = [];
+  if (env.AUTO_VERIFY_CLAIMABLES) guardViolations.push('AUTO_VERIFY_CLAIMABLES=true');
+  if (env.ENABLE_BILLING) guardViolations.push('ENABLE_BILLING=true');
+  if (env.NOTIFY_CUSTOMERS_ENABLED) guardViolations.push('NOTIFY_CUSTOMERS_ENABLED=true');
+  logger.info('pipeline', 'Pipeline started', {
+    dryRun: options.dryRun,
+    skipAI: options.skipAI,
+    guards: {
+      AUTO_VERIFY_CLAIMABLES: env.AUTO_VERIFY_CLAIMABLES,
+      ENABLE_BILLING: env.ENABLE_BILLING,
+      NOTIFY_CUSTOMERS_ENABLED: env.NOTIFY_CUSTOMERS_ENABLED,
+    },
+  });
+  if (guardViolations.length > 0) {
+    alertSink.emit({
+      alertType: 'policy-guard-violation',
+      severity: 'critical',
+      message: `Policy guard violation: ${guardViolations.join(', ')}`,
+      runId,
+    });
+  }
 
   // Database / Storage Adapter
   const db: IDatabaseWriter =
@@ -568,7 +625,18 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
       crawlRunId = await db.createCrawlRun('running');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Database error creating crawl_run';
-      logger.error('pipeline', msg);
+      logger.error('pipeline', msg, { errorCode: 'DATABASE_ERROR' });
+      alertSink.emit({
+        alertType: 'database-failure',
+        severity: 'critical',
+        message: 'Failed to create crawl_runs record — database unavailable',
+        category: 'DATABASE_ERROR',
+        runId,
+      });
+      captureError(err instanceof Error ? err : new Error(msg), {
+        stage: 'pipeline',
+        operation: 'createCrawlRun',
+      });
       summary.errorCount++;
       return summary;
     }
@@ -628,7 +696,18 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
       }));
     } else {
       const msg = err instanceof Error ? err.message : 'Failed to fetch sources from database';
-      logger.error('pipeline', msg);
+      logger.error('pipeline', msg, { errorCode: 'DATABASE_ERROR' });
+      alertSink.emit({
+        alertType: 'database-failure',
+        severity: 'critical',
+        message: 'Failed to fetch enabled sources — database unavailable',
+        category: 'DATABASE_ERROR',
+        runId,
+      });
+      captureError(err instanceof Error ? err : new Error(msg), {
+        stage: 'pipeline',
+        operation: 'getEnabledSources',
+      });
       summary.errorCount++;
       return summary;
     }
@@ -658,6 +737,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
       options,
       aiExtractor,
       crawlRunSourceId,
+      alertSink,
     });
   });
 
@@ -681,6 +761,38 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   logger.info('pipeline', 'Pipeline completed', { durationMs: summary.durationMs });
   console.log(formatSummaryText(summary));
   console.log(formatSummaryJson(summary));
+
+  // Persist machine-readable summary for CI artifacts / job summaries.
+  if (env.CRAWLER_SUMMARY_FILE !== undefined && env.CRAWLER_SUMMARY_FILE !== '') {
+    try {
+      writeFileSync(env.CRAWLER_SUMMARY_FILE, formatSummaryJson(summary), 'utf-8');
+      logger.info('pipeline', `Summary written to ${env.CRAWLER_SUMMARY_FILE}`);
+    } catch (err) {
+      logger.warn('pipeline', `Failed to write summary file: ${env.CRAWLER_SUMMARY_FILE}`, {
+        error: err instanceof Error ? err.message : 'unknown',
+      });
+    }
+  }
+
+  // Alert on degraded runs (deduplicated within the alert window).
+  if (summary.sourcesFailed > 0) {
+    alertSink.emit({
+      alertType: 'crawl-completed-with-failures',
+      severity: summary.sourcesSucceeded === 0 ? 'critical' : 'warning',
+      message: `Crawl finished with ${summary.sourcesFailed}/${summary.sourcesAttempted} failed sources`,
+      runId,
+      context: { errorCount: summary.errorCount, aiCallsFailed: summary.aiCallsFailed },
+    });
+  }
+  if (summary.aiCallsFailed > 0 && summary.sourcesFailed === 0) {
+    alertSink.emit({
+      alertType: 'ai-provider-degraded',
+      severity: 'warning',
+      message: `Crawl finished with ${summary.aiCallsFailed} failed AI call(s)`,
+      category: 'AI_PROVIDER_ERROR',
+      runId,
+    });
+  }
 
   return summary;
 }

@@ -195,6 +195,8 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
                 action={approvePublication.bind(null, claimable.id)}
                 label="Approve publication"
                 pendingLabel="Publishing…"
+                confirmLabel="Publish"
+                confirmMessage={`Publishing makes "${claimable.public_title}" visible to everyone on the public ClaimRadar website and in search engines. This is recorded in the audit log and as a publication event.`}
               />
             )}
             {claimable.publication_status !== 'archived' && (
@@ -205,6 +207,12 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
                 }
                 pendingLabel="Archiving…"
                 variant="outline"
+                confirmLabel="Archive"
+                confirmMessage={
+                  claimable.publication_status === 'published'
+                    ? `Archiving removes "${claimable.public_title}" from the public website immediately. Users watching it will no longer see it, and the unpublish is recorded in the audit log.`
+                    : 'Archiving marks this claimable as withdrawn from any publication pipeline. This is recorded in the audit log.'
+                }
               />
             )}
           </div>

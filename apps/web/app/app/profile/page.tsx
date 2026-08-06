@@ -128,15 +128,12 @@ export default async function ProfilePage() {
             </dl>
           )}
           <p className="mt-5 border-t border-border pt-4 text-xs text-text-muted">
-            Update these answers any time by redoing setup — your matches are recomputed when you
-            refresh them.{' '}
-            <Link href="/onboarding" className="text-trust-primary hover:underline">
-              Update answers
-            </Link>{' '}
-            ·{' '}
+            These answers were captured during account setup and drive your deterministic matches.
+            To correct them, use the correction request in the{' '}
             <Link href="/app/privacy" className="text-trust-primary hover:underline">
               Privacy center
             </Link>
+            , or withdraw consent there to stop matching entirely.
           </p>
         </Card>
       </div>

@@ -45,9 +45,16 @@ async function main() {
       break;
     }
     case 'health': {
-      // Source health checks
+      // Source health checks with failure categories, persisted health events,
+      // and credential-free structured alerts. Exits 1 when any source fails.
       console.log('Running source health checks...');
       const env = loadCrawlerEnv();
+      const { createAlertSink } = await import('./observability/alerts.js');
+      const { classifyError } = await import('./observability/failure-categories.js');
+      const alertSink = createAlertSink({
+        sink: env.ALERT_SINK,
+        dedupWindowMinutes: env.ALERT_DEDUP_WINDOW_MINUTES,
+      });
       const supabase = createAdminClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: rawSources } = await (supabase as any)
@@ -61,6 +68,21 @@ async function main() {
       const sources = rawSources as Source[];
 
       const { getAdapter } = await import('./adapters/registry.js');
+      const { DatabaseWriter } = await import('./pipeline/db-writer.js');
+      const healthResults: Array<{
+        sourceId: string;
+        ok: boolean;
+        latencyMs: number;
+        category?: string;
+      }> = [];
+      let failures = 0;
+      let writer: InstanceType<typeof DatabaseWriter> | null = null;
+      try {
+        writer = new DatabaseWriter();
+      } catch {
+        writer = null; // no credentials in this environment — events not persisted
+      }
+
       for (const source of sources) {
         try {
           const feedUrl =
@@ -85,15 +107,83 @@ async function main() {
             timeoutMs: env.CRAWLER_REQUEST_TIMEOUT_MS,
           };
           const health = await adapter.healthCheck(context);
+          const category = health.ok
+            ? undefined
+            : classifyError(health.error ?? null, health.statusCode);
           console.log(
-            `${source.name}: ${health.ok ? 'OK' : 'FAIL'} (${health.latencyMs}ms)${health.error ? ' - ' + health.error : ''}`,
+            `${source.name}: ${health.ok ? 'OK' : 'FAIL'} (${health.latencyMs}ms)` +
+              `${health.ok ? '' : ` [${category ?? 'UNKNOWN'}]`}` +
+              `${health.error ? ' - ' + health.error : ''}`,
           );
+          healthResults.push({
+            sourceId: source.id,
+            ok: health.ok,
+            latencyMs: health.latencyMs,
+            ...(category !== undefined ? { category } : {}),
+          });
+          if (!health.ok) {
+            failures++;
+            alertSink.emit({
+              alertType: 'source-health-failure',
+              severity: 'warning',
+              message: `Source health check failed for ${source.name}`,
+              ...(category !== undefined ? { category } : {}),
+              sourceId: source.id,
+              context: { latencyMs: health.latencyMs },
+            });
+          }
+          if (writer) {
+            try {
+              await writer.insertSourceHealthEvent({
+                source_id: source.id,
+                check_type: 'workflow-health',
+                status: health.ok ? 'ok' : 'failed',
+                details: {
+                  latencyMs: health.latencyMs,
+                  ...(category !== undefined ? { category } : {}),
+                  ...(health.error !== undefined ? { error: health.error } : {}),
+                },
+              });
+            } catch (persistError) {
+              console.error(
+                `Warning: could not persist source_health_event for ${source.name}: ` +
+                  (persistError instanceof Error ? persistError.message : 'unknown'),
+              );
+            }
+          }
         } catch (error) {
-          console.log(
-            `${source.name}: ERROR - ${error instanceof Error ? error.message : 'unknown'}`,
-          );
+          const message = error instanceof Error ? error.message : 'unknown';
+          const category = classifyError(message);
+          console.log(`${source.name}: ERROR [${category}] - ${message}`);
+          failures++;
+          healthResults.push({ sourceId: source.id, ok: false, latencyMs: 0, category });
+          alertSink.emit({
+            alertType: 'source-health-failure',
+            severity: 'warning',
+            message: `Source health check errored for ${source.name}`,
+            category,
+            sourceId: source.id,
+          });
         }
       }
+
+      const byCategory: Record<string, number> = {};
+      for (const r of healthResults) {
+        if (!r.ok && r.category) byCategory[r.category] = (byCategory[r.category] ?? 0) + 1;
+      }
+      // Sanitized machine-readable summary: counts and categories only, no URLs.
+      console.log(
+        JSON.stringify({
+          type: 'source-health-summary',
+          checkedAt: new Date().toISOString(),
+          sourcesChecked: healthResults.length,
+          ok: healthResults.length - failures,
+          failed: failures,
+          byCategory,
+          suppressedDuplicateAlerts: alertSink.suppressedCount,
+        }),
+      );
+      process.exit(failures > 0 ? 1 : 0);
       break;
     }
     case 'reprocess': {
@@ -364,6 +454,80 @@ async function main() {
       );
       break;
     }
+    case 'crawl-status': {
+      // Missed-run detection: verifies a successful crawl run exists within the
+      // expected window. Exits 1 when the last success is stale or missing.
+      const { evaluateMissedRun } = await import('./observability/missed-run.js');
+      const { createAlertSink } = await import('./observability/alerts.js');
+      const csEnv = loadCrawlerEnv();
+      const maxIdx = args.indexOf('--max-age-hours');
+      const maxArg = args.find((a) => a.startsWith('--max-age-hours='));
+      const maxAgeHours = maxArg
+        ? Number(maxArg.split('=')[1])
+        : maxIdx >= 0
+          ? Number(args[maxIdx + 1])
+          : 26;
+      if (!Number.isFinite(maxAgeHours) || maxAgeHours <= 0) {
+        console.error('Usage: crawler crawl-status [--max-age-hours <number>]');
+        process.exit(1);
+      }
+
+      const csSupabase: AnyClient = createAdminClient();
+      const { data: lastRun, error: lastRunError } = await csSupabase
+        .from('crawl_runs')
+        .select('started_at, status')
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (lastRunError) {
+        console.error(`Failed to query crawl_runs: ${lastRunError.message as string}`);
+        process.exit(1);
+      }
+      const { data: lastSuccessRow } = await csSupabase
+        .from('crawl_runs')
+        .select('started_at')
+        .in('status', ['completed', 'completed_with_errors'])
+        .order('started_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const evaluation = evaluateMissedRun({
+        lastRunAt: (lastRun?.started_at as string | undefined) ?? null,
+        lastRunStatus: (lastRun?.status as string | undefined) ?? null,
+        lastSuccessAt: (lastSuccessRow?.started_at as string | undefined) ?? null,
+        maxAgeHours,
+      });
+      console.log(
+        JSON.stringify(
+          {
+            type: 'crawl-status',
+            verdict: evaluation.verdict,
+            alert: evaluation.alert,
+            lastRunAt: (lastRun?.started_at as string | undefined) ?? null,
+            lastRunStatus: (lastRun?.status as string | undefined) ?? null,
+            lastSuccessAt: (lastSuccessRow?.started_at as string | undefined) ?? null,
+            ageHours: Number.isFinite(evaluation.ageHours) ? evaluation.ageHours : null,
+            maxAgeHours,
+            reason: evaluation.reason,
+          },
+          null,
+          2,
+        ),
+      );
+      if (evaluation.alert) {
+        const alertSink = createAlertSink({
+          sink: csEnv.ALERT_SINK,
+          dedupWindowMinutes: csEnv.ALERT_DEDUP_WINDOW_MINUTES,
+        });
+        alertSink.emit({
+          alertType: 'missed-crawl-run',
+          severity: 'critical',
+          message: evaluation.reason,
+        });
+        process.exit(1);
+      }
+      break;
+    }
     case 'inventory-report': {
       const { generateInventoryReport, formatInventoryReport } =
         await import('./observability/inventory-report.js');
@@ -464,6 +628,7 @@ async function main() {
       console.log('  daily              Run full crawl pipeline');
       console.log('  source --source=X  Run crawl for specific source');
       console.log('  health             Run source health checks');
+      console.log('  crawl-status       Missed-run detection (last successful crawl age)');
       console.log('  reprocess --document=X  Reprocess a specific document');
       console.log('  retry-queued       Retry deferred AI extraction candidates');
       console.log('  inventory-report   Print 30-day inventory validation metrics report');

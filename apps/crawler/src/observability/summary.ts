@@ -2,6 +2,19 @@
  * Crawl run summary generator — produces human-readable and JSON output.
  */
 
+/** Per-source counters. Every attempted source gets exactly one entry, even on failure. */
+export interface SourceSummary {
+  sourceId: string;
+  sourceName: string;
+  status: 'succeeded' | 'failed';
+  discovered: number;
+  fetched: number;
+  unchanged: number;
+  duplicates: number;
+  candidates: number;
+  errors: number;
+}
+
 export interface CrawlSummary {
   runId: string;
   startedAt: Date;
@@ -21,6 +34,8 @@ export interface CrawlSummary {
   recordsQueued: number;
   recordsRejected: number;
   errorCount: number;
+  /** One entry per attempted source, in attempt order — includes failed sources. */
+  perSource: SourceSummary[];
 }
 
 export function createEmptySummary(runId: string): CrawlSummary {
@@ -43,6 +58,7 @@ export function createEmptySummary(runId: string): CrawlSummary {
     recordsQueued: 0,
     recordsRejected: 0,
     errorCount: 0,
+    perSource: [],
   };
 }
 
@@ -58,6 +74,13 @@ export function formatSummaryText(s: CrawlSummary): string {
     `AI calls:      ${s.aiCallsUsed} used, ${s.aiCallsFailed} failed`,
     `Publications:  ${s.recordsPublished} published, ${s.recordsQueued} queued, ${s.recordsRejected} rejected`,
     `Errors:        ${s.errorCount}`,
+    'Per-source:    (every attempted source is listed, including failures)',
+    ...s.perSource.map(
+      (p) =>
+        `  ${p.sourceId.padEnd(12)} ${p.status === 'succeeded' ? 'OK  ' : 'FAIL'} ` +
+        `discovered=${p.discovered} fetched=${p.fetched} unchanged=${p.unchanged} ` +
+        `duplicates=${p.duplicates} candidates=${p.candidates} errors=${p.errors}`,
+    ),
   ];
   return lines.join('\n');
 }

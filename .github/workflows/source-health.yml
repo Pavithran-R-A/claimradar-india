@@ -4,36 +4,111 @@ on:
   schedule:
     - cron: '43 2 * * 1' # Monday 02:43 UTC (weekly)
   workflow_dispatch:
+    inputs:
+      max_age_hours:
+        description: 'Max acceptable age (hours) of the last successful crawl run'
+        required: false
+        default: '26'
+        type: string
+
+# Weekly health checks must not overlap themselves.
+concurrency:
+  group: source-health
+  cancel-in-progress: false
+
+# Least privilege: read-only repository access.
+permissions:
+  contents: read
 
 jobs:
   health:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    # Resolves staging-scoped secrets only. This workflow must never be wired
+    # to production credentials, and staging never notifies real customers.
+    environment: staging
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Node version is pinned by the committed .node-version file (24).
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version-file: '.node-version'
 
+      # pnpm version is pinned exactly via the "packageManager" field in the
+      # root package.json; pnpm/action-setup reads it automatically.
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
-          version: 9
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Source availability + feed validity. Failures are categorized
+      # (TLS_ERROR, TIMEOUT, HTTP_4XX, ...) and persisted to
+      # source_health_events. Exits non-zero when any source fails, which is
+      # the alerting signal (GitHub notifies watchers of failed schedules).
+      # Secrets are injected ONLY as step-scoped env vars.
       - name: Run source health checks
+        id: healthcheck
         run: pnpm crawler:health
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CRAWLER_USER_AGENT: 'ClaimRadar India Bot/1.0 (+https://claimradar.in)'
           LIVE_ADAPTERS_ENABLED: 'true'
+          AUTO_VERIFY_CLAIMABLES: 'false'
+          ENABLE_BILLING: 'false'
+          NOTIFY_CUSTOMERS_ENABLED: 'false'
 
-    # Note: This workflow does NOT make AI calls unless specifically enabled.
-    # It only tests source availability and feed validity.
+      # Missed-run detection: fails this workflow when no successful crawl
+      # run exists inside the expected window (last-success timestamp check
+      # against crawl_runs). Runs even if the health check step failed.
+      # Dispatch input is passed via env to avoid script-injection.
+      - name: Missed-run detection (last successful crawl age)
+        if: always()
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MAX_AGE_HOURS: ${{ inputs.max_age_hours || '26' }}
+        run: |
+          pnpm crawler:crawl-status -- --max-age-hours "$MAX_AGE_HOURS"
+
+      - name: Publish sanitized job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Source Health Check'
+            echo ''
+            if [ "${{ steps.healthcheck.outcome }}" = "success" ]; then
+              echo 'All enabled sources passed the health check.'
+            else
+              echo 'One or more sources FAILED the health check — see step logs for categorized failures (no credentials or token-bearing URLs are printed).'
+            fi
+            echo ''
+            echo 'Health check step outcome: `${{ steps.healthcheck.outcome }}`. The crawl-status step above carries the authoritative missed-run verdict.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+    # Notes:
+    # - This workflow does NOT make AI calls; it only tests source
+    #   availability and feed validity.
+    # - Notification suppression: this workflow never sends customer-facing
+    #   notifications; alerts are structured log lines only (ALERT_SINK=log),
+    #   plus GitHub's built-in failed-workflow notifications to watchers.

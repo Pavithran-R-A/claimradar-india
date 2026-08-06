@@ -18,6 +18,14 @@ export const crawlerEnvSchema = z.object({
   CRAWLER_CONCURRENCY: z.coerce.number().default(3),
   CRAWLER_REQUEST_TIMEOUT_MS: z.coerce.number().default(30000),
   AUTO_VERIFY_CLAIMABLES: z.coerce.boolean().default(false),
+  ENABLE_BILLING: z.coerce.boolean().default(false),
+  /** Staging must never notify real customers. */
+  NOTIFY_CUSTOMERS_ENABLED: z.coerce.boolean().default(false),
+  /** Optional file path to write the machine-readable crawl summary JSON. */
+  CRAWLER_SUMMARY_FILE: z.string().optional(),
+  /** Alert sink selection: 'log' (default, structured stderr) or 'none'. */
+  ALERT_SINK: z.enum(['log', 'none']).default('log'),
+  ALERT_DEDUP_WINDOW_MINUTES: z.coerce.number().default(60),
   SENTRY_DSN: z.string().optional(),
 });
 

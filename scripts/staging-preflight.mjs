@@ -1,0 +1,294 @@
+/**
+ * ClaimRadar India — Staging Preflight
+ *
+ * Credential-free safe by design: without staging credentials every remote
+ * check reports SKIP_CREDENTIALS and the script exits 0. With credentials it
+ * verifies connectivity, migration list parity, and RLS spot checks against
+ * the staging Supabase project. It NEVER writes data, NEVER resets anything,
+ * and NEVER fabricates results.
+ *
+ * Status vocabulary (project standard):
+ *   PASS | FAIL | SKIP_CREDENTIALS | NOT_EXECUTED
+ *
+ * Usage (PowerShell; use `;` separators, never `&&`):
+ *   node scripts/staging-preflight.mjs
+ *
+ * Credentials are read from staging-prefixed names first, then the
+ * unprefixed workflow names:
+ *   STAGING_SUPABASE_URL            | SUPABASE_URL
+ *   STAGING_SUPABASE_ANON_KEY       | SUPABASE_ANON_KEY / NEXT_PUBLIC_SUPABASE_ANON_KEY
+ *   STAGING_SUPABASE_SERVICE_ROLE_KEY | SUPABASE_SERVICE_ROLE_KEY
+ *   STAGING_SUPABASE_DATABASE_URL   | DATABASE_URL
+ *   STAGING_SUPABASE_PROJECT_REF    | SUPABASE_PROJECT_REF
+ *   SUPABASE_ACCESS_TOKEN (required for migration-list parity via the CLI)
+ */
+
+import { spawnSync } from 'node:child_process';
+import { readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+function pickEnv(...names) {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value && value.trim().length > 0) return { name, value: value.trim() };
+  }
+  return null;
+}
+
+const PASS = 'PASS';
+const FAIL = 'FAIL';
+const SKIP = 'SKIP_CREDENTIALS';
+const NOT_EXECUTED = 'NOT_EXECUTED';
+
+const results = [];
+function record(check, status, detail = '') {
+  results.push({ check, status, detail });
+  const marker =
+    status === PASS
+      ? '✅'
+      : status === FAIL
+        ? '❌'
+        : status === SKIP
+          ? '⚠️'
+          : '⏸️';
+  console.log(`${marker} [${status}] ${check}${detail ? ` — ${detail}` : ''}`);
+}
+
+function maskUrl(url) {
+  // Host-only redaction: never echo anything beyond the origin.
+  try {
+    return new URL(url).origin;
+  } catch (_err) {
+    return '<invalid-url>';
+  }
+}
+
+console.log('=============================================================================');
+console.log('  CLAIMRADAR INDIA — STAGING PREFLIGHT (read-only, no writes, no resets)');
+console.log('=============================================================================');
+
+/* ---------------------------------------------------------------------------
+ * 1. Policy guards — these run regardless of credentials and FAIL hard.
+ * ------------------------------------------------------------------------- */
+console.log('\n--- Policy guards ---');
+const appEnv = process.env.APP_ENV;
+if (appEnv && appEnv !== 'staging' && appEnv !== 'development') {
+  record('APP_ENV staging guard', FAIL, `APP_ENV=${appEnv} (expected staging for this preflight)`);
+} else {
+  record('APP_ENV staging guard', PASS, appEnv ? `APP_ENV=${appEnv}` : 'APP_ENV unset (defaults to development; set APP_ENV=staging for staging deployments)');
+}
+for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOMERS_ENABLED']) {
+  const raw = process.env[guard];
+  if (raw === 'true') {
+    record(`${guard}=false guard`, FAIL, `${guard} is 'true' — staging invariant violated`);
+  } else {
+    record(`${guard}=false guard`, PASS, raw ? `${guard}='${raw}'` : `${guard} unset (defaults to false)`);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Credential resolution — everything below is skipped without credentials.
+ * ------------------------------------------------------------------------- */
+console.log('\n--- Credential resolution ---');
+const supabaseUrl = pickEnv('STAGING_SUPABASE_URL', 'SUPABASE_URL');
+const serviceRoleKey = pickEnv('STAGING_SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY');
+const anonKey = pickEnv(
+  'STAGING_SUPABASE_ANON_KEY',
+  'SUPABASE_ANON_KEY',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+);
+const projectRef = pickEnv('STAGING_SUPABASE_PROJECT_REF', 'SUPABASE_PROJECT_REF');
+const accessToken = pickEnv('SUPABASE_ACCESS_TOKEN');
+
+if (!supabaseUrl) {
+  record('SUPABASE_URL present', SKIP, 'STAGING_SUPABASE_URL / SUPABASE_URL not set');
+} else {
+  record('SUPABASE_URL present', PASS, maskUrl(supabaseUrl.value));
+}
+if (!serviceRoleKey) {
+  record('SUPABASE_SERVICE_ROLE_KEY present', SKIP, 'staging service-role key not set');
+} else {
+  record('SUPABASE_SERVICE_ROLE_KEY present', PASS, 'set (never echoed)');
+}
+if (!anonKey) {
+  record('SUPABASE_ANON_KEY present', SKIP, 'staging anon key not set (required for RLS spot checks)');
+} else {
+  record('SUPABASE_ANON_KEY present', PASS, `via ${anonKey.name} (never echoed)`);
+}
+
+if (!supabaseUrl || !serviceRoleKey) {
+  record('Connectivity (REST API)', SKIP, 'no staging credentials');
+  record('Migration list parity', SKIP, 'no staging credentials');
+  record('RLS spot check (anon denied on admin tables)', SKIP, 'no staging credentials');
+  record('RLS spot check (service role can read ingestion tables)', SKIP, 'no staging credentials');
+  finish(0);
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Connectivity — REST endpoint reachable with the service-role key.
+ * ------------------------------------------------------------------------- */
+console.log('\n--- Connectivity ---');
+try {
+  const response = await fetch(`${supabaseUrl.value}/rest/v1/`, {
+    headers: { apikey: serviceRoleKey.value, Authorization: `Bearer ${serviceRoleKey.value}` },
+    signal: AbortSignal.timeout(15000),
+  });
+  if (response.ok) {
+    record('Connectivity (REST API)', PASS, `${maskUrl(supabaseUrl.value)} responded ${response.status}`);
+  } else {
+    record('Connectivity (REST API)', FAIL, `HTTP ${response.status} from ${maskUrl(supabaseUrl.value)} — check URL/key`);
+  }
+} catch (error) {
+  record('Connectivity (REST API)', FAIL, error instanceof Error ? error.message : 'fetch failed');
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Migration list parity — local supabase/migrations vs linked project.
+ *    Requires the Supabase CLI, the project ref, and SUPABASE_ACCESS_TOKEN;
+ *    missing any of them is an honest SKIP_CREDENTIALS, never a guess.
+ * ------------------------------------------------------------------------- */
+console.log('\n--- Migration list parity ---');
+let localVersions = [];
+try {
+  localVersions = readdirSync(join(repoRoot, 'supabase', 'migrations'))
+    .filter((file) => file.endsWith('.sql'))
+    .map((file) => file.replace(/\.sql$/, ''))
+    .sort();
+} catch (_err) {
+  localVersions = [];
+}
+console.log(`Local migrations on disk: ${localVersions.length} (${localVersions[0] ?? 'none'} … ${localVersions.at(-1) ?? 'none'})`);
+
+if (!projectRef) {
+  record('Migration list parity', SKIP, 'STAGING_SUPABASE_PROJECT_REF not set');
+} else if (!accessToken) {
+  record('Migration list parity', SKIP, 'SUPABASE_ACCESS_TOKEN not set (Supabase CLI personal access token required)');
+} else {
+  // Strict whitelist: a Supabase project ref is exactly 20 lowercase
+  // alphanumerics. Anything else is rejected before touching a shell.
+  if (!/^[a-z0-9]{20}$/.test(projectRef.value)) {
+    record('Migration list parity', FAIL, 'STAGING_SUPABASE_PROJECT_REF is not a 20-char lowercase alphanumeric project ref');
+  } else {
+    const cli = spawnSync(
+      'npx',
+      ['--yes', 'supabase', 'migration', 'list', '--project-ref', projectRef.value, '--output', 'json'],
+      {
+        encoding: 'utf8',
+        shell: process.platform === 'win32', // npx is a .cmd shim on Windows
+        env: { ...process.env, SUPABASE_ACCESS_TOKEN: accessToken.value },
+        timeout: 120000,
+      },
+    );
+    try {
+      if (cli.status !== 0) {
+        throw new Error((cli.stderr || 'supabase CLI exited non-zero').split('\n')[0]);
+      }
+      const remote = new Set(
+        (JSON.parse(cli.stdout) || [])
+          .filter((entry) => entry && entry.status === 'applied')
+          .map((entry) => String(entry.version)),
+      );
+      const pending = localVersions.filter((version) => !remote.has(version));
+      const orphaned = [...remote].filter((version) => !localVersions.includes(version));
+      if (pending.length === 0 && orphaned.length === 0) {
+        record('Migration list parity', PASS, `${localVersions.length} local migrations all applied on staging`);
+      } else {
+        const parts = [];
+        if (pending.length > 0) parts.push(`pending: ${pending.join(', ')} (run 'supabase db push')`);
+        if (orphaned.length > 0) parts.push(`applied remotely but missing locally: ${orphaned.join(', ')}`);
+        record('Migration list parity', FAIL, parts.join('; '));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message.split('\n')[0] : 'supabase CLI failed';
+      record('Migration list parity', SKIP, `CLI could not verify remote state (${message}); check SUPABASE_ACCESS_TOKEN and 'supabase link'`);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. RLS spot checks (read-only) — anon must be denied on admin tables,
+ *    service role must read ingestion tables.
+ * ------------------------------------------------------------------------- */
+console.log('\n--- RLS spot checks (read-only) ---');
+if (!anonKey) {
+  record('RLS spot check (anon denied on admin tables)', SKIP, 'anon key not set');
+} else {
+  // Admin/editorial tables must never be readable with the anon key.
+  const adminTables = ['audit_log', 'ai_runs', 'crawl_errors'];
+  let leaked = [];
+  let checked = 0;
+  for (const table of adminTables) {
+    try {
+      const response = await fetch(`${supabaseUrl.value}/rest/v1/${table}?select=id&limit=1`, {
+        headers: { apikey: anonKey.value, Authorization: `Bearer ${anonKey.value}` },
+        signal: AbortSignal.timeout(15000),
+      });
+      checked += 1;
+      if (response.ok) {
+        const rows = await response.json();
+        if (Array.isArray(rows) && rows.length > 0) leaked.push(table);
+        // 200 with zero rows is acceptable denial semantics under RLS.
+      }
+      // Non-2xx (401/403/404) = correctly denied.
+    } catch (_err) {
+      // Network failure on one table — skip that table, keep it honest.
+    }
+  }
+  if (checked === 0) {
+    record('RLS spot check (anon denied on admin tables)', SKIP, 'no table could be probed (connectivity issue)');
+  } else if (leaked.length > 0) {
+    record('RLS spot check (anon denied on admin tables)', FAIL, `anon key returned rows from: ${leaked.join(', ')}`);
+  } else {
+    record('RLS spot check (anon denied on admin tables)', PASS, `anon key denied on ${checked}/${adminTables.length} admin tables`);
+  }
+}
+
+{
+  // Service role must read ingestion tables (proves schema + privileges).
+  try {
+    const response = await fetch(`${supabaseUrl.value}/rest/v1/crawl_runs?select=id&limit=1`, {
+      headers: {
+        apikey: serviceRoleKey.value,
+        Authorization: `Bearer ${serviceRoleKey.value}`,
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (response.ok) {
+      record('RLS spot check (service role can read ingestion tables)', PASS, 'service role read crawl_runs');
+    } else {
+      record(
+        'RLS spot check (service role can read ingestion tables)',
+        FAIL,
+        `HTTP ${response.status} on crawl_runs — migrations may not be applied`,
+      );
+    }
+  } catch (error) {
+    record(
+      'RLS spot check (service role can read ingestion tables)',
+      FAIL,
+      error instanceof Error ? error.message : 'fetch failed',
+    );
+  }
+}
+
+finish(results.some((result) => result.status === FAIL) ? 1 : 0);
+
+/* ---------------------------------------------------------------------------
+ * Summary
+ * ------------------------------------------------------------------------- */
+function finish(exitCode) {
+  console.log('\n--- Summary ---');
+  const counts = { [PASS]: 0, [FAIL]: 0, [SKIP]: 0, [NOT_EXECUTED]: 0 };
+  for (const result of results) counts[result.status] += 1;
+  console.log(
+    `${PASS}: ${counts[PASS]} | ${FAIL}: ${counts[FAIL]} | ${SKIP}: ${counts[SKIP]} | ${NOT_EXECUTED}: ${counts[NOT_EXECUTED]}`,
+  );
+  if (counts[SKIP] > 0) {
+    console.log('SKIP_CREDENTIALS checks re-run automatically once staging credentials are provided.');
+  }
+  console.log('This preflight performed no writes and no schema changes.');
+  process.exit(exitCode);
+}

@@ -2,31 +2,201 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   ClaimRadar design tokens — see docs/design/design-system.md
+   --------------------------------------------------------------------------
+   `:root` carries the dark theme (authenticated app shell, admin).
+   `.theme-light` remaps the same semantic variables for the public site, so
+   token-based components render correctly in both themes.
+   ========================================================================== */
+
 :root {
-  --color-background: #070b14;
-  --color-background-elevated: #0b1120;
-  --color-surface: #101827;
-  --color-surface-strong: #151f32;
-  --color-border: rgba(255, 255, 255, 0.09);
-  --color-text-primary: #f7f8fb;
-  --color-text-secondary: #a7b0c0;
-  --color-text-muted: #778197;
-  --color-trust-primary: #7387ff;
-  --color-trust-primary-hover: #8798ff;
-  --color-success: #28c6a2;
-  --color-deadline: #f4a340;
-  --color-danger: #ff6b72;
-  --color-info: #5db7ff;
-  --color-verified-background: rgba(40, 198, 162, 0.12);
-  --color-deadline-background: rgba(244, 163, 64, 0.12);
+  --c-background: 7 11 20; /* #070B14 */
+  --c-background-elevated: 11 17 32; /* #0B1120 */
+  --c-surface: 16 24 39; /* #101827 */
+  --c-surface-strong: 21 31 50; /* #151F32 */
+  --c-border: rgba(255, 255, 255, 0.09);
+  --c-text-primary: 247 248 251; /* #F7F8FB */
+  --c-text-secondary: 167 176 192; /* #A7B0C0 */
+  --c-text-muted: 119 129 151; /* #778197 */
+  --c-trust-primary: 115 135 255; /* #7387FF */
+  --c-trust-primary-hover: 135 152 255; /* #8798FF */
+  --c-success: 40 198 162; /* #28C6A2 */
+  --c-deadline: 244 163 64; /* #F4A340 */
+  --c-danger: 255 107 114; /* #FF6B72 */
+  --c-info: 93 183 255; /* #5DB7FF */
+  --c-verified-background: rgba(40, 198, 162, 0.12);
+  --c-deadline-background: rgba(244, 163, 64, 0.12);
+}
+
+/* Public site: white content surfaces on off-white, teal actions,
+   saffron reserved for deadlines, red only for errors/expiry. */
+.theme-light {
+  --c-background: 246 247 244; /* off-white paper */
+  --c-background-elevated: 238 240 235;
+  --c-surface: 255 255 255; /* white card */
+  --c-surface-strong: 243 245 240;
+  --c-border: rgba(17, 24, 39, 0.12);
+  --c-text-primary: 17 24 39; /* gray-900 */
+  --c-text-secondary: 55 65 81; /* gray-700 */
+  --c-text-muted: 107 114 128; /* gray-500 */
+  --c-trust-primary: 15 118 110; /* teal-700 — 4.9:1 with white text */
+  --c-trust-primary-hover: 17 94 89; /* teal-800 */
+  --c-success: 4 120 87; /* emerald-700 */
+  --c-deadline: 158 74 8; /* saffron, AA on white */
+  --c-danger: 185 28 28; /* red-700 */
+  --c-info: 29 78 216; /* blue-700 */
+  --c-verified-background: rgba(4, 120, 87, 0.09);
+  --c-deadline-background: rgba(180, 83, 9, 0.1);
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  background-color: rgb(var(--c-background));
+  color: rgb(var(--c-text-primary));
 }
 
+/* Visible keyboard focus everywhere unless a component replaces it. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--c-trust-primary));
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Hero backdrop — restrained animated grid + aurora, CSS only.
+   ========================================================================== */
+
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: #060b14;
+}
+
+.hero-backdrop::before {
+  /* Aurora glow: two soft radial washes, drifted slowly via keyframes. */
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(38rem 22rem at 72% 8%, rgba(45, 212, 191, 0.16), transparent 65%),
+    radial-gradient(30rem 20rem at 18% 30%, rgba(39, 84, 160, 0.22), transparent 65%);
+  animation: aurora 26s ease-in-out infinite alternate;
+}
+
+.hero-backdrop::after {
+  /* Survey grid, faded toward the bottom. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 85%);
+}
+
+/* ==========================================================================
+   Motion utilities
+   --------------------------------------------------------------------------
+   .anim-rise / .anim-fade run on first paint (CSS only, no JS gate) so the
+   LCP text is always painted immediately; animation is decorative.
+   .reveal-* is applied ONLY after client JS opts in, so content is fully
+   visible without JS and under prefers-reduced-motion.
+   ========================================================================== */
+
+.anim-rise {
+  animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.anim-fade {
+  animation: fade 0.45s ease-out both;
+}
+.anim-delay-1 {
+  animation-delay: 90ms;
+}
+.anim-delay-2 {
+  animation-delay: 180ms;
+}
+.anim-delay-3 {
+  animation-delay: 270ms;
+}
+.anim-delay-4 {
+  animation-delay: 360ms;
+}
+
+.reveal-ready {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.reveal-shown {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Nav underline micro-interaction. */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.25rem;
+  height: 2px;
+  border-radius: 1px;
+  background-color: rgb(var(--c-trust-primary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1);
+}
+.nav-link:hover::after,
+.nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   Auth backdrop — quiet grid + single soft trust-tinted wash.
+   Static decoration only (no animation), token-derived colours.
+   ========================================================================== */
+
+.auth-backdrop {
+  background-color: rgb(var(--c-background));
+  background-image:
+    radial-gradient(34rem 20rem at 50% -6rem, rgb(var(--c-trust-primary) / 0.08), transparent 70%),
+    linear-gradient(rgb(var(--c-text-muted) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--c-text-muted) / 0.05) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    44px 44px,
+    44px 44px;
+}
+
+/* ==========================================================================
+   Reduced motion: immediate content, no ambient movement.
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .anim-rise,
+  .anim-fade {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .hero-backdrop::before {
+    animation: none;
+  }
   .animate-shimmer {
     animation: none;
     opacity: 0.7;

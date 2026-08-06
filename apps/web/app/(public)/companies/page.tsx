@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowRight, Building2 } from 'lucide-react';
 import { getPublishedCompanies } from '@/lib/claimables-repository';
 import {
   DataUnavailableNotice,
@@ -9,7 +10,9 @@ import {
 
 export const metadata: Metadata = {
   title: 'Company Directory — ClaimRadar India',
-  description: 'Explore companies associated with official published refund and claim notices.',
+  description:
+    'Explore companies referenced in published refund, compensation and claim records verified from official Indian sources.',
+  alternates: { canonical: '/companies' },
 };
 
 // Directory content comes from the live publication database.
@@ -19,57 +22,85 @@ export default async function CompaniesPage() {
   const outcome = await getPublishedCompanies();
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Company Directory</h1>
-        <p className="text-slate-600 max-w-2xl">
-          Companies referenced in published regulatory refund, disgorgement, or grievance orders.
+    <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
+      <header className="max-w-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+          Company directory
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-text-secondary sm:text-base">
+          Companies referenced in published refund, compensation and claim records. A company
+          appears here only when a verified, published record mentions it.
         </p>
+      </header>
+
+      <div className="mt-8">
+        {!outcome.ok ? (
+          <DataUnavailableNotice message={outcome.error} />
+        ) : (
+          <>
+            {outcome.demo && <DemoDataBanner />}
+
+            {outcome.data.length === 0 ? (
+              <EmptyDirectoryNotice
+                title="No companies listed yet"
+                body="Companies appear here only when a published record references them. There are currently no published records in the directory."
+              />
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-text-muted">
+                  {outcome.data.length} {outcome.data.length === 1 ? 'company' : 'companies'} in the
+                  published directory
+                </p>
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {outcome.data.map((company) => (
+                    <Link
+                      key={company.slug}
+                      href={`/companies/${company.slug}`}
+                      className="group rounded-card border border-border bg-surface p-5 shadow-card transition-[transform,box-shadow] duration-base ease-lift hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          aria-hidden
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-ink-900 text-sm font-bold text-brand-bright"
+                        >
+                          {company.name.substring(0, 2).toUpperCase()}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block truncate text-base font-semibold text-text-primary group-hover:text-trust-primary">
+                            {company.name}
+                          </span>
+                          <span className="text-xs text-text-muted">{company.sector}</span>
+                        </span>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
+                        <span className="text-text-muted">
+                          <span className="font-semibold text-text-secondary">
+                            {company.activeClaimCount}
+                          </span>{' '}
+                          active {company.activeClaimCount === 1 ? 'record' : 'records'}
+                        </span>
+                        <span className="inline-flex items-center gap-1 font-semibold text-trust-primary">
+                          View records
+                          <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
 
-      {!outcome.ok ? (
-        <DataUnavailableNotice message={outcome.error} />
-      ) : (
-        <>
-          {outcome.demo && <DemoDataBanner />}
-
-          {outcome.data.length === 0 ? (
-            <EmptyDirectoryNotice
-              title="No companies listed yet"
-              body="Companies appear here only when a published claimable record references them. There are currently no published records in the directory."
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {outcome.data.map((comp) => (
-                <div
-                  key={comp.slug}
-                  className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm"
-                >
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 mb-3 inline-block">
-                    {comp.sector}
-                  </span>
-                  <h2 className="text-lg font-bold text-slate-900 mb-1">{comp.name}</h2>
-                  <p className="text-xs text-slate-500 mb-4">
-                    Active Claimables:{' '}
-                    <span className="font-semibold text-slate-800">{comp.activeClaimCount}</span>
-                  </p>
-                  <Link
-                    href={`/companies/${comp.slug}`}
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    View Company Profile &rarr;
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-
-      <div className="p-4 bg-slate-50 rounded-xl text-xs text-slate-500">
-        <strong>Neutral Listing Disclosure:</strong> Listing a company on ClaimRadar India indicates
-        only that an official regulatory notice, refund scheme, or disgorgement order references the
-        entity. It implies no judgment regarding current corporate standing.
+      <div className="mt-10 flex items-start gap-3 rounded-card border border-border bg-background-elevated p-4 text-xs leading-relaxed text-text-muted">
+        <Building2 aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" />
+        <p>
+          <strong className="font-semibold text-text-secondary">Neutral listing disclosure:</strong>{' '}
+          listing a company on ClaimRadar India indicates only that an official notice, refund
+          scheme or order references the entity. It implies no judgment about the company&apos;s
+          conduct, liability or current standing.
+        </p>
       </div>
     </div>
   );

@@ -33,6 +33,8 @@ export default tseslint.config(
       'scripts/**',
       'supabase/**',
       'vitest.workspace.ts',
+      // Transient review-diff snapshots kept at the repo root.
+      '.review-*',
     ],
   },
 );

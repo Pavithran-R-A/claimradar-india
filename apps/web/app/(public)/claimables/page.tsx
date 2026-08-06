@@ -1,6 +1,19 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { getPublishedClaimables, getPublishedSectors } from '@/lib/claimables-repository';
+import {
+  applyClaimableFilters,
+  getPublishedClaimables,
+  getPublishedSectors,
+  paginateClaimables,
+  type PublishedClaimable,
+} from '@/lib/claimables-repository';
+import { ClaimableCard } from '@/components/directory/claimable-card';
+import {
+  ActiveFilterChips,
+  FilterFields,
+  type DirectoryParams,
+} from '@/components/directory/filters';
+import { MobileFilterDrawer } from '@/components/directory/mobile-filter-drawer';
+import { Pagination } from '@/components/directory/pagination';
 import {
   DataUnavailableNotice,
   DemoDataBanner,
@@ -8,217 +21,193 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Public Claimables Directory — Published Official Claims | ClaimRadar India',
+  title: 'Claimables Directory — Published Refund & Compensation Records | ClaimRadar India',
   description:
-    'Browse published consumer, investor, and banking claimable opportunities backed by official regulator orders and public notices.',
+    'Search and filter published refund, compensation and claim opportunities verified from official Indian sources. Filter by status and sector, sort by deadline.',
+  alternates: { canonical: '/claimables' },
 };
 
 // Directory content comes from the live publication database.
 export const dynamic = 'force-dynamic';
 
+const PAGE_SIZE = 12;
+
 interface ClaimablesPageProps {
   searchParams: Promise<{
     search?: string;
     status?: string;
-    company?: string;
     sector?: string;
+    sort?: string;
     page?: string;
   }>;
 }
 
+/** Page-side sort so ordering is correct across the full result set. */
+function sortClaimables(items: PublishedClaimable[], sort: string): PublishedClaimable[] {
+  const list = [...items];
+  if (sort === 'deadline') {
+    list.sort((a, b) => {
+      if (!a.deadlineDate && !b.deadlineDate) return 0;
+      if (!a.deadlineDate) return 1;
+      if (!b.deadlineDate) return -1;
+      return Date.parse(a.deadlineDate) - Date.parse(b.deadlineDate);
+    });
+  } else if (sort === 'title') {
+    list.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    list.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+  }
+  return list;
+}
+
 export default async function ClaimablesPage({ searchParams }: ClaimablesPageProps) {
-  const params = await searchParams;
-  const page = parseInt(params.page || '1', 10);
-  const result = await getPublishedClaimables({
-    search: params.search,
-    status: params.status,
-    companySlug: params.company,
-    sectorSlug: params.sector,
-    page,
-    limit: 10,
-  });
-  const sectorsOutcome = await getPublishedSectors();
+  const raw = await searchParams;
+  const params: DirectoryParams = {
+    search: raw.search,
+    status: raw.status,
+    sector: raw.sector,
+    sort: raw.sort,
+  };
+  const page = parseInt(raw.page || '1', 10) || 1;
+
+  // Fetch the full published set once, then filter/sort/paginate in-page so
+  // sorting is globally correct (the repository paginates internally).
+  const [allOutcome, sectorsOutcome] = await Promise.all([
+    getPublishedClaimables({ limit: 500 }),
+    getPublishedSectors(),
+  ]);
+  const sectors = sectorsOutcome.ok ? sectorsOutcome.data : [];
+
+  const activeCount = [params.search, params.status, params.sector].filter(Boolean).length;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">
-          Public Claimables Directory
+    <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
+      <header className="max-w-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+          Claimables directory
         </h1>
-        <p className="text-slate-600 max-w-2xl">
-          Browse published claimable opportunities extracted from regulator notices and public
-          orders. Only records that passed the publication policy are shown.
+        <p className="mt-3 text-sm leading-relaxed text-text-secondary sm:text-base">
+          Published refund, compensation and claim opportunities verified against official sources.
+          Only records that pass our publication policy are listed — eligibility is always
+          determined by the official scheme, never by us.
         </p>
-      </div>
+      </header>
 
-      {/* Filter and Search Bar */}
-      <form
-        method="GET"
-        className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200"
-      >
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-            Search
-          </label>
-          <input
-            type="text"
-            name="search"
-            defaultValue={params.search || ''}
-            placeholder="Search company or title..."
-            className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400"
-          />
-        </div>
+      {/* One GET form drives desktop panel and mobile drawer alike. */}
+      <form method="GET" action="/claimables" className="mt-8">
+        <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
+          {/* Desktop filter panel */}
+          <aside className="hidden lg:block" aria-label="Directory filters">
+            <div className="sticky top-24 rounded-card border border-border bg-surface p-5 shadow-card">
+              <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
+              <div className="space-y-4">
+                <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
+              </div>
+            </div>
+          </aside>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-            Status
-          </label>
-          <select
-            name="status"
-            defaultValue={params.status || ''}
-            className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400"
-          >
-            <option value="">All Statuses</option>
-            <option value="open">Open</option>
-            <option value="closing_soon">Closing Soon</option>
-            <option value="under_review">Under Review</option>
-            <option value="closed">Closed</option>
-          </select>
-        </div>
+          <div>
+            {/* Mobile filter trigger + bottom-sheet (renders inside this form) */}
+            <div className="mb-4 lg:hidden">
+              <MobileFilterDrawer activeCount={activeCount}>
+                <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
+              </MobileFilterDrawer>
+            </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-            Sector
-          </label>
-          <select
-            name="sector"
-            defaultValue={params.sector || ''}
-            className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400"
-          >
-            <option value="">All Sectors</option>
-            {sectorsOutcome.ok &&
-              sectorsOutcome.data.map((sector) => (
-                <option key={sector.slug} value={sector.slug}>
-                  {sector.name}
-                </option>
-              ))}
-          </select>
-        </div>
+            <ActiveFilterChips params={params} sectors={sectors} />
 
-        <div className="flex items-end">
-          <button
-            type="submit"
-            className="w-full px-4 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors"
-          >
-            Apply Filters
-          </button>
-        </div>
-      </form>
-
-      {!result.ok ? (
-        <DataUnavailableNotice message={result.error} />
-      ) : (
-        <>
-          {result.demo && <DemoDataBanner />}
-
-          {/* Directory List */}
-          {result.data.items.length === 0 ? (
-            <EmptyDirectoryNotice
-              title="No published claimables match your criteria"
-              body="There are currently no published records matching these filters. Published claimables appear here only after they pass the full publication policy — try clearing your filters or check back later."
-            />
-          ) : (
-            <div className="space-y-4 mb-8">
-              {result.data.items.map((claim) => (
-                <div
-                  key={claim.id}
-                  className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                      {claim.sector}
-                    </span>
-                    <span
-                      className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                        claim.status === 'closing_soon'
-                          ? 'bg-amber-100 text-amber-800'
-                          : claim.status === 'under_review'
-                            ? 'bg-sky-100 text-sky-800'
-                            : claim.status === 'closed'
-                              ? 'bg-slate-200 text-slate-700'
-                              : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {claim.status === 'closing_soon'
-                        ? 'Closing Soon'
-                        : claim.status === 'under_review'
-                          ? 'Under Review'
-                          : claim.status === 'closed'
-                            ? 'Closed'
-                            : 'Open'}
-                    </span>
-                  </div>
-
-                  <h2 className="text-xl font-bold text-slate-900 mb-2">
-                    <Link
-                      href={`/claimables/${claim.slug}`}
-                      className="hover:text-blue-600 transition-colors"
-                    >
-                      {claim.title}
-                    </Link>
-                  </h2>
-
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                    {claim.statusExplanation}
-                  </p>
-
-                  <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 pt-3 border-t border-slate-100">
-                    <div>
-                      <span className="font-semibold text-slate-700">Company:</span>{' '}
-                      {claim.companyName}
-                    </div>
-                    {claim.deadlineDate && (
-                      <div>
-                        <span className="font-semibold text-slate-700">Deadline:</span>{' '}
-                        {new Date(claim.deadlineDate).toLocaleDateString('en-IN', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </div>
-                    )}
-                    <Link
-                      href={`/claimables/${claim.slug}`}
-                      className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                      View Details &rarr;
-                    </Link>
-                  </div>
-                </div>
-              ))}
-
-              {/* Pagination */}
-              {result.data.totalPages > 1 && (
-                <nav aria-label="Directory pagination" className="flex justify-center gap-2">
-                  {Array.from({ length: result.data.totalPages }, (_, i) => i + 1).map((p) => (
-                    <Link
-                      key={p}
-                      href={`/claimables?page=${p}${params.search ? `&search=${encodeURIComponent(params.search)}` : ''}${params.status ? `&status=${params.status}` : ''}${params.company ? `&company=${params.company}` : ''}${params.sector ? `&sector=${params.sector}` : ''}`}
-                      className={`px-3 py-1 rounded-md text-sm font-medium ${
-                        p === result.data.page
-                          ? 'bg-slate-900 text-white'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                      }`}
-                    >
-                      {p}
-                    </Link>
-                  ))}
-                </nav>
+            <div className="mt-6">
+              {!allOutcome.ok ? (
+                <DataUnavailableNotice message={allOutcome.error} />
+              ) : (
+                <>
+                  {allOutcome.demo && <DemoDataBanner />}
+                  <DirectoryResults
+                    items={allOutcome.data.items}
+                    params={params}
+                    page={page}
+                    demo={allOutcome.demo}
+                  />
+                </>
               )}
             </div>
-          )}
-        </>
-      )}
+          </div>
+        </div>
+      </form>
     </div>
+  );
+}
+
+function DirectoryResults({
+  items,
+  params,
+  page,
+  demo,
+}: {
+  items: PublishedClaimable[];
+  params: DirectoryParams;
+  page: number;
+  demo: boolean;
+}) {
+  const filtered = applyClaimableFilters(items, {
+    search: params.search,
+    status: params.status,
+    sectorSlug: params.sector,
+  });
+  const sorted = sortClaimables(filtered, params.sort ?? 'newest');
+  const pageData = paginateClaimables(sorted, page, PAGE_SIZE);
+
+  if (filtered.length === 0) {
+    return (
+      <EmptyDirectoryNotice
+        title={items.length === 0 ? 'No published claimables yet' : 'No records match your filters'}
+        body={
+          items.length === 0
+            ? 'Records appear here as soon as they pass our verification and publication policy. Check back soon.'
+            : 'Try removing a filter or broadening your search. Published records appear here only after they pass the full publication policy.'
+        }
+      />
+    );
+  }
+
+  const start = (pageData.page - 1) * PAGE_SIZE + 1;
+  const end = Math.min(pageData.page * PAGE_SIZE, pageData.total);
+
+  return (
+    <>
+      <p aria-live="polite" className="mb-4 text-sm text-text-muted">
+        Showing{' '}
+        <span className="font-semibold text-text-secondary">
+          {start}–{end}
+        </span>{' '}
+        of <span className="font-semibold text-text-secondary">{pageData.total}</span> published{' '}
+        {pageData.total === 1 ? 'record' : 'records'}
+      </p>
+
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        {pageData.items.map((claim) => (
+          <ClaimableCard key={claim.id} claim={claim} />
+        ))}
+      </div>
+
+      <Pagination
+        basePath="/claimables"
+        query={{
+          search: params.search,
+          status: params.status,
+          sector: params.sector,
+          sort: params.sort,
+        }}
+        page={pageData.page}
+        totalPages={pageData.totalPages}
+      />
+
+      {!demo && (
+        <p className="mt-8 text-center text-xs text-text-muted">
+          Records are verified against official sources before publication. Always confirm details
+          on the official website before submitting a claim.
+        </p>
+      )}
+    </>
   );
 }

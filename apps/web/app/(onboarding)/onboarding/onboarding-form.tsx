@@ -242,7 +242,7 @@ export function OnboardingForm() {
                 value={option.value}
                 checked={receipt === option.value}
                 onChange={() => setReceipt(option.value)}
-                className="accent-[#7387FF]"
+                className="accent-trust-primary"
               />
               {option.label}
             </label>
@@ -266,7 +266,7 @@ export function OnboardingForm() {
                 value={option.value}
                 checked={reference === option.value}
                 onChange={() => setReference(option.value)}
-                className="accent-[#7387FF]"
+                className="accent-trust-primary"
               />
               {option.label}
             </label>
@@ -291,7 +291,7 @@ export function OnboardingForm() {
                 value={option.value}
                 checked={channel === option.value}
                 onChange={() => setChannel(option.value)}
-                className="accent-[#7387FF]"
+                className="accent-trust-primary"
               />
               {option.label}
             </label>

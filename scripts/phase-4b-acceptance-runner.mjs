@@ -8,10 +8,12 @@
  *   - a filesystem artifact probe
  *   - an explicit environment probe (docker info / supabase status / env flags)
  *
- * No status is hardcoded. The runner never executes live network crawls and
- * never attempts to start local Supabase itself. When the local Docker engine
- * or local Supabase stack is unavailable, database-dependent keys are
- * reported as BLOCKED_LOCAL_ENVIRONMENT.
+ * No status is hardcoded. The runner never starts local Supabase itself and
+ * performs no unrestricted live network crawls: the single exception is the
+ * controlled local live-source idempotency window, which executes only when
+ * the local Supabase stack is already up and targets the local database only.
+ * When the local Docker engine or local Supabase stack is unavailable,
+ * database-dependent keys are reported as BLOCKED_LOCAL_ENVIRONMENT.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
@@ -160,12 +162,15 @@ console.log('===================================================================
 // 1. Up-front environment probes: Docker engine and local Supabase
 // ---------------------------------------------------------------------------
 const docker = runStep('Environment probe: Docker engine', 'docker info', { timeoutMs: 30_000 });
+const dockerErrorDetail = docker.ok
+  ? ''
+  : ` Last output: ${tailLines(`${docker.stderr}\n${docker.stdout}`, 2).replace(/\n/g, ' ') || '(no output)'}`;
 record(
   'DOCKER_ENGINE',
   docker.ok ? STATUS.PASS : STATUS.BLOCKED_LOCAL_ENVIRONMENT,
   docker.ok
     ? '`docker info` exited 0 — Docker engine reachable.'
-    : '`docker info` did not exit 0 — Docker engine unavailable on this device.',
+    : `\`docker info\` exited ${docker.exitCode ?? 'ERR'} — Docker engine unavailable on this device.${dockerErrorDetail}`,
 );
 
 let supabaseUp = false;
@@ -383,6 +388,13 @@ if (!supabaseUp) {
     ),
   );
   record(
+    'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    dbBlockedEvidence(
+      'would run `node scripts/verify-local-live-source-idempotency.mjs` (controlled live-source window against local Postgres)',
+    ),
+  );
+  record(
     'PUBLIC_DIRECTORY_LOCAL_DATABASE',
     STATUS.BLOCKED_LOCAL_ENVIRONMENT,
     dbBlockedEvidence('database-backed public directory check requires the local stack'),
@@ -492,6 +504,21 @@ if (!supabaseUp) {
         'TODO: add an evidence-producing verification step.',
     );
   }
+
+  // Controlled local live-source idempotency window: executes a real live
+  // fetch (generic-rss) twice against the local stack and compares row counts.
+  // PASS/FAIL derives purely from the verifier's exit code.
+  const liveIdempotency = runStep(
+    'Local DB: live-source idempotency window (generic-rss, two identical runs)',
+    'node scripts/verify-local-live-source-idempotency.mjs',
+    { timeoutMs: 1_200_000 },
+  );
+  record(
+    'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
+    liveIdempotency.ok ? STATUS.PASS : STATUS.FAIL,
+    `\`node scripts/verify-local-live-source-idempotency.mjs\` exit ${liveIdempotency.exitCode ?? 'ERR'} — ` +
+      'two identical controlled live-source windows against local Postgres; second window must add 0 content rows.',
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -545,21 +572,26 @@ record(
 record(
   'PIB_LIVE',
   STATUS.SKIP_EXTERNAL_ACCESS,
-  'Policy: this runner performs no external access; PIB live crawl requires a human-supervised run.',
+  'Policy: this runner performs no external access; PIB live crawl requires a human-supervised run ' +
+    '(recorded in docs/checkpoints live dry-run documents).',
 );
 for (const key of ['SEBI_LIVE', 'RBI_LIVE', 'GENERIC_RSS_LIVE', 'ALL_FOUR_SOURCE_DRY_RUN']) {
   record(
     key,
     STATUS.NOT_EXECUTED,
     'Runner policy: no live network crawls are executed here. Run the crawler ' +
-      '(pnpm crawler:source with LIVE_ADAPTERS_ENABLED) for live evidence.',
+      '(pnpm crawler:daily -- --live --dry-run) for live evidence; results are recorded in ' +
+      'docs/checkpoints live dry-run documents.',
   );
 }
-record(
-  'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
-  STATUS.SKIP_CREDENTIALS,
-  'Requires live-source credentials, which are not present in this environment.',
-);
+if (!results.has('POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY')) {
+  record(
+    'POSTGRESQL_LIVE_SOURCE_IDEMPOTENCY',
+    STATUS.BLOCKED_LOCAL_ENVIRONMENT,
+    'Requires the local Supabase stack to execute the controlled live-source window; ' +
+      'the stack is not running in this environment.',
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 7. Staging keys — credentials intentionally absent

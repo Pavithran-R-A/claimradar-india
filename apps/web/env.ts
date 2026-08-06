@@ -3,6 +3,12 @@ import { z } from 'zod';
 
 export const env = createEnv({
   server: {
+    /**
+     * Deployment tier. Real customer email only leaves in 'production'
+     * (see lib/notifications); staging/preview deployments must set
+     * APP_ENV=staging so robots.ts also suppresses indexing.
+     */
+    APP_ENV: z.enum(['development', 'staging', 'production']).default('development'),
     SUPABASE_URL: z.string().url(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
     DATABASE_URL: z.string().url().optional(),
@@ -18,6 +24,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   },
   runtimeEnv: {
+    APP_ENV: process.env.APP_ENV,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     DATABASE_URL: process.env.DATABASE_URL,

@@ -1,9 +1,27 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import {
+  ArrowUpRight,
+  BellRing,
+  CalendarClock,
+  ChevronLeft,
+  ClipboardCheck,
+  ExternalLink,
+  FileText,
+  Landmark,
+  ListChecks,
+  ShieldCheck,
+  TriangleAlert,
+  Users,
+} from 'lucide-react';
 import type { PublishedClaimable } from '@/lib/claimables-repository';
-import { getPublishedClaimableBySlug } from '@/lib/claimables-repository';
+import { getPublishedClaimableBySlug, getPublishedClaimables } from '@/lib/claimables-repository';
+import { ClaimableRow } from '@/components/directory/claimable-card';
+import { StatusBadge } from '@/components/directory/status-badge';
 import { DataUnavailableNotice, DemoDataBanner } from '@/components/repository-states';
+import { deadlinePhrase, formatIstDate, formatIstDateTime } from '@/lib/dates';
 
 interface DetailPageProps {
   params: Promise<{ slug: string }>;
@@ -39,175 +57,434 @@ export default async function ClaimableDetailPage({ params }: DetailPageProps) {
     notFound();
   }
 
+  if (!outcome.ok) {
+    return (
+      <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
+        <BackLink />
+        <div className="mt-6">
+          <DataUnavailableNotice message={outcome.error} />
+        </div>
+      </div>
+    );
+  }
+
+  const claim = outcome.data!;
+
+  // Related records: same company first, then same sector (real records only).
+  const relatedOutcome = await getPublishedClaimables({ limit: 500 });
+  const related = relatedOutcome.ok
+    ? relatedOutcome.data.items
+        .filter((c) => c.id !== claim.id)
+        .filter((c) => c.companySlug === claim.companySlug || c.sectorSlug === claim.sectorSlug)
+        .sort((a, b) => {
+          const aSameCompany = a.companySlug === claim.companySlug ? 0 : 1;
+          const bSameCompany = b.companySlug === claim.companySlug ? 0 : 1;
+          return aSameCompany - bSameCompany;
+        })
+        .slice(0, 3)
+    : [];
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-6">
-        <Link
-          href="/claimables"
-          className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          &larr; Back to Directory
-        </Link>
+    <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
+      <BackLink />
+      {outcome.demo && (
+        <div className="mt-6">
+          <DemoDataBanner />
+        </div>
+      )}
+      <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_320px]">
+        <ClaimableDetail claim={claim} related={related} />
+        <SummaryPanel claim={claim} />
       </div>
-
-      {!outcome.ok ? (
-        <DataUnavailableNotice message={outcome.error} />
-      ) : outcome.data ? (
-        <ClaimableDetail claim={outcome.data} demo={outcome.demo} />
-      ) : null}
-
-      <div className="mt-8 p-4 rounded-xl bg-slate-100 text-xs text-slate-600 text-center">
-        <strong>Independent Information Disclaimer:</strong> ClaimRadar India is an independent
-        informational tracking service. We are not a law firm, claim filing agent, or government
-        authority. Submit all claims directly via official government/company portals.
-      </div>
+      <DisclaimerFooter />
     </div>
   );
 }
 
-function ClaimableDetail({ claim, demo }: { claim: PublishedClaimable; demo: boolean }) {
+function BackLink() {
   return (
-    <>
-      {demo && <DemoDataBanner />}
+    <Link
+      href="/claimables"
+      className="inline-flex items-center gap-1.5 text-sm font-semibold text-trust-primary underline-offset-2 hover:underline"
+    >
+      <ChevronLeft aria-hidden className="h-4 w-4" />
+      Back to directory
+    </Link>
+  );
+}
 
-      <article className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-        <div className="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-200 text-slate-800">
-              {claim.sector}
-            </span>
-            <span
-              className={`text-xs font-bold px-3 py-1 rounded-full ${
-                claim.status === 'closing_soon'
-                  ? 'bg-amber-100 text-amber-900'
-                  : claim.status === 'under_review'
-                    ? 'bg-sky-100 text-sky-900'
-                    : claim.status === 'closed'
-                      ? 'bg-slate-200 text-slate-700'
-                      : 'bg-emerald-100 text-emerald-900'
-              }`}
-            >
-              {claim.statusDetail}
-            </span>
-          </div>
+function SectionHeading({ icon: Icon, children }: { icon: typeof Users; children: ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-2 text-lg font-semibold text-text-primary">
+      <Icon aria-hidden className="h-5 w-5 text-trust-primary" />
+      {children}
+    </h2>
+  );
+}
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">{claim.title}</h1>
-          <p className="text-sm font-medium text-slate-600">
-            Company: <span className="text-slate-900 font-semibold">{claim.companyName}</span>
-          </p>
-          {claim.companySlug && (
+function ClaimableDetail({
+  claim,
+  related,
+}: {
+  claim: PublishedClaimable;
+  related: PublishedClaimable[];
+}) {
+  const deadline = formatIstDate(claim.deadlineDate);
+
+  return (
+    <article className="min-w-0">
+      {/* Direct-answer header */}
+      <header>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge status={claim.status} />
+          <span className="text-xs font-medium text-text-muted">{claim.statusDetail}</span>
+        </div>
+        <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-text-primary sm:text-4xl">
+          {claim.title}
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-text-secondary">
+          {claim.statusExplanation}
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text-muted">
+          {claim.companySlug ? (
             <Link
               href={`/companies/${claim.companySlug}`}
-              className="mt-2 inline-block text-xs font-semibold text-blue-600 hover:text-blue-800"
+              className="font-medium text-trust-primary underline-offset-2 hover:underline"
             >
-              View all notices for this company &rarr;
+              {claim.companyName}
             </Link>
+          ) : (
+            <span className="font-medium text-text-secondary">{claim.companyName}</span>
+          )}
+          <span aria-hidden>·</span>
+          {claim.sectorSlug ? (
+            <Link
+              href={`/sectors/${claim.sectorSlug}`}
+              className="underline-offset-2 hover:text-trust-primary hover:underline"
+            >
+              {claim.sector}
+            </Link>
+          ) : (
+            <span>{claim.sector}</span>
           )}
         </div>
+      </header>
 
-        <div className="p-6 sm:p-8 space-y-6 text-slate-700">
-          {claim.freshnessWarning && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-medium text-amber-900">
-              ⚠️ <span className="font-bold">Freshness Advisory:</span> {claim.freshnessWarning}
-            </div>
+      {claim.freshnessWarning && (
+        <div
+          role="note"
+          className="mt-6 rounded-card border border-deadline/40 bg-deadline-background p-4 text-sm"
+        >
+          <p className="flex items-center gap-2 font-semibold text-text-primary">
+            <TriangleAlert aria-hidden className="h-4 w-4 text-deadline" />
+            Freshness advisory
+          </p>
+          <p className="mt-1 text-text-secondary">{claim.freshnessWarning}</p>
+        </div>
+      )}
+
+      <div className="mt-10 space-y-10">
+        {/* Who may qualify */}
+        <section aria-labelledby="who-qualifies">
+          <SectionHeading icon={Users}>
+            <span id="who-qualifies">Who may qualify</span>
+          </SectionHeading>
+          <p className="mt-3 rounded-card border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary shadow-card">
+            {claim.affectedGroup}
+          </p>
+          <p className="mt-2 text-xs text-text-muted">
+            Publication of this record is not a determination of eligibility. The official scheme
+            terms always decide.
+          </p>
+        </section>
+
+        {/* Relief */}
+        <section aria-labelledby="relief">
+          <SectionHeading icon={ClipboardCheck}>
+            <span id="relief">Relief stated</span>
+          </SectionHeading>
+          <p className="mt-3 rounded-card border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary shadow-card">
+            {claim.reliefAmount ||
+              'No specific amount is stated in the sources we reviewed. Refer to the official order for the exact terms.'}
+          </p>
+          <p className="mt-2 text-xs text-text-muted">
+            We only show relief figures or terms that appear in the official record — never
+            estimates.
+          </p>
+        </section>
+
+        {/* Proof needed */}
+        <section aria-labelledby="proof">
+          <SectionHeading icon={ListChecks}>
+            <span id="proof">Proof you may need</span>
+          </SectionHeading>
+          {claim.proofRequirements.length > 0 ? (
+            <ul className="mt-3 space-y-2">
+              {claim.proofRequirements.map((req) => (
+                <li
+                  key={req}
+                  className="flex items-start gap-2.5 rounded-card border border-border bg-surface px-4 py-3 text-sm text-text-secondary shadow-card"
+                >
+                  <FileText aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" />
+                  {req}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm text-text-muted">
+              No specific proof requirements are recorded yet. The official route below will state
+              what evidence is needed.
+            </p>
           )}
+        </section>
 
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Status & Explanation
-            </h2>
-            <p className="text-sm text-slate-800 leading-relaxed">{claim.statusExplanation}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                Affected Group
-              </h3>
-              <p className="text-sm text-slate-800 font-medium">{claim.affectedGroup}</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                Relief Amount / Benefit
-              </h3>
-              <p className="text-sm text-slate-800 font-medium">
-                {claim.reliefAmount || 'Specified in official order'}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Official Claim Action Route
-            </h2>
-            <p className="text-sm text-slate-800 mb-3">{claim.actionRoute}</p>
-            {claim.officialRouteUrl ? (
-              <a
-                href={claim.officialRouteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-              >
-                Access Official Filing Portal &rarr;
-              </a>
-            ) : (
-              <p className="text-xs text-slate-500">
-                No official claim portal URL is recorded for this listing yet. Refer to the source
-                documents below.
-              </p>
-            )}
-          </div>
-
-          {claim.proofRequirements.length > 0 && (
-            <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Required Proof Documents
-              </h2>
-              <ul className="list-disc pl-5 space-y-1 text-sm text-slate-700">
-                {claim.proofRequirements.map((req, idx) => (
-                  <li key={idx}>{req}</li>
-                ))}
-              </ul>
-            </div>
+        {/* Official action route */}
+        <section aria-labelledby="action-route">
+          <SectionHeading icon={Landmark}>
+            <span id="action-route">Official action route</span>
+          </SectionHeading>
+          <p className="mt-3 text-sm leading-relaxed text-text-secondary">{claim.actionRoute}</p>
+          {claim.officialRouteUrl ? (
+            <a
+              href={claim.officialRouteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex h-11 items-center gap-2 rounded-field bg-trust-primary px-5 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
+            >
+              Go to the official portal
+              <ExternalLink aria-hidden className="h-4 w-4" />
+            </a>
+          ) : (
+            <p className="mt-3 rounded-card border border-dashed border-border bg-surface p-4 text-xs text-text-muted">
+              No official claim portal URL is recorded for this listing yet. Refer to the source
+              documents below.
+            </p>
           )}
+          <p className="mt-2 text-xs text-text-muted">
+            You submit directly to the company or authority. ClaimRadar never files claims on your
+            behalf.
+          </p>
+        </section>
 
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Official Sources & Evidence
-            </h2>
-            {claim.officialSources.length === 0 ? (
-              <p className="text-xs text-slate-500">
-                Source documents for this record have not been linked yet.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {claim.officialSources.map((src, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 rounded-lg border border-slate-200 text-xs flex justify-between items-center"
+        {/* Evidence summary */}
+        <section aria-labelledby="evidence">
+          <SectionHeading icon={ShieldCheck}>
+            <span id="evidence">How we verified this</span>
+          </SectionHeading>
+          <p className="mt-3 rounded-card border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary shadow-card">
+            {claim.evidenceSummary}
+          </p>
+        </section>
+
+        {/* Sources */}
+        <section aria-labelledby="sources">
+          <SectionHeading icon={FileText}>
+            <span id="sources">Official sources</span>
+          </SectionHeading>
+          {claim.officialSources.length === 0 ? (
+            <p className="mt-3 text-sm text-text-muted">
+              Source documents for this record have not been linked yet.
+            </p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {claim.officialSources.map((src) => (
+                <li key={`${src.name}-${src.url}`}>
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-3 shadow-card transition-colors duration-fast hover:border-trust-primary"
                   >
-                    <span className="font-semibold text-slate-800">{src.name}</span>
-                    <a
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      View Official Order
-                    </a>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium text-text-primary group-hover:text-trust-primary">
+                        {src.name}
+                      </span>
+                      {src.publishedAt && (
+                        <span className="text-xs text-text-muted">
+                          Source dated{' '}
+                          <time dateTime={src.publishedAt}>
+                            {formatIstDate(src.publishedAt) ?? src.publishedAt}
+                          </time>
+                        </span>
+                      )}
+                    </span>
+                    <ArrowUpRight aria-hidden className="h-4 w-4 shrink-0 text-text-muted" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
-          <div className="pt-4 border-t border-slate-100 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
-            <div>Last Checked: {new Date(claim.lastCheckedAt).toLocaleString('en-IN')}</div>
-            <div>Last Verified: {new Date(claim.lastVerifiedAt).toLocaleString('en-IN')}</div>
+        {/* Update history (record timeline) */}
+        <section aria-labelledby="update-history">
+          <SectionHeading icon={CalendarClock}>
+            <span id="update-history">Record timeline</span>
+          </SectionHeading>
+          <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+            {[
+              { label: 'First published', value: claim.publishedAt },
+              { label: 'Last checked against sources', value: claim.lastCheckedAt },
+              { label: 'Last verified by editors', value: claim.lastVerifiedAt },
+            ].map((entry) => (
+              <div
+                key={entry.label}
+                className="rounded-card border border-border bg-surface p-4 shadow-card"
+              >
+                <dt className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+                  {entry.label}
+                </dt>
+                <dd className="mt-1.5 text-sm font-medium text-text-primary">
+                  <time dateTime={entry.value}>
+                    {formatIstDateTime(entry.value) ?? entry.value}
+                  </time>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          {deadline && claim.deadlineDate && (
+            <p className="mt-3 text-sm text-text-secondary">
+              Recorded deadline:{' '}
+              <time dateTime={claim.deadlineDate} className="font-semibold text-deadline">
+                {deadline}
+              </time>{' '}
+              {deadlinePhrase(claim.deadlineDate) && (
+                <span className="text-text-muted">({deadlinePhrase(claim.deadlineDate)})</span>
+              )}{' '}
+              — confirm on the official source before relying on this date.
+            </p>
+          )}
+        </section>
+
+        {/* Corrections */}
+        <section aria-labelledby="corrections">
+          <SectionHeading icon={TriangleAlert}>
+            <span id="corrections">Spotted an error?</span>
+          </SectionHeading>
+          <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+            If something here is inaccurate or out of date, submit a correction and our editors will
+            re-check the record against its official sources.
+          </p>
+          <Link
+            href="/corrections"
+            className="mt-3 inline-flex h-11 items-center rounded-field border border-border bg-surface px-5 text-sm font-semibold text-text-primary transition-colors duration-fast hover:border-trust-primary hover:text-trust-primary"
+          >
+            Submit a correction
+          </Link>
+        </section>
+
+        {/* Related */}
+        {related.length > 0 && (
+          <section aria-labelledby="related">
+            <SectionHeading icon={ListChecks}>
+              <span id="related">Related records</span>
+            </SectionHeading>
+            <div className="mt-3 space-y-3">
+              {related.map((item) => (
+                <ClaimableRow key={item.id} claim={item} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function SummaryPanel({ claim }: { claim: PublishedClaimable }) {
+  const deadline = formatIstDate(claim.deadlineDate);
+  return (
+    <aside aria-label="Record summary" className="lg:sticky lg:top-24 lg:self-start">
+      <div className="rounded-card border border-border bg-surface p-5 shadow-card">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+          At a glance
+        </h2>
+        <dl className="mt-4 space-y-4 text-sm">
+          <div>
+            <dt className="text-xs text-text-muted">Status</dt>
+            <dd className="mt-1">
+              <StatusBadge status={claim.status} />
+            </dd>
           </div>
-        </div>
-      </article>
-    </>
+          {deadline && claim.deadlineDate && (
+            <div>
+              <dt className="text-xs text-text-muted">Deadline</dt>
+              <dd className="mt-1 font-semibold text-deadline">
+                <time dateTime={claim.deadlineDate}>{deadline}</time>
+                {deadlinePhrase(claim.deadlineDate) && (
+                  <span className="ml-1.5 font-normal text-text-muted">
+                    · {deadlinePhrase(claim.deadlineDate)}
+                  </span>
+                )}
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt className="text-xs text-text-muted">Company</dt>
+            <dd className="mt-1 font-medium text-text-primary">{claim.companyName}</dd>
+          </div>
+          <div>
+            <dt className="text-xs text-text-muted">Sector</dt>
+            <dd className="mt-1 font-medium text-text-primary">{claim.sector}</dd>
+          </div>
+          {claim.geographicScope && (
+            <div>
+              <dt className="text-xs text-text-muted">Geographic scope</dt>
+              <dd className="mt-1 font-medium text-text-primary">{claim.geographicScope}</dd>
+            </div>
+          )}
+          {claim.jurisdiction && (
+            <div>
+              <dt className="text-xs text-text-muted">Jurisdiction</dt>
+              <dd className="mt-1 font-medium text-text-primary">{claim.jurisdiction}</dd>
+            </div>
+          )}
+          <div>
+            <dt className="text-xs text-text-muted">Last verified</dt>
+            <dd className="mt-1 font-medium text-text-primary">
+              <time dateTime={claim.lastVerifiedAt}>
+                {formatIstDateTime(claim.lastVerifiedAt) ?? claim.lastVerifiedAt}
+              </time>
+            </dd>
+          </div>
+        </dl>
+
+        {claim.officialRouteUrl ? (
+          <a
+            href={claim.officialRouteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-field bg-trust-primary px-4 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
+          >
+            Official portal
+            <ExternalLink aria-hidden className="h-4 w-4" />
+          </a>
+        ) : null}
+
+        <Link
+          href="/register"
+          className="mt-2.5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-field border border-border px-4 text-sm font-semibold text-text-primary transition-colors duration-fast hover:border-trust-primary hover:text-trust-primary"
+        >
+          <BellRing aria-hidden className="h-4 w-4" />
+          Watch this company
+        </Link>
+        <p className="mt-3 text-[11px] leading-relaxed text-text-muted">
+          Watching alerts you when new records are published. It does not guarantee eligibility.
+        </p>
+      </div>
+    </aside>
+  );
+}
+
+function DisclaimerFooter() {
+  return (
+    <div className="mt-12 rounded-card border border-border bg-background-elevated p-5 text-center text-xs leading-relaxed text-text-muted">
+      <strong className="font-semibold text-text-secondary">
+        Independent information disclaimer:
+      </strong>{' '}
+      ClaimRadar India is an independent informational tracking service. We are not a law firm, a
+      claim filing agent or a government authority. Publication does not mean you are eligible.
+      Submit all claims directly through official government or company portals.
+    </div>
   );
 }

@@ -12,13 +12,17 @@
     "crawler:daily": "pnpm --filter @claimradar/crawler dev -- daily",
     "crawler:source": "pnpm --filter @claimradar/crawler dev -- source",
     "crawler:health": "pnpm --filter @claimradar/crawler dev -- health",
+    "crawler:crawl-status": "pnpm --filter @claimradar/crawler dev -- crawl-status",
     "crawler:preflight": "pnpm --filter @claimradar/crawler dev -- preflight",
+    "preflight:staging": "node scripts/staging-preflight.mjs",
     "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
     "test:phase-4b-offline": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:phase-4b-acceptance": "node scripts/phase-4b-acceptance-runner.mjs",
     "verify:local-ingestion": "node scripts/verify-local-database-ingestion.mjs",
+    "verify:local-idempotency": "node scripts/verify-local-live-source-idempotency.mjs",
     "report:inventory-validation": "pnpm --filter @claimradar/crawler dev -- inventory-report"
   },
+  "packageManager": "pnpm@11.20.0",
   "engines": {
     "node": ">=24 <25",
     "pnpm": ">=9"

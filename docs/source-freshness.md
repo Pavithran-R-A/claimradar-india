@@ -1,8 +1,8 @@
 # ClaimRadar India — Source Freshness & Health Specification
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Status:** Implemented & Verified Offline  
-**Last Updated:** August 5, 2026
+**Last Updated:** August 6, 2026
 
 ---
 
@@ -82,3 +82,19 @@ Every monitored source transitions through five explicit operational states:
 1. **Source Failure Isolation:** A source failure or downtime event NEVER automatically closes an active claim, marks a claim expired, or alters its procedural claimability status.
 2. **Withholding Stale Data:** Records linked to `STALE` or `FAILING` sources display explicit "Source Verification Delayed" notices on the public UI to prevent misleading users.
 3. **No Automatic Verification:** `AUTO_VERIFY_CLAIMABLES=false` remains strictly enforced regardless of source health status.
+4. **No Invented Data on Failure:** A failed crawl attempt preserves prior attempt/success timestamps, increments `failure_count`, records the error category, and NEVER invents deadlines, removes evidence, or rewrites claim fields.
+5. **Content-Change Semantics:** `last_modified`/content-change timestamps update only when the fetched payload hash actually differs; re-fetching unchanged content updates `retrieved_at` bookkeeping but not the content-change timestamp.
+
+---
+
+## 5. Verification Coverage (Offline)
+
+Enforced by `apps/crawler/tests/freshness/freshness.test.ts` (14 tests, all passing):
+
+| Rule    | Test                               | Guarantee                                                                                                            |
+| :------ | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| 4b      | failure preserves timestamps       | failed attempts never invent success, deadline, or content-change timestamps                                         |
+| 2b      | content-change timestamp semantics | content-change timestamp updates only on actual payload-hash change                                                  |
+| 9 & 10b | failure isolation                  | source failure never closes claims, never changes procedural status, never removes evidence, never invents deadlines |
+
+Remaining database-level freshness checks (persisted `sources`/`source_health_events` rows) are covered by the local Supabase verification path and are reported as `BLOCKED_LOCAL_ENVIRONMENT` until Docker/WSL2 is available (see `docs/checkpoints/qoder-local-live-source-idempotency.md`).

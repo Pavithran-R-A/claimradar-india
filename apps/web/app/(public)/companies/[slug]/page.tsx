@@ -1,11 +1,19 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPublishedCompanyBySlug, getPublishedClaimables } from '@/lib/claimables-repository';
-import { DataUnavailableNotice, DemoDataBanner } from '@/components/repository-states';
+import { notFound } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getPublishedClaimables, getPublishedCompanyBySlug } from '@/lib/claimables-repository';
+import { ClaimableRow } from '@/components/directory/claimable-card';
+import { Pagination } from '@/components/directory/pagination';
+import {
+  DataUnavailableNotice,
+  DemoDataBanner,
+  EmptyDirectoryNotice,
+} from '@/components/repository-states';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 // Detail content comes from the live publication database.
@@ -22,29 +30,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${outcome.data.name} — Regulatory Orders & Claimables | ClaimRadar India`,
-    description: `Published regulatory orders, disgorgement schemes, and public claimable notices referencing ${outcome.data.name}.`,
+    title: `${outcome.data.name} — Published Refund & Claim Records | ClaimRadar India`,
+    description: `Published refund, compensation and claim records referencing ${outcome.data.name}, verified from official sources.`,
     alternates: {
       canonical: `https://claimradar.in/companies/${outcome.data.slug}`,
     },
   };
 }
 
-export default async function CompanyDetailPage({ params }: PageProps) {
+export default async function CompanyDetailPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const { page: pageStr } = await searchParams;
+  const page = pageStr ? parseInt(pageStr, 10) || 1 : 1;
+
   const outcome = await getPublishedCompanyBySlug(slug);
 
   if (outcome.ok && !outcome.data) {
     notFound();
   }
 
-  const claimablesOutcome = outcome.ok
-    ? await getPublishedClaimables({ companySlug: slug, limit: 100 })
-    : null;
-
   if (!outcome.ok || !outcome.data) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
         <DataUnavailableNotice
           message={!outcome.ok ? outcome.error : 'This company is no longer listed.'}
         />
@@ -53,84 +60,110 @@ export default async function CompanyDetailPage({ params }: PageProps) {
   }
 
   const company = outcome.data;
+  const claimablesOutcome = await getPublishedClaimables({ companySlug: slug, page, limit: 10 });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex text-sm text-gray-500">
-        <Link href="/" className="hover:text-gray-700">
-          Home
-        </Link>
-        <span className="mx-2">/</span>
-        <Link href="/companies" className="hover:text-gray-700">
-          Companies
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-gray-900 font-medium">{company.name}</span>
+      <nav aria-label="Breadcrumb" className="mb-6">
+        <ol className="flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
+          <li>
+            <Link href="/" className="underline-offset-2 hover:text-trust-primary hover:underline">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </li>
+          <li>
+            <Link
+              href="/companies"
+              className="underline-offset-2 hover:text-trust-primary hover:underline"
+            >
+              Companies
+            </Link>
+          </li>
+          <li aria-hidden>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </li>
+          <li aria-current="page" className="font-medium text-text-primary">
+            {company.name}
+          </li>
+        </ol>
       </nav>
 
       {outcome.demo && <DemoDataBanner />}
 
       {/* Header */}
-      <header className="mb-8 rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-        <div className="flex items-center space-x-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-blue-100 text-xl font-bold text-blue-700">
+      <header className="rounded-card border border-border bg-surface p-6 shadow-card sm:p-8">
+        <div className="flex items-center gap-4">
+          <span
+            aria-hidden
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-card bg-ink-900 text-lg font-bold text-brand-bright"
+          >
             {company.name.substring(0, 2).toUpperCase()}
-          </div>
+          </span>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{company.name}</h1>
-            <p className="text-sm text-gray-500">Sector: {company.sector}</p>
+            <h1 className="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+              {company.name}
+            </h1>
+            <p className="mt-1 text-sm text-text-muted">
+              Sector: <span className="font-medium text-text-secondary">{company.sector}</span>
+            </p>
           </div>
         </div>
 
-        {/* Neutral Disclosure Notice */}
-        <div className="mt-6 rounded-md bg-slate-50 p-4 border border-slate-200 text-xs text-slate-600">
-          <strong>Neutral Listing Disclaimer:</strong> Listing on ClaimRadar India indicates that
-          this entity has been named in official regulatory, judicial, or corporate public notices.
-          It does not imply wrongdoing or liability by the company or its officers.
-        </div>
+        <p className="mt-6 rounded-field border border-border bg-background-elevated p-4 text-xs leading-relaxed text-text-muted">
+          <strong className="font-semibold text-text-secondary">Neutral listing disclaimer:</strong>{' '}
+          listing on ClaimRadar India indicates that this entity has been named in official
+          regulatory, judicial or corporate public notices that we published. It does not imply
+          wrongdoing or liability by the company or its officers.
+        </p>
       </header>
 
-      {/* Published Records */}
-      <section>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          Official Orders & Public Notices{' '}
-          {claimablesOutcome?.ok ? `(${claimablesOutcome.data.total})` : ''}
+      {/* Published records */}
+      <section aria-labelledby="records-heading" className="mt-10">
+        <h2 id="records-heading" className="text-xl font-bold tracking-tight text-text-primary">
+          Published records{' '}
+          {claimablesOutcome.ok && (
+            <span className="font-normal text-text-muted">({claimablesOutcome.data.total})</span>
+          )}
         </h2>
 
-        {!claimablesOutcome || !claimablesOutcome.ok ? (
-          <DataUnavailableNotice
-            message={claimablesOutcome && !claimablesOutcome.ok ? claimablesOutcome.error : ''}
-          />
-        ) : claimablesOutcome.data.items.length === 0 ? (
-          <div className="rounded-lg bg-white p-8 text-center text-gray-500 border border-gray-200">
-            No published public notices currently active for this company.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {claimablesOutcome.data.items.map((c) => (
-              <div
-                key={c.id}
-                className="rounded-lg bg-white p-6 shadow-sm border border-gray-200 hover:border-blue-300 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
-                      {c.statusDetail}
-                    </span>
-                    <h3 className="mt-2 text-lg font-semibold text-gray-900">
-                      <Link href={`/claimables/${c.slug}`} className="hover:underline">
-                        {c.title}
-                      </Link>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-600">{c.affectedGroup}</p>
-                  </div>
-                </div>
+        <div className="mt-4">
+          {!claimablesOutcome.ok ? (
+            <DataUnavailableNotice message={claimablesOutcome.error} />
+          ) : claimablesOutcome.data.items.length === 0 ? (
+            <EmptyDirectoryNotice
+              title="No published records for this company"
+              body="When a verified record referencing this company passes our publication policy, it will appear here."
+            />
+          ) : (
+            <>
+              <div className="space-y-3">
+                {claimablesOutcome.data.items.map((claim) => (
+                  <ClaimableRow key={claim.id} claim={claim} />
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+              <Pagination
+                basePath={`/companies/${company.slug}`}
+                page={claimablesOutcome.data.page}
+                totalPages={claimablesOutcome.data.totalPages}
+              />
+            </>
+          )}
+        </div>
       </section>
+
+      <div className="mt-10">
+        <Link
+          href="/claimables"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-trust-primary underline-offset-2 hover:underline"
+        >
+          <ChevronLeft aria-hidden className="h-4 w-4" />
+          Back to the full directory
+        </Link>
+      </div>
     </div>
   );
 }

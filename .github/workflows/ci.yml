@@ -10,6 +10,11 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege: CI only needs to read the repository. No secrets are used
+# in this workflow, so nothing can leak into logs or artifacts.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,15 +24,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Node version is pinned by the committed .node-version file (24).
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version-file: '.node-version'
 
+      # pnpm version is pinned exactly via the "packageManager" field in the
+      # root package.json; pnpm/action-setup reads it automatically, so CI can
+      # never drift from the version that produced pnpm-lock.yaml.
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Get pnpm store directory
         id: pnpm-cache

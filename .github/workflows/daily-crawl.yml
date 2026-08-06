@@ -6,33 +6,49 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Run in dry-run mode (no publishing)'
+        description: 'Run in dry-run mode (no publishing, no DB writes)'
         required: false
-        default: 'false'
+        default: false
         type: boolean
+      source:
+        description: 'Optional single source id to crawl (empty = all enabled sources)'
+        required: false
+        default: ''
+        type: string
 
+# Prevent overlapping crawls: a scheduled or manual trigger while a crawl is
+# running waits in the queue instead of cancelling the in-flight run.
 concurrency:
   group: daily-crawl
-  cancel-in-progress: false # Don't cancel running crawls
+  cancel-in-progress: false
+
+# Least privilege: this workflow never pushes code or manages packages.
+permissions:
+  contents: read
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Secrets and environment-scoped variables resolve from the "staging"
+    # GitHub environment. Production credentials must never be added to this
+    # environment. The job fails closed if staging secrets are missing.
+    environment: staging
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Node version is pinned by the committed .node-version file (24).
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version-file: '.node-version'
 
+      # pnpm version is pinned exactly via the "packageManager" field in the
+      # root package.json; pnpm/action-setup reads it automatically.
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -53,8 +69,21 @@ jobs:
       - name: Run crawler tests
         run: pnpm --filter @claimradar/crawler test
 
+      # Policy gate: refuses to continue if AUTO_VERIFY_CLAIMABLES or
+      # ENABLE_BILLING is ever flipped on. Runs before any live write.
+      - name: Preflight policy gate
+        run: pnpm crawler:preflight -- --environment=staging
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AUTO_VERIFY_CLAIMABLES: 'false'
+          ENABLE_BILLING: 'false'
+
+      # Secrets are injected ONLY as step-scoped env vars (never echoed,
+      # never interpolated into shell text). Dispatch inputs are passed via
+      # env to avoid script-injection.
       - name: Run daily crawl
-        run: pnpm crawler:daily ${{ inputs.dry_run == 'true' && '-- --dry-run' || '' }}
+        shell: bash
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -65,6 +94,72 @@ jobs:
           LIVE_ADAPTERS_ENABLED: 'true'
           AI_DAILY_REQUEST_BUDGET: ${{ vars.AI_DAILY_REQUEST_BUDGET || '40' }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          # Staging safety guards — pinned, never sourced from vars/secrets.
+          APP_ENV: 'staging'
+          AUTO_VERIFY_CLAIMABLES: 'false'
+          ENABLE_BILLING: 'false'
+          # Staging must never notify real customers.
+          NOTIFY_CUSTOMERS_ENABLED: 'false'
+          # Machine-readable summary for the artifact + sanitized job summary.
+          CRAWLER_SUMMARY_FILE: 'crawl-summary.json'
+          DRY_RUN: ${{ inputs.dry_run }}
+          SOURCE_FILTER: ${{ inputs.source }}
+        run: |
+          DRY_FLAG=""
+          if [ "$DRY_RUN" = "true" ]; then
+            DRY_FLAG="--dry-run"
+          fi
+          if [ -n "$SOURCE_FILTER" ]; then
+            echo "Running single-source crawl: $SOURCE_FILTER"
+            pnpm crawler:source -- --source "$SOURCE_FILTER" $DRY_FLAG
+          else
+            pnpm crawler:daily $DRY_FLAG
+          fi
+
+      # Job summary is a whitelisted projection of crawl-summary.json:
+      # counters and source ids only — never URLs, tokens, or raw error text.
+      - name: Publish sanitized job summary
+        if: always()
+        shell: bash
+        run: |
+          node - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          const fs = require('node:fs');
+          const file = 'crawl-summary.json';
+          if (!fs.existsSync(file)) {
+            console.log('## Daily Crawl');
+            console.log('');
+            console.log('_No crawl summary produced (run failed before the pipeline completed)._');
+            process.exit(0);
+          }
+          const s = JSON.parse(fs.readFileSync(file, 'utf-8'));
+          const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+          const cleanId = (v) => String(v ?? 'unknown').replace(/[|`\\]/g, '').slice(0, 64);
+          const lines = [
+            '## Daily Crawl - Run Summary',
+            '',
+            '| Metric | Value |',
+            '| --- | --- |',
+            `| Sources | ${num(s.sourcesSucceeded)}/${num(s.sourcesAttempted)} succeeded, ${num(s.sourcesFailed)} failed |`,
+            `| Documents | ${num(s.documentsDiscovered)} discovered, ${num(s.documentsFetched)} fetched |`,
+            `| Unchanged / duplicates | ${num(s.documentsUnchanged)} / ${num(s.documentsDuplicate)} |`,
+            `| Candidates | ${num(s.candidatesCreated)} |`,
+            `| AI calls | ${num(s.aiCallsUsed)} used, ${num(s.aiCallsFailed)} failed |`,
+            `| Publications | ${num(s.recordsPublished)} published, ${num(s.recordsQueued)} queued, ${num(s.recordsRejected)} rejected |`,
+            `| Errors | ${num(s.errorCount)} |`,
+            `| Duration | ${(num(s.durationMs) / 1000).toFixed(1)}s |`,
+            '',
+            '### Per-source status',
+            '',
+            '| Source | Status | Discovered | Fetched | Candidates | Errors |',
+            '| --- | --- | --- | --- | --- | --- |',
+          ];
+          for (const p of Array.isArray(s.perSource) ? s.perSource : []) {
+            lines.push(
+              `| ${cleanId(p.sourceId)} | ${p.status === 'succeeded' ? 'OK' : 'FAIL'} | ${num(p.discovered)} | ${num(p.fetched)} | ${num(p.candidates)} | ${num(p.errors)} |`,
+            );
+          }
+          console.log(lines.join('\n'));
+          EOF
 
       - name: Upload run summary
         if: always()
@@ -74,5 +169,10 @@ jobs:
           path: crawl-summary.json
           if-no-files-found: ignore
 
-    # Note: GitHub Actions scheduled workflows can occasionally be delayed.
-    # They are not exact-time guarantees.
+    # Notes:
+    # - GitHub Actions scheduled workflows can be delayed or skipped on
+    #   inactive forks; missed-run detection lives in source-health.yml
+    #   (crawl-status step) which fails when the last successful crawl is
+    #   older than the configured threshold.
+    # - Scheduled workflows require the repository to be hosted on GitHub;
+    #   see docs/deployment-readiness.md for the current blocker list.

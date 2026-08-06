@@ -238,6 +238,17 @@ export default async function CorrectionsPage({
                       <input name="resolution" required minLength={3} className={inputCls} />
                     </div>
                   </div>
+                  <label className="flex items-start gap-2 text-xs text-text-secondary">
+                    <input
+                      type="checkbox"
+                      name="confirm_impact"
+                      required
+                      value="yes"
+                      className="mt-0.5 accent-danger"
+                    />
+                    I understand the impact: granting archives this claimable and removes it from
+                    the public website; both outcomes are recorded in the audit log.
+                  </label>
                 </ActionForm>
               )}
             </article>

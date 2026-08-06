@@ -4,7 +4,9 @@ import { Alert, Badge, Card, EmptyState } from '@claimradar/design-system';
 import {
   BellRing,
   Building2,
+  CircleCheck,
   ClipboardList,
+  Layers,
   Newspaper,
   Radar,
   Settings,
@@ -13,6 +15,8 @@ import {
 import { requireAppAuth } from '@/lib/app-auth';
 import {
   getMatches,
+  getNotifications,
+  getOnboarding,
   getRecentlyChangedClaimables,
   getTrackers,
   getWatchlist,
@@ -29,12 +33,15 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardPage() {
   const user = await requireAppAuth();
 
-  const [matches, watchlist, trackers, recentChanges] = await Promise.all([
-    getMatches(user.id),
-    getWatchlist(user.id),
-    getTrackers(user.id),
-    getRecentlyChangedClaimables(5),
-  ]);
+  const [matches, watchlist, trackers, recentChanges, notifications, onboarding] =
+    await Promise.all([
+      getMatches(user.id),
+      getWatchlist(user.id),
+      getTrackers(user.id),
+      getRecentlyChangedClaimables(5),
+      getNotifications(user.id),
+      getOnboarding(user.id),
+    ]);
 
   const dbUnavailable = matches.unavailable && watchlist.unavailable && trackers.unavailable;
 
@@ -48,6 +55,15 @@ export default async function DashboardPage() {
     (m) => m.confidence === MatchConfidence.StrongPotentialMatch,
   );
   const closingSoon = matches.filter((m) => isClosingSoon(m.claimable?.deadline ?? null));
+  const unreadNotifications = notifications.filter((n) => !n.read_at).length;
+  const setupAnswersProvided = onboarding
+    ? [
+        onboarding.companies_used.length > 0,
+        onboarding.sectors_used.length > 0,
+        onboarding.state !== null,
+        onboarding.purchase_period_start !== null || onboarding.purchase_period_end !== null,
+      ].filter(Boolean).length
+    : 0;
 
   const stats = [
     {
@@ -195,10 +211,10 @@ export default async function DashboardPage() {
           )}
         </Card>
 
-        {/* Watched companies snapshot */}
+        {/* Watchlist snapshot (companies + sectors) */}
         <Card>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">Watched companies</h2>
+            <h2 className="text-base font-semibold text-text-primary">Watchlist</h2>
             <Link
               href="/app/watchlist"
               className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
@@ -206,27 +222,147 @@ export default async function DashboardPage() {
               Manage
             </Link>
           </div>
-          {watchlist.companies.length === 0 ? (
+          {watchlist.companies.length === 0 && watchlist.sectors.length === 0 ? (
             <EmptyState
               className="py-8"
               icon={<Building2 className="h-8 w-8" aria-hidden />}
-              title="No watched companies"
-              description="Watch companies you have bought from and we will surface anything new about them."
+              title="Nothing watched yet"
+              description="Watch companies and sectors you have bought from and we will surface anything new involving them."
             />
           ) : (
-            <ul className="flex flex-wrap gap-2">
-              {watchlist.companies.map((company) => (
-                <li key={company.id}>
-                  <Link
-                    href={company.slug ? `/companies/${company.slug}` : '/companies'}
-                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
-                  >
-                    <Badge variant="secondary">{company.display_name}</Badge>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-4">
+              {watchlist.companies.length > 0 && (
+                <div>
+                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-text-muted">
+                    <Building2 className="h-3.5 w-3.5" aria-hidden />
+                    Companies
+                  </p>
+                  <ul className="flex flex-wrap gap-2">
+                    {watchlist.companies.map((company) => (
+                      <li key={company.id}>
+                        <Link
+                          href={company.slug ? `/companies/${company.slug}` : '/companies'}
+                          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+                        >
+                          <Badge variant="secondary">{company.display_name}</Badge>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {watchlist.sectors.length > 0 && (
+                <div>
+                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-text-muted">
+                    <Layers className="h-3.5 w-3.5" aria-hidden />
+                    Sectors
+                  </p>
+                  <ul className="flex flex-wrap gap-2">
+                    {watchlist.sectors.map((sector) => (
+                      <li key={sector.id}>
+                        <Link
+                          href={sector.slug ? `/sectors/${sector.slug}` : '/sectors'}
+                          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+                        >
+                          <Badge variant="neutral">{sector.name}</Badge>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
+        </Card>
+
+        {/* Notification summary */}
+        <Card>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-text-primary">Notifications</h2>
+            <Link
+              href="/app/notifications"
+              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+            >
+              View all
+            </Link>
+          </div>
+          {notifications.length === 0 ? (
+            <EmptyState
+              className="py-8"
+              icon={<BellRing className="h-8 w-8" aria-hidden />}
+              title="No notifications yet"
+              description="Match alerts and deadline reminders will appear here."
+            />
+          ) : (
+            <>
+              <p className="mb-3 text-sm text-text-secondary">
+                {unreadNotifications > 0 ? (
+                  <>
+                    <span className="font-semibold text-text-primary">{unreadNotifications}</span>{' '}
+                    unread notification{unreadNotifications === 1 ? '' : 's'}
+                  </>
+                ) : (
+                  'You are all caught up.'
+                )}
+              </p>
+              <ul className="divide-y divide-border">
+                {notifications.slice(0, 3).map((notification) => (
+                  <li key={notification.id} className="flex items-start gap-2.5 py-3">
+                    <span
+                      className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                        notification.read_at ? 'bg-border' : 'bg-trust-primary'
+                      }`}
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-text-primary">
+                        {notification.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-text-muted">
+                        {formatDate(notification.created_at)}
+                        {!notification.read_at && <span className="sr-only"> (unread)</span>}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </Card>
+
+        {/* Setup progress */}
+        <Card>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-text-primary">Your setup</h2>
+            <Link
+              href="/app/profile"
+              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+            >
+              Review profile
+            </Link>
+          </div>
+          <div className="flex items-start gap-3">
+            <CircleCheck className="mt-0.5 h-5 w-5 shrink-0 text-success" aria-hidden />
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-text-primary">Account setup complete</p>
+              <p className="mt-1 text-xs leading-relaxed text-text-muted">
+                {onboarding
+                  ? `${setupAnswersProvided} of 4 matching dimensions provided · ${onboarding.companies_used.length} compan${onboarding.companies_used.length === 1 ? 'y' : 'ies'} · ${onboarding.sectors_used.length} sector${onboarding.sectors_used.length === 1 ? '' : 's'}`
+                  : 'Your setup answers could not be loaded right now.'}
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-text-muted">
+                Matching uses only the low-risk answers you gave. Manage them under{' '}
+                <Link href="/app/profile" className="text-trust-primary hover:underline">
+                  Profile
+                </Link>{' '}
+                or the{' '}
+                <Link href="/app/privacy" className="text-trust-primary hover:underline">
+                  Privacy center
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
         </Card>
 
         {/* Recent source changes */}

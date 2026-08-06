@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useId, useState } from 'react';
 import type { ReactNode } from 'react';
 
 /**
@@ -35,6 +35,57 @@ function ResultMessage({ state }: { state: ActionResult | null }) {
   return <p className="mt-2 text-xs text-success">Done.</p>;
 }
 
+/**
+ * Inline impact-confirmation panel. Destructive and publication actions must
+ * pass through this second step: the operator reads the impact message and
+ * explicitly confirms before the server action runs. Deliberately calm — no
+ * modal focus trap, no animation beyond colour transitions.
+ */
+function ConfirmationPanel({
+  message,
+  confirmLabel,
+  onConfirm,
+  onCancel,
+  pending,
+}: {
+  message: string;
+  confirmLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  pending: boolean;
+}) {
+  const messageId = useId();
+  return (
+    <div
+      className="mt-2 rounded-md border border-deadline/30 bg-deadline-background p-3"
+      aria-describedby={messageId}
+    >
+      <p id={messageId} className="text-xs leading-relaxed text-text-secondary" role="alert">
+        <span className="font-semibold text-deadline">Confirm before continuing. </span>
+        {message}
+      </p>
+      <div className="mt-2 flex gap-2">
+        <button
+          type="button"
+          onClick={onConfirm}
+          disabled={pending}
+          className={`${buttonBase} bg-danger text-white hover:opacity-90`}
+        >
+          {pending ? `${confirmLabel}…` : confirmLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={pending}
+          className={`${buttonBase} ${buttonVariants.outline}`}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** Fire-and-forget server action bound to a single button. */
 export function ActionButton({
   action,
@@ -42,28 +93,47 @@ export function ActionButton({
   pendingLabel,
   variant = 'default',
   className,
+  confirmMessage,
+  confirmLabel = 'Confirm',
 }: {
   action: () => Promise<ActionResult>;
   label: string;
   pendingLabel?: string;
   variant?: 'default' | 'outline' | 'danger';
   className?: string;
+  /**
+   * When set, the first click opens an inline confirmation showing this
+   * impact message; the action only runs after explicit confirmation.
+   * Required for destructive and publication-affecting actions.
+   */
+  confirmMessage?: string;
+  confirmLabel?: string;
 }) {
   const [state, dispatch, pending] = useActionState<ActionResult, undefined>(
     async () => await action(),
     {},
   );
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <div className={className}>
       <button
         type="button"
-        onClick={() => dispatch(undefined)}
-        disabled={pending}
+        onClick={() => (confirmMessage ? setConfirming(true) : dispatch(undefined))}
+        disabled={pending || confirming}
         className={`${buttonBase} ${buttonVariants[variant]}`}
       >
         {pending ? (pendingLabel ?? `${label}…`) : label}
       </button>
+      {confirmMessage && confirming && (
+        <ConfirmationPanel
+          message={confirmMessage}
+          confirmLabel={confirmLabel}
+          pending={pending}
+          onConfirm={() => dispatch(undefined)}
+          onCancel={() => setConfirming(false)}
+        />
+      )}
       <ResultMessage state={state} />
     </div>
   );

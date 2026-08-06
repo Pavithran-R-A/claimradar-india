@@ -117,6 +117,8 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
               action={approveCandidate.bind(null, candidate.id)}
               label="Approve candidate"
               pendingLabel="Approving…"
+              confirmLabel="Approve"
+              confirmMessage="Approving marks this candidate as eligible for promotion to a claimable draft. Nothing becomes public yet, but the decision is recorded in the audit log."
             />
             <ActionForm
               action={rejectCandidate.bind(null, candidate.id)}
@@ -137,6 +139,16 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
                 placeholder="Why should this candidate not be published?"
                 className="mb-2 min-h-[60px] w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-1 focus:ring-trust-primary"
               />
+              <label className="mb-2 flex items-start gap-2 text-xs text-text-secondary">
+                <input
+                  type="checkbox"
+                  name="confirm_rejection"
+                  required
+                  value="yes"
+                  className="mt-0.5 accent-danger"
+                />
+                I understand rejection is final for this candidate and is recorded in the audit log.
+              </label>
             </ActionForm>
           </div>
         )}
@@ -159,6 +171,8 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
                   action={promoteCandidate.bind(null, candidate.id)}
                   label="Promote to draft claimable"
                   pendingLabel="Promoting…"
+                  confirmLabel="Promote"
+                  confirmMessage="Promotion creates a draft claimable pre-filled from this candidate's extracted fields. The draft still needs legal review and explicit publication approval before it is ever public."
                 />
               </div>
             )}
