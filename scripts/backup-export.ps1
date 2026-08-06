@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param(
   [string]$ProjectRoot = '',
-  [string]$DestinationDir = 'C:\Users\LENOVO\Downloads'
+  [string]$DestinationDir = 'C:\Users\Pavithran R A\Downloads\ClaimRadar-Backups'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -35,8 +35,8 @@ if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
   $ProjectRoot = (Resolve-Path (Join-Path $scriptDir '..')).Path
 }
 
-$stamp   = Get-Date -Format 'yyyyMMdd-HHmm'
-$zipName = "claimradar-backup-$stamp.zip"
+$stamp   = Get-Date -Format 'yyyyMMdd-HHmmss'
+$zipName = "claimradar-source-backup-$stamp.zip"
 $zipPath = Join-Path $DestinationDir $zipName
 
 if (-not (Test-Path $DestinationDir)) {
@@ -61,6 +61,9 @@ try {
     --exclude='.next' `
     --exclude='.temp' `
     --exclude='coverage' `
+    --exclude='dist' `
+    --exclude='.env' `
+    --exclude='.env.local' `
     --exclude='tsconfig.tsbuildinfo' `
     '.'
   if ($LASTEXITCODE -ne 0) { throw "tar exited with code $LASTEXITCODE" }
