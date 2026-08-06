@@ -8,14 +8,14 @@
 
 ## 1. Repository Identification
 
-| Item | Value |
-| :--- | :--- |
-| Absolute repo path | `C:\Users\Pavithran R A\Downloads\chat-11\chat-1` |
-| Git toplevel | `C:/Users/Pavithran R A/Downloads/chat-11/chat-1` |
-| Git directory | `.git` (normal repository, HEAD attached) |
-| Current branch | `qoder/complete-claimradar` |
-| Worktrees | Single worktree at `C:/Users/Pavithran R A/Downloads/chat-11/chat-1` |
-| Preserved Commit | `9901ebc` (`chore(recovery): preserve transferred qoder progress and notifications feature`) |
+| Item               | Value                                                                                        |
+| :----------------- | :------------------------------------------------------------------------------------------- |
+| Absolute repo path | `C:\Users\Pavithran R A\Downloads\chat-11\chat-1`                                            |
+| Git toplevel       | `C:/Users/Pavithran R A/Downloads/chat-11/chat-1`                                            |
+| Git directory      | `.git` (normal repository, HEAD attached)                                                    |
+| Current branch     | `qoder/complete-claimradar`                                                                  |
+| Worktrees          | Single worktree at `C:/Users/Pavithran R A/Downloads/chat-11/chat-1`                         |
+| Preserved Commit   | `9901ebc` (`chore(recovery): preserve transferred qoder progress and notifications feature`) |
 
 ## 2. Git & Transfer Recovery Details
 

@@ -13,13 +13,13 @@ keys or service-role secrets to Git.** In GitHub Actions they belong in the
 `staging` **environment** (Settings → Environments → staging), not at
 repository level, so only jobs declaring `environment: staging` can read them.
 
-| Variable                       | Value / Shape                                                            | Where it is used                                             |
-| :----------------------------- | :----------------------------------------------------------------------- | :----------------------------------------------------------- |
-| `STAGING_SUPABASE_PROJECT_REF` | 20-char project ref, e.g. `abcdefghijklmnopqrst`                         | Derives URL and DATABASE_URL; stored as a GitHub variable; consumed by `scripts/staging-preflight.mjs` migration parity check |
-| `SUPABASE_URL`                 | `https://<STAGING_SUPABASE_PROJECT_REF>.supabase.co`                     | Crawler, web app server env (`apps/web/env.ts`), preflight. Web browser client consumes the same value as `NEXT_PUBLIC_SUPABASE_URL` |
+| Variable                       | Value / Shape                                                            | Where it is used                                                                                                                                 |
+| :----------------------------- | :----------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `STAGING_SUPABASE_PROJECT_REF` | 20-char project ref, e.g. `abcdefghijklmnopqrst`                         | Derives URL and DATABASE_URL; stored as a GitHub variable; consumed by `scripts/staging-preflight.mjs` migration parity check                    |
+| `SUPABASE_URL`                 | `https://<STAGING_SUPABASE_PROJECT_REF>.supabase.co`                     | Crawler, web app server env (`apps/web/env.ts`), preflight. Web browser client consumes the same value as `NEXT_PUBLIC_SUPABASE_URL`             |
 | `SUPABASE_ANON_KEY`            | JWT (`eyJ...`) from Project Settings → API, `anon` `public` role         | Web app browser-side (RLS enforced) — consumed under the name `NEXT_PUBLIC_SUPABASE_ANON_KEY` (`apps/web/env.ts`, `packages/database/client.ts`) |
-| `SUPABASE_SERVICE_ROLE_KEY`    | JWT (`eyJ...`) from Project Settings → API, `service_role` role          | Crawler admin client + web server-only code — never ships to the browser, never under a `NEXT_PUBLIC_` name |
-| `DATABASE_URL`                 | `postgresql://postgres:<db-password>@db.<ref>.supabase.co:5432/postgres` | Supabase CLI migrations (`db push`), psql for backup/restore |
+| `SUPABASE_SERVICE_ROLE_KEY`    | JWT (`eyJ...`) from Project Settings → API, `service_role` role          | Crawler admin client + web server-only code — never ships to the browser, never under a `NEXT_PUBLIC_` name                                      |
+| `DATABASE_URL`                 | `postgresql://postgres:<db-password>@db.<ref>.supabase.co:5432/postgres` | Supabase CLI migrations (`db push`), psql for backup/restore                                                                                     |
 
 GitHub Actions mapping (workflow secret names on the left):
 

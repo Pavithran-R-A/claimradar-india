@@ -46,14 +46,7 @@ const NOT_EXECUTED = 'NOT_EXECUTED';
 const results = [];
 function record(check, status, detail = '') {
   results.push({ check, status, detail });
-  const marker =
-    status === PASS
-      ? '✅'
-      : status === FAIL
-        ? '❌'
-        : status === SKIP
-          ? '⚠️'
-          : '⏸️';
+  const marker = status === PASS ? '✅' : status === FAIL ? '❌' : status === SKIP ? '⚠️' : '⏸️';
   console.log(`${marker} [${status}] ${check}${detail ? ` — ${detail}` : ''}`);
 }
 
@@ -78,14 +71,24 @@ const appEnv = process.env.APP_ENV;
 if (appEnv && appEnv !== 'staging' && appEnv !== 'development') {
   record('APP_ENV staging guard', FAIL, `APP_ENV=${appEnv} (expected staging for this preflight)`);
 } else {
-  record('APP_ENV staging guard', PASS, appEnv ? `APP_ENV=${appEnv}` : 'APP_ENV unset (defaults to development; set APP_ENV=staging for staging deployments)');
+  record(
+    'APP_ENV staging guard',
+    PASS,
+    appEnv
+      ? `APP_ENV=${appEnv}`
+      : 'APP_ENV unset (defaults to development; set APP_ENV=staging for staging deployments)',
+  );
 }
 for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOMERS_ENABLED']) {
   const raw = process.env[guard];
   if (raw === 'true') {
     record(`${guard}=false guard`, FAIL, `${guard} is 'true' — staging invariant violated`);
   } else {
-    record(`${guard}=false guard`, PASS, raw ? `${guard}='${raw}'` : `${guard} unset (defaults to false)`);
+    record(
+      `${guard}=false guard`,
+      PASS,
+      raw ? `${guard}='${raw}'` : `${guard} unset (defaults to false)`,
+    );
   }
 }
 
@@ -114,7 +117,11 @@ if (!serviceRoleKey) {
   record('SUPABASE_SERVICE_ROLE_KEY present', PASS, 'set (never echoed)');
 }
 if (!anonKey) {
-  record('SUPABASE_ANON_KEY present', SKIP, 'staging anon key not set (required for RLS spot checks)');
+  record(
+    'SUPABASE_ANON_KEY present',
+    SKIP,
+    'staging anon key not set (required for RLS spot checks)',
+  );
 } else {
   record('SUPABASE_ANON_KEY present', PASS, `via ${anonKey.name} (never echoed)`);
 }
@@ -137,9 +144,17 @@ try {
     signal: AbortSignal.timeout(15000),
   });
   if (response.ok) {
-    record('Connectivity (REST API)', PASS, `${maskUrl(supabaseUrl.value)} responded ${response.status}`);
+    record(
+      'Connectivity (REST API)',
+      PASS,
+      `${maskUrl(supabaseUrl.value)} responded ${response.status}`,
+    );
   } else {
-    record('Connectivity (REST API)', FAIL, `HTTP ${response.status} from ${maskUrl(supabaseUrl.value)} — check URL/key`);
+    record(
+      'Connectivity (REST API)',
+      FAIL,
+      `HTTP ${response.status} from ${maskUrl(supabaseUrl.value)} — check URL/key`,
+    );
   }
 } catch (error) {
   record('Connectivity (REST API)', FAIL, error instanceof Error ? error.message : 'fetch failed');
@@ -160,21 +175,40 @@ try {
 } catch (_err) {
   localVersions = [];
 }
-console.log(`Local migrations on disk: ${localVersions.length} (${localVersions[0] ?? 'none'} … ${localVersions.at(-1) ?? 'none'})`);
+console.log(
+  `Local migrations on disk: ${localVersions.length} (${localVersions[0] ?? 'none'} … ${localVersions.at(-1) ?? 'none'})`,
+);
 
 if (!projectRef) {
   record('Migration list parity', SKIP, 'STAGING_SUPABASE_PROJECT_REF not set');
 } else if (!accessToken) {
-  record('Migration list parity', SKIP, 'SUPABASE_ACCESS_TOKEN not set (Supabase CLI personal access token required)');
+  record(
+    'Migration list parity',
+    SKIP,
+    'SUPABASE_ACCESS_TOKEN not set (Supabase CLI personal access token required)',
+  );
 } else {
   // Strict whitelist: a Supabase project ref is exactly 20 lowercase
   // alphanumerics. Anything else is rejected before touching a shell.
   if (!/^[a-z0-9]{20}$/.test(projectRef.value)) {
-    record('Migration list parity', FAIL, 'STAGING_SUPABASE_PROJECT_REF is not a 20-char lowercase alphanumeric project ref');
+    record(
+      'Migration list parity',
+      FAIL,
+      'STAGING_SUPABASE_PROJECT_REF is not a 20-char lowercase alphanumeric project ref',
+    );
   } else {
     const cli = spawnSync(
       'npx',
-      ['--yes', 'supabase', 'migration', 'list', '--project-ref', projectRef.value, '--output', 'json'],
+      [
+        '--yes',
+        'supabase',
+        'migration',
+        'list',
+        '--project-ref',
+        projectRef.value,
+        '--output',
+        'json',
+      ],
       {
         encoding: 'utf8',
         shell: process.platform === 'win32', // npx is a .cmd shim on Windows
@@ -194,16 +228,26 @@ if (!projectRef) {
       const pending = localVersions.filter((version) => !remote.has(version));
       const orphaned = [...remote].filter((version) => !localVersions.includes(version));
       if (pending.length === 0 && orphaned.length === 0) {
-        record('Migration list parity', PASS, `${localVersions.length} local migrations all applied on staging`);
+        record(
+          'Migration list parity',
+          PASS,
+          `${localVersions.length} local migrations all applied on staging`,
+        );
       } else {
         const parts = [];
-        if (pending.length > 0) parts.push(`pending: ${pending.join(', ')} (run 'supabase db push')`);
-        if (orphaned.length > 0) parts.push(`applied remotely but missing locally: ${orphaned.join(', ')}`);
+        if (pending.length > 0)
+          parts.push(`pending: ${pending.join(', ')} (run 'supabase db push')`);
+        if (orphaned.length > 0)
+          parts.push(`applied remotely but missing locally: ${orphaned.join(', ')}`);
         record('Migration list parity', FAIL, parts.join('; '));
       }
     } catch (error) {
       const message = error instanceof Error ? error.message.split('\n')[0] : 'supabase CLI failed';
-      record('Migration list parity', SKIP, `CLI could not verify remote state (${message}); check SUPABASE_ACCESS_TOKEN and 'supabase link'`);
+      record(
+        'Migration list parity',
+        SKIP,
+        `CLI could not verify remote state (${message}); check SUPABASE_ACCESS_TOKEN and 'supabase link'`,
+      );
     }
   }
 }
@@ -238,11 +282,23 @@ if (!anonKey) {
     }
   }
   if (checked === 0) {
-    record('RLS spot check (anon denied on admin tables)', SKIP, 'no table could be probed (connectivity issue)');
+    record(
+      'RLS spot check (anon denied on admin tables)',
+      SKIP,
+      'no table could be probed (connectivity issue)',
+    );
   } else if (leaked.length > 0) {
-    record('RLS spot check (anon denied on admin tables)', FAIL, `anon key returned rows from: ${leaked.join(', ')}`);
+    record(
+      'RLS spot check (anon denied on admin tables)',
+      FAIL,
+      `anon key returned rows from: ${leaked.join(', ')}`,
+    );
   } else {
-    record('RLS spot check (anon denied on admin tables)', PASS, `anon key denied on ${checked}/${adminTables.length} admin tables`);
+    record(
+      'RLS spot check (anon denied on admin tables)',
+      PASS,
+      `anon key denied on ${checked}/${adminTables.length} admin tables`,
+    );
   }
 }
 
@@ -257,7 +313,11 @@ if (!anonKey) {
       signal: AbortSignal.timeout(15000),
     });
     if (response.ok) {
-      record('RLS spot check (service role can read ingestion tables)', PASS, 'service role read crawl_runs');
+      record(
+        'RLS spot check (service role can read ingestion tables)',
+        PASS,
+        'service role read crawl_runs',
+      );
     } else {
       record(
         'RLS spot check (service role can read ingestion tables)',
@@ -287,7 +347,9 @@ function finish(exitCode) {
     `${PASS}: ${counts[PASS]} | ${FAIL}: ${counts[FAIL]} | ${SKIP}: ${counts[SKIP]} | ${NOT_EXECUTED}: ${counts[NOT_EXECUTED]}`,
   );
   if (counts[SKIP] > 0) {
-    console.log('SKIP_CREDENTIALS checks re-run automatically once staging credentials are provided.');
+    console.log(
+      'SKIP_CREDENTIALS checks re-run automatically once staging credentials are provided.',
+    );
   }
   console.log('This preflight performed no writes and no schema changes.');
   process.exit(exitCode);

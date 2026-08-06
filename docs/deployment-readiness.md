@@ -97,20 +97,20 @@ deployment is explicitly out of scope.
 
 ### 6.2 Env var list (Preview environment only)
 
-| Variable                       | Value                              | Notes                                                       |
-| :----------------------------- | :--------------------------------- | :---------------------------------------------------------- |
-| `APP_ENV`                      | `staging`                          | Activates robots disallow-all + email suppression            |
-| `NEXT_PUBLIC_SITE_URL`         | the preview/staging URL            | Required by `apps/web/env.ts` (client)                      |
-| `NEXT_PUBLIC_SITE_NAME`        | `ClaimRadar India`                 | Required by `apps/web/env.ts` (client)                      |
-| `NEXT_PUBLIC_SUPABASE_URL`     | staging Supabase URL               | Browser-safe                                                  |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`| staging anon JWT                   | Browser-safe; RLS enforced                                    |
-| `NEXT_PUBLIC_ENABLE_BILLING`   | `false`                            | Staging invariant                                             |
-| `SUPABASE_URL`                 | staging Supabase URL               | Server-only                                                   |
-| `SUPABASE_SERVICE_ROLE_KEY`    | staging service-role JWT           | **Server-only — never with a `NEXT_PUBLIC_` prefix**          |
-| `AUTO_VERIFY_CLAIMABLES`       | `false`                            | Staging invariant                                             |
-| `ENABLE_BILLING`               | `false`                            | Staging invariant                                             |
-| `NOTIFY_CUSTOMERS_ENABLED`     | `false`                            | Staging invariant                                             |
-| `EMAIL_PROVIDER`               | `console`                          | Real mail is production-only (§7)                             |
+| Variable                        | Value                    | Notes                                                |
+| :------------------------------ | :----------------------- | :--------------------------------------------------- |
+| `APP_ENV`                       | `staging`                | Activates robots disallow-all + email suppression    |
+| `NEXT_PUBLIC_SITE_URL`          | the preview/staging URL  | Required by `apps/web/env.ts` (client)               |
+| `NEXT_PUBLIC_SITE_NAME`         | `ClaimRadar India`       | Required by `apps/web/env.ts` (client)               |
+| `NEXT_PUBLIC_SUPABASE_URL`      | staging Supabase URL     | Browser-safe                                         |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | staging anon JWT         | Browser-safe; RLS enforced                           |
+| `NEXT_PUBLIC_ENABLE_BILLING`    | `false`                  | Staging invariant                                    |
+| `SUPABASE_URL`                  | staging Supabase URL     | Server-only                                          |
+| `SUPABASE_SERVICE_ROLE_KEY`     | staging service-role JWT | **Server-only — never with a `NEXT_PUBLIC_` prefix** |
+| `AUTO_VERIFY_CLAIMABLES`        | `false`                  | Staging invariant                                    |
+| `ENABLE_BILLING`                | `false`                  | Staging invariant                                    |
+| `NOTIFY_CUSTOMERS_ENABLED`      | `false`                  | Staging invariant                                    |
+| `EMAIL_PROVIDER`                | `console`                | Real mail is production-only (§7)                    |
 
 ### 6.3 NEXT_PUBLIC safety rule
 
