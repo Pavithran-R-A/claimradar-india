@@ -40,9 +40,47 @@
 - **Source Registry:** `packages/source-registry`
 - **Config & SEO Packages:** `packages/config`, `packages/seo`
 
+## 2. Readiness Category Status Matrix
+
+| Category | Status | Evidence / Reason |
+| :--- | :--- | :--- |
+| `HOMEPAGE_UI_CODE` | `PASS` | `apps/web/app/(public)/page.tsx` compiled & styled |
+| `HOMEPAGE_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `PUBLIC_DIRECTORY_UI_CODE` | `PASS` | `apps/web/app/(public)/claimables/page.tsx` compiled & styled |
+| `PUBLIC_DIRECTORY_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `CLAIM_DETAIL_UI_CODE` | `PASS` | `apps/web/app/(public)/claimables/[slug]/page.tsx` compiled & styled |
+| `CLAIM_DETAIL_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `COMPANY_UI_CODE` | `PASS` | `apps/web/app/(public)/companies/page.tsx` compiled & styled |
+| `COMPANY_UI_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `SECTOR_UI_CODE` | `PASS` | `apps/web/app/(public)/sectors/page.tsx` compiled & styled |
+| `SECTOR_UI_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `DEADLINE_UI_CODE` | `PASS` | `apps/web/app/(public)/deadlines/page.tsx` compiled & styled |
+| `DEADLINE_UI_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `CUSTOMER_APP_UI_CODE` | `PASS` | `apps/web/app/app/page.tsx` compiled & styled |
+| `CUSTOMER_APP_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `ADMIN_UI_CODE` | `PASS` | `apps/web/app/admin/page.tsx` compiled & styled |
+| `ADMIN_UI_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `AUTH_UI_CODE` | `PASS` | `apps/web/app/(auth)/login/page.tsx` compiled & styled |
+| `AUTH_UI_BROWSER_QA` | `NOT_EXECUTED` | Pending live browser screenshot capture & interaction evidence |
+| `LOADING_STATES` | `PASS` | Skeletons implemented in `components/skeletons/` |
+| `EMPTY_STATES` | `PASS` | `EmptyDirectoryNotice` in `components/repository-states.tsx` |
+| `ERROR_STATES` | `PASS` | `global-error.tsx` & error notice banners implemented |
+| `MOBILE_UI` | `NOT_EXECUTED` | Pending mobile viewport screenshot & interaction evidence |
+| `KEYBOARD_ACCESSIBILITY` | `NOT_EXECUTED` | Focus ring CSS present; manual/automated keyboard QA not executed |
+| `AUTOMATED_ACCESSIBILITY` | `NOT_EXECUTED` | WCAG semantics present; automated axe scan not executed |
+| `REDUCED_MOTION_BROWSER_QA` | `NOT_EXECUTED` | CSS media query present; browser emulation scan not executed |
+| `LIGHTHOUSE_PERFORMANCE` | `NOT_EXECUTED` | Build completed; Lighthouse audit not executed |
+| `LOCAL_SUPABASE_NEW_DEVICE` | `BLOCKED_LOCAL_ENVIRONMENT` | `com.docker.service` stopped on Windows host |
+| `LOCAL_PGTAP_NEW_DEVICE` | `BLOCKED_LOCAL_ENVIRONMENT` | `supabase test db` pending Docker engine |
+| `LOCAL_RLS_NEW_DEVICE` | `BLOCKED_LOCAL_ENVIRONMENT` | Local RLS suite pending Docker engine |
+| `PUBLIC_ROUTES_LOCAL_DATABASE` | `BLOCKED_LOCAL_ENVIRONMENT` | Database-backed route isolation test pending Docker engine |
+| `STAGING_DATABASE` | `SKIP_CREDENTIALS` | Disposable staging credentials required |
+| `STAGING_PREVIEW` | `SKIP_CREDENTIALS` | Disposable staging credentials & Vercel link required |
+
 ---
 
-## 2. Git Status Summary
+## 3. Git Status Summary
 - **Branch:** `qoder/complete-claimradar`
 - **Working Tree:** `nothing to commit, working tree clean`
 - **Uncommitted Files:** `0`
+
