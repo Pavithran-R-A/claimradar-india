@@ -45,9 +45,9 @@
 | G-32 | `STAGING_MONITORING_RUNTIME`      | Telemetry      | Hosted monitoring events                 | `crawl_runs` 0 rows pending remote GitHub runs             | ⚠️ **PARTIAL**                                 |
 | G-33 | `STAGING_SMTP`                    | Auth Email     | Custom SMTP provider                     | Blocked: ClaimRadar domain required                        | ❌ **SMTP BLOCKER = VERIFIED DOMAIN REQUIRED** |
 | G-34 | `PREVIEW_AUTH_EMAIL`              | Auth Email     | Email delivery test                      | Pending G-33 SMTP configuration                            | ❌ **BLOCKER — PENDING G-33**                  |
-| G-35 | `GITHUB_CI_RUNTIME`               | CI/CD          | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
-| G-36 | `GITHUB_CRAWL_RUNTIME`            | Ingestion      | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
-| G-37 | `GITHUB_HEALTH_RUNTIME`           | Monitoring     | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
+| G-35 | `GITHUB_CI_RUNTIME`               | CI/CD          | GitHub Actions run                       | Run `31203756263` passed 100% on GitHub Actions            | ✅ PASS                                        |
+| G-36 | `GITHUB_CRAWL_RUNTIME`            | Ingestion      | GitHub Actions run                       | Run `31204429496` executed live crawler pipeline           | ✅ PASS                                        |
+| G-37 | `GITHUB_HEALTH_RUNTIME`           | Monitoring     | GitHub Actions run                       | Run `31204432428` executed live health check               | ✅ PASS                                        |
 
 ---
 
