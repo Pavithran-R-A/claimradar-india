@@ -5,7 +5,21 @@ const NOW = new Date('2026-08-06T12:00:00Z');
 const HOURS = 3600_000;
 
 describe('Missed-run detection', () => {
-  it('1. brand-new staging: reports initializing (no alert) when environment is fresh within grace window', () => {
+  it('1. brand-new staging: reports initializing (no alert) when totalCrawlRuns is 0', () => {
+    const result = evaluateMissedRun({
+      lastRunAt: null,
+      lastRunStatus: null,
+      lastSuccessAt: null,
+      totalCrawlRuns: 0,
+      maxAgeHours: 26,
+      now: NOW,
+    });
+    expect(result.verdict).toBe('initializing');
+    expect(result.alert).toBe(false);
+    expect(result.reason).toContain('Fresh environment initializing (0 historical crawl runs)');
+  });
+
+  it('1b. brand-new staging: reports initializing (no alert) when environment is fresh within grace window', () => {
     const result = evaluateMissedRun({
       lastRunAt: null,
       lastRunStatus: null,
@@ -70,11 +84,12 @@ describe('Missed-run detection', () => {
     expect(recoveredResult.alert).toBe(false);
   });
 
-  it('reports never_ran when no successful run exists and environment age exceeds threshold', () => {
+  it('reports never_ran when no successful run exists, totalCrawlRuns > 0, and environment age exceeds threshold', () => {
     const result = evaluateMissedRun({
-      lastRunAt: null,
-      lastRunStatus: null,
+      lastRunAt: new Date(NOW.getTime() - 30 * HOURS).toISOString(),
+      lastRunStatus: 'failed',
       lastSuccessAt: null,
+      totalCrawlRuns: 1,
       environmentCreatedAt: new Date(NOW.getTime() - 30 * HOURS).toISOString(),
       maxAgeHours: 26,
       now: NOW,

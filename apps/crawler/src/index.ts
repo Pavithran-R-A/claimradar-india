@@ -508,7 +508,13 @@ async function main() {
         .maybeSingle();
 
       let environmentCreatedAt: string | null = null;
+      let totalCrawlRuns: number | null = null;
       if (!lastSuccessRow) {
+        const { count } = await csSupabase
+          .from('crawl_runs')
+          .select('*', { count: 'exact', head: true });
+        totalCrawlRuns = count;
+
         const { data: earliestSource } = await csSupabase
           .from('sources')
           .select('created_at')
@@ -522,6 +528,7 @@ async function main() {
         lastRunAt: (lastRun?.started_at as string | undefined) ?? null,
         lastRunStatus: (lastRun?.status as string | undefined) ?? null,
         lastSuccessAt: (lastSuccessRow?.started_at as string | undefined) ?? null,
+        totalCrawlRuns,
         maxAgeHours,
         environmentCreatedAt,
       });

@@ -8,7 +8,7 @@
  * this check on its own schedule so a broken/skipped daily schedule becomes
  * visible within at most one health-check interval.
  *
- * For a brand-new environment (where environmentCreatedAt is within maxAgeHours),
+ * For a brand-new environment (where totalCrawlRuns === 0 or environmentCreatedAt is within maxAgeHours),
  * the status is 'initializing' rather than an operational outage alert.
  */
 
@@ -19,6 +19,8 @@ export interface MissedRunInput {
   lastRunStatus?: string | null;
   /** Timestamp of the most recent successful run, or null if none exists. */
   lastSuccessAt: Date | string | null;
+  /** Total number of crawl runs in the database, or null. */
+  totalCrawlRuns?: number | null;
   /** Maximum acceptable age of the last successful run, in hours. */
   maxAgeHours: number;
   /** Environment creation / first observation timestamp, or null. */
@@ -43,6 +45,15 @@ export function evaluateMissedRun(input: MissedRunInput): MissedRunEvaluation {
   const maxAgeMs = input.maxAgeHours * 3600 * 1000;
 
   if (!input.lastSuccessAt) {
+    if (input.totalCrawlRuns === 0) {
+      return {
+        verdict: 'initializing',
+        ageHours: 0,
+        alert: false,
+        reason: `Fresh environment initializing (0 historical crawl runs) — first scheduled crawl expected within ${input.maxAgeHours}h grace window`,
+      };
+    }
+
     if (input.environmentCreatedAt) {
       const envCreated = new Date(input.environmentCreatedAt);
       const envAgeMs = now.getTime() - envCreated.getTime();
