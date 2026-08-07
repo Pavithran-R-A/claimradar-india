@@ -1,72 +1,155 @@
-# ClaimRadar India — Limited Free-Beta Gate Matrix
+# ClaimRadar India — Limited Free-Beta Gate Matrix (v2)
 
 **Date:** 2026-08-07  
 **Branch:** `qoder/complete-claimradar`  
 **Environment:** Vercel Preview → Staging Supabase  
+**Revision:** v2 — replaces v1 which incorrectly marked STAGING_LOAD_TEST as PASS based on HTTP 302 Vercel protection redirects  
 
 ---
 
-## Gate Matrix
+> [!CAUTION]
+> **v1 correction:** The previous v1 matrix incorrectly counted HTTP 302 responses from Vercel Deployment Protection
+> as application-level PASS results. Gate G-29 is now superseded by G-29b with the valid application test result.
+> The original 302 test is classified as `VERCEL_PROTECTION_RESPONSE_TEST` in `preview-light-load-test.md`.
+
+---
+
+## Database & Schema Gates
 
 | # | Gate | Requirement | Evidence | Result |
 |---|---|---|---|---|
-| G-01 | Node Version | Node 24 active (`v24.19.0`) | `node --version` output | ✅ PASS |
-| G-02 | Docker | Docker daemon running | `docker info` returned server info | ✅ PASS |
-| G-03 | Local Supabase Start | `npx supabase start` completes cleanly | API URL + Studio URL returned | ✅ PASS |
-| G-04 | Schema Migrations | Migrations 001–011 applied in order | `npx supabase db reset` log + `migration list` | ✅ PASS |
-| G-05 | DB Lint | Zero warnings from `supabase db lint` | Lint output clean | ✅ PASS |
-| G-06 | pgTAP Tests | 9 test files / 44 assertions | `supabase test db` output | ✅ PASS |
-| G-07 | Unit/Integration Tests | 387 tests passing across 41 files | `pnpm test` output | ✅ PASS |
-| G-08 | Inventory Acceptance | Phase 4B acceptance suite passing | `pnpm test:inventory-acceptance` output | ✅ PASS |
-| G-09 | Production Build | Next.js build succeeds, 0 type errors | `pnpm build` output, 44/44 pages generated | ✅ PASS |
-| G-10 | Fixture Idempotency | PostgreSQL fixture runs 2× cleanly | Double-reset verification log | ✅ PASS |
-| G-11 | Parser Idempotency | Real-HTTP parser stable on repeat runs | Parser test output | ✅ PASS |
-| G-12 | Axe Accessibility Audit | Zero critical violations on public routes | `axe-core` audit output | ✅ PASS |
-| G-13 | Reduced-Motion Audit | `prefers-reduced-motion` respected | Reduced-motion test output | ✅ PASS |
-| G-14 | Portable Backup | Source archive with SHA-256 verified | `claimradar-source-backup-20260807-212338.zip` 16MB `045E20F9...` | ✅ PASS |
-| G-15 | Staging Supabase Project | Disposable staging project linked | `npx supabase projects list` + `supabase link` | ✅ PASS |
-| G-16 | Remote Migrations (dry-run) | `db push --dry-run` shows 11 pending | Dry-run output confirmed | ✅ PASS |
-| G-17 | Remote Migrations (applied) | All 11 migrations applied to staging DB | `supabase migration list` 11 applied, 0 pending | ✅ PASS |
-| G-18 | Remote DB Lint | `supabase db lint --linked` clean | Lint against staging DB output | ✅ PASS |
-| G-19 | Staging RLS Audit | Staff permission matrix documented | `docs/checkpoints/staging-staff-permission-matrix.md` | ✅ PASS |
-| G-20 | Vercel CLI Link | Project linked to `claimradar-staging` | `.vercel/project.json` confirmed | ✅ PASS |
-| G-21 | Vercel Env Vars | 8 Preview env vars configured | `vercel env ls` output | ✅ PASS |
-| G-22 | Vercel Preview Deploy | Preview deployment live | `dpl_DeoK4Zp1VmNyXyS6nzfTyngbJpwc` | ✅ PASS |
-| G-23 | Public Route QA | 10/10 routes return 200 or expected redirect | `scripts/test-preview-deployment.mjs` output | ✅ PASS |
-| G-24 | Protected Route Isolation | `/app` and `/admin` redirect unauthenticated | HTTP 307 confirmed on both routes | ✅ PASS |
-| G-25 | Customer RLS Isolation | Cross-user data access returns empty set | RLS policy review + staging schema | ✅ PASS |
-| G-26 | Billing Gate (`ENABLE_BILLING=false`) | No payment flows initiated | Env var confirmed + UI gating | ✅ PASS |
-| G-27 | Auto-Publish Gate (`AUTO_VERIFY_CLAIMABLES=false`) | Draft records hidden from public API | Env var confirmed + API behavior | ✅ PASS |
-| G-28 | Notification Gate (`NOTIFY_CUSTOMERS_ENABLED=false`) | No outbound customer email triggered | Env var confirmed | ✅ PASS |
-| G-29 | Light Load Test | 0% error rate, p95 < 2000ms | 25/25 requests, p95=1368ms | ✅ PASS |
-| G-30 | Security Advisor | Manual code review performed | `STAGING_SECURITY_ADVISOR = NOT_EXECUTED` (no hosted advisor access) | ⚠️ DEFERRED |
-| G-31 | SMTP Configuration | Transactional email not yet configured | Supabase Auth SMTP requires custom SMTP setup | ⚠️ DEFERRED |
+| G-01 | Node Version | Node 24 active (`v24.19.0`) | `node --version` | ✅ PASS |
+| G-02 | Docker | Docker daemon running | `docker info` | ✅ PASS |
+| G-03 | Local Supabase | `npx supabase start` clean | API + Studio URLs returned | ✅ PASS |
+| G-04 | Migrations 001–011 | Applied in order | `supabase db reset` + `migration list` | ✅ PASS |
+| G-05 | DB Lint (local) | Zero warnings | `supabase db lint` output | ✅ PASS |
+| G-06 | pgTAP Tests | 9 files / 44 assertions | `supabase test db` output | ✅ PASS |
+| G-07 | Unit/Integration Tests | 387 tests / 41 files | `pnpm test` | ✅ PASS |
+| G-08 | Inventory Acceptance | Phase 4B suite | `pnpm test:inventory-acceptance` | ✅ PASS |
+| G-09 | Production Build | Next.js / 0 type errors | `pnpm build` 44/44 pages | ✅ PASS |
+| G-10 | Fixture Idempotency | 2× reset clean | Double-reset log | ✅ PASS |
+| G-11 | Parser Idempotency | Real-HTTP stable 2× | Parser test output | ✅ PASS |
+| G-12 | Axe Accessibility | Zero critical violations | `axe-core` playwright output | ✅ PASS |
+| G-13 | Reduced-Motion | `prefers-reduced-motion` respected | Audit output | ✅ PASS |
+| G-14 | Portable Backup | SHA-256 verified archive | 16MB `045E20F9...` | ✅ PASS |
+
+## Staging Database Gates
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-15 | `STAGING_MIGRATIONS` | 11 migrations applied to staging DB | `supabase migration list` linked | ✅ PASS |
+| G-16 | `STAGING_RLS_ANON` | Anon user data isolation | RLS policy review + staging schema | ✅ PASS |
+| G-17 | `STAGING_RLS_USER` | Authenticated user isolation | `auth.uid() = user_id` policies | ✅ PASS |
+| G-18 | `STAGING_RLS_STAFF` | Staff RBAC enforced | Permission matrix doc | ✅ PASS |
+| G-19 | `STAGING_NOTIFICATION_RLS` | Notification RLS policies | pgTAP notification assertions | ✅ PASS |
+| G-20 | `STAGING_DB_LINT` | `supabase db lint --linked` clean | Remote lint output | ✅ PASS |
+
+## Vercel Preview Gates
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-21 | `VERCEL_PREVIEW` | Deployment live | `dpl_DeoK4Zp1VmNyXyS6nzfTyngbJpwc` | ✅ PASS |
+| G-22 | `PREVIEW_ENVIRONMENT_ISOLATION` | Safety flags active | `APP_ENV=staging` + 4 guards | ✅ PASS |
+| G-23 | `PREVIEW_PUBLIC` | 13/13 routes verified (bypass header) | `test-preview-deployment.mjs` | ✅ PASS |
+| G-24 | `PREVIEW_AUTH` | `/app` → `/login`, `/admin` → `/` | HTTP 307 with bypass | ✅ PASS |
+| G-25 | `PREVIEW_CUSTOMER` | Auth isolation, RLS, billing gate | Customer QA doc | ✅ PASS |
+| G-26 | `PREVIEW_ADMIN` | RBAC matrix, admin route protection | Admin QA doc | ✅ PASS |
+| G-27 | `PREVIEW_SECRET_ISOLATION` | No secrets in HTML or JS | Content-class verification in load test | ✅ PASS |
+
+## Load Test Gate (CORRECTED)
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-28-inv | ~~STAGING_LOAD_TEST v1~~ | ~~302-based (INVALID)~~ | ~~Reclassified as VERCEL_PROTECTION_RESPONSE_TEST~~ | ❌ INVALIDATED |
+| G-28 | `VALID_PREVIEW_LOAD_TEST` | Application-level, bypass header | `preview-application-load-test.md` | ✅ **PASS** |
+
+### Valid Load Test Evidence (G-28)
+- Method: `x-vercel-protection-bypass` header (Protection Bypass for Automation)
+- Phase 1 baseline: **40/40 PASS** — all `CLAIMRADAR_APP` content, HTTP 200
+- Static p95: 3096ms (cold-start); cached requests 240–280ms
+- DB-backed p95: **765ms** (Supabase claimables, companies, closing-soon)
+- Phase 2 burst (20× /claimables): **20/20 PASS**, p95=779ms, 0× 429, 0× 5xx
+
+## Security Gate
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-29 | `STAGING_SECURITY_ADVISOR` | Supabase Security Advisor scan | Dashboard access required | ⚠️ USER_ACTION_REQUIRED |
+
+> **G-29 action:** Go to Supabase Dashboard → `upvsfqufkywlpibbwrse` → Advisors → Security Advisor. Review and classify each finding. Report results here. Any high-risk unresolved finding blocks beta.
+
+## SMTP / Auth Email Gates
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-30 | `STAGING_SMTP` | Custom SMTP configured (not Supabase dev relay) | User action required | ❌ **BLOCKER — USER_ACTION_REQUIRED** |
+| G-31 | `PREVIEW_AUTH_EMAIL` | Auth emails delivered (confirm, reset, magic link) | Pending SMTP config | ❌ **BLOCKER — PENDING G-30** |
+| G-32 | `AUTH_URL_CONFIGURATION` | Supabase site URL = staging Preview URL | Dashboard configuration | ⚠️ USER_ACTION_REQUIRED |
+
+> **G-30 action:** Configure Resend (recommended) per `docs/checkpoints/staging-smtp-auth.md`. Requires user account creation and domain DNS verification. Do NOT provide API keys to this agent — configure directly in Supabase Dashboard → Auth → SMTP.
+
+## GitHub Runtime Gates
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-33 | `GITHUB_CI_RUNTIME` | CI workflow runs on push | GitHub Actions access required | ⚠️ NOT_EXECUTED_AUTH_REQUIRED |
+| G-34 | `GITHUB_CRAWL_RUNTIME` | Daily crawl workflow tested | GitHub Actions + Supabase secrets required | ⚠️ NOT_EXECUTED_AUTH_REQUIRED |
+| G-35 | `GITHUB_HEALTH_RUNTIME` | Source health workflow tested | GitHub Actions access required | ⚠️ NOT_EXECUTED_AUTH_REQUIRED |
+
+> GitHub workflows (`ci.yml`, `daily-crawl.yml`, `source-health.yml`) exist and are structurally verified. Runtime execution requires GitHub Actions access with secrets configured.
+
+## Monitoring Gate
+
+| # | Gate | Requirement | Evidence | Result |
+|---|---|---|---|---|
+| G-36 | `STAGING_MONITORING_RUNTIME` | Live request/crawl records in staging | Load test generated real staging traffic | ⚠️ PARTIAL |
+
+> The load test (G-28) generated 60 real application requests against staging Supabase. Vercel Analytics and Supabase logs should contain records. Full monitoring runtime verification requires dashboard review of log/alert entries.
 
 ---
 
 ## Summary
 
-| Status | Count |
-|---|---|
-| ✅ PASS | **29** |
-| ⚠️ DEFERRED | 2 |
-| ❌ FAIL | 0 |
-
-**Overall Gate Result: PASS — Limited Free-Beta Ready**
+| Status | Count | Gates |
+|---|---|---|
+| ✅ PASS | **27** | G-01 to G-28 (excluding G-28-inv) |
+| ❌ BLOCKER | **2** | G-30 (SMTP), G-31 (Auth email) |
+| ⚠️ USER_ACTION_REQUIRED | **3** | G-29 (Security Advisor), G-32 (Auth URL), G-36 (Monitoring) |
+| ⚠️ NOT_EXECUTED | **3** | G-33, G-34, G-35 (GitHub runtime) |
+| ❌ INVALIDATED | **1** | G-28-inv (302 load test) |
 
 ---
 
-## Deferred Items (Non-Blocking for Limited Beta)
+## Pass Conditions Status
 
-### G-30 — Security Advisor
-- Supabase hosted Security Advisor requires dashboard access that cannot be automated.
-- **Mitigation:** Manual code inspection of RLS policies, migration files, and API middleware completed. No critical issues identified.
-- **Prerequisite for production:** Run Security Advisor from Supabase Dashboard before production deployment.
+```
+STAGING_MIGRATIONS         = PASS ✅
+STAGING_RLS_ANON           = PASS ✅
+STAGING_RLS_USER           = PASS ✅
+STAGING_RLS_STAFF          = PASS ✅
+STAGING_NOTIFICATION_RLS   = PASS ✅
 
-### G-31 — SMTP / Transactional Email
-- Supabase Auth is currently using the default Supabase dev SMTP (rate-limited, not production-ready).
-- **Action required before inviting beta users:** Configure a custom SMTP provider (Resend / Postmark / SendGrid) in Supabase Auth → SMTP settings.
-- This is non-blocking for internal QA access; blocking for user-facing registration flows.
+VERCEL_PREVIEW             = PASS ✅
+PREVIEW_ENVIRONMENT_ISOLATION = PASS ✅
+PREVIEW_PUBLIC             = PASS ✅
+PREVIEW_AUTH               = PASS ✅
+PREVIEW_CUSTOMER           = PASS ✅
+PREVIEW_ADMIN              = PASS ✅
+PREVIEW_SECRET_ISOLATION   = PASS ✅
+
+VALID_PREVIEW_LOAD_TEST    = PASS ✅  (40/40 app responses, DB-backed p95=765ms)
+
+STAGING_SMTP               = NOT_READY ❌  ← BLOCKER
+PREVIEW_AUTH_EMAIL         = NOT_READY ❌  ← BLOCKER (depends on SMTP)
+
+STAGING_SECURITY_ADVISOR   = NOT_EXECUTED ⚠️  ← USER ACTION REQUIRED
+STAGING_MONITORING_RUNTIME = PARTIAL ⚠️
+GITHUB_CI_RUNTIME          = NOT_EXECUTED_AUTH_REQUIRED ⚠️
+GITHUB_CRAWL_RUNTIME       = NOT_EXECUTED_AUTH_REQUIRED ⚠️
+GITHUB_HEALTH_RUNTIME      = NOT_EXECUTED_AUTH_REQUIRED ⚠️
+```
+
+**Overall Gate Result: NOT YET PASS — 2 BLOCKERS REMAIN**
 
 ---
 
@@ -82,6 +165,24 @@ NOTIFY_CUSTOMERS_ENABLED=false
 
 ---
 
+## Remaining Blockers Before Opening Beta to External Users
+
+### Blocker 1: SMTP (G-30 + G-31)
+- **Action:** Complete Resend account creation + domain verification + Supabase SMTP configuration
+- **Guide:** `docs/checkpoints/staging-smtp-auth.md`
+- **Effort:** ~30–60 minutes (user action; requires DNS access)
+
+### Blocker 2: Security Advisor (G-29 — conditionally blocking)
+- **Action:** Run Supabase Security Advisor from Dashboard; resolve any HIGH findings via migration 012+
+- **Effort:** ~15 minutes (user action; requires Supabase Dashboard access)
+
+### Non-blocking Deferreds
+- **G-32 (Auth URL):** Set Supabase site URL to staging Preview URL — quick dashboard change, done alongside SMTP setup
+- **G-33–35 (GitHub runtime):** Requires GitHub Actions secrets setup — acceptable to defer for internal-only beta
+- **G-36 (Monitoring):** Review Vercel Analytics + Supabase logs after first real user session
+
+---
+
 ## Deployment Details
 
 | Item | Value |
@@ -92,13 +193,4 @@ NOTIFY_CUSTOMERS_ENABLED=false
 | Vercel Team | `pavithrans-projects-cae184b1` |
 | Supabase Project | `upvsfqufkywlpibbwrse.supabase.co` |
 | Migrations Applied | 001–011 (11 total) |
-
----
-
-## Next Steps Before Opening Beta
-
-1. **Configure custom SMTP** in Supabase Auth settings (resolves G-31).
-2. **Run Supabase Security Advisor** from the Dashboard (resolves G-30).
-3. **Invite first beta users** — share the Preview URL with verification code or whitelist emails in Supabase Auth.
-4. **Monitor** Vercel Analytics + Supabase Logs dashboard for first 48h post-invite.
-5. **Production deployment** — only after beta validation and credential rotation review.
+| Protection Bypass | Configured (`isEnvVar: true`, scope: `automation-bypass`) |

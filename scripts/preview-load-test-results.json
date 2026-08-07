@@ -1,65 +1,913 @@
 {
-  "timestamp": "2026-08-07T16:25:57.844Z",
+  "timestamp": "2026-08-07T16:48:10.301Z",
   "baseUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app",
-  "totalRequests": 25,
-  "concurrency": 25,
-  "passedRequests": 25,
-  "failedRequests": 0,
-  "errorRate": "0.0%",
-  "wallClockMs": 1367,
-  "latencyMs": {
-    "min": 847,
-    "avg": 1076,
-    "p50": 1033,
-    "p95": 1368,
-    "p99": 1368,
-    "max": 1368
+  "bypassMethod": "x-vercel-protection-bypass header (Protection Bypass for Automation)",
+  "classification": "APPLICATION_LOAD_TEST",
+  "phases": {
+    "baseline": {
+      "description": "8 routes × 5 requests (concurrency 5)",
+      "wallClockMs": 7117,
+      "stats": {
+        "total": 40,
+        "passed": 40,
+        "failed": 0,
+        "fivexx": 0,
+        "ratelimited": 0,
+        "timedOut": 0,
+        "errorRate": "0.0%",
+        "latency": {
+          "min": 240,
+          "max": 3107,
+          "avg": 792,
+          "p50": 510,
+          "p95": 3096,
+          "p99": 3107
+        }
+      },
+      "staticPageStats": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0,
+        "fivexx": 0,
+        "ratelimited": 0,
+        "timedOut": 0,
+        "errorRate": "0.0%",
+        "latency": {
+          "min": 240,
+          "max": 3107,
+          "avg": 927,
+          "p50": 496,
+          "p95": 3096,
+          "p99": 3107
+        }
+      },
+      "databaseBackedPageStats": {
+        "total": 15,
+        "passed": 15,
+        "failed": 0,
+        "fivexx": 0,
+        "ratelimited": 0,
+        "timedOut": 0,
+        "errorRate": "0.0%",
+        "latency": {
+          "min": 481,
+          "max": 765,
+          "avg": 567,
+          "p50": 523,
+          "p95": 765,
+          "p99": 765
+        }
+      },
+      "routeBreakdown": [
+        {
+          "route": "/",
+          "type": "STATIC",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 3080,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/claimables",
+          "type": "DB_BACKED",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 683,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/companies",
+          "type": "DB_BACKED",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 501,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/closing-soon",
+          "type": "DB_BACKED",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 518,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/sectors",
+          "type": "STATIC",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 512,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/pricing",
+          "type": "STATIC",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 284,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/login",
+          "type": "STATIC",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 509,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        },
+        {
+          "route": "/register",
+          "type": "STATIC",
+          "passed": 5,
+          "total": 5,
+          "avgMs": 251,
+          "statuses": [
+            200
+          ],
+          "contentClasses": [
+            "CLAIMRADAR_APP"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "description": "10 simultaneous requests × 2 rounds on /claimables",
+      "stats": {
+        "total": 20,
+        "passed": 20,
+        "failed": 0,
+        "fivexx": 0,
+        "ratelimited": 0,
+        "timedOut": 0,
+        "errorRate": "0.0%",
+        "latency": {
+          "min": 493,
+          "max": 779,
+          "avg": 576,
+          "p50": 518,
+          "p95": 779,
+          "p99": 779
+        }
+      }
+    }
   },
-  "routeBreakdown": [
+  "rawBaseline": [
     {
       "route": "/",
-      "passed": 5,
-      "total": 5,
-      "avgMs": 944,
-      "statuses": [
-        302
-      ]
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 3107,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 68389,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 3054,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 68389,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 3057,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 68389,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 3096,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 68389,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 3085,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 68389,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 654,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 665,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 765,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 691,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 642,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/companies",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 485,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31249,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/companies",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 485,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31249,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/companies",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 507,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31249,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/companies",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 537,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31249,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/companies",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 490,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31249,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/closing-soon",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 523,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31552,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/closing-soon",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 481,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31552,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/closing-soon",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 517,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31552,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/closing-soon",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 522,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31552,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/closing-soon",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 546,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 31552,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/sectors",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 496,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 28898,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/sectors",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 496,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 28898,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/sectors",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 516,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 28898,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/sectors",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 487,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 28898,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/sectors",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 564,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 28898,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
     },
     {
       "route": "/pricing",
-      "passed": 5,
-      "total": 5,
-      "avgMs": 962,
-      "statuses": [
-        302
-      ]
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 298,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 57754,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
     },
     {
-      "route": "/faq",
-      "passed": 5,
-      "total": 5,
-      "avgMs": 1057,
-      "statuses": [
-        302
-      ]
+      "route": "/pricing",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 278,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 57754,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
     },
     {
-      "route": "/terms",
-      "passed": 5,
-      "total": 5,
-      "avgMs": 1097,
-      "statuses": [
-        302
-      ]
+      "route": "/pricing",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 281,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 57754,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
     },
     {
-      "route": "/privacy",
-      "passed": 5,
-      "total": 5,
-      "avgMs": 1320,
-      "statuses": [
-        302
-      ]
+      "route": "/pricing",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 279,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 57754,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/pricing",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 286,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 57754,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/login",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 505,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 13820,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/login",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 510,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 13820,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/login",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 528,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 13820,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/login",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 511,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 13820,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/login",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 491,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 13820,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/register",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 262,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 14728,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/register",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 247,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 14728,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/register",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 254,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 14728,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/register",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 254,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 14728,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/register",
+      "type": "STATIC",
+      "status": 200,
+      "durationMs": 240,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 14728,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    }
+  ],
+  "rawBurst": [
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 509,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 497,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 518,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 508,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 516,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 779,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 674,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 735,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 767,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 712,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 503,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 495,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 518,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 510,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 493,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 510,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 556,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 573,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 595,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
+    },
+    {
+      "route": "/claimables",
+      "type": "DB_BACKED",
+      "status": 200,
+      "durationMs": 542,
+      "contentType": "text/html; charset=utf-8",
+      "bodySizeBytes": 42706,
+      "contentClass": "CLAIMRADAR_APP",
+      "isAppResponse": true,
+      "pass": true,
+      "failReason": null
     }
   ]
 }

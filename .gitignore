@@ -50,3 +50,7 @@ coverage/
 *.pem
 *.key
 .aicoding-chat-workspace
+.env*
+
+.env.vercel.preview
+.env.automation
