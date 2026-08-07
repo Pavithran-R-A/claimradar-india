@@ -34,6 +34,8 @@ export interface CrawlSummary {
   recordsQueued: number;
   recordsRejected: number;
   errorCount: number;
+  expectedLimitationCount: number;
+  unexpectedErrorCount: number;
   /** One entry per attempted source, in attempt order — includes failed sources. */
   perSource: SourceSummary[];
 }
@@ -58,8 +60,14 @@ export function createEmptySummary(runId: string): CrawlSummary {
     recordsQueued: 0,
     recordsRejected: 0,
     errorCount: 0,
+    expectedLimitationCount: 0,
+    unexpectedErrorCount: 0,
     perSource: [],
   };
+}
+
+export function isFatalCrawlSummary(s: CrawlSummary): boolean {
+  return s.sourcesFailed > 0 || s.unexpectedErrorCount > 0;
 }
 
 /** Human-readable summary text. */

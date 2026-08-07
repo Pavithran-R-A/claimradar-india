@@ -493,11 +493,21 @@ async function processSource(params: {
           decision: pubDecision.action,
         });
       } catch (docError) {
+        const errMsg = docError instanceof Error ? docError.message : 'unknown';
+        const isExpectedLimitation =
+          source.id === 'pib-rss' && (errMsg.includes('HTTP 403') || errMsg.includes('403'));
+
+        if (isExpectedLimitation) {
+          summary.expectedLimitationCount++;
+        } else {
+          summary.unexpectedErrorCount++;
+        }
         summary.errorCount++;
         stats.errors++;
         logger.error('document', `Document processing failed: ${doc.url}`, {
           sourceId: source.id,
-          error: docError instanceof Error ? docError.message : 'unknown',
+          error: errMsg,
+          isExpectedLimitation,
         });
         if (!options.dryRun) {
           await db.insertCrawlError(runId, {

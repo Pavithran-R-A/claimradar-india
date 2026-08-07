@@ -5,19 +5,21 @@ const NOW = new Date('2026-08-06T12:00:00Z');
 const HOURS = 3600_000;
 
 describe('Missed-run detection', () => {
-  it('reports never_ran when no successful run exists', () => {
+  it('1. brand-new staging: reports initializing (no alert) when environment is fresh within grace window', () => {
     const result = evaluateMissedRun({
       lastRunAt: null,
       lastRunStatus: null,
       lastSuccessAt: null,
+      environmentCreatedAt: new Date(NOW.getTime() - 2 * HOURS).toISOString(),
       maxAgeHours: 26,
       now: NOW,
     });
-    expect(result.verdict).toBe('never_ran');
-    expect(result.alert).toBe(true);
+    expect(result.verdict).toBe('initializing');
+    expect(result.alert).toBe(false);
+    expect(result.reason).toContain('Fresh environment initializing');
   });
 
-  it('reports ok when the last success is inside the window', () => {
+  it('2. first crawl success: reports ok (no alert) when a successful run exists inside window', () => {
     const result = evaluateMissedRun({
       lastRunAt: new Date(NOW.getTime() - 2 * HOURS).toISOString(),
       lastRunStatus: 'completed',
@@ -30,7 +32,7 @@ describe('Missed-run detection', () => {
     expect(result.ageHours).toBeCloseTo(2, 5);
   });
 
-  it('reports stale when the last success exceeds the window', () => {
+  it('3. missed scheduled crawl after baseline: reports stale (alert true) when age exceeds maxAgeHours', () => {
     const result = evaluateMissedRun({
       lastRunAt: new Date(NOW.getTime() - 40 * HOURS).toISOString(),
       lastRunStatus: 'failed',
@@ -43,27 +45,41 @@ describe('Missed-run detection', () => {
     expect(result.reason).toContain('40.0h');
   });
 
-  it('flags in-progress runs in the stale reason for operator clarity', () => {
-    const result = evaluateMissedRun({
-      lastRunAt: new Date(NOW.getTime() - 1 * HOURS).toISOString(),
-      lastRunStatus: 'running',
+  it('4. recovery: new successful run arrives and restores verdict to ok (no alert)', () => {
+    // Before recovery (stale)
+    const staleResult = evaluateMissedRun({
+      lastRunAt: new Date(NOW.getTime() - 30 * HOURS).toISOString(),
+      lastRunStatus: 'failed',
       lastSuccessAt: new Date(NOW.getTime() - 30 * HOURS).toISOString(),
       maxAgeHours: 26,
       now: NOW,
     });
-    expect(result.verdict).toBe('stale');
-    expect(result.reason).toContain('in progress');
+    expect(staleResult.verdict).toBe('stale');
+    expect(staleResult.alert).toBe(true);
+
+    // After recovery run completes
+    const recoveredNow = new Date(NOW.getTime() + 1 * HOURS);
+    const recoveredResult = evaluateMissedRun({
+      lastRunAt: new Date(recoveredNow.getTime() - 10 * 60 * 1000).toISOString(),
+      lastRunStatus: 'completed',
+      lastSuccessAt: new Date(recoveredNow.getTime() - 10 * 60 * 1000).toISOString(),
+      maxAgeHours: 26,
+      now: recoveredNow,
+    });
+    expect(recoveredResult.verdict).toBe('ok');
+    expect(recoveredResult.alert).toBe(false);
   });
 
-  it('treats the boundary exactly at the threshold as ok', () => {
+  it('reports never_ran when no successful run exists and environment age exceeds threshold', () => {
     const result = evaluateMissedRun({
-      lastRunAt: new Date(NOW.getTime() - 26 * HOURS).toISOString(),
-      lastRunStatus: 'completed',
-      lastSuccessAt: new Date(NOW.getTime() - 26 * HOURS).toISOString(),
+      lastRunAt: null,
+      lastRunStatus: null,
+      lastSuccessAt: null,
+      environmentCreatedAt: new Date(NOW.getTime() - 30 * HOURS).toISOString(),
       maxAgeHours: 26,
       now: NOW,
     });
-    expect(result.verdict).toBe('ok');
-    expect(result.alert).toBe(false);
+    expect(result.verdict).toBe('never_ran');
+    expect(result.alert).toBe(true);
   });
 });

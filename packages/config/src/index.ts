@@ -19,7 +19,8 @@ export const defaultFeatureFlags: FeatureFlags = {
 
 export const serverEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_SECRET_KEY: z.string().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   DATABASE_URL: z.string().url().optional(),
 });
 
@@ -58,7 +59,8 @@ export const colors = {
 
 export const crawlerEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_SECRET_KEY: z.string().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
   AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),
   AI_SECOND_PASS_RESERVE: z.coerce.number().default(10),

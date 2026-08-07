@@ -8,8 +8,8 @@
  * this check on its own schedule so a broken/skipped daily schedule becomes
  * visible within at most one health-check interval.
  *
- * The pure evaluation here is database-agnostic; the CLI `crawl-status`
- * command fetches the latest run and delegates the verdict here.
+ * For a brand-new environment (where environmentCreatedAt is within maxAgeHours),
+ * the status is 'initializing' rather than an operational outage alert.
  */
 
 export interface MissedRunInput {
@@ -21,11 +21,13 @@ export interface MissedRunInput {
   lastSuccessAt: Date | string | null;
   /** Maximum acceptable age of the last successful run, in hours. */
   maxAgeHours: number;
+  /** Environment creation / first observation timestamp, or null. */
+  environmentCreatedAt?: Date | string | null;
   /** Reference time (defaults to now). */
   now?: Date;
 }
 
-export type MissedRunVerdict = 'ok' | 'stale' | 'never_ran';
+export type MissedRunVerdict = 'ok' | 'stale' | 'never_ran' | 'initializing';
 
 export interface MissedRunEvaluation {
   verdict: MissedRunVerdict;
@@ -41,6 +43,20 @@ export function evaluateMissedRun(input: MissedRunInput): MissedRunEvaluation {
   const maxAgeMs = input.maxAgeHours * 3600 * 1000;
 
   if (!input.lastSuccessAt) {
+    if (input.environmentCreatedAt) {
+      const envCreated = new Date(input.environmentCreatedAt);
+      const envAgeMs = now.getTime() - envCreated.getTime();
+      if (envAgeMs <= maxAgeMs) {
+        const envAgeHours = envAgeMs / 3600_000;
+        return {
+          verdict: 'initializing',
+          ageHours: envAgeHours,
+          alert: false,
+          reason: `Fresh environment initializing (${envAgeHours.toFixed(1)}h old) — first scheduled crawl expected within ${input.maxAgeHours}h grace window`,
+        };
+      }
+    }
+
     return {
       verdict: 'never_ran',
       ageHours: Infinity,

@@ -19,19 +19,35 @@ async function main() {
   switch (command) {
     case 'daily': {
       // Full pipeline run
+      const { isFatalCrawlSummary } = await import('./observability/summary.js');
       const summary = await runPipeline({ dryRun, skipAI: false });
-      console.log(
-        summary.errorCount > 0
-          ? `Completed with ${summary.errorCount} errors`
-          : 'Crawl completed successfully',
-      );
-      process.exit(summary.errorCount > 0 ? 1 : 0);
+      const fatal = isFatalCrawlSummary(summary);
+      if (fatal) {
+        console.error(
+          `Crawl failed with ${summary.unexpectedErrorCount} unexpected errors and ${summary.sourcesFailed} failed sources`,
+        );
+        process.exit(1);
+      } else {
+        if (summary.expectedLimitationCount > 0) {
+          console.warn(
+            `Crawl completed with ${summary.expectedLimitationCount} expected source limitations (e.g. PIB detail 403s)`,
+          );
+        } else {
+          console.log('Crawl completed successfully');
+        }
+        process.exit(0);
+      }
       break;
     }
     case 'source': {
-      // Run single source: crawler source --source=pib-rss
+      // Run single source: crawler source --source=pib-rss or --source pib-rss
+      const sourceArg = args.find((a) => a.startsWith('--source='));
       const sourceIdx = args.indexOf('--source');
-      const sourceFilter = sourceIdx >= 0 ? args[sourceIdx + 1] : undefined;
+      const sourceFilter = sourceArg
+        ? sourceArg.split('=')[1]
+        : sourceIdx >= 0 && sourceIdx + 1 < args.length
+          ? args[sourceIdx + 1]
+          : undefined;
       if (!sourceFilter) {
         console.error('Usage: crawler source --source=<source-id>');
         process.exit(1);
@@ -491,11 +507,23 @@ async function main() {
         .limit(1)
         .maybeSingle();
 
+      let environmentCreatedAt: string | null = null;
+      if (!lastSuccessRow) {
+        const { data: earliestSource } = await csSupabase
+          .from('sources')
+          .select('created_at')
+          .order('created_at', { ascending: true })
+          .limit(1)
+          .maybeSingle();
+        environmentCreatedAt = (earliestSource?.created_at as string | undefined) ?? null;
+      }
+
       const evaluation = evaluateMissedRun({
         lastRunAt: (lastRun?.started_at as string | undefined) ?? null,
         lastRunStatus: (lastRun?.status as string | undefined) ?? null,
         lastSuccessAt: (lastSuccessRow?.started_at as string | undefined) ?? null,
         maxAgeHours,
+        environmentCreatedAt,
       });
       console.log(
         JSON.stringify(
