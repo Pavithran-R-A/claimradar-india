@@ -8,15 +8,15 @@
 
 ## 1. Inventory of Repository Modifications After Homepage Redesign
 
-| Category | Files Added / Modified | Description & Purpose |
-| :--- | :--- | :--- |
-| **Source UI Files** | `apps/web/app/(public)/page.tsx` | Redesigned landing page with continuous deep-ink to off-white canvas, interactive search (`InteractiveHeroSearch`), and evidence flow diagram (`EvidenceFlowDiagram`) |
-| **Shared Component Files** | `apps/web/components/landing/*`, `apps/web/components/directory/*`, `apps/web/components/layout/*` | Shared components using theme CSS variables and Tailwind tokens |
-| **Browser QA Scripts** | `scripts/browser-qa-runner.mjs` | Multi-viewport screenshot capture automation script |
-| **Accessibility Scripts** | `scripts/accessibility-qa-runner.mjs` | DOM structure and heading hierarchy audit script |
-| **Performance Scripts** | `scripts/lighthouse-qa-runner.mjs` | Performance probe measuring FCP, DOM element count, and network transfer weight |
-| **Browser Evidence Suite** | `docs/checkpoints/browser-evidence/*.png` | 98 high-resolution screenshots across 6 viewports and reduced-motion emulation |
-| **Checkpoint Documentation** | `docs/checkpoints/*.md`, `docs/design/*.md` | Change inventory, route inventory, local database setup, and performance audit reports |
+| Category                     | Files Added / Modified                                                                             | Description & Purpose                                                                                                                                                 |
+| :--------------------------- | :------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Source UI Files**          | `apps/web/app/(public)/page.tsx`                                                                   | Redesigned landing page with continuous deep-ink to off-white canvas, interactive search (`InteractiveHeroSearch`), and evidence flow diagram (`EvidenceFlowDiagram`) |
+| **Shared Component Files**   | `apps/web/components/landing/*`, `apps/web/components/directory/*`, `apps/web/components/layout/*` | Shared components using theme CSS variables and Tailwind tokens                                                                                                       |
+| **Browser QA Scripts**       | `scripts/browser-qa-runner.mjs`                                                                    | Multi-viewport screenshot capture automation script                                                                                                                   |
+| **Accessibility Scripts**    | `scripts/accessibility-qa-runner.mjs`                                                              | DOM structure and heading hierarchy audit script                                                                                                                      |
+| **Performance Scripts**      | `scripts/lighthouse-qa-runner.mjs`                                                                 | Performance probe measuring FCP, DOM element count, and network transfer weight                                                                                       |
+| **Browser Evidence Suite**   | `docs/checkpoints/browser-evidence/*.png`                                                          | 98 high-resolution screenshots across 6 viewports and reduced-motion emulation                                                                                        |
+| **Checkpoint Documentation** | `docs/checkpoints/*.md`, `docs/design/*.md`                                                        | Change inventory, route inventory, local database setup, and performance audit reports                                                                                |
 
 ---
 

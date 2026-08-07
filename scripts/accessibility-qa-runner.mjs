@@ -36,7 +36,9 @@ async function waitForServer(url, timeoutMs = 60000) {
 }
 
 async function runAxeAccessibilityAudit() {
-  console.log('Starting Next.js production web server on port 3000 for Axe-Core Accessibility Audit...');
+  console.log(
+    'Starting Next.js production web server on port 3000 for Axe-Core Accessibility Audit...',
+  );
   const env = { ...process.env, PORT: '3000', NODE_ENV: 'production' };
   const serverProc = spawn('npx', ['next', 'start', '-p', '3000'], {
     cwd: path.join(process.cwd(), 'apps', 'web'),
@@ -117,11 +119,15 @@ async function runAxeAccessibilityAudit() {
       fullReport.routesScanned.push(routeAuditData);
 
       console.log(`  - Axe Rules Passed: ${axeResults.passes.length}`);
-      console.log(`  - Violations: ${routeViolations.length} (Critical: ${critical}, Serious: ${serious}, Moderate: ${moderate})`);
+      console.log(
+        `  - Violations: ${routeViolations.length} (Critical: ${critical}, Serious: ${serious}, Moderate: ${moderate})`,
+      );
       if (routeViolations.length === 0) {
         console.log(`  ✓ Clean Axe WCAG A/AA Compliance!`);
       } else {
-        routeViolations.forEach((v) => console.log(`    * [${v.impact?.toUpperCase()}] ${v.id}: ${v.help}`));
+        routeViolations.forEach((v) =>
+          console.log(`    * [${v.impact?.toUpperCase()}] ${v.id}: ${v.help}`),
+        );
       }
     }
 
@@ -129,7 +135,12 @@ async function runAxeAccessibilityAudit() {
     await browser.close();
 
     // Write machine-readable result artifact
-    const resultsJsonPath = path.join(process.cwd(), 'docs', 'checkpoints', 'accessibility-results.json');
+    const resultsJsonPath = path.join(
+      process.cwd(),
+      'docs',
+      'checkpoints',
+      'accessibility-results.json',
+    );
     fs.writeFileSync(resultsJsonPath, JSON.stringify(fullReport, null, 2), 'utf-8');
     console.log(`\nSaved machine-readable accessibility report to ${resultsJsonPath}`);
 

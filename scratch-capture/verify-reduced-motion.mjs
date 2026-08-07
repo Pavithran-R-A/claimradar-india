@@ -41,7 +41,9 @@ async function verifyReducedMotion() {
 
   try {
     await waitForServer('http://localhost:3000');
-    console.log('Next.js server ready. Initializing Playwright with prefers-reduced-motion: reduce...');
+    console.log(
+      'Next.js server ready. Initializing Playwright with prefers-reduced-motion: reduce...',
+    );
 
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
@@ -80,8 +82,12 @@ async function verifyReducedMotion() {
         };
       });
 
-      console.log(`  - Media Match (prefers-reduced-motion: reduce): ${animationState.prefersReducedMotionActive}`);
-      console.log(`  - Active Animated Elements: ${animationState.activeAnimatedElements} / ${animationState.totalElements}`);
+      console.log(
+        `  - Media Match (prefers-reduced-motion: reduce): ${animationState.prefersReducedMotionActive}`,
+      );
+      console.log(
+        `  - Active Animated Elements: ${animationState.activeAnimatedElements} / ${animationState.totalElements}`,
+      );
       console.log(`  ✓ Decorative animations stopped, layout immediate!`);
 
       auditData.push({

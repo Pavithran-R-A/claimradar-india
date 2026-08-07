@@ -24,7 +24,15 @@ const routes = [
   'admin-sources',
 ];
 
-const viewports = ['1440x900', '1024x768', '768x1024', '390x844', '360x800', '320x568', 'reduced-motion'];
+const viewports = [
+  '1440x900',
+  '1024x768',
+  '768x1024',
+  '390x844',
+  '360x800',
+  '320x568',
+  'reduced-motion',
+];
 
 const tableRows = [];
 

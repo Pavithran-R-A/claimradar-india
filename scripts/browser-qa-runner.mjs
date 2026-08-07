@@ -52,7 +52,7 @@ async function waitForServer(url, timeoutMs = 60000) {
 
 async function main() {
   console.log('Starting Next.js production web server on port 3000...');
-  
+
   const env = { ...process.env, PORT: '3000', NODE_ENV: 'production' };
   const serverProc = spawn('npx', ['next', 'start', '-p', '3000'], {
     cwd: path.join(process.cwd(), 'apps', 'web'),
@@ -61,7 +61,6 @@ async function main() {
     env,
   });
 
-
   try {
     console.log('Waiting for Next.js server on http://localhost:3000 ...');
     await waitForServer('http://localhost:3000');
@@ -69,12 +68,12 @@ async function main() {
 
     console.log('Launching Playwright Chromium browser...');
     const browser = await chromium.launch({ headless: true });
-    
+
     let totalScreenshots = 0;
 
     for (const route of ROUTES) {
       console.log(`\n--- Auditing Route: ${route.path} (${route.name}) ---`);
-      
+
       // Standard viewports QA
       for (const vp of VIEWPORTS) {
         const context = await browser.newContext({
@@ -82,11 +81,17 @@ async function main() {
           deviceScaleFactor: 1,
         });
         const page = await context.newPage();
-        
+
         try {
-          await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle', timeout: 15000 });
+          await page.goto(`http://localhost:3000${route.path}`, {
+            waitUntil: 'networkidle',
+            timeout: 15000,
+          });
         } catch {
-          await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'domcontentloaded', timeout: 10000 });
+          await page.goto(`http://localhost:3000${route.path}`, {
+            waitUntil: 'domcontentloaded',
+            timeout: 10000,
+          });
         }
 
         const filename = `${route.name}-${vp.name}.png`;
@@ -115,7 +120,9 @@ async function main() {
       await rmContext.close();
     }
 
-    console.log(`\nBrowser QA Completed! Generated ${totalScreenshots} screenshots in ${OUTPUT_DIR}`);
+    console.log(
+      `\nBrowser QA Completed! Generated ${totalScreenshots} screenshots in ${OUTPUT_DIR}`,
+    );
     await browser.close();
   } finally {
     serverProc.kill();

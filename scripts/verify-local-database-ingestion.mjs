@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { createAdminClient } from '@claimradar/database';
+import { createAdminClient } from '../packages/database/dist/index.js';
 
 function ensureLocalSupabaseEnv() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {

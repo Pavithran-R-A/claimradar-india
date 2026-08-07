@@ -713,9 +713,15 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
     }
   }
 
-  // Apply source filter
+  // Apply source filter (id, adapter_name, or name substring)
   if (options.sourceFilter) {
-    sources = sources.filter((s) => s.id === options.sourceFilter);
+    const filter = options.sourceFilter.toLowerCase();
+    sources = sources.filter(
+      (s) =>
+        s.id === options.sourceFilter ||
+        s.adapter_name.toLowerCase() === filter ||
+        s.name.toLowerCase().includes(filter),
+    );
   }
 
   summary.sourcesAttempted = sources.length;

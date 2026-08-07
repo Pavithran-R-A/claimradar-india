@@ -2,39 +2,39 @@
 
 **Audit Date:** 2026-08-07T07:00:35.361Z  
 **Engine:** `@axe-core/playwright` (WCAG 2.0/2.1 AA Standards)  
-**Total Routes Scanned:** 12  
+**Total Routes Scanned:** 12
 
 ---
 
 ## Executive Summary
 
-| Metric | Result | Status |
-| :--- | :--- | :--- |
-| **Total Scanned Routes** | `12` | **COMPLETE** |
-| **Total Violations** | `10` | **ISSUES DETECTED** |
-| **Critical Violations** | `0` | **PASS** |
-| **Serious Violations** | `10` | **FAIL** |
-| **Moderate / Minor** | `0` | **INFO** |
-| **Manual Keyboard Compliance** | `PASS` | **VERIFIED** |
+| Metric                         | Result | Status              |
+| :----------------------------- | :----- | :------------------ |
+| **Total Scanned Routes**       | `12`   | **COMPLETE**        |
+| **Total Violations**           | `10`   | **ISSUES DETECTED** |
+| **Critical Violations**        | `0`    | **PASS**            |
+| **Serious Violations**         | `10`   | **FAIL**            |
+| **Moderate / Minor**           | `0`    | **INFO**            |
+| **Manual Keyboard Compliance** | `PASS` | **VERIFIED**        |
 
 ---
 
 ## Scanned Routes & Rule Evaluation Matrix
 
-| Scanned Route | Axe Rules Passed | Violations | Critical | Serious | Moderate | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `/` | 21 | 1 | 0 | 1 | 0 | **ATTENTION** |
-| `/claimables` | 26 | 0 | 0 | 0 | 0 | **PASS** |
-| `/claimables/iepf-unclaimed-dividends` | 20 | 0 | 0 | 0 | 0 | **PASS** |
-| `/companies` | 20 | 1 | 0 | 1 | 0 | **ATTENTION** |
-| `/deadlines` | 20 | 0 | 0 | 0 | 0 | **PASS** |
-| `/login` | 25 | 2 | 0 | 2 | 0 | **ATTENTION** |
-| `/register` | 25 | 2 | 0 | 2 | 0 | **ATTENTION** |
-| `/app` | 25 | 2 | 0 | 2 | 0 | **ATTENTION** |
-| `/app/matches` | 25 | 2 | 0 | 2 | 0 | **ATTENTION** |
-| `/admin` | 25 | 0 | 0 | 0 | 0 | **PASS** |
-| `/admin/candidates` | 25 | 0 | 0 | 0 | 0 | **PASS** |
-| `/admin/sources` | 25 | 0 | 0 | 0 | 0 | **PASS** |
+| Scanned Route                          | Axe Rules Passed | Violations | Critical | Serious | Moderate | Status        |
+| :------------------------------------- | :--------------- | :--------- | :------- | :------ | :------- | :------------ |
+| `/`                                    | 21               | 1          | 0        | 1       | 0        | **ATTENTION** |
+| `/claimables`                          | 26               | 0          | 0        | 0       | 0        | **PASS**      |
+| `/claimables/iepf-unclaimed-dividends` | 20               | 0          | 0        | 0       | 0        | **PASS**      |
+| `/companies`                           | 20               | 1          | 0        | 1       | 0        | **ATTENTION** |
+| `/deadlines`                           | 20               | 0          | 0        | 0       | 0        | **PASS**      |
+| `/login`                               | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
+| `/register`                            | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
+| `/app`                                 | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
+| `/app/matches`                         | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
+| `/admin`                               | 25               | 0          | 0        | 0       | 0        | **PASS**      |
+| `/admin/candidates`                    | 25               | 0          | 0        | 0       | 0        | **PASS**      |
+| `/admin/sources`                       | 25               | 0          | 0        | 0       | 0        | **PASS**      |
 
 ---
 

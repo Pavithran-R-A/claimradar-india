@@ -36,7 +36,6 @@ async function runPerformanceAudit() {
     env,
   });
 
-
   try {
     await waitForServer('http://localhost:3000');
     console.log('Next.js server is ready.');
@@ -74,7 +73,9 @@ async function runPerformanceAudit() {
       });
 
       const startTime = Date.now();
-      await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle', timeout: 15000 }).catch(() => {});
+      await page
+        .goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle', timeout: 15000 })
+        .catch(() => {});
       const loadDurationMs = Date.now() - startTime;
 
       // Extract LCP & CLS from Web Vitals Performance API inside page
@@ -92,7 +93,9 @@ async function runPerformanceAudit() {
       console.log(`  - Page Load Duration: ${loadDurationMs}ms`);
       console.log(`  - First Contentful Paint (FCP): ${vitals.fcp}ms`);
       console.log(`  - Total Requests: ${transferMetrics.totalRequests}`);
-      console.log(`  - Total Bytes Transferred: ${(transferMetrics.totalBytes / 1024).toFixed(1)} KB`);
+      console.log(
+        `  - Total Bytes Transferred: ${(transferMetrics.totalBytes / 1024).toFixed(1)} KB`,
+      );
       console.log(`  - JS Transferred: ${(transferMetrics.jsBytes / 1024).toFixed(1)} KB`);
       console.log(`  - DOM Elements Count: ${vitals.domElements}`);
 
@@ -112,7 +115,8 @@ async function runPerformanceAudit() {
     await browser.close();
 
     // Create docs/checkpoints/ui-performance-audit.md
-    const docContent = `# ClaimRadar India — UI Performance Audit
+    const docContent =
+      `# ClaimRadar India — UI Performance Audit
 
 **Date:** August 6, 2026  
 **Target:** Production Server (apps/web)  
@@ -124,7 +128,14 @@ async function runPerformanceAudit() {
 
 | Route | Load Duration | FCP (Paint) | Transferred Size | JS Weight | DOM Elements |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-` + auditResults.map((r) => `| \`${r.route}\` | **${r.loadDurationMs} ms** | **${r.fcp} ms** | ${r.totalKB} KB | ${r.jsKB} KB | ${r.domElements} elements |`).join('\n') + `
+` +
+      auditResults
+        .map(
+          (r) =>
+            `| \`${r.route}\` | **${r.loadDurationMs} ms** | **${r.fcp} ms** | ${r.totalKB} KB | ${r.jsKB} KB | ${r.domElements} elements |`,
+        )
+        .join('\n') +
+      `
 
 ---
 
@@ -134,7 +145,6 @@ async function runPerformanceAudit() {
 - **Resource Optimization:** Next.js static asset optimization and route code splitting ensured lean JavaScript payloads (<150 KB per route initial load).
 - **Layout Shift:** Fixed layout containers and explicit aspect ratio placeholders prevent Cumulative Layout Shift (CLS <= 0.05).
 `;
-
 
     const auditDocPath = path.join(process.cwd(), 'docs', 'checkpoints', 'ui-performance-audit.md');
     fs.writeFileSync(auditDocPath, docContent, 'utf-8');

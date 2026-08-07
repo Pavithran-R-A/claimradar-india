@@ -18,7 +18,7 @@
 import { execSync, spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createAdminClient } from '@claimradar/database';
+import { createAdminClient } from '../packages/database/dist/index.js';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CRAWLER_DIR = resolve(REPO_ROOT, 'apps', 'crawler');
@@ -84,7 +84,7 @@ const BOOKKEEPING_TABLES = ['crawl_runs', 'crawl_run_sources', 'crawl_errors'];
 async function count(table) {
   const { count: n, error } = await supabase
     .from(table)
-    .select('id', { count: 'exact', head: true });
+    .select('*', { count: 'exact', head: true });
   if (error) throw new Error(`count(${table}) failed: ${error.message}`);
   return n ?? 0;
 }
@@ -137,7 +137,7 @@ if (!sourceExists) {
 // ---------------------------------------------------------------------------
 function runLiveWindow(label) {
   console.log(`\n--- Live-source window: ${label} ---`);
-  const res = spawnSync('pnpm exec tsx src/index.ts source --source generic-rss', {
+  const res = spawnSync(`pnpm exec tsx src/index.ts source --source ${SOURCE_ID} --live`, {
     shell: true,
     cwd: CRAWLER_DIR,
     encoding: 'utf8',
@@ -147,6 +147,7 @@ function runLiveWindow(label) {
       ...process.env,
       SUPABASE_URL: localUrl,
       NEXT_PUBLIC_SUPABASE_URL: localUrl,
+      SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
       AI_PROVIDER: 'none',
       AUTO_VERIFY_CLAIMABLES: 'false',
       LIVE_ADAPTERS_ENABLED: 'true',

@@ -1,16 +1,16 @@
-| Route | 1440x900 | 1024x768 | 768x1024 | 390x844 | 360x800 | 320x568 | Reduced Motion | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `homepage` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `claimables` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `companies` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `deadlines` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `sectors` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `login` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `register` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `customer-app` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `customer-matches` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `customer-watchlist` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `customer-tracker` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `admin-dashboard` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `admin-candidates` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
-| `admin-sources` | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | PRESENT | **VERIFIED (7/7)** |
+| Route                | 1440x900 | 1024x768 | 768x1024 | 390x844 | 360x800 | 320x568 | Reduced Motion | Status             |
+| :------------------- | :------- | :------- | :------- | :------ | :------ | :------ | :------------- | :----------------- |
+| `homepage`           | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `claimables`         | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `companies`          | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `deadlines`          | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `sectors`            | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `login`              | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `register`           | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `customer-app`       | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `customer-matches`   | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `customer-watchlist` | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `customer-tracker`   | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `admin-dashboard`    | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `admin-candidates`   | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
+| `admin-sources`      | PRESENT  | PRESENT  | PRESENT  | PRESENT | PRESENT | PRESENT | PRESENT        | **VERIFIED (7/7)** |
