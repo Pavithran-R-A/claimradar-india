@@ -3,51 +3,51 @@
 **Date:** 2026-08-07  
 **Branch:** `qoder/complete-claimradar`  
 **Environment:** Vercel Preview → Staging Supabase (`upvsfqufkywlpibbwrse`)  
-**Revision:** v4 — Reconciled Evidence, Test Suites Breakdown & Stop Conditions  
+**Revision:** v4 — Reconciled Evidence, Test Suites Breakdown & Stop Conditions
 
 ---
 
 ## 1. Core Gate Matrix
 
-| # | Gate Name | Classification | Requirement | Evidence / Details | Status |
-|---|---|---|---|---|---|
-| G-01 | Node Version | System | Node 24 active | `node --version` → `v24.19.0` | ✅ PASS |
-| G-02 | Docker | System | Docker daemon running | `docker ps` active & healthy | ✅ PASS |
-| G-03 | Local Supabase | Database | `npx supabase start` clean | API & Studio operational | ✅ PASS |
-| G-04 | Migrations 001–011 | Database | Applied in exact order | `supabase db reset` log | ✅ PASS |
-| G-05 | DB Lint (Local) | Database | Zero warnings | `supabase db lint` output | ✅ PASS |
-| G-06 | pgTAP Assertions | Database | 9 files / 44 assertions | `supabase test db` output | ✅ PASS |
-| G-07 | Unit & Integration Suite | Testing | `pnpm test` | 41 test files / 387 tests PASSED | ✅ PASS |
-| G-08 | Crawler Package Suite | Testing | `pnpm --filter @claimradar/crawler test` | 31 test files / 255 tests PASSED | ✅ PASS |
-| G-09 | Inventory Acceptance | Testing | `pnpm test:inventory-acceptance` | 1 test file / 4 tests PASSED | ✅ PASS |
-| G-10 | Production Build | Web App | `pnpm build` | Next.js 15.5.22 / 0 type errors | ✅ PASS |
-| G-11 | Fixture Idempotency | Database | 2× reset clean | Double-reset log | ✅ PASS |
-| G-12 | Parser Idempotency | Crawler | Real-HTTP stable 2× | Live-source idempotency log | ✅ PASS |
-| G-13 | Axe Accessibility | UI/UX | Zero critical violations | `@axe-core/playwright` output | ✅ PASS |
-| G-14 | Reduced-Motion | UI/UX | `prefers-reduced-motion` respected | Audit output | ✅ PASS |
-| G-15 | Portable Backup | Operations | SHA-256 verified archive | 17.20 MB backup archive | ✅ PASS |
-| G-16 | `STAGING_MIGRATIONS` | Staging DB | 11 migrations applied | Staging DB schema verified | ✅ PASS |
-| G-17 | `STAGING_RLS_ANON` | Security | Public table isolation | 12/12 public tables `relrowsecurity=true` | ✅ PASS |
-| G-18 | `STAGING_RLS_USER` | Security | User data isolation | `auth.uid() = user_id` policies | ✅ PASS |
-| G-19 | `STAGING_RLS_STAFF` | Security | Staff RBAC enforced | Staff permission matrix | ✅ PASS |
-| G-20 | `STAGING_NOTIFICATION_RLS`| Security | Notification isolation | pgTAP notification assertions | ✅ PASS |
-| G-21 | `CUSTOM_POSTGRES_SECURITY_AUDIT` | Security | DB catalog security audit | PostgreSQL security script | ✅ PASS |
-| G-22 | `STAGING_SECURITY_ADVISOR` | Security | Supabase Security Advisor | Dashboard/API access required | ⚠️ **AWAITING_USER_ACTION** |
-| G-23 | `APPLICATION_AUTH_REDIRECT_LOGIC` | Auth | Relative redirect validation | `actions.ts` & `callback/route.ts` open-redirect audit | ✅ PASS |
-| G-24 | `LOCAL_STAGING_SITE_URL` | Auth | Staging env site URL | `NEXT_PUBLIC_SITE_URL` set to Preview URL | ✅ PASS |
-| G-25 | `SUPABASE_AUTH_URL_CONFIGURATION` | Auth | Supabase Auth Dashboard settings | Dashboard access required | ⚠️ **AWAITING_USER_ACTION** |
-| G-26 | `VERCEL_PREVIEW` | Hosted App | Deployment live | Deployment `pqkk2cmy5` | ✅ PASS |
-| G-27 | `PREVIEW_ENVIRONMENT_ISOLATION` | Safety | Environment guards active | `APP_ENV=staging` + 4 safety flags | ✅ PASS |
-| G-28 | `PREVIEW_PUBLIC` | Hosted App | 13/13 routes verified | `test-preview-deployment.mjs` (bypass header) | ✅ PASS |
-| G-29 | `PREVIEW_SECRET_ISOLATION` | Security | No secrets leaked | Client bundle & HTML scan | ✅ PASS |
-| G-30 | `VALID_PREVIEW_LOAD_TEST` | Performance | Hosted load test via bypass header | `preview-application-load-test.md` (40/40 PASS, p95=765ms) | ✅ PASS |
-| G-31 | `STAGING_MONITORING_CODE` | Telemetry | Logger & dedup logic | Crawler log sink & dedup code | ✅ PASS |
-| G-32 | `STAGING_MONITORING_RUNTIME` | Telemetry | Hosted monitoring events | `crawl_runs` 0 rows pending remote GitHub runs | ⚠️ **PARTIAL** |
-| G-33 | `STAGING_SMTP` | Auth Email | Custom SMTP provider | Blocked: ClaimRadar domain required | ❌ **SMTP BLOCKER = VERIFIED DOMAIN REQUIRED** |
-| G-34 | `PREVIEW_AUTH_EMAIL` | Auth Email | Email delivery test | Pending G-33 SMTP configuration | ❌ **BLOCKER — PENDING G-33** |
-| G-35 | `GITHUB_CI_RUNTIME` | CI/CD | GitHub Actions run | `git remote -v` empty | ⚠️ **NOT_EXECUTED_REMOTE_MISSING** |
-| G-36 | `GITHUB_CRAWL_RUNTIME` | Ingestion | GitHub Actions run | `git remote -v` empty | ⚠️ **NOT_EXECUTED_REMOTE_MISSING** |
-| G-37 | `GITHUB_HEALTH_RUNTIME` | Monitoring | GitHub Actions run | `git remote -v` empty | ⚠️ **NOT_EXECUTED_REMOTE_MISSING** |
+| #    | Gate Name                         | Classification | Requirement                              | Evidence / Details                                         | Status                                         |
+| ---- | --------------------------------- | -------------- | ---------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| G-01 | Node Version                      | System         | Node 24 active                           | `node --version` → `v24.19.0`                              | ✅ PASS                                        |
+| G-02 | Docker                            | System         | Docker daemon running                    | `docker ps` active & healthy                               | ✅ PASS                                        |
+| G-03 | Local Supabase                    | Database       | `npx supabase start` clean               | API & Studio operational                                   | ✅ PASS                                        |
+| G-04 | Migrations 001–011                | Database       | Applied in exact order                   | `supabase db reset` log                                    | ✅ PASS                                        |
+| G-05 | DB Lint (Local)                   | Database       | Zero warnings                            | `supabase db lint` output                                  | ✅ PASS                                        |
+| G-06 | pgTAP Assertions                  | Database       | 9 files / 44 assertions                  | `supabase test db` output                                  | ✅ PASS                                        |
+| G-07 | Unit & Integration Suite          | Testing        | `pnpm test`                              | 41 test files / 387 tests PASSED                           | ✅ PASS                                        |
+| G-08 | Crawler Package Suite             | Testing        | `pnpm --filter @claimradar/crawler test` | 31 test files / 255 tests PASSED                           | ✅ PASS                                        |
+| G-09 | Inventory Acceptance              | Testing        | `pnpm test:inventory-acceptance`         | 1 test file / 4 tests PASSED                               | ✅ PASS                                        |
+| G-10 | Production Build                  | Web App        | `pnpm build`                             | Next.js 15.5.22 / 0 type errors                            | ✅ PASS                                        |
+| G-11 | Fixture Idempotency               | Database       | 2× reset clean                           | Double-reset log                                           | ✅ PASS                                        |
+| G-12 | Parser Idempotency                | Crawler        | Real-HTTP stable 2×                      | Live-source idempotency log                                | ✅ PASS                                        |
+| G-13 | Axe Accessibility                 | UI/UX          | Zero critical violations                 | `@axe-core/playwright` output                              | ✅ PASS                                        |
+| G-14 | Reduced-Motion                    | UI/UX          | `prefers-reduced-motion` respected       | Audit output                                               | ✅ PASS                                        |
+| G-15 | Portable Backup                   | Operations     | SHA-256 verified archive                 | 17.20 MB backup archive                                    | ✅ PASS                                        |
+| G-16 | `STAGING_MIGRATIONS`              | Staging DB     | 11 migrations applied                    | Staging DB schema verified                                 | ✅ PASS                                        |
+| G-17 | `STAGING_RLS_ANON`                | Security       | Public table isolation                   | 12/12 public tables `relrowsecurity=true`                  | ✅ PASS                                        |
+| G-18 | `STAGING_RLS_USER`                | Security       | User data isolation                      | `auth.uid() = user_id` policies                            | ✅ PASS                                        |
+| G-19 | `STAGING_RLS_STAFF`               | Security       | Staff RBAC enforced                      | Staff permission matrix                                    | ✅ PASS                                        |
+| G-20 | `STAGING_NOTIFICATION_RLS`        | Security       | Notification isolation                   | pgTAP notification assertions                              | ✅ PASS                                        |
+| G-21 | `CUSTOM_POSTGRES_SECURITY_AUDIT`  | Security       | DB catalog security audit                | PostgreSQL security script                                 | ✅ PASS                                        |
+| G-22 | `STAGING_SECURITY_ADVISOR`        | Security       | Supabase Security Advisor                | Dashboard/API access required                              | ⚠️ **AWAITING_USER_ACTION**                    |
+| G-23 | `APPLICATION_AUTH_REDIRECT_LOGIC` | Auth           | Relative redirect validation             | `actions.ts` & `callback/route.ts` open-redirect audit     | ✅ PASS                                        |
+| G-24 | `LOCAL_STAGING_SITE_URL`          | Auth           | Staging env site URL                     | `NEXT_PUBLIC_SITE_URL` set to Preview URL                  | ✅ PASS                                        |
+| G-25 | `SUPABASE_AUTH_URL_CONFIGURATION` | Auth           | Supabase Auth Dashboard settings         | Dashboard access required                                  | ⚠️ **AWAITING_USER_ACTION**                    |
+| G-26 | `VERCEL_PREVIEW`                  | Hosted App     | Deployment live                          | Deployment `pqkk2cmy5`                                     | ✅ PASS                                        |
+| G-27 | `PREVIEW_ENVIRONMENT_ISOLATION`   | Safety         | Environment guards active                | `APP_ENV=staging` + 4 safety flags                         | ✅ PASS                                        |
+| G-28 | `PREVIEW_PUBLIC`                  | Hosted App     | 13/13 routes verified                    | `test-preview-deployment.mjs` (bypass header)              | ✅ PASS                                        |
+| G-29 | `PREVIEW_SECRET_ISOLATION`        | Security       | No secrets leaked                        | Client bundle & HTML scan                                  | ✅ PASS                                        |
+| G-30 | `VALID_PREVIEW_LOAD_TEST`         | Performance    | Hosted load test via bypass header       | `preview-application-load-test.md` (40/40 PASS, p95=765ms) | ✅ PASS                                        |
+| G-31 | `STAGING_MONITORING_CODE`         | Telemetry      | Logger & dedup logic                     | Crawler log sink & dedup code                              | ✅ PASS                                        |
+| G-32 | `STAGING_MONITORING_RUNTIME`      | Telemetry      | Hosted monitoring events                 | `crawl_runs` 0 rows pending remote GitHub runs             | ⚠️ **PARTIAL**                                 |
+| G-33 | `STAGING_SMTP`                    | Auth Email     | Custom SMTP provider                     | Blocked: ClaimRadar domain required                        | ❌ **SMTP BLOCKER = VERIFIED DOMAIN REQUIRED** |
+| G-34 | `PREVIEW_AUTH_EMAIL`              | Auth Email     | Email delivery test                      | Pending G-33 SMTP configuration                            | ❌ **BLOCKER — PENDING G-33**                  |
+| G-35 | `GITHUB_CI_RUNTIME`               | CI/CD          | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
+| G-36 | `GITHUB_CRAWL_RUNTIME`            | Ingestion      | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
+| G-37 | `GITHUB_HEALTH_RUNTIME`           | Monitoring     | GitHub Actions run                       | `git remote -v` empty                                      | ⚠️ **NOT_EXECUTED_REMOTE_MISSING**             |
 
 ---
 
