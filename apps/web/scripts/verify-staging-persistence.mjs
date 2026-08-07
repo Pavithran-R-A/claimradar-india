@@ -22,21 +22,18 @@ async function run() {
 
   // 1. Run controlled crawler on SEBI source
   console.log('1. Executing controlled write-enabled crawl for sebi-rss on staging DB...');
-  const run1Out = execSync(
-    'pnpm --filter @claimradar/crawler dev -- source --source=sebi-rss',
-    {
-      env: {
-        ...process.env,
-        APP_ENV: 'staging',
-        SUPABASE_URL: supabaseUrl,
-        SUPABASE_SERVICE_ROLE_KEY: supabaseKey,
-        AUTO_VERIFY_CLAIMABLES: 'false',
-        ENABLE_BILLING: 'false',
-        NOTIFY_CUSTOMERS_ENABLED: 'false',
-      },
-      encoding: 'utf8',
-    }
-  );
+  const run1Out = execSync('pnpm --filter @claimradar/crawler dev -- source --source=sebi-rss', {
+    env: {
+      ...process.env,
+      APP_ENV: 'staging',
+      SUPABASE_URL: supabaseUrl,
+      SUPABASE_SERVICE_ROLE_KEY: supabaseKey,
+      AUTO_VERIFY_CLAIMABLES: 'false',
+      ENABLE_BILLING: 'false',
+      NOTIFY_CUSTOMERS_ENABLED: 'false',
+    },
+    encoding: 'utf8',
+  });
   console.log(run1Out.split('\n').filter(Boolean).slice(-6).join('\n'));
 
   // 2. Query remote staging DB for crawl_runs and crawl_run_sources
@@ -92,24 +89,21 @@ async function run() {
 
   // 4. Re-run same crawl for idempotency check
   console.log('\n4. Rerunning same crawl window for idempotency verification...');
-  const run2Out = execSync(
-    'pnpm --filter @claimradar/crawler dev -- source --source=sebi-rss',
-    {
-      env: {
-        ...process.env,
-        APP_ENV: 'staging',
-        SUPABASE_URL: supabaseUrl,
-        SUPABASE_SERVICE_ROLE_KEY: supabaseKey,
-        AUTO_VERIFY_CLAIMABLES: 'false',
-        ENABLE_BILLING: 'false',
-        NOTIFY_CUSTOMERS_ENABLED: 'false',
-      },
-      encoding: 'utf8',
-    }
-  );
+  const run2Out = execSync('pnpm --filter @claimradar/crawler dev -- source --source=sebi-rss', {
+    env: {
+      ...process.env,
+      APP_ENV: 'staging',
+      SUPABASE_URL: supabaseUrl,
+      SUPABASE_SERVICE_ROLE_KEY: supabaseKey,
+      AUTO_VERIFY_CLAIMABLES: 'false',
+      ENABLE_BILLING: 'false',
+      NOTIFY_CUSTOMERS_ENABLED: 'false',
+    },
+    encoding: 'utf8',
+  });
   console.log('  Idempotency run completed clean!');
 
   console.log('\n✅ Staging database persistence, monitoring runtime, and idempotency VERIFIED!');
 }
 
-run().catch(err => console.error(err));
+run().catch((err) => console.error(err));

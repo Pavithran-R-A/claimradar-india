@@ -26,4 +26,4 @@ async function check() {
   else console.log(`  Success! Returned ${claimables.length} published rows.`);
 }
 
-check().catch(err => console.error(err));
+check().catch((err) => console.error(err));
