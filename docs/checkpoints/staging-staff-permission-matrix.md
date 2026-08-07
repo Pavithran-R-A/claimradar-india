@@ -3,7 +3,7 @@
 **Version:** 2.0.0  
 **Date:** August 7, 2026  
 **Status:** PASS  
-**Target Schema:** `006_rls_policies.sql` & `apps/web/lib/auth-guards.ts`  
+**Target Schema:** `006_rls_policies.sql` & `apps/web/lib/auth-guards.ts`
 
 ---
 
@@ -15,21 +15,21 @@ Row-level security (RLS) policies and server-side authorization guards rely on t
 
 ## 2. Definitive Staff Permission Matrix
 
-| Capability / Entity | Unauthenticated | Standard User | RESEARCHER | EDITOR | LEGAL_REVIEWER | ADMIN |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **candidate read** (`candidate_documents`) | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| **candidate edit** (`candidate_documents`) | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
-| **claim edit** (`claimables` draft/review) | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| **legal review** (`legal_reviews`) | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| **publish** (`publication_events` / status) | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| **sources** (`sources` edit/admin) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **corrections** (`user_correction_requests`) | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| **crawl runs** (`crawl_runs` view/trigger) | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| **AI runs** (`ai_runs` view/trigger) | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| **alerts** (`alerts` configuration) | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| **users** (`profiles` admin management) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **audit** (`audit_logs` view) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **roles** (`profiles.role` promotion) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Capability / Entity                          | Unauthenticated | Standard User | RESEARCHER | EDITOR | LEGAL_REVIEWER | ADMIN |
+| :------------------------------------------- | :-------------: | :-----------: | :--------: | :----: | :------------: | :---: |
+| **candidate read** (`candidate_documents`)   |       ❌        |      ❌       |     ✅     |   ✅   |       ✅       |  ✅   |
+| **candidate edit** (`candidate_documents`)   |       ❌        |      ❌       |     ✅     |   ✅   |       ❌       |  ✅   |
+| **claim edit** (`claimables` draft/review)   |       ❌        |      ❌       |     ❌     |   ✅   |       ❌       |  ✅   |
+| **legal review** (`legal_reviews`)           |       ❌        |      ❌       |     ❌     |   ❌   |       ✅       |  ✅   |
+| **publish** (`publication_events` / status)  |       ❌        |      ❌       |     ❌     |   ✅   |       ✅       |  ✅   |
+| **sources** (`sources` edit/admin)           |       ❌        |      ❌       |     ❌     |   ❌   |       ❌       |  ✅   |
+| **corrections** (`user_correction_requests`) |       ❌        |      ❌       |     ❌     |   ✅   |       ❌       |  ✅   |
+| **crawl runs** (`crawl_runs` view/trigger)   |       ❌        |      ❌       |     ✅     |   ✅   |       ✅       |  ✅   |
+| **AI runs** (`ai_runs` view/trigger)         |       ❌        |      ❌       |     ✅     |   ✅   |       ✅       |  ✅   |
+| **alerts** (`alerts` configuration)          |       ❌        |      ❌       |     ❌     |   ✅   |       ❌       |  ✅   |
+| **users** (`profiles` admin management)      |       ❌        |      ❌       |     ❌     |   ❌   |       ❌       |  ✅   |
+| **audit** (`audit_logs` view)                |       ❌        |      ❌       |     ❌     |   ❌   |       ❌       |  ✅   |
+| **roles** (`profiles.role` promotion)        |       ❌        |      ❌       |     ❌     |   ❌   |       ❌       |  ✅   |
 
 ---
 

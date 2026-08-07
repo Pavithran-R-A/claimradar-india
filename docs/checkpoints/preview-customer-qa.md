@@ -2,7 +2,7 @@
 
 **Timestamp:** 2026-08-07T16:19:36Z  
 **Environment:** Vercel Preview (`https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app`)  
-**Database:** Supabase Staging (`upvsfqufkywlpibbwrse.supabase.co`)  
+**Database:** Supabase Staging (`upvsfqufkywlpibbwrse.supabase.co`)
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Timestamp:** 2026-08-07T16:19:36Z  
 **Environment:** Vercel Preview (`https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app`)  
-**Database:** Supabase Staging (`upvsfqufkywlpibbwrse.supabase.co`)  
+**Database:** Supabase Staging (`upvsfqufkywlpibbwrse.supabase.co`)
 
 ---
 
@@ -15,12 +15,12 @@
 
 ## 2. Staff Permission Matrix Enforcement
 
-| Staff Role | Allowed Operations | Restricted Operations | Verified Gate State |
-|---|---|---|---|
-| `RESEARCHER` | View candidates, crawl logs, source records | Cannot approve candidates or publish claimables | Enforced via RLS & API Middleware |
-| `EDITOR` | Draft claimables, edit metadata, submit for review | Cannot perform legal verification or admin user updates | Enforced via RLS & API Middleware |
-| `LEGAL_REVIEWER` | Review legal disclosures, perform verification | Cannot perform system admin configuration | Enforced via RLS & API Middleware |
-| `ADMIN` | Full editorial, user management, and audit log access | System configuration subject to audit logging | Enforced via RLS & API Middleware |
+| Staff Role       | Allowed Operations                                    | Restricted Operations                                   | Verified Gate State               |
+| ---------------- | ----------------------------------------------------- | ------------------------------------------------------- | --------------------------------- |
+| `RESEARCHER`     | View candidates, crawl logs, source records           | Cannot approve candidates or publish claimables         | Enforced via RLS & API Middleware |
+| `EDITOR`         | Draft claimables, edit metadata, submit for review    | Cannot perform legal verification or admin user updates | Enforced via RLS & API Middleware |
+| `LEGAL_REVIEWER` | Review legal disclosures, perform verification        | Cannot perform system admin configuration               | Enforced via RLS & API Middleware |
+| `ADMIN`          | Full editorial, user management, and audit log access | System configuration subject to audit logging           | Enforced via RLS & API Middleware |
 
 ---
 

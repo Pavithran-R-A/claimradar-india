@@ -65,12 +65,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 3080,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/claimables",
@@ -78,12 +74,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 683,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/companies",
@@ -91,12 +83,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 501,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/closing-soon",
@@ -104,12 +92,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 518,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/sectors",
@@ -117,12 +101,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 512,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/pricing",
@@ -130,12 +110,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 284,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/login",
@@ -143,12 +119,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 509,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         },
         {
           "route": "/register",
@@ -156,12 +128,8 @@
           "passed": 5,
           "total": 5,
           "avgMs": 251,
-          "statuses": [
-            200
-          ],
-          "contentClasses": [
-            "CLAIMRADAR_APP"
-          ]
+          "statuses": [200],
+          "contentClasses": ["CLAIMRADAR_APP"]
         }
       ]
     },
