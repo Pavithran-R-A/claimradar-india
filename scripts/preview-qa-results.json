@@ -1,0 +1,74 @@
+[
+  {
+    "route": "/",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "ame\\\":\\\"text-xs leading-relaxed text-text-secondary\\\",\\\"children\\\":\\\"The official submission window has concluded. Records are preserved for transparency and reference.\\\"}]\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/claimables",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": " text-text-muted\\\",\\\"children\\\":\\\"We only show records that exist in the verified publication database — never placeholder or invented entries. Please check back later.\\\"}]\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/companies",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "es only that an official notice, refund scheme or order references the entity. It implies no judgment about the company's conduct, liability or current standing.\\\"]}]]}]]}]\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/closing-soon",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "field bg-trust-primary px-6 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover\\\",\\\"children\\\":\\\"Get closing-soon alerts\\\"}]]}]]}]\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/pricing",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "ion\\\",\\\"content\\\":\\\"Simple, transparent pricing. Free forever or upgrade to Plus for unlimited features.\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n24:\\\"$28:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/faq",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "r independence, data safety, plans, statuses and corrections.\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n\"])</script><script>self.__next_f.push([1,\"1a:\\\"$1e:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/terms",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": ",\\\"meta\\\",\\\"1\\\",{\\\"name\\\":\\\"description\\\",\\\"content\\\":\\\"Terms and conditions for using ClaimRadar India.\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n1a:\\\"$1e:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/privacy",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "me\\\":\\\"description\\\",\\\"content\\\":\\\"How ClaimRadar India collects, uses, and protects your personal data.\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n1c:\\\"$20:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/login",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "\"meta\\\",\\\"1\\\",{\\\"name\\\":\\\"description\\\",\\\"content\\\":\\\"Discover and track claimable opportunities in India\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n13:\\\"$e:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/register",
+    "statusCode": "200",
+    "status": "PASS",
+    "snippet": "ntent\\\":\\\"Discover and track claimable opportunities in India\\\"}]],\\\"error\\\":null,\\\"digest\\\":\\\"$undefined\\\"}\\n\"])</script><script>self.__next_f.push([1,\"16:\\\"$11:metadata\\\"\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/app",
+    "statusCode": "307",
+    "status": "PASS",
+    "snippet": "t\\\":\\\"$undefined\\\"}\\nf:\\\"$a:metadata\\\"\\n5:E{\\\"digest\\\":\\\"NEXT_REDIRECT;replace;/login?next=%2Fapp;307;\\\"}\\n6:E{\\\"digest\\\":\\\"NEXT_REDIRECT;replace;/login?next=%2Fapp;307;\\\"}\\n\"])</script></body></html>"
+  },
+  {
+    "route": "/admin",
+    "statusCode": "307",
+    "status": "PASS",
+    "snippet": "old text-text-primary\\\",\\\"children\\\":\\\"Recent Crawl Runs\\\"}],[\\\"$\\\",\\\"p\\\",null,{\\\"className\\\":\\\"mt-4 text-sm text-text-muted\\\",\\\"children\\\":\\\"No crawl runs found.\\\"}]]}]]}]\\n\"])</script></body></html>"
+  }
+]

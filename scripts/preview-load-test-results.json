@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-08-07T16:25:57.844Z",
+  "baseUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app",
+  "totalRequests": 25,
+  "concurrency": 25,
+  "passedRequests": 25,
+  "failedRequests": 0,
+  "errorRate": "0.0%",
+  "wallClockMs": 1367,
+  "latencyMs": {
+    "min": 847,
+    "avg": 1076,
+    "p50": 1033,
+    "p95": 1368,
+    "p99": 1368,
+    "max": 1368
+  },
+  "routeBreakdown": [
+    {
+      "route": "/",
+      "passed": 5,
+      "total": 5,
+      "avgMs": 944,
+      "statuses": [
+        302
+      ]
+    },
+    {
+      "route": "/pricing",
+      "passed": 5,
+      "total": 5,
+      "avgMs": 962,
+      "statuses": [
+        302
+      ]
+    },
+    {
+      "route": "/faq",
+      "passed": 5,
+      "total": 5,
+      "avgMs": 1057,
+      "statuses": [
+        302
+      ]
+    },
+    {
+      "route": "/terms",
+      "passed": 5,
+      "total": 5,
+      "avgMs": 1097,
+      "statuses": [
+        302
+      ]
+    },
+    {
+      "route": "/privacy",
+      "passed": 5,
+      "total": 5,
+      "avgMs": 1320,
+      "statuses": [
+        302
+      ]
+    }
+  ]
+}
