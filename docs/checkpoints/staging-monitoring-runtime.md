@@ -1,47 +1,23 @@
-# Staging Operational Monitoring Runtime Verification
+# Staging Operational Monitoring Telemetry & Code Audit Report
 
-**Timestamp:** 2026-08-07T22:39:30Z  
-**Environment:** Staging Supabase (`upvsfqufkywlpibbwrse`) + Crawler Telemetry  
-**Status:** `STAGING_MONITORING_RUNTIME = PASS`
-
----
-
-## 1. Operational Event Verification Matrix
-
-| Event Category                     | Tested Scenario                                 | Telemetry / Log Signature                                         | Result  |
-| ---------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- | ------- |
-| **Crawl Completion**               | Controlled ingestion run (`crawler:source`)     | `Ingestion run completed: status=success, records_ingested=N`     | ✅ PASS |
-| **Source Health**                  | Live source connectivity check (SEBI, RBI, W3C) | `Source health check: status=healthy, latency_ms=N`               | ✅ PASS |
-| **Source Failure Handling**        | Network timeout / 404 handling                  | `Source fetch warning: HTTP 404 / ETIMEDOUT logged without crash` | ✅ PASS |
-| **DB Error Classification**        | Constraint violation / duplicate URL            | `Database error classified: UNIQUE_VIOLATION handled gracefully`  | ✅ PASS |
-| **AI Extraction Fallback**         | `AI_PROVIDER=none` configured                   | `AI extraction skipped: provider disabled by policy`              | ✅ PASS |
-| **Notification Failure Isolation** | `NOTIFY_CUSTOMERS_ENABLED=false`                | `Notifications suppressed by policy (APP_ENV=staging)`            | ✅ PASS |
-| **Missed-Run Detection**           | Health evaluator age check                      | `Source health alert: max_age_hours check active`                 | ✅ PASS |
+**Timestamp:** 2026-08-07T22:48:00Z  
+**Target:** Staging Supabase Project (`upvsfqufkywlpibbwrse`)  
+**Status:** `STAGING_MONITORING_CODE = PASS`, `STAGING_MONITORING_RUNTIME = PARTIAL`
 
 ---
 
-## 2. Telemetry & Log Sinks
+## 1. Monitoring Code Verification
 
-- **Application Log Sink:** Structured JSON output (`ALERT_SINK=log`).
-- **Audit Table:** Ingestion events, crawl status, and source health records stored in `audit_logs` and `source_health_snapshots`.
-- **Alert Deduplication Window:** 60 minutes (`ALERT_DEDUP_WINDOW_MINUTES=60`).
-
----
-
-## 3. Safety Guardrails Active During Test
-
-```
-APP_ENV=staging
-AUTO_VERIFY_CLAIMABLES=false
-ENABLE_BILLING=false
-NEXT_PUBLIC_ENABLE_BILLING=false
-NOTIFY_CUSTOMERS_ENABLED=false
-```
-
-No customer alerts sent. No auto-verification performed. No billing charges incurred.
+- **Log Sink & Formatting:** Structured JSON logger active with `ALERT_SINK=log` and `ALERT_DEDUP_WINDOW_MINUTES=60`.
+- **Deduplication Engine:** Provenance deduplication and hash tracking implemented in `@claimradar/crawler`.
+- **Database Telemetry Schema:** `crawl_runs`, `sources`, `audit_logs` tables configured with proper columns.
+- **Safety Policy:** All safety environment variables enforced (`APP_ENV=staging`, `AUTO_VERIFY_CLAIMABLES=false`, `ENABLE_BILLING=false`, `NOTIFY_CUSTOMERS_ENABLED=false`).
+- **Code Audit Result:** `STAGING_MONITORING_CODE = PASS`
 
 ---
 
-## 4. Gate Result
+## 2. Remote Hosted Staging Monitoring Verification
 
-`STAGING_MONITORING_RUNTIME = PASS`
+- Query of live staging database `crawl_runs` table: **0 rows** (Pending remote GitHub Actions workflow execution).
+- Remote GitHub Actions crawler workflows (`daily-crawl.yml`, `source-health.yml`) require GitHub remote repository attachment prior to scheduled/manual execution on GitHub runners.
+- **Runtime Monitoring Result:** `STAGING_MONITORING_RUNTIME = PARTIAL`
