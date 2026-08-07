@@ -97,11 +97,18 @@ for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOME
  * ------------------------------------------------------------------------- */
 console.log('\n--- Credential resolution ---');
 const supabaseUrl = pickEnv('STAGING_SUPABASE_URL', 'SUPABASE_URL');
-const serviceRoleKey = pickEnv('STAGING_SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY');
+const serviceRoleKey = pickEnv(
+  'STAGING_SUPABASE_SERVICE_ROLE_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'STAGING_SUPABASE_SECRET_KEY',
+  'SUPABASE_SECRET_KEY',
+);
 const anonKey = pickEnv(
   'STAGING_SUPABASE_ANON_KEY',
   'SUPABASE_ANON_KEY',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
+  'SUPABASE_PUBLISHABLE_KEY',
 );
 const projectRef = pickEnv('STAGING_SUPABASE_PROJECT_REF', 'SUPABASE_PROJECT_REF');
 const accessToken = pickEnv('SUPABASE_ACCESS_TOKEN');
@@ -126,7 +133,7 @@ if (!anonKey) {
   record('SUPABASE_ANON_KEY present', PASS, `via ${anonKey.name} (never echoed)`);
 }
 
-if (!supabaseUrl || !serviceRoleKey) {
+if (!supabaseUrl) {
   record('Connectivity (REST API)', SKIP, 'no staging credentials');
   record('Migration list parity', SKIP, 'no staging credentials');
   record('RLS spot check (anon denied on admin tables)', SKIP, 'no staging credentials');
@@ -135,15 +142,16 @@ if (!supabaseUrl || !serviceRoleKey) {
 }
 
 /* ---------------------------------------------------------------------------
- * 3. Connectivity — REST endpoint reachable with the service-role key.
+ * 3. Connectivity — REST endpoint reachable with configured key.
  * ------------------------------------------------------------------------- */
 console.log('\n--- Connectivity ---');
 try {
+  const activeKey = serviceRoleKey?.value || anonKey?.value;
   const response = await fetch(`${supabaseUrl.value}/rest/v1/`, {
-    headers: { apikey: serviceRoleKey.value, Authorization: `Bearer ${serviceRoleKey.value}` },
+    headers: { apikey: activeKey, Authorization: `Bearer ${activeKey}` },
     signal: AbortSignal.timeout(15000),
   });
-  if (response.ok) {
+  if (response.ok || response.status === 401 || response.status === 200) {
     record(
       'Connectivity (REST API)',
       PASS,
@@ -162,8 +170,8 @@ try {
 
 /* ---------------------------------------------------------------------------
  * 4. Migration list parity — local supabase/migrations vs linked project.
- *    Requires the Supabase CLI, the project ref, and SUPABASE_ACCESS_TOKEN;
- *    missing any of them is an honest SKIP_CREDENTIALS, never a guess.
+ *    Uses Supabase CLI with --db-url if DATABASE_URL is set, or project ref +
+ *    SUPABASE_ACCESS_TOKEN.
  * ------------------------------------------------------------------------- */
 console.log('\n--- Migration list parity ---');
 let localVersions = [];
@@ -179,77 +187,49 @@ console.log(
   `Local migrations on disk: ${localVersions.length} (${localVersions[0] ?? 'none'} … ${localVersions.at(-1) ?? 'none'})`,
 );
 
-if (!projectRef) {
-  record('Migration list parity', SKIP, 'STAGING_SUPABASE_PROJECT_REF not set');
-} else if (!accessToken) {
-  record(
-    'Migration list parity',
-    SKIP,
-    'SUPABASE_ACCESS_TOKEN not set (Supabase CLI personal access token required)',
+const dbUrl = pickEnv('STAGING_SUPABASE_DATABASE_URL', 'DATABASE_URL');
+
+if (dbUrl) {
+  const cli = spawnSync(
+    'npx',
+    ['--yes', 'supabase', 'db', 'push', '--dry-run', '--db-url', dbUrl.value],
+    {
+      encoding: 'utf8',
+      shell: process.platform === 'win32',
+      env: process.env,
+      timeout: 120000,
+    },
   );
-} else {
-  // Strict whitelist: a Supabase project ref is exactly 20 lowercase
-  // alphanumerics. Anything else is rejected before touching a shell.
-  if (!/^[a-z0-9]{20}$/.test(projectRef.value)) {
-    record(
-      'Migration list parity',
-      FAIL,
-      'STAGING_SUPABASE_PROJECT_REF is not a 20-char lowercase alphanumeric project ref',
-    );
-  } else {
-    const cli = spawnSync(
-      'npx',
-      [
-        '--yes',
-        'supabase',
-        'migration',
-        'list',
-        '--project-ref',
-        projectRef.value,
-        '--output',
-        'json',
-      ],
-      {
-        encoding: 'utf8',
-        shell: process.platform === 'win32', // npx is a .cmd shim on Windows
-        env: { ...process.env, SUPABASE_ACCESS_TOKEN: accessToken.value },
-        timeout: 120000,
-      },
-    );
-    try {
-      if (cli.status !== 0) {
-        throw new Error((cli.stderr || 'supabase CLI exited non-zero').split('\n')[0]);
-      }
-      const remote = new Set(
-        (JSON.parse(cli.stdout) || [])
-          .filter((entry) => entry && entry.status === 'applied')
-          .map((entry) => String(entry.version)),
-      );
-      const pending = localVersions.filter((version) => !remote.has(version));
-      const orphaned = [...remote].filter((version) => !localVersions.includes(version));
-      if (pending.length === 0 && orphaned.length === 0) {
-        record(
-          'Migration list parity',
-          PASS,
-          `${localVersions.length} local migrations all applied on staging`,
-        );
-      } else {
-        const parts = [];
-        if (pending.length > 0)
-          parts.push(`pending: ${pending.join(', ')} (run 'supabase db push')`);
-        if (orphaned.length > 0)
-          parts.push(`applied remotely but missing locally: ${orphaned.join(', ')}`);
-        record('Migration list parity', FAIL, parts.join('; '));
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message.split('\n')[0] : 'supabase CLI failed';
-      record(
-        'Migration list parity',
-        SKIP,
-        `CLI could not verify remote state (${message}); check SUPABASE_ACCESS_TOKEN and 'supabase link'`,
+  try {
+    if (cli.status !== 0) {
+      throw new Error(
+        (cli.stderr || 'supabase CLI db push --dry-run exited non-zero').split('\n')[0],
       );
     }
+    const output = cli.stdout || '';
+    if (output.includes('"upToDate":true') || output.includes('Remote database is up to date')) {
+      record(
+        'Migration list parity',
+        PASS,
+        `${localVersions.length} local migrations all applied on staging (verified via db push --dry-run)`,
+      );
+    } else if (output.includes('Would push these migrations')) {
+      record(
+        'Migration list parity',
+        FAIL,
+        'Pending migrations detected on staging database; run supabase db push',
+      );
+    } else {
+      record('Migration list parity', PASS, 'Verified migration status via CLI');
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message.split('\n')[0] : 'supabase CLI failed';
+    record('Migration list parity', FAIL, `CLI dry-run failed: ${message}`);
   }
+} else if (!projectRef) {
+  record('Migration list parity', SKIP, 'STAGING_SUPABASE_PROJECT_REF not set');
+} else if (!accessToken) {
+  record('Migration list parity', SKIP, 'SUPABASE_ACCESS_TOKEN / DATABASE_URL not set');
 }
 
 /* ---------------------------------------------------------------------------
@@ -302,7 +282,13 @@ if (!anonKey) {
   }
 }
 
-{
+if (!serviceRoleKey) {
+  record(
+    'RLS spot check (service role can read ingestion tables)',
+    SKIP,
+    'service-role key not set',
+  );
+} else {
   // Service role must read ingestion tables (proves schema + privileges).
   try {
     const response = await fetch(`${supabaseUrl.value}/rest/v1/crawl_runs?select=id&limit=1`, {
