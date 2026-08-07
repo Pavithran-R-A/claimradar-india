@@ -59,6 +59,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build workspace packages
+        run: pnpm build
+
       # Source availability + feed validity. Failures are categorized
       # (TLS_ERROR, TIMEOUT, HTTP_4XX, ...) and persisted to
       # source_health_events. Exits non-zero when any source fails, which is
