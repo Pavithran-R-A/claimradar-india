@@ -3,9 +3,6 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Building2,
-  CalendarClock,
-  CheckCircle2,
-  Eye,
   FileCheck2,
   Landmark,
   Radar,
