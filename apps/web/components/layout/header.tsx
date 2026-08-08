@@ -4,13 +4,13 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@claimradar/design-system';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Bell } from 'lucide-react';
 
 const navLinks = [
   { href: '/claimables', label: 'Find claims' },
+  { href: '/closing-soon', label: 'Closing soon' },
   { href: '/companies', label: 'Companies' },
   { href: '/sectors', label: 'Sectors' },
-  { href: '/deadlines', label: 'Deadlines' },
   { href: '/how-it-works', label: 'How it works' },
 ] as const;
 
@@ -74,7 +74,7 @@ export function Header() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:block" aria-label="Main">
+          <nav className="hidden lg:block" aria-label="Main navigation">
             <ul className="flex items-center gap-1">
               {navLinks.map((link) => {
                 const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -86,7 +86,7 @@ export function Header() {
                       className={cn(
                         'nav-link rounded-field px-3 py-2 text-sm font-medium transition-colors duration-fast',
                         active
-                          ? 'text-trust-primary'
+                          ? 'text-trust-primary font-semibold'
                           : 'text-text-secondary hover:text-text-primary',
                       )}
                     >
@@ -108,9 +108,10 @@ export function Header() {
             </Link>
             <Link
               href="/register"
-              className="inline-flex h-10 items-center rounded-field bg-trust-primary px-4 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
+              className="inline-flex h-9 items-center gap-1.5 rounded-field bg-trust-primary px-4 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
             >
-              Create watchlist
+              <Bell className="h-3.5 w-3.5" />
+              Get alerts
             </Link>
           </div>
 
@@ -159,7 +160,7 @@ export function Header() {
                 <X aria-hidden className="h-5 w-5" />
               </button>
             </div>
-            <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile">
+            <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile navigation">
               <ul className="space-y-1">
                 {navLinks.map((link) => {
                   const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -171,7 +172,7 @@ export function Header() {
                         className={cn(
                           'block rounded-field px-3 py-3 text-base font-medium transition-colors duration-fast',
                           active
-                            ? 'bg-surface-strong text-trust-primary'
+                            ? 'bg-surface-strong text-trust-primary font-semibold'
                             : 'text-text-secondary hover:bg-surface-strong hover:text-text-primary',
                         )}
                       >
@@ -191,9 +192,10 @@ export function Header() {
               </Link>
               <Link
                 href="/register"
-                className="flex h-11 items-center justify-center rounded-field bg-trust-primary text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
+                className="flex h-11 items-center justify-center gap-1.5 rounded-field bg-trust-primary text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
               >
-                Create watchlist
+                <Bell className="h-4 w-4" />
+                Get alerts
               </Link>
             </div>
           </div>

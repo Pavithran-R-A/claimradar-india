@@ -6,7 +6,8 @@
  * the UI. Fictional content is never presented as real.
  */
 
-import { Inbox, TriangleAlert } from 'lucide-react';
+import Link from 'next/link';
+import { ShieldCheck, TriangleAlert, Bell, ArrowRight, Eye } from 'lucide-react';
 
 export function DemoDataBanner() {
   return (
@@ -31,14 +32,14 @@ export function DataUnavailableNotice({ message }: { message: string }) {
   return (
     <div
       role="status"
-      className="rounded-card border border-border bg-surface p-8 text-center shadow-card sm:p-12"
+      className="rounded-card border border-border bg-surface p-6 text-center shadow-card sm:p-8"
     >
-      <TriangleAlert aria-hidden className="mx-auto h-6 w-6 text-deadline" />
-      <h2 className="mb-2 mt-3 text-lg font-semibold text-text-primary">
+      <TriangleAlert aria-hidden className="mx-auto h-5 w-5 text-deadline" />
+      <h2 className="mb-1 mt-2 text-base font-semibold text-text-primary">
         Directory temporarily unavailable
       </h2>
-      <p className="mx-auto max-w-xl text-sm text-text-secondary">{message}</p>
-      <p className="mx-auto mt-3 max-w-xl text-xs text-text-muted">
+      <p className="mx-auto max-w-lg text-xs leading-relaxed text-text-secondary">{message}</p>
+      <p className="mx-auto mt-2 max-w-lg text-[11px] text-text-muted">
         We only show records that exist in the verified publication database — never placeholder or
         invented entries. Please check back later.
       </p>
@@ -46,12 +47,47 @@ export function DataUnavailableNotice({ message }: { message: string }) {
   );
 }
 
-export function EmptyDirectoryNotice({ title, body }: { title: string; body: string }) {
+export function EmptyDirectoryNotice({
+  title = 'No published opportunities found',
+  body = 'ClaimRadar is currently monitoring official Indian regulatory and court feeds. Opportunities are published only after human verification.',
+  showActions = true,
+}: {
+  title?: string;
+  body?: string;
+  showActions?: boolean;
+}) {
   return (
-    <div className="rounded-card border border-dashed border-border bg-surface p-10 text-center sm:p-14">
-      <Inbox aria-hidden className="mx-auto h-6 w-6 text-text-muted" />
-      <h2 className="mb-2 mt-3 text-lg font-semibold text-text-primary">{title}</h2>
-      <p className="mx-auto max-w-xl text-sm text-text-secondary">{body}</p>
+    <div className="rounded-xl border border-border/80 bg-surface/70 p-6 text-center shadow-sm sm:p-8">
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary">
+        <ShieldCheck aria-hidden className="h-5 w-5" />
+      </div>
+      <h2 className="mt-3 text-base font-bold text-text-primary sm:text-lg">{title}</h2>
+      <p className="mx-auto mt-2 max-w-md text-xs leading-relaxed text-text-secondary">{body}</p>
+
+      {showActions && (
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs font-medium">
+          <Link
+            href="/sources"
+            className="inline-flex items-center gap-1.5 rounded-field border border-border bg-surface px-3.5 py-2 text-text-primary transition-colors hover:border-trust-primary hover:text-trust-primary"
+          >
+            <Eye className="h-3.5 w-3.5 text-trust-primary" />
+            Monitored sources
+          </Link>
+          <Link
+            href="/how-it-works"
+            className="inline-flex items-center gap-1.5 rounded-field border border-border bg-surface px-3.5 py-2 text-text-primary transition-colors hover:border-trust-primary hover:text-trust-primary"
+          >
+            Verification process
+          </Link>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-1.5 rounded-field bg-trust-primary px-3.5 py-2 text-white transition-colors hover:bg-trust-primary-hover"
+          >
+            <Bell className="h-3.5 w-3.5" />
+            Get alerts <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

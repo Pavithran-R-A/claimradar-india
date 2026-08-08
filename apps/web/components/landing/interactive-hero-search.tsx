@@ -4,13 +4,13 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, Sparkles, ArrowRight } from 'lucide-react';
 
-interface QuickSuggestion {
+interface QuickCategory {
   query: string;
   category: 'sector' | 'company' | 'trending';
   label: string;
 }
 
-const POPULAR_SUGGESTIONS: QuickSuggestion[] = [
+const COMMON_CATEGORIES: QuickCategory[] = [
   { query: 'Banking & Financial Services', category: 'sector', label: 'Banking & Finance' },
   { query: 'Aviation', category: 'sector', label: 'Airlines & Flight Refunds' },
   { query: 'Insurance Claims', category: 'sector', label: 'Insurance & Claims' },
@@ -31,9 +31,9 @@ export function InteractiveHeroSearch() {
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setQuery(suggestion);
-    router.push(`/claimables?q=${encodeURIComponent(suggestion)}`);
+  const handleCategoryClick = (categoryQuery: string) => {
+    setQuery(categoryQuery);
+    router.push(`/claimables?q=${encodeURIComponent(categoryQuery)}`);
   };
 
   return (
@@ -57,7 +57,7 @@ export function InteractiveHeroSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 200)}
-          placeholder="Search by company, sector, or authority notice..."
+          placeholder="Search by company, sector, regulator, or notice..."
           className="w-full bg-transparent py-4 text-base font-normal text-white placeholder-white/50 focus:outline-none"
           aria-label="Search claim opportunities"
         />
@@ -70,17 +70,17 @@ export function InteractiveHeroSearch() {
         </button>
       </form>
 
-      {/* Instant Suggestions Bar */}
+      {/* Honest Category Bar (Not labeled popular searches) */}
       <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2 text-xs">
-        <span className="flex items-center gap-1 text-white/60 font-medium">
+        <span className="flex items-center gap-1 font-medium text-white/60">
           <Sparkles className="h-3.5 w-3.5 text-brand-bright" />
-          Popular searches:
+          Explore sectors:
         </span>
-        {POPULAR_SUGGESTIONS.map((item) => (
+        {COMMON_CATEGORIES.map((item) => (
           <button
             key={item.query}
             type="button"
-            onClick={() => handleSuggestionClick(item.query)}
+            onClick={() => handleCategoryClick(item.query)}
             className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-white/80 transition-colors hover:border-brand-bright/50 hover:bg-white/10 hover:text-white"
           >
             {item.label}
