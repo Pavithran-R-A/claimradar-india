@@ -1,8 +1,11 @@
-# Clean Live Dry Run Candidate Audit
+# Canonical Live Run Evidence & Candidate Audit
 
-**Crawl Run ID:** 6ae3cf68-e64f-49bb-9854-d91eb74c18f1
-**Discovered Documents:** 106
-**Candidates Created:** 0
+**FINAL_NETWORK_RUN_ID:** c4abf0e0-9639-4760-970b-eed0e87f0559
+**Executed At:** 2026-08-12T12:41:09.778Z
+**Discovered Documents:** 154
+**Candidates Created:** 20
 
-| INDEX | SOURCE_ID | CANONICAL_URL | TITLE | SCORE | MATCHED_POSITIVE | MATCHED_NEGATIVE | CLASSIFICATION |
-| :---- | :-------- | :------------ | :---- | :---- | :--------------- | :--------------- | :------------- |
+### Detailed Candidate Evidence Audit Table
+
+| NUM | SOURCE_ID | CORPORATE_DEBTOR / ENTITY | ANNOUNCEMENT_TYPE | DEADLINE | HTTP | TITLE_MATCH | BODY_SHA256 | ACTIONABILITY_STATUS | REASON |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
