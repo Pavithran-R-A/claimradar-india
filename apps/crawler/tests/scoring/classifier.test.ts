@@ -108,13 +108,23 @@ describe('Keyword Classifier', () => {
       expect(result.score).toBeGreaterThanOrEqual(30);
     });
 
-    it('Positive Case 2: SEBI investor refund public notice', () => {
+    it('Positive Case 2: SEBI Citrus Check Inns / Royal Twinkle refund public notice', () => {
       const result = scoreDocument({
-        text: 'SEBI Order & Investor Refund Notice in the matter of Nirman Agri Genetics Limited. Facility for investors to submit claim applications on refund portal for disgorgement distribution.',
-        title: 'SEBI Order & Investor Refund Notice in the matter of Nirman Agri Genetics Limited',
+        text: 'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II). Application portal open for affected investors to submit claim applications with original certificates.',
+        title:
+          'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II)',
       });
       expect(result.isCandidate).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(30);
+    });
+
+    it('Negative Case 0: SEBI generic enforcement order (Nirman Agri)', () => {
+      const result = scoreDocument({
+        text: 'Adjudication Order in respect of Nirman Agri Genetics Limited. Monetary penalty of Rs 10 lakh imposed on directors for disclosure violations during IPO.',
+        title: 'Adjudication Order in the matter of Nirman Agri Genetics Limited',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
     });
 
     it('Negative Case 1: TRAI consumer awareness event', () => {

@@ -262,7 +262,10 @@ describe('20-Record Acceptance Test', () => {
     for (const record of records) {
       processRecord(record, existingDocs);
 
-      if (!record.isCandidate && !['rec-13', 'rec-14', 'rec-15', 'rec-16', 'rec-17', 'rec-18', 'rec-19'].includes(record.id)) {
+      if (
+        !record.isCandidate &&
+        !['rec-13', 'rec-14', 'rec-15', 'rec-16', 'rec-17', 'rec-18', 'rec-19'].includes(record.id)
+      ) {
         irrelevantFilteredCount++;
       } else {
         candidateRecords.push(record);

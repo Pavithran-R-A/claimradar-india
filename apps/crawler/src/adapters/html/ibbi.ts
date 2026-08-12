@@ -162,12 +162,12 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
         },
       };
     } catch {
-      // Fallback fetched document if direct PDF fetch fails due to network security
+      const fallbackContent = `IBBI Public Announcement for ${(document.metadata?.['corporateDebtor'] as string) ?? document.title}. Claims Deadline: ${(document.metadata?.['claimDeadline'] as string) ?? ''}.`;
       return {
         url: document.url,
-        content: `IBBI Public Announcement for ${(document.metadata?.['corporateDebtor'] as string) ?? document.title}. Claims Deadline: ${(document.metadata?.['claimDeadline'] as string) ?? ''}.`,
+        content: fallbackContent,
         contentType: 'text/html',
-        contentHash: 'fallback-hash-' + crypto.randomUUID(),
+        contentHash: crypto.createHash('sha256').update(fallbackContent).digest('hex'),
         etag: null,
         lastModified: null,
         fetchedAt: new Date(),

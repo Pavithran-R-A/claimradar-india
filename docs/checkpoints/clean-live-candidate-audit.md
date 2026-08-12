@@ -8,4 +8,4 @@
 ### Detailed Candidate Evidence Audit Table
 
 | NUM | SOURCE_ID | CORPORATE_DEBTOR / ENTITY | ANNOUNCEMENT_TYPE | DEADLINE | HTTP | TITLE_MATCH | BODY_SHA256 | ACTIONABILITY_STATUS | REASON |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| :-- | :-------- | :------------------------ | :---------------- | :------- | :--- | :---------- | :---------- | :------------------- | :----- |

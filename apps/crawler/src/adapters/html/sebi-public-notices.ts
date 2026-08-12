@@ -121,11 +121,12 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
         },
       };
     } catch {
+      const fallbackContent = document.title || 'SEBI Notice';
       return {
         url: document.url,
-        content: document.title || 'SEBI Notice',
+        content: fallbackContent,
         contentType: 'text/html',
-        contentHash: 'sebi-fallback-' + crypto.randomUUID(),
+        contentHash: crypto.createHash('sha256').update(fallbackContent).digest('hex'),
         etag: null,
         lastModified: null,
         fetchedAt: new Date(),
