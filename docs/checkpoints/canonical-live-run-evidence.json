@@ -1,0 +1,117 @@
+{
+  "finalNetworkRunId": "c4abf0e0-9639-4760-970b-eed0e87f0559",
+  "executedAt": "2026-08-12T12:41:09.776Z",
+  "summary": {
+    "runId": "c4abf0e0-9639-4760-970b-eed0e87f0559",
+    "startedAt": "2026-08-12T12:36:30.759Z",
+    "completedAt": "2026-08-12T12:41:09.759Z",
+    "durationMs": 279000,
+    "sourcesAttempted": 8,
+    "sourcesSucceeded": 8,
+    "sourcesFailed": 0,
+    "documentsDiscovered": 154,
+    "documentsFetched": 154,
+    "documentsUnchanged": 0,
+    "documentsDuplicate": 23,
+    "candidatesCreated": 20,
+    "aiCallsUsed": 0,
+    "aiCallsFailed": 0,
+    "recordsPublished": 0,
+    "recordsQueued": 20,
+    "recordsRejected": 0,
+    "errorCount": 0,
+    "expectedLimitationCount": 0,
+    "unexpectedErrorCount": 0,
+    "perSource": [
+      {
+        "sourceId": "pib-rss",
+        "sourceName": "Press Information Bureau RSS",
+        "status": "succeeded",
+        "discovered": 0,
+        "fetched": 0,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "generic-rss",
+        "sourceName": "W3C News RSS (Generic Adapter)",
+        "status": "succeeded",
+        "discovered": 25,
+        "fetched": 25,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "sebi-rss",
+        "sourceName": "SEBI RSS Feed",
+        "status": "succeeded",
+        "discovered": 30,
+        "fetched": 30,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "rbi-rss",
+        "sourceName": "Reserve Bank of India RSS",
+        "status": "succeeded",
+        "discovered": 10,
+        "fetched": 10,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "rbi-notifications-rss",
+        "sourceName": "RBI Consumer Protection & Ombudsman Notifications",
+        "status": "succeeded",
+        "discovered": 10,
+        "fetched": 10,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "trai-press-releases",
+        "sourceName": "TRAI Telecom Tariff Refund & Overcharge Directives",
+        "status": "succeeded",
+        "discovered": 10,
+        "fetched": 10,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "sebi-public-notices",
+        "sourceName": "SEBI Public Notices & Investor Refund Orders",
+        "status": "succeeded",
+        "discovered": 49,
+        "fetched": 49,
+        "unchanged": 0,
+        "duplicates": 23,
+        "candidates": 0,
+        "errors": 0
+      },
+      {
+        "sourceId": "ibbi-public-announcements",
+        "sourceName": "IBBI Corporate Insolvency Creditor Claims Notices",
+        "status": "succeeded",
+        "discovered": 20,
+        "fetched": 20,
+        "unchanged": 0,
+        "duplicates": 0,
+        "candidates": 20,
+        "errors": 0
+      }
+    ]
+  },
+  "candidateAuditRows": []
+}
