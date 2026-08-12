@@ -2,17 +2,18 @@
 
 **Evidence Session:** 2026-08-12  
 **Target Environment:** Deployed Staging (`DEPLOYED_STAGING`)  
-**Deployment URL:** `https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app`  
-**Deployment SHA:** `ca3a010846e3dcba8059897d6155f5145668bafc` (equals `REPOSITORY_HEAD`)  
-**Bypass Protocol:** Vercel Automation Bypass via `BrowserContext.extraHTTPHeaders` (`x-vercel-protection-bypass` + `x-vercel-set-bypass-cookie: true`)  
+**Deployment Status:** `AWAITING_FINAL_DEPLOYMENT`  
+**Legacy Deployment URL Inspected:** `https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app`  
+**Verified Vercel Git SHA for Old Deployment:** `ca3a010846e3dcba8059897d6155f5145668bafc`  
+**Provenance Note:** Legacy screenshots move to `docs/checkpoints/browser-evidence/legacy-ca3a010/`. Final post-release QA evidence for the final immutable preview deployment will be stored externally outside Git at `C:\Users\Pavithran R A\Downloads\ClaimRadar-Final-QA\<short-final-sha>\` to prevent Git SHA invalidation.  
 **Safety Controls:** `AUTO_VERIFY_CLAIMABLES=false` | `ENABLE_BILLING=false` | `NOTIFY_CUSTOMERS_ENABLED=false`
 
 ---
 
 ## 1. Evidence Collection Method
 
-- **Bypass Verification:** Playwright context configured with official Vercel automation bypass headers from initial navigation. Confirmed `200 OK` on ClaimRadar application routes; `Log in to Vercel` auth wall absent.
-- **Evidence Origin:** All `stg-*.png` screenshots captured directly against live Vercel staging deployment.
+- **Bypass Verification:** Playwright context configured with official Vercel automation bypass headers from initial navigation (`x-vercel-protection-bypass`). Confirmed `200 OK` on ClaimRadar application routes; `Log in to Vercel` auth wall absent.
+- **Evidence Origin:** Captured against live Vercel staging preview deployment.
 
 ---
 
@@ -61,15 +62,7 @@
 
 ---
 
-## 4. Screenshot Evidence Artifacts (`docs/checkpoints/browser-evidence/`)
+## 4. Screenshot Evidence Artifacts (`docs/checkpoints/browser-evidence/legacy-ca3a010/`)
 
-- `stg-home-desktop-1536-top.png`, `stg-home-desktop-1536-mid.png`, `stg-home-desktop-1536-footer.png`
-- `stg-home-desktop-1440-top.png`, `stg-home-desktop-1440-mid.png`, `stg-home-desktop-1440-footer.png`
-- `stg-home-desktop-1280-top.png`, `stg-home-desktop-1280-mid.png`, `stg-home-desktop-1280-footer.png`
-- `stg-home-tablet-1024-top.png`, `stg-home-tablet-1024-mid.png`, `stg-home-tablet-1024-footer.png`
-- `stg-home-tablet-768-top.png`, `stg-home-tablet-768-mid.png`, `stg-home-tablet-768-footer.png`
-- `stg-home-mobile-430-top.png`, `stg-home-mobile-430-mid.png`, `stg-home-mobile-430-footer.png`
-- `stg-home-mobile-390-top.png`, `stg-home-mobile-390-mid.png`, `stg-home-mobile-390-footer.png`
-- `stg-home-mobile-360-top.png`, `stg-home-mobile-360-mid.png`, `stg-home-mobile-360-footer.png`
-- `stg-mobile-drawer-open.png`, `stg-mobile-drawer-closed.png`
-- `stg-claimables-1440-top.png`, `stg-claimables-390-top.png`, `stg-login-1440-top.png`, `stg-register-1440-top.png`
+- Historical visual captures preserved under `docs/checkpoints/browser-evidence/legacy-ca3a010/`.
+- Final release evidence for `FINAL_SHA` generated externally outside Git.

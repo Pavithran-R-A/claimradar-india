@@ -2,14 +2,15 @@
 
 **Release Date:** 2026-08-12  
 **Target Environment:** Staging (`APP_ENV=staging`, Vercel Staging, Supabase DB `upvsfqufkywlpibbwrse`)  
-**Deployment SHA:** `ca3a010846e3dcba8059897d6155f5145668bafc`  
+**Deployment Status:** `AWAITING_FINAL_DEPLOYMENT`  
+**Legacy Deployment SHA:** `ca3a010846e3dcba8059897d6155f5145668bafc`  
 **Safety Controls:** `AUTO_VERIFY_CLAIMABLES=false` | `ENABLE_BILLING=false` | `NOTIFY_CUSTOMERS_ENABLED=false`
 
 ---
 
 ## 1. Executive Summary
 
-ClaimRadar India's customer-facing product experience has undergone full verification and visual QA against live deployed staging. All 8 target viewports (`1536×960` down to `360×800`) pass visual quality, responsiveness, accessibility, and zero-data honesty standards.
+ClaimRadar India's customer-facing product experience has undergone full verification and visual QA against live deployed staging. All 8 target viewports (`1536×960` down to `360×800`) pass visual quality, responsiveness, accessibility, and zero-data honesty standards. Provenance has been reconciled: legacy screenshots are archived under `docs/checkpoints/browser-evidence/legacy-ca3a010/`, and final release proof will be generated for `FINAL_SHA`.
 
 ---
 

@@ -1,8 +1,10 @@
 /**
  * ClaimRadar Deployed Staging Visual QA & Accessibility Suite
  *
- * Runs against the exact permanent Vercel deployment URL
+ * Runs against the exact Vercel deployment URL specified in environment
  * using Vercel's official automation bypass header protocol.
+ *
+ * Evidence screenshots are written OUTSIDE the git repository to preserve Git HEAD.
  */
 
 import { chromium } from 'playwright';
@@ -32,17 +34,28 @@ function loadEnvFile(filePath) {
 const automationEnv = loadEnvFile(path.resolve(__dirname, '../.env.automation'));
 const BYPASS_SECRET =
   automationEnv['VERCEL_AUTOMATION_BYPASS_SECRET'] || process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
-const BASE_URL =
-  automationEnv['PREVIEW_URL'] ||
-  process.env.PREVIEW_URL ||
-  'https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app';
+const BASE_URL = automationEnv['PREVIEW_URL'] || process.env.PREVIEW_URL;
 
-if (!BYPASS_SECRET) {
-  console.error('ERROR: VERCEL_AUTOMATION_BYPASS_SECRET not found in .env.automation');
+if (!BASE_URL) {
+  console.error(
+    'FATAL ERROR: PREVIEW_URL is missing in environment configuration (.env.automation or process.env.PREVIEW_URL)',
+  );
   process.exit(1);
 }
 
-const OUT_DIR = path.resolve(__dirname, '../docs/checkpoints/browser-evidence/deployed-4000fcb');
+if (!BYPASS_SECRET) {
+  console.error(
+    'FATAL ERROR: VERCEL_AUTOMATION_BYPASS_SECRET is missing in environment configuration',
+  );
+  process.exit(1);
+}
+
+// Store screenshots OUTSIDE the git repository to preserve Git HEAD immutability
+const defaultOutDir = path.resolve(
+  'C:/Users/Pavithran R A/Downloads/ClaimRadar-Final-QA',
+  'latest',
+);
+const OUT_DIR = process.env.OUT_DIR || defaultOutDir;
 mkdirSync(OUT_DIR, { recursive: true });
 
 const BYPASS_HEADERS = {
@@ -51,17 +64,31 @@ const BYPASS_HEADERS = {
 };
 
 const CLAIMRADAR_MARKERS = ['ClaimRadar', 'claimradar', '__NEXT_DATA__'];
-const VERCEL_AUTH_MARKERS = ['Log in to Vercel', 'sso.vercel.com', 'Vercel Authentication'];
+const INVALID_MARKERS = [
+  'Log in to Vercel',
+  'sso.vercel.com',
+  'Vercel Authentication',
+  'Deployment is building',
+  '404: NOT_FOUND',
+];
 
-async function assertNotVercelAuth(page, label) {
-  const content = await page.content();
-  const isVercelAuth = VERCEL_AUTH_MARKERS.some((m) => content.includes(m));
-  if (isVercelAuth) {
-    throw new Error(`[${label}] FAIL: Page is Vercel Authentication, not ClaimRadar app`);
+async function assertValidAppPage(page, label, responseStatus) {
+  if (responseStatus < 200 || responseStatus >= 400) {
+    throw new Error(`[${label}] FAIL: HTTP response status is ${responseStatus}`);
   }
-  const isApp = CLAIMRADAR_MARKERS.some((m) => content.includes(m));
+
+  const content = await page.content();
+  const title = await page.title();
+
+  for (const invalid of INVALID_MARKERS) {
+    if (content.includes(invalid) || title.includes(invalid)) {
+      throw new Error(`[${label}] FAIL: Page matches invalid state marker "${invalid}"`);
+    }
+  }
+
+  const isApp = CLAIMRADAR_MARKERS.some((m) => content.includes(m) || title.includes(m));
   if (!isApp) {
-    throw new Error(`[${label}] FAIL: ClaimRadar markers not found in page content`);
+    throw new Error(`[${label}] FAIL: ClaimRadar markers not found in page title or content`);
   }
   return true;
 }
@@ -83,7 +110,8 @@ async function newCtx(browser, width, height) {
 async function loadPage(ctx, url, label) {
   const page = await ctx.newPage();
   console.log(`  [${label}] GET ${url}`);
-  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  const status = response ? response.status() : 0;
 
   const finalUrl = page.url();
   const title = await page.title();
@@ -93,17 +121,16 @@ async function loadPage(ctx, url, label) {
     .textContent({ timeout: 5000 })
     .catch(() => '(none)');
 
-  await assertNotVercelAuth(page, label);
+  await assertValidAppPage(page, label, status);
 
   console.log(
-    `  [${label}] ✅ URL=${finalUrl.replace(BASE_URL, '') || '/'} title="${title.substring(0, 50)}" h1="${h1.substring(0, 50)}"`,
+    `  [${label}] ✅ status=${status} URL=${finalUrl.replace(BASE_URL, '') || '/'} title="${title.substring(0, 50)}" h1="${h1.substring(0, 50)}"`,
   );
-  return { page, finalUrl, title, h1 };
+  return { page, finalUrl, title, h1, status };
 }
 
 const results = {
   baseUrl: BASE_URL,
-  sha: '4000fcbb88e875359aeda3c5798e47bc333c2e89',
   timestamp: new Date().toISOString(),
   pages: {},
   accessibility: {},
@@ -113,11 +140,9 @@ const results = {
 };
 
 async function run() {
-  console.log('=== ClaimRadar Deployed Staging Visual QA ===');
+  console.log('=== ClaimRadar Deployed Staging Hardened QA ===');
   console.log(`Target: ${BASE_URL}`);
-  console.log(
-    `Bypass: extraHTTPHeaders (x-vercel-protection-bypass + x-vercel-set-bypass-cookie)\n`,
-  );
+  console.log(`Evidence Directory (External to Git): ${OUT_DIR}\n`);
 
   const browser = await chromium.launch({ headless: true });
 
@@ -136,7 +161,7 @@ async function run() {
   console.log('--- 1. Homepage (8 viewports: top, mid, footer) ---');
   for (const [name, w, h] of homeViewports) {
     const ctx = await newCtx(browser, w, h);
-    const { page, title, h1 } = await loadPage(ctx, BASE_URL, name);
+    const { page, title, h1, status, finalUrl } = await loadPage(ctx, BASE_URL, name);
 
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(300);
@@ -168,7 +193,14 @@ async function run() {
     );
     results.floatingControls[name] = floats.length;
 
-    results.pages[`home-${name}`] = { title, h1, floatingControls: floats.length };
+    results.pages[`home-${name}`] = {
+      title,
+      h1,
+      status,
+      finalUrl,
+      viewport: `${w}x${h}`,
+      floatingControls: floats.length,
+    };
     await ctx.close();
   }
 
@@ -243,7 +275,9 @@ async function run() {
     ['closing-soon-1440', '/closing-soon', 1440, 900],
     ['companies-1440', '/companies', 1440, 900],
     ['sectors-1440', '/sectors', 1440, 900],
+    ['deadlines-1440', '/deadlines', 1440, 900],
     ['how-it-works-1440', '/how-it-works', 1440, 900],
+    ['methodology-1440', '/methodology', 1440, 900],
     ['faq-1440', '/faq', 1440, 900],
     ['login-1440', '/login', 1440, 900],
     ['login-390', '/login', 390, 844],
@@ -254,7 +288,11 @@ async function run() {
   for (const [name, route, w, h] of secondaryPages) {
     const ctx = await newCtx(browser, w, h);
     try {
-      const { page, title, h1 } = await loadPage(ctx, `${BASE_URL}${route}`, name);
+      const { page, title, h1, status, finalUrl } = await loadPage(
+        ctx,
+        `${BASE_URL}${route}`,
+        name,
+      );
 
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForTimeout(300);
@@ -275,7 +313,7 @@ async function run() {
         console.log(`  [claimables status] state: ${results.claimableState}`);
       }
 
-      results.pages[name] = { title, h1 };
+      results.pages[name] = { title, h1, status, finalUrl, viewport: `${w}x${h}` };
     } catch (err) {
       console.error(`  [${name}] ERROR: ${err.message}`);
       results.pages[name] = { error: err.message };
@@ -358,10 +396,10 @@ async function run() {
 
   await browser.close();
 
-  const resultsPath = path.resolve(__dirname, '../docs/checkpoints/deployed-qa-results.json');
+  const resultsPath = path.join(OUT_DIR, 'qa-results.json');
   writeFileSync(resultsPath, JSON.stringify(results, null, 2));
-  console.log(`\nResults written to: ${resultsPath}`);
-  console.log(`Screenshots stored in: ${OUT_DIR}`);
+  console.log(`\nResults written to external path: ${resultsPath}`);
+  console.log(`Screenshots stored in external path: ${OUT_DIR}`);
 }
 
 run().catch((err) => {
