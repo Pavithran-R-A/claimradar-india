@@ -182,7 +182,7 @@ async function run() {
     await page.waitForTimeout(300);
 
     const toggleBtn = page.locator('header button[aria-label="Open menu"]').first();
-    await toggleBtn.click();
+    await toggleBtn.click({ force: true });
     await page.waitForTimeout(600);
 
     await shot(page, 'mobile-drawer-open');
@@ -215,12 +215,14 @@ async function run() {
     console.log(`  Closes on Escape: ${closedOnEscape}`);
 
     // Navigation trigger
-    await toggleBtn.click();
+    await toggleBtn.click({ force: true });
     await page.waitForTimeout(500);
-    const claimablesLink = page.locator('a[href="/claimables"]').first();
-    await claimablesLink.click({ force: true });
-    await page.waitForURL(/claimables/, { timeout: 10000 }).catch(() => {});
-    const navigated = page.url().includes('/claimables');
+    const claimablesLink = page.locator('[role="dialog"] a[href="/claimables"]').first();
+    const navigated = await claimablesLink
+      .click({ force: true })
+      .then(() => page.waitForURL(/claimables/, { timeout: 10000 }))
+      .then(() => page.url().includes('/claimables'))
+      .catch(() => false);
     console.log(`  Drawer navigation works: ${navigated}`);
 
     results.mobileDrawer = {
