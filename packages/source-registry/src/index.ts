@@ -94,6 +94,18 @@ export const cciRssSourceDisabled: SourceDefinition = {
 // support, no redirects, and no bot-blocking for the declared crawler User-Agent.
 // Unlike the previous CCI endpoint (which never got past the TLS handshake), it
 // exercises the full adapter path: discover -> fetch detail pages -> extract.
+export const genericRssSource: SourceDefinition = {
+  id: 'generic-rss',
+  name: 'W3C News RSS (Generic Adapter)',
+  domain: 'www.w3.org',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.w3.org',
+  feedUrl: 'https://www.w3.org/news/feed/',
+  trustLevel: 'reputable',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
 export const sebiOrdersRssSource: SourceDefinition = {
   id: 'sebi-orders-rss',
   name: 'SEBI Enforcement & Recovery Orders',
