@@ -94,15 +94,111 @@ export const cciRssSourceDisabled: SourceDefinition = {
 // support, no redirects, and no bot-blocking for the declared crawler User-Agent.
 // Unlike the previous CCI endpoint (which never got past the TLS handshake), it
 // exercises the full adapter path: discover -> fetch detail pages -> extract.
-export const genericRssSource: SourceDefinition = {
-  id: 'generic-rss',
-  name: 'W3C News RSS (Generic Adapter)',
-  domain: 'www.w3.org',
+export const sebiOrdersRssSource: SourceDefinition = {
+  id: 'sebi-orders-rss',
+  name: 'SEBI Enforcement & Recovery Orders',
+  domain: 'sebi.gov.in',
   sourceType: SourceType.RSS,
   adapterType: 'rss',
-  baseUrl: 'https://www.w3.org',
-  feedUrl: 'https://www.w3.org/news/feed/',
-  trustLevel: 'reputable',
+  baseUrl: 'https://www.sebi.gov.in',
+  feedUrl: 'https://www.sebi.gov.in/sebirss.xml?type=orders',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const rbiNotificationsRssSource: SourceDefinition = {
+  id: 'rbi-notifications-rss',
+  name: 'RBI Consumer Protection & Ombudsman Notifications',
+  domain: 'rbi.org.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.rbi.org.in',
+  feedUrl: 'https://www.rbi.org.in/notifications_rss.xml',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const irdaiNoticesSource: SourceDefinition = {
+  id: 'irdai-notices',
+  name: 'IRDAI Policyholder Unclaimed Funds & Claim Notices',
+  domain: 'irdai.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://irdai.gov.in',
+  feedUrl: 'https://irdai.gov.in/rss-feed',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const iepfNoticesSource: SourceDefinition = {
+  id: 'iepf-notices',
+  name: 'Investor Education & Protection Fund Authority Notices',
+  domain: 'iepf.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.iepf.gov.in',
+  feedUrl: 'https://www.iepf.gov.in/IEPF/rss.xml',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const ibbiAnnouncementsSource: SourceDefinition = {
+  id: 'ibbi-public-announcements',
+  name: 'IBBI Corporate Insolvency Creditor Claims Notices',
+  domain: 'ibbi.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.ibbi.gov.in',
+  feedUrl: 'https://www.ibbi.gov.in/rss-feed',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const ncdrcOrdersSource: SourceDefinition = {
+  id: 'ncdrc-orders',
+  name: 'National Consumer Commission Compensation Judgments',
+  domain: 'ncdrc.nic.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://ncdrc.nic.in',
+  feedUrl: 'https://ncdrc.nic.in/rss.xml',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const dgcaPassengerRightsSource: SourceDefinition = {
+  id: 'dgca-passenger-rights',
+  name: 'DGCA Airline Passenger Refund & Compensation Directives',
+  domain: 'dgca.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.dgca.gov.in',
+  feedUrl: 'https://www.dgca.gov.in/digigov-portal/rss-feed',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const mcaCircularsSource: SourceDefinition = {
+  id: 'mca-circulars',
+  name: 'Ministry of Corporate Affairs Deposit Restitution Notices',
+  domain: 'mca.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.mca.gov.in',
+  feedUrl: 'https://www.mca.gov.in/content/mca/global/en/rss.xml',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
+export const traiPressReleasesSource: SourceDefinition = {
+  id: 'trai-press-releases',
+  name: 'TRAI Telecom Tariff Refund & Overcharge Directives',
+  domain: 'trai.gov.in',
+  sourceType: SourceType.RSS,
+  adapterType: 'rss',
+  baseUrl: 'https://www.trai.gov.in',
+  feedUrl: 'https://www.trai.gov.in/rss.xml',
+  trustLevel: 'official',
   rateLimit: { requestsPerMinute: 10 },
 };
 
@@ -111,4 +207,14 @@ export const initialSources: SourceDefinition[] = [
   sebiRssSource,
   rbiRssSource,
   genericRssSource,
+  sebiOrdersRssSource,
+  rbiNotificationsRssSource,
+  irdaiNoticesSource,
+  iepfNoticesSource,
+  ibbiAnnouncementsSource,
+  ncdrcOrdersSource,
+  dgcaPassengerRightsSource,
+  mcaCircularsSource,
+  traiPressReleasesSource,
 ];
+

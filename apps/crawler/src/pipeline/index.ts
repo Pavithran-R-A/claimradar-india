@@ -261,9 +261,11 @@ async function processSource(params: {
 
         // AI extraction
         if (options.skipAI || !aiExtractor) {
+          summary.recordsQueued++;
           if (!options.dryRun) {
             await db.updateCandidateDocument(candidateId, {
               ai_extraction_status: 'deferred',
+              publication_decision: 'human_review',
             });
           }
           continue;

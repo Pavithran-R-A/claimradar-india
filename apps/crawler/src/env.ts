@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { readFileSync, existsSync } from 'node:fs';
+import path from 'node:path';
 
 export const crawlerEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
@@ -32,16 +34,35 @@ export const crawlerEnvSchema = z.object({
 
 export type CrawlerEnv = z.infer<typeof crawlerEnvSchema>;
 
+function readEnvFile(filePath: string): Record<string, string> {
+  if (!existsSync(filePath)) return {};
+  const res: Record<string, string> = {};
+  for (const line of readFileSync(filePath, 'utf-8').split('\n')) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const eq = t.indexOf('=');
+    if (eq < 0) continue;
+    res[t.slice(0, eq).trim()] = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+  }
+  return res;
+}
+
 export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
-  const env = { ...process.env };
+  const rootDir = process.cwd();
+  const localEnv = readEnvFile(path.resolve(rootDir, '.env.local'));
+  const stagingEnv = readEnvFile(path.resolve(rootDir, '.env.staging'));
+
+  const env = { ...stagingEnv, ...localEnv, ...process.env };
+  const isDryRun = options?.dryRun ?? process.argv.includes('--dry-run');
+
+  if (isDryRun) {
+    env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
+  }
   const resolvedKey =
     env.SUPABASE_SECRET_KEY ||
     env.SUPABASE_SERVICE_ROLE_KEY ||
-    (options?.dryRun ? 'dummy-dryrun-service-role-key' : undefined);
+    (isDryRun ? 'dummy-dryrun-service-role-key' : undefined);
 
-  if (options?.dryRun) {
-    env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
-  }
   env.SUPABASE_SECRET_KEY = resolvedKey;
   env.SUPABASE_SERVICE_ROLE_KEY = resolvedKey;
   return crawlerEnvSchema.parse(env);

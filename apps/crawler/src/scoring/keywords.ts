@@ -26,10 +26,19 @@ export const POSITIVE_KEYWORDS: KeywordEntry[] = [
   { term: 'compensation', weight: 9 },
   { term: 'compensate', weight: 9 },
   { term: 'settlement', weight: 9 },
+  { term: 'disgorgement', weight: 10 },
+  { term: 'disgorged', weight: 10 },
+  { term: 'unclaimed deposit', weight: 10 },
+  { term: 'unclaimed amount', weight: 10 },
+  { term: 'unclaimed dividend', weight: 10 },
+  { term: 'iepf', weight: 10 },
+  { term: 'recovery order', weight: 9 },
   { term: 'class action', weight: 10 },
   { term: 'collective complaint', weight: 10 },
   { term: 'representative complaint', weight: 10 },
   { term: 'recall and refund', weight: 10 },
+  { term: 'proof of claim', weight: 9 },
+  { term: 'invitation of claims', weight: 9 },
 
   // ── Medium-high weight (6-8): Likely claimable ────────────────────────────
   { term: 'claim form', weight: 8 },
@@ -44,7 +53,14 @@ export const POSITIVE_KEYWORDS: KeywordEntry[] = [
   { term: 'affected consumers', weight: 7 },
   { term: 'affected customers', weight: 7 },
   { term: 'eligible consumers', weight: 7 },
+  { term: 'eligible investors', weight: 8 },
+  { term: 'eligible depositors', weight: 8 },
   { term: 'public notice', weight: 6 },
+  { term: 'passenger compensation', weight: 9 },
+  { term: 'flight cancellation refund', weight: 9 },
+  { term: 'deposit repayment', weight: 9 },
+  { term: 'overcharge refund', weight: 9 },
+  { term: 'excess charge reversal', weight: 8 },
 
   // ── Medium weight (4-6): Supporting indicators ────────────────────────────
   { term: 'depositors', weight: 6 },
@@ -57,6 +73,9 @@ export const POSITIVE_KEYWORDS: KeywordEntry[] = [
   { term: 'consumer protection', weight: 5 },
   { term: 'penalty', weight: 4 },
   { term: 'restitution', weight: 7 },
+  { term: 'redressal', weight: 6 },
+  { term: 'remediation', weight: 6 },
+  { term: 'payout', weight: 6 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -91,4 +110,5 @@ export const NEGATIVE_KEYWORDS: KeywordEntry[] = [
  * Default score threshold (0–100) above which a document is considered a
  * claimable candidate.  Can be overridden at call time.
  */
-export const DEFAULT_CANDIDATE_THRESHOLD = 15;
+export const DEFAULT_CANDIDATE_THRESHOLD = 10;
+
