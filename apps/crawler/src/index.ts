@@ -1,5 +1,6 @@
 import { runPipeline } from './pipeline/index.js';
 import { loadCrawlerEnv } from './env.js';
+export { loadCrawlerEnv };
 import { createAdminClient } from '@claimradar/database';
 import type { Source } from '@claimradar/database';
 import type { SourceDefinition } from '@claimradar/source-registry';

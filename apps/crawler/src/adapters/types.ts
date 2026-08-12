@@ -13,6 +13,7 @@ export interface DiscoveredDocument {
   sourceIdentifier?: string;
   description?: string;
   linkedDocumentUrl?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface FetchedDocument {

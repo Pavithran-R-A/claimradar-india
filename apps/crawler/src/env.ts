@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { readFileSync, existsSync } from 'node:fs';
-import path from 'node:path';
+import * as path from 'node:path';
 
 export const crawlerEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
@@ -42,7 +42,10 @@ function readEnvFile(filePath: string): Record<string, string> {
     if (!t || t.startsWith('#')) continue;
     const eq = t.indexOf('=');
     if (eq < 0) continue;
-    res[t.slice(0, eq).trim()] = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+    res[t.slice(0, eq).trim()] = t
+      .slice(eq + 1)
+      .trim()
+      .replace(/^["']|["']$/g, '');
   }
   return res;
 }

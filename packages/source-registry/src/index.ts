@@ -158,46 +158,9 @@ export const ibbiAnnouncementsSource: SourceDefinition = {
   id: 'ibbi-public-announcements',
   name: 'IBBI Corporate Insolvency Creditor Claims Notices',
   domain: 'ibbi.gov.in',
-  sourceType: SourceType.RSS,
-  adapterType: 'rss',
-  baseUrl: 'https://www.ibbi.gov.in',
-  feedUrl: 'https://www.ibbi.gov.in/rss-feed',
-  trustLevel: 'official',
-  rateLimit: { requestsPerMinute: 10 },
-};
-
-export const ncdrcOrdersSource: SourceDefinition = {
-  id: 'ncdrc-orders',
-  name: 'National Consumer Commission Compensation Judgments',
-  domain: 'ncdrc.nic.in',
-  sourceType: SourceType.RSS,
-  adapterType: 'rss',
-  baseUrl: 'https://ncdrc.nic.in',
-  feedUrl: 'https://ncdrc.nic.in/rss.xml',
-  trustLevel: 'official',
-  rateLimit: { requestsPerMinute: 10 },
-};
-
-export const dgcaPassengerRightsSource: SourceDefinition = {
-  id: 'dgca-passenger-rights',
-  name: 'DGCA Airline Passenger Refund & Compensation Directives',
-  domain: 'dgca.gov.in',
-  sourceType: SourceType.RSS,
-  adapterType: 'rss',
-  baseUrl: 'https://www.dgca.gov.in',
-  feedUrl: 'https://www.dgca.gov.in/digigov-portal/rss-feed',
-  trustLevel: 'official',
-  rateLimit: { requestsPerMinute: 10 },
-};
-
-export const mcaCircularsSource: SourceDefinition = {
-  id: 'mca-circulars',
-  name: 'Ministry of Corporate Affairs Deposit Restitution Notices',
-  domain: 'mca.gov.in',
-  sourceType: SourceType.RSS,
-  adapterType: 'rss',
-  baseUrl: 'https://www.mca.gov.in',
-  feedUrl: 'https://www.mca.gov.in/content/mca/global/en/rss.xml',
+  sourceType: SourceType.HTMLListing,
+  adapterType: 'ibbi-public-announcement',
+  baseUrl: 'https://ibbi.gov.in',
   trustLevel: 'official',
   rateLimit: { requestsPerMinute: 10 },
 };
@@ -214,19 +177,24 @@ export const traiPressReleasesSource: SourceDefinition = {
   rateLimit: { requestsPerMinute: 10 },
 };
 
+export const sebiPublicNoticesSource: SourceDefinition = {
+  id: 'sebi-public-notices',
+  name: 'SEBI Public Notices & Investor Refund Orders',
+  domain: 'sebi.gov.in',
+  sourceType: SourceType.HTMLListing,
+  adapterType: 'sebi-public-notices',
+  baseUrl: 'https://www.sebi.gov.in',
+  trustLevel: 'official',
+  rateLimit: { requestsPerMinute: 10 },
+};
+
 export const initialSources: SourceDefinition[] = [
   pibRssSource,
   sebiRssSource,
   rbiRssSource,
   genericRssSource,
-  sebiOrdersRssSource,
   rbiNotificationsRssSource,
-  irdaiNoticesSource,
-  iepfNoticesSource,
   ibbiAnnouncementsSource,
-  ncdrcOrdersSource,
-  dgcaPassengerRightsSource,
-  mcaCircularsSource,
+  sebiPublicNoticesSource,
   traiPressReleasesSource,
 ];
-

@@ -32,7 +32,14 @@ export class BaseRssAdapter implements SourceAdapter {
     }
 
     try {
-      const feed = await this.parser.parseURL(feedUrl);
+      const client = this.createHttpClient(_context);
+      const res = await client.fetch({
+        url: feedUrl,
+        method: 'GET',
+        timeoutMs: _context.timeoutMs,
+      });
+      const xml = res.body.toString('utf-8');
+      const feed = await this.parser.parseString(xml);
       const documents: DiscoveredDocument[] = [];
 
       for (const item of feed.items ?? []) {

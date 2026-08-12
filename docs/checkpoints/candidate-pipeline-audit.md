@@ -10,11 +10,11 @@
 
 The staging database contains **3 source documents** ingested from the `sebi-rss` adapter (`https://www.sebi.gov.in/sebirss.xml`). The table below traces each document through all 9 pipeline stages:
 
-| SOURCE_DOCUMENT | FETCHED | FILTER_RESULT | FILTER_REASON | AI_CALLED | AI_RESULT | CANDIDATE_CREATED | VALIDATION_RESULT | PUBLICATION_RESULT |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SEBI Circular — ESG Disclosure Framework** | YES (HTTP 200) | FAILS (Score: 5/100) | Regulatory disclosure guidelines; missing investor refund/compensation keywords | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO | N/A | N/A |
-| **SEBI Press Release — Advisory on Unregistered Entities** | YES (HTTP 200) | FAILS (Score: 10/100) | General investor awareness advisory; no specific claim scheme or deadline | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO | N/A | N/A |
-| **SEBI Board Meeting Summary Circular** | YES (HTTP 200) | FAILS (Score: 5/100) | Policy and governance decisions; no investor monetary restitution mechanism | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO | N/A | N/A |
+| SOURCE_DOCUMENT                                            | FETCHED        | FILTER_RESULT         | FILTER_REASON                                                                   | AI_CALLED               | AI_RESULT    | CANDIDATE_CREATED | VALIDATION_RESULT | PUBLICATION_RESULT |
+| :--------------------------------------------------------- | :------------- | :-------------------- | :------------------------------------------------------------------------------ | :---------------------- | :----------- | :---------------- | :---------------- | :----------------- |
+| **SEBI Circular — ESG Disclosure Framework**               | YES (HTTP 200) | FAILS (Score: 5/100)  | Regulatory disclosure guidelines; missing investor refund/compensation keywords | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO                | N/A               | N/A                |
+| **SEBI Press Release — Advisory on Unregistered Entities** | YES (HTTP 200) | FAILS (Score: 10/100) | General investor awareness advisory; no specific claim scheme or deadline       | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO                | N/A               | N/A                |
+| **SEBI Board Meeting Summary Circular**                    | YES (HTTP 200) | FAILS (Score: 5/100)  | Policy and governance decisions; no investor monetary restitution mechanism     | NO (`AI_PROVIDER=none`) | NOT_EXECUTED | NO                | N/A               | N/A                |
 
 ---
 

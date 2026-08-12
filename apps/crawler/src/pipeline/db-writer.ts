@@ -225,7 +225,7 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   public publicationEvents: Array<Record<string, unknown>> = [];
   public sourceHealthEvents: Array<Record<string, unknown>> = [];
 
-  constructor(private initialSources?: Source[]) {}
+  constructor(private initialSources?: any[]) {}
 
   async createCrawlRun(status: string): Promise<string> {
     const id = crypto.randomUUID();
@@ -322,27 +322,32 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   }
 
   async getEnabledSources(): Promise<Source[]> {
-    if (this.initialSources) return this.initialSources;
-    const { initialSources } = await import('@claimradar/source-registry');
-    return initialSources.map((s) => ({
+    const sourcesToMap: any[] =
+      this.initialSources ?? (await import('@claimradar/source-registry')).initialSources;
+    return sourcesToMap.map((s) => ({
       id: s.id,
       name: s.name,
       domain: s.domain,
-      source_type: s.sourceType,
-      adapter_name: s.adapterType,
-      base_url: s.baseUrl,
-      trust_level: s.trustLevel,
+      source_type: s.sourceType ?? s.source_type,
+      adapter_name: s.adapterType ?? s.adapter_name,
+      adapterType: s.adapterType ?? s.adapter_name,
+      baseUrl: s.baseUrl ?? s.base_url,
+      base_url: s.baseUrl ?? s.base_url,
+      feedUrl: s.feedUrl ?? s.metadata?.feedUrl,
+      trustLevel: s.trustLevel ?? s.trust_level,
+      trust_level: s.trustLevel ?? s.trust_level,
       enabled: true,
       fetch_frequency_hours: 24,
-      rate_limit_per_minute: s.rateLimit.requestsPerMinute,
+      rate_limit_per_minute: s.rateLimit?.requestsPerMinute ?? s.rate_limit_per_minute ?? 10,
       robots_checked_at: null,
       terms_checked_at: null,
       last_run_at: null,
       last_success_at: null,
       failure_count: 0,
-      metadata: s.feedUrl ? { feedUrl: s.feedUrl } : {},
+      metadata:
+        s.feedUrl || s.metadata?.feedUrl ? { feedUrl: s.feedUrl || s.metadata?.feedUrl } : {},
       created_at: new Date().toISOString(),
-    }));
+    })) as unknown as Source[];
   }
 
   async getSourceDocumentsForDedup(_sourceId: string): Promise<SourceDocumentDedupItem[]> {

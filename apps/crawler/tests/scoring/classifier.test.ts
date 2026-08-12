@@ -9,7 +9,7 @@ describe('Keyword Classifier', () => {
       title: 'NCDRC orders refund and compensation to consumers',
     });
 
-    expect(result.score).toBeGreaterThan(50);
+    expect(result.score).toBeGreaterThanOrEqual(30);
     expect(result.isCandidate).toBe(true);
     expect(result.positiveMatches.length).toBeGreaterThan(0);
   });
@@ -95,5 +95,71 @@ describe('Keyword Classifier', () => {
 
     expect(highResult.score).toBeLessThanOrEqual(100);
     expect(highResult.score).toBeGreaterThanOrEqual(0);
+  });
+
+  describe('Real Document Shape Regression Tests (Phase L)', () => {
+    it('Positive Case 1: IBBI creditor claim invitation', () => {
+      const result = scoreDocument({
+        text: 'Public Announcement of Corporate Insolvency Resolution Process for KRUX PHARMA PRIVATE LIMITED. Notice inviting proof of claim from all creditors and claimants. Last date for submission of claims: 21-08-2026.',
+        title:
+          'IBBI CIRP Creditor Claim Notice: KRUX PHARMA PRIVATE LIMITED (Claims Deadline: 21-08-2026)',
+      });
+      expect(result.isCandidate).toBe(true);
+      expect(result.score).toBeGreaterThanOrEqual(30);
+    });
+
+    it('Positive Case 2: SEBI investor refund public notice', () => {
+      const result = scoreDocument({
+        text: 'SEBI Order & Investor Refund Notice in the matter of Nirman Agri Genetics Limited. Facility for investors to submit claim applications on refund portal for disgorgement distribution.',
+        title: 'SEBI Order & Investor Refund Notice in the matter of Nirman Agri Genetics Limited',
+      });
+      expect(result.isCandidate).toBe(true);
+      expect(result.score).toBeGreaterThanOrEqual(30);
+    });
+
+    it('Negative Case 1: TRAI consumer awareness event', () => {
+      const result = scoreDocument({
+        text: 'TRAI organized a consumer awareness program and education workshop in Kangra, Himachal Pradesh for telecom subscribers.',
+        title: 'TRAI Consumer Awareness Program Kangra Himachal Pradesh',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Negative Case 2: SEBI individual recovery certificate', () => {
+      const result = scoreDocument({
+        text: 'Release order for recovery certificate issued in respect of individual monetary penalty payable by Mr. Sharma.',
+        title: 'SEBI Recovery Certificate Notice',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Negative Case 3: RBI monetary penalty', () => {
+      const result = scoreDocument({
+        text: 'RBI imposes monetary penalty on ABC Cooperative Bank for non-compliance with KYC directives.',
+        title: 'Monetary Penalty Imposed on ABC Cooperative Bank',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Negative Case 4: PIB generic press release', () => {
+      const result = scoreDocument({
+        text: 'Union Minister inaugurates new textiles development initiative and National Quantum Mission facility.',
+        title: 'Press Information Bureau Press Release',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Negative Case 5: W3C reference document', () => {
+      const result = scoreDocument({
+        text: 'W3C Recommendation for Accessible Rich Internet Applications (ARIA) in HTML specifications.',
+        title: 'W3C ARIA Recommendation',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
   });
 });

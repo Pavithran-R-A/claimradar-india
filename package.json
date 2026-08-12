@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "pnpm -r build",
+    "build": "pnpm --workspace-concurrency 1 -r build",
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run --passWithNoTests",

@@ -20,95 +20,65 @@ export interface KeywordEntry {
 // ---------------------------------------------------------------------------
 
 export const POSITIVE_KEYWORDS: KeywordEntry[] = [
-  // ── High weight (8-10): Strong claimable indicators ──────────────────────
-  { term: 'refund', weight: 10 },
-  { term: 'reimbursement', weight: 9 },
-  { term: 'compensation', weight: 9 },
-  { term: 'compensate', weight: 9 },
-  { term: 'settlement', weight: 9 },
-  { term: 'disgorgement', weight: 10 },
-  { term: 'disgorged', weight: 10 },
-  { term: 'unclaimed deposit', weight: 10 },
-  { term: 'unclaimed amount', weight: 10 },
-  { term: 'unclaimed dividend', weight: 10 },
-  { term: 'iepf', weight: 10 },
-  { term: 'recovery order', weight: 9 },
-  { term: 'class action', weight: 10 },
-  { term: 'collective complaint', weight: 10 },
-  { term: 'representative complaint', weight: 10 },
-  { term: 'recall and refund', weight: 10 },
-  { term: 'proof of claim', weight: 9 },
-  { term: 'invitation of claims', weight: 9 },
+  // ── High weight (10-15): Concrete actionable claim mechanisms ─────────────
+  { term: 'unclaimed deposit', weight: 15 },
+  { term: 'unclaimed amount', weight: 15 },
+  { term: 'unclaimed dividend', weight: 15 },
+  { term: 'investor refund portal', weight: 15 },
+  { term: 'invitation of claims', weight: 15 },
+  { term: 'proof of claim', weight: 15 },
+  { term: 'last date for submission of claims', weight: 15 },
+  { term: 'submit a claim', weight: 12 },
+  { term: 'claim form', weight: 12 },
+  { term: 'iepf', weight: 12 },
+  { term: 'disgorgement distribution', weight: 15 },
+  { term: 'recall and refund', weight: 15 },
+  { term: 'deposit repayment portal', weight: 15 },
+  { term: 'refund directed', weight: 10 },
+  { term: 'refund ordered', weight: 10 },
+  { term: 'customers shall be reimbursed', weight: 12 },
+  { term: 'eligible depositors', weight: 10 },
+  { term: 'eligible investors', weight: 10 },
+  { term: 'cirp creditor claim', weight: 15 },
 
-  // ── Medium-high weight (6-8): Likely claimable ────────────────────────────
-  { term: 'claim form', weight: 8 },
-  { term: 'submit a claim', weight: 8 },
-  { term: 'register claims', weight: 8 },
-  { term: 'refund directed', weight: 9 },
-  { term: 'refund ordered', weight: 9 },
-  { term: 'amount shall be returned', weight: 8 },
-  { term: 'customers shall be reimbursed', weight: 9 },
-  { term: 'relief to consumers', weight: 8 },
-  { term: 'invite applications', weight: 7 },
-  { term: 'affected consumers', weight: 7 },
-  { term: 'affected customers', weight: 7 },
-  { term: 'eligible consumers', weight: 7 },
-  { term: 'eligible investors', weight: 8 },
-  { term: 'eligible depositors', weight: 8 },
-  { term: 'public notice', weight: 6 },
-  { term: 'passenger compensation', weight: 9 },
-  { term: 'flight cancellation refund', weight: 9 },
-  { term: 'deposit repayment', weight: 9 },
-  { term: 'overcharge refund', weight: 9 },
-  { term: 'excess charge reversal', weight: 8 },
-
-  // ── Medium weight (4-6): Supporting indicators ────────────────────────────
-  { term: 'depositors', weight: 6 },
-  { term: 'shareholders', weight: 5 },
-  { term: 'policyholders', weight: 6 },
-  { term: 'homebuyers', weight: 6 },
-  { term: 'investors', weight: 5 },
-  { term: 'consumer forum', weight: 5 },
-  { term: 'consumer court', weight: 5 },
-  { term: 'consumer protection', weight: 5 },
-  { term: 'penalty', weight: 4 },
-  { term: 'restitution', weight: 7 },
-  { term: 'redressal', weight: 6 },
-  { term: 'remediation', weight: 6 },
+  // ── Medium weight (5-8): Supporting indicators (require combined signal) ──
+  { term: 'refund', weight: 6 },
+  { term: 'reimbursement', weight: 6 },
+  { term: 'compensation', weight: 5 },
+  { term: 'settlement', weight: 6 },
+  { term: 'disgorgement', weight: 8 },
+  { term: 'restitution', weight: 8 },
   { term: 'payout', weight: 6 },
+  { term: 'redressal', weight: 5 },
 ];
-
-// ---------------------------------------------------------------------------
-// Negative keywords — signals that a document is NOT a claimable candidate
-// ---------------------------------------------------------------------------
 
 export const NEGATIVE_KEYWORDS: KeywordEntry[] = [
-  { term: 'vacancy', weight: 8 },
-  { term: 'recruitment', weight: 8 },
-  { term: 'tender', weight: 8 },
-  { term: 'procurement', weight: 8 },
-  { term: 'appointment', weight: 7 },
-  { term: 'speech', weight: 6 },
-  { term: 'seminar', weight: 7 },
-  { term: 'conference', weight: 7 },
-  { term: 'training', weight: 6 },
-  { term: 'examination', weight: 7 },
-  { term: 'routine administrative order', weight: 8 },
-  { term: 'employee transfer', weight: 8 },
-  { term: 'job opening', weight: 8 },
-  { term: 'hiring', weight: 8 },
-  { term: 'annual report', weight: 5 },
-  { term: 'policy circular', weight: 5 },
-  { term: 'guidelines issued', weight: 4 },
+  // ── High weight (15-25): Immediate rejection of administrative noise ──────
+  { term: 'consumer awareness program', weight: 25 },
+  { term: 'consumer outreach program', weight: 25 },
+  { term: 'consumer education workshop', weight: 25 },
+  { term: 'awareness campaign', weight: 25 },
+  { term: 'outreach event', weight: 25 },
+  { term: 'workshop at', weight: 20 },
+  { term: 'release order for recovery certificate', weight: 25 },
+  { term: 'completion of recovery certificate', weight: 25 },
+  { term: 'adjudication order in respect of', weight: 20 },
+  { term: 'illiquid stock options', weight: 20 },
+  { term: 'monetary penalty payable to', weight: 20 },
+  { term: 'vacancy', weight: 20 },
+  { term: 'recruitment', weight: 20 },
+  { term: 'tender', weight: 20 },
+  { term: 'procurement', weight: 20 },
+  { term: 'appointment', weight: 15 },
+  { term: 'speech', weight: 15 },
+  { term: 'seminar', weight: 20 },
+  { term: 'conference', weight: 15 },
+  { term: 'training', weight: 15 },
+  { term: 'examination', weight: 15 },
+  { term: 'employee transfer', weight: 20 },
+  { term: 'annual report', weight: 15 },
+  { term: 'aria in html', weight: 25 },
+  { term: 'w3c recommendation', weight: 25 },
 ];
 
-// ---------------------------------------------------------------------------
-// Configuration
-// ---------------------------------------------------------------------------
-
-/**
- * Default score threshold (0–100) above which a document is considered a
- * claimable candidate.  Can be overridden at call time.
- */
-export const DEFAULT_CANDIDATE_THRESHOLD = 10;
-
+export const DEFAULT_CANDIDATE_THRESHOLD = 30;

@@ -8,6 +8,8 @@ import { GenericRssAdapter } from './rss/generic.js';
 import { HtmlListingAdapter } from './html/listing.js';
 import { HtmlDetailAdapter } from './html/detail.js';
 import { PdfIndexAdapter } from './pdf/index.js';
+import { IbbiPublicAnnouncementAdapter } from './html/ibbi.js';
+import { SebiPublicNoticesAdapter } from './html/sebi-public-notices.js';
 
 export function getAdapter(source: SourceDefinition): SourceAdapter {
   switch (source.adapterType) {
@@ -27,6 +29,10 @@ export function getAdapter(source: SourceDefinition): SourceAdapter {
       return new HtmlDetailAdapter(source);
     case 'pdf_index':
       return new PdfIndexAdapter(source);
+    case 'ibbi-public-announcement':
+      return new IbbiPublicAnnouncementAdapter(source);
+    case 'sebi-public-notices':
+      return new SebiPublicNoticesAdapter(source);
     default:
       throw new Error(`Unknown adapter type: ${source.adapterType}`);
   }
