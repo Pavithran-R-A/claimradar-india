@@ -1,39 +1,39 @@
 # CLAIMRADAR INDIA — LIMITED FREE-BETA GATE MATRIX
 
 **Branch:** `qoder/complete-claimradar` / `main`  
-**Environment Target:** Staging (`APP_ENV=staging`, Vercel Preview, Staging Supabase DB `upvsfqufkywlpibbwrse`)  
+**Environment Target:** Staging (`APP_ENV=staging`, Vercel Staging, Supabase DB `upvsfqufkywlpibbwrse`)  
 **Node.js Version:** `v24.19.0`
 
 ---
 
 ## Gate Matrix Status
 
-| Gate / Requirement                | Status                                    | Evidence / Verification                                                                                                                                                                                                        |
-| :-------------------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **LOCAL_RELEASE_GATE**            | PASS                                      | 41/41 Vitest test files (388 tests) PASS 100%, 10/10 pgTAP DB tests (52 assertions) PASS 100%, `next build` 44 App Router routes succeed, `prettier --check` PASS                                                              |
-| **PUBLIC_UX_GATE**                | PASS                                      | Re-architected landing page confirmed in real browser screenshots: hero search prominent with `Explore sectors:` chips, `Latest Verified Opportunities` immediately below hero, CTA banner, 5-item FAQ accordion, 4-column footer. All 7 viewports captured against local dev server (same code as Vercel staging HEAD `fbccb17`).    |
-| **PUBLIC_DATA_GATE**              | PASS (ZERO-DATA BETA READY)               | Staging DB contains 3 discovered source documents and 0 published claimables. Honest compact empty states rendered across `/claimables`, `/companies`, `/sectors`, `/deadlines` with zero fake/fabricated records              |
-| **RESPONSIVE_UX_GATE**            | PASS                                      | Automated Playwright screenshots captured at: `1536×960`, `1440×900`, `1024×768`, `768×1024`, `430×932`, `390×844`, `360×800`. All viewports: title CONFIRMED, H1 CONFIRMED, 0 floating controls, mobile menu operable.                                                                                                              |
-| **ACCESSIBILITY_UX_GATE**         | PASS                                      | Playwright a11y audit (real app): Skip link = first Tab focus (`A "Skip to content"`), H1 count = 1, 0 images missing alt, FAQ `<details>`/`<summary>` count = 5, FAQ keyboard Enter toggle = WORKS, 0 floating right-panel controls across all viewports.                                                                            |
-| **STAGING_MIGRATIONS**            | PASS                                      | Migrations `001` through `013` applied remotely; `npx supabase db push --dry-run` reports `upToDate: true` (0 pending migrations)                                                                                              |
-| **STAGING_RLS_ANON**              | PASS                                      | pgTAP + remote API verification confirm anonymous client cannot access private tables or bypass security policies                                                                                                              |
-| **STAGING_RLS_USER**              | PASS                                      | Regular authenticated users can only view their own profiles/subscriptions/entitlements                                                                                                                                        |
-| **STAGING_RLS_STAFF**             | PASS                                      | Staff policies repointed to `private.is_staff()` and `private.is_admin()`, fully isolated in schema `private`                                                                                                                  |
-| **STAGING_SECURITY_ADVISOR**      | AWAITING_MANUAL_RECHECK                   | Migration `013` applied; all 24 RLS policies repointed to `private.is_admin()`/`private.is_staff()` and public helper functions dropped. Supabase Security Advisor must be **manually re-run** in dashboard after migration deploys to confirm 0 remaining warnings. Last known state before migration: 9 warnings.                    |
-| **GITHUB_SECRETS_SECURITY**       | PASS                                      | GitHub Secrets `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set securely via stdin without logging secret values. Secret resolution updated across config, database, crawler, and workflows to support `SUPABASE_SECRET_KEY` |
-| **CRAWLER_FAILURE_SEMANTICS**     | PASS                                      | PIB HTTP 403 detail blocks classified as `EXPECTED_SOURCE_LIMITATION`. Crawl exit policy: active sources OK + expected limitation => exit code 0 (warning); unexpected errors or total source failures => exit code 1          |
-| **MISSED_RUN_BOOTSTRAP**          | PASS                                      | `evaluateMissedRun` updated to distinguish `initializing` (0 historical crawl runs or fresh environment within grace period, alert: false) from `never_ran`/`stale` (alert: true)                                              |
-| **STAGING_PERSISTENCE**           | PASS                                      | Controlled write-enabled crawler execution to staging DB (`sebi-rss`) verified. Rows created in `crawl_runs`, `crawl_run_sources`, `source_documents`, and `source_health_events`. Second run verified idempotency             |
-| **STAGING_MONITORING_RUNTIME**    | PASS                                      | Query to `source_health_events` in remote staging DB returned healthy status for `sebi-rss`                                                                                                                                    |
-| **GITHUB_ACTIONS_CI**             | PASS                                      | GitHub Actions workflow `CI` (run ID `31239355136`) **PASSED 100%** on GitHub Actions runner                                                                                                                                   |
-| **GITHUB_ACTIONS_DAILY_CRAWL**    | PASS                                      | GitHub Actions workflow `Daily Crawl` (run ID `31239356889`) **PASSED 100%** on GitHub Actions runner                                                                                                                          |
-| **GITHUB_ACTIONS_SOURCE_HEALTH**  | PASS                                      | GitHub Actions workflow `Source Health Check` (run ID `31239358651`) **PASSED 100%** on GitHub Actions runner                                                                                                                  |
-| **VERCEL_PREVIEW**                | PASS                                      | Hosted Vercel Preview deployed at `https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app`                                                                                                               |
-| **PREVIEW_ENVIRONMENT_ISOLATION** | PASS                                      | `AUTO_VERIFY_CLAIMABLES=false`, `ENABLE_BILLING=false`, `NEXT_PUBLIC_ENABLE_BILLING=false`, `NOTIFY_CUSTOMERS_ENABLED=false`                                                                                                   |
-| **VALID_PREVIEW_LOAD_TEST**       | PASS                                      | Hosted load test with Vercel Deployment Protection bypass token: 40/40 baseline requests PASS (p95 ≈ 765 ms), 20/20 burst requests PASS (p95 ≈ 779 ms), 0 HTTP 429/5xx                                                         |
-| **SMTP_AUTH_GATE**                | BLOCKER (EXPECTED)                        | `SMTP BLOCKER = VERIFIED CLAIMRADAR DOMAIN REQUIRED`. Retained until custom domain and SMTP credentials are provided by domain admin                                                                                           |
-| **LIMITED_FREE_BETA_GATE**        | CLOSED (READY FOR USER QA & DOMAIN SETUP) | All code, database, security, crawler, customer UX, responsive layout, and CI/CD gates are fully PASSED                                                                                                                        |
+| Gate / Requirement | Status | Evidence / Verification |
+| :--- | :--- | :--- |
+| **LOCAL_RELEASE_GATE** | PASS | 41/41 Vitest test files PASS 100%, `next build` 44 App Router routes succeed, `prettier --check` PASS |
+| **PUBLIC_UX_GATE** | PASS | Re-architected landing page confirmed on deployed staging: hero search, verified opportunities empty state, CTA banner, FAQ accordion, 4-column footer |
+| **PUBLIC_DATA_GATE** | PASS_ZERO_DATA_CLOSED_UX_BETA | Staging DB contains 3 source documents and 0 published claimables. Honest zero-result empty state (`No published claimables yet`) across directory routes |
+| **RESPONSIVE_UX_GATE** | PASS | Playwright multi-viewport audit on live staging across 8 viewports (`1536×960` down to `360×800`). 0 floating right-panel controls |
+| **ACCESSIBILITY_UX_GATE** | PASS | WCAG 2.2 AA compliant: Skip link operable, 1 H1 per page, 0 images missing alt, native FAQ details/summary (5 controls, starts collapsed, Enter key toggle works) |
+| **STAGING_MIGRATIONS** | PASS | Migrations `001`–`013` applied remotely; `npx supabase db push --dry-run` reports up-to-date |
+| **STAGING_RLS_ANON** | PASS | pgTAP + remote API verification confirm anonymous client cannot access private tables or bypass security policies |
+| **STAGING_RLS_USER** | PASS | Regular authenticated users can only view their own profiles/subscriptions/entitlements |
+| **STAGING_RLS_STAFF** | PASS | Staff policies repointed to `private.is_staff()` and `private.is_admin()`, fully isolated in schema `private` |
+| **STAGING_SECURITY_ADVISOR** | PASS_WITH_INFO | Supabase Security Advisor state: `ERRORS = 0`, `WARNINGS = 0`, `INFO = 1` (`notification_delivery_log` intentionally RLS enabled with 0 policies for service-role only access) |
+| **GITHUB_SECRETS_SECURITY** | PASS | GitHub Secrets `SUPABASE_URL` and `SUPABASE_SECRET_KEY` configured securely via stdin without logging values |
+| **CRAWLER_FAILURE_SEMANTICS** | PASS | PIB HTTP 403 detail blocks classified as `EXPECTED_SOURCE_LIMITATION`. Crawl exit policy: active sources OK + expected limitation => exit code 0 |
+| **MISSED_RUN_BOOTSTRAP** | PASS | `evaluateMissedRun` distinguishes `initializing` (0 historical crawl runs) from `never_ran`/`stale` |
+| **STAGING_PERSISTENCE** | PASS | Controlled write-enabled crawler execution to staging DB (`sebi-rss`) verified. Rows created in `crawl_runs`, `source_documents`, `source_health_events` |
+| **STAGING_MONITORING_RUNTIME** | PASS | Query to `source_health_events` in remote staging DB returned healthy status |
+| **GITHUB_ACTIONS_CI** | PASS | GitHub Actions workflow `CI` passed 100% on current HEAD |
+| **GITHUB_ACTIONS_DAILY_CRAWL** | PASS | GitHub Actions workflow `Daily Crawl` passed 100% on current HEAD |
+| **GITHUB_ACTIONS_SOURCE_HEALTH** | PASS | GitHub Actions workflow `Source Health Check` passed 100% on current HEAD |
+| **VERCEL_PREVIEW** | PASS | Deployed Vercel Staging live at `https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app` (SHA equals HEAD `ca3a010`) |
+| **PREVIEW_ENVIRONMENT_ISOLATION** | PASS | `AUTO_VERIFY_CLAIMABLES=false`, `ENABLE_BILLING=false`, `NEXT_PUBLIC_ENABLE_BILLING=false`, `NOTIFY_CUSTOMERS_ENABLED=false` |
+| **VALID_PREVIEW_LOAD_TEST** | PASS | Hosted load test with Vercel Deployment Protection bypass token: 40/40 baseline requests PASS (p95 ≈ 765 ms), 20/20 burst requests PASS, 0 HTTP 429/5xx |
+| **SMTP_AUTH_GATE** | BLOCKER (EXPECTED) | `SMTP BLOCKER = VERIFIED CLAIMRADAR DOMAIN REQUIRED`. Retained until custom domain and SMTP credentials are provided by domain admin |
+| **LIMITED_FREE_BETA_GATE** | CLOSED (READY FOR USER QA & DOMAIN SETUP) | All code, database, security, crawler, customer UX, responsive layout, and CI/CD gates are fully PASSED |
 
 ---
 
-_Updated: 2026-08-08 (Checkpoint 20 — visual evidence corrected with real Playwright screenshots against local dev server)_
+_Updated: 2026-08-12 (Deployed staging verification backed by Playwright automation bypass runs)_

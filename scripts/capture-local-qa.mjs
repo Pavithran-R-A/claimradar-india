@@ -33,7 +33,11 @@ for (const [name, w, h] of VPS) {
   await page.waitForTimeout(3000); // let Next.js hydrate
 
   const title = await page.title();
-  const h1 = await page.locator('h1').first().textContent().catch(() => 'none');
+  const h1 = await page
+    .locator('h1')
+    .first()
+    .textContent()
+    .catch(() => 'none');
   console.log(`  title="${title.substring(0, 60)}" h1="${h1.substring(0, 60)}"`);
 
   // top
@@ -67,16 +71,20 @@ for (const [name, w, h] of VPS) {
   // floating right controls
   const floats = await page.evaluate(() => {
     return Array.from(document.querySelectorAll('*'))
-      .filter(el => {
+      .filter((el) => {
         const s = window.getComputedStyle(el);
         const r = el.getBoundingClientRect();
-        return (s.position === 'fixed' || s.position === 'sticky')
-          && r.right > window.innerWidth - 100
-          && r.top > 80 && r.bottom < window.innerHeight - 80
-          && r.width > 20 && r.height > 20;
+        return (
+          (s.position === 'fixed' || s.position === 'sticky') &&
+          r.right > window.innerWidth - 100 &&
+          r.top > 80 &&
+          r.bottom < window.innerHeight - 80 &&
+          r.width > 20 &&
+          r.height > 20
+        );
       })
       .slice(0, 5)
-      .map(el => ({ tag: el.tagName, cls: (el.className || '').substring(0, 60) }));
+      .map((el) => ({ tag: el.tagName, cls: (el.className || '').substring(0, 60) }));
   });
   console.log(`  Floating controls: ${floats.length}`);
   if (floats.length) console.log('  ', JSON.stringify(floats));
@@ -91,7 +99,11 @@ for (const [name, w, h] of VPS) {
   console.log('\nLoading /claimables 1440x900...');
   await page.goto(BASE + '/claimables', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForTimeout(3000);
-  const h1 = await page.locator('h1').first().textContent().catch(() => 'none');
+  const h1 = await page
+    .locator('h1')
+    .first()
+    .textContent()
+    .catch(() => 'none');
   console.log(`  h1="${h1.substring(0, 80)}"`);
   await shot(page, 'qa-claimables-1440-top');
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -118,7 +130,11 @@ for (const [name, w, h] of VPS) {
   console.log('Loading /login 1440x900...');
   await page.goto(BASE + '/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForTimeout(2000);
-  const h1 = await page.locator('h1').first().textContent().catch(() => 'none');
+  const h1 = await page
+    .locator('h1')
+    .first()
+    .textContent()
+    .catch(() => 'none');
   console.log(`  h1="${h1}"`);
   await shot(page, 'qa-login-1440');
   await ctx.close();
@@ -145,7 +161,9 @@ for (const [name, w, h] of VPS) {
 
   await page.keyboard.press('Tab');
   const focusTag = await page.evaluate(() => document.activeElement?.tagName);
-  const focusText = await page.evaluate(() => document.activeElement?.textContent?.trim().substring(0, 50));
+  const focusText = await page.evaluate(() =>
+    document.activeElement?.textContent?.trim().substring(0, 50),
+  );
   const h1Count = await page.locator('h1').count();
   const imgNoAlt = await page.locator('img:not([alt])').count();
   const detailsCount = await page.locator('details').count();

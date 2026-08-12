@@ -113,7 +113,12 @@ async function run() {
       await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 30000 });
     }
     // Wait for Next.js app shell to hydrate
-    await page.waitForFunction(() => document.querySelector('main, #main-content, [data-testid]') !== null, { timeout: 10000 }).catch(() => {});
+    await page
+      .waitForFunction(
+        () => document.querySelector('main, #main-content, [data-testid]') !== null,
+        { timeout: 10000 },
+      )
+      .catch(() => {});
 
     // Top-of-page (hero + first content)
     await page.screenshot({
@@ -138,7 +143,9 @@ async function run() {
 
     // Mobile: try to open menu
     if (vp.width <= 768) {
-      const menuBtn = await page.$('[aria-label="Open menu"], [aria-label="Toggle menu"], button[class*="menu"]');
+      const menuBtn = await page.$(
+        '[aria-label="Open menu"], [aria-label="Toggle menu"], button[class*="menu"]',
+      );
       if (menuBtn) {
         await menuBtn.click();
         await page.waitForTimeout(400);
@@ -166,7 +173,11 @@ async function run() {
           );
         })
         .slice(0, 5)
-        .map((el) => ({ tag: el.tagName, cls: el.className?.substring(0, 60), txt: el.innerText?.substring(0, 30) }))
+        .map((el) => ({
+          tag: el.tagName,
+          cls: el.className?.substring(0, 60),
+          txt: el.innerText?.substring(0, 30),
+        })),
     );
     floatingSummary.push({ viewport: vp.name, count: floats.length, details: floats });
 
@@ -185,7 +196,10 @@ async function run() {
     await page.screenshot({ path: path.join(OUT_DIR, 'directory-1440-top.png'), fullPage: false });
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(300);
-    await page.screenshot({ path: path.join(OUT_DIR, 'directory-1440-footer.png'), fullPage: false });
+    await page.screenshot({
+      path: path.join(OUT_DIR, 'directory-1440-footer.png'),
+      fullPage: false,
+    });
     await ctx.close();
   }
 
@@ -247,7 +261,9 @@ async function run() {
 
     a11ySummary.firstFocusTag = firstFocusTag;
     a11ySummary.firstFocusText = firstFocusText;
-    a11ySummary.skipLinkOperable = firstFocusTag === 'A' && (firstFocusText?.includes('Skip') || firstFocusText?.includes('content'));
+    a11ySummary.skipLinkOperable =
+      firstFocusTag === 'A' &&
+      (firstFocusText?.includes('Skip') || firstFocusText?.includes('content'));
     a11ySummary.h1Count = h1Count;
     a11ySummary.h1Text = h1Text;
     a11ySummary.imgNoAlt = imgNoAlt;
@@ -277,7 +293,9 @@ async function run() {
   console.log(`Base URL: ${BASE_URL}`);
   console.log(`Viewports Tested: ${VIEWPORTS.length}`);
   console.log('\nAccessibility:');
-  console.log(`  Skip Link Operable: ${a11ySummary.skipLinkOperable ? 'YES' : 'NO'} (first focus: ${a11ySummary.firstFocusTag} "${a11ySummary.firstFocusText}")`);
+  console.log(
+    `  Skip Link Operable: ${a11ySummary.skipLinkOperable ? 'YES' : 'NO'} (first focus: ${a11ySummary.firstFocusTag} "${a11ySummary.firstFocusText}")`,
+  );
   console.log(`  H1 Count: ${a11ySummary.h1Count} — "${a11ySummary.h1Text?.[0]}"`);
   console.log(`  Images Missing Alt: ${a11ySummary.imgNoAlt}`);
   console.log(`  FAQ <details> elements: ${a11ySummary.faqDetailsElements}`);

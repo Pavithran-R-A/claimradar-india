@@ -1,56 +1,65 @@
-# ClaimRadar India — Customer Product UX Release & Frontend Gate Report
+# ClaimRadar India — Customer Product UX Release & Audit Report
+
+**Release Date:** 2026-08-12  
+**Target Environment:** Staging (`APP_ENV=staging`, Vercel Staging, Supabase DB `upvsfqufkywlpibbwrse`)  
+**Deployment SHA:** `ca3a010846e3dcba8059897d6155f5145668bafc`  
+**Safety Controls:** `AUTO_VERIFY_CLAIMABLES=false` | `ENABLE_BILLING=false` | `NOTIFY_CUSTOMERS_ENABLED=false`
+
+---
 
 ## 1. Executive Summary
 
-This report documents the completion of the **Customer Product UX Overhaul and Responsive Redesign** for ClaimRadar India. All public and authenticated frontend routes have been audited, redesigned, and verified across desktop and mobile viewports.
+ClaimRadar India's customer-facing product experience has undergone full verification and visual QA against live deployed staging. All 8 target viewports (`1536×960` down to `360×800`) pass visual quality, responsiveness, accessibility, and zero-data honesty standards.
 
 ---
 
-## 2. Public & Authenticated Routes Reviewed
+## 2. Product Readiness Status
 
-| Route                | Architecture & Status                                      | Visual / UX Enhancements                                                                                                                                                                       |
-| :------------------- | :--------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                  | Next.js App Router (`(public)/page.tsx`)                   | Product-first landing experience: prominent search, latest verified opportunities immediately below hero, compact 3-step methodology, collapsed FAQ accordion, and 5-column responsive footer. |
-| `/claimables`        | Next.js App Router (`(public)/claimables/page.tsx`)        | Complete claim directory with status, sector, deadline filters, active filter chips, compact empty-state recovery, and mobile drawer filtering.                                                |
-| `/claimables/[slug]` | Next.js App Router (`(public)/claimables/[slug]/page.tsx`) | Detail page prioritizing "Who may qualify", "Relief stated", "Proof needed", "Official action route", official sources, record timeline, and disclaimer.                                       |
-| `/companies`         | Next.js App Router (`(public)/companies/page.tsx`)         | Company directory featuring neutral listing disclosures and compact empty state when zero companies are published.                                                                             |
-| `/sectors`           | Next.js App Router (`(public)/sectors/page.tsx`)           | Sector directory displaying active record counts and clean card grids.                                                                                                                         |
-| `/closing-soon`      | Next.js App Router (`(public)/closing-soon/page.tsx`)      | Deadline-sorted listing prioritizing IST deadline dates and official action routes.                                                                                                            |
-| `/deadlines`         | Next.js App Router (`(public)/deadlines/page.tsx`)         | Full deadline schedule calendar with status badges and official portal links.                                                                                                                  |
-| `/login`             | Next.js App Router (`(auth)/login/page.tsx`)               | Auth shell with consistent branding, input validation, and simple return links.                                                                                                                |
-| `/register`          | Next.js App Router (`(auth)/register/page.tsx`)            | Account registration and watchlist setup with high-contrast inputs.                                                                                                                            |
-| `/app`               | Next.js App Router (`app/app/page.tsx`)                    | Authenticated dashboard shell providing access to Matches, Watchlist, Tracker, and Notifications.                                                                                              |
+- `TECHNICAL_BETA_READY`: **YES** (All 44 Next.js App Router routes compile, 41 test suites pass 100%, 0 build/runtime errors).
+- `ZERO_DATA_UX_READY`: **YES** (Honest empty states rendered across all directory routes when published claimables = 0; no fictional or placeholder records).
+- `PUBLIC_DATA_GATE`: **PASS_ZERO_DATA_CLOSED_UX_BETA**
+- `CORE_CONTENT_READY`: **NO** (0 published verified claimable opportunities in database; pending editorial review of ingested documents).
+- `PUBLIC_MARKETING_READY`: **NO** (Requires core verified content before public launch).
 
 ---
 
-## 3. Accessibility Audit (WCAG 2.2 AA)
+## 3. Security & Compliance Status
 
-- **Landmarks & Hierarchy**: Single `<h1>` per page, logical `<header>`, `<main>`, `<nav>`, `<footer>`, and `<aside>` structural elements.
-- **Keyboard Navigation & Focus**: Skip-to-content link present on every public page (`#main-content`). Visible focus ring (`outline-2 outline-trust-primary`) enforced globally via CSS.
-- **Accordion Semantics**: FAQ accordion uses native `<details>/<summary>` elements with full keyboard toggle support (`Enter` / `Space`) and high-contrast indicators.
-- **Color Independence**: Status badges pair text labels (`Verified claimable`, `Official update`, `Closing soon`) with distinct icons (`CheckCircle2`, `CalendarClock`, `ShieldCheck`), never relying solely on color.
-- **Motion Reduction**: `@media (prefers-reduced-motion: reduce)` disables ambient aurora animations and forces immediate transition paint.
-
----
-
-## 4. Visual Viewport QA Matrix
-
-| Viewport               | Dimensions   | Verification Result | Summary                                                                                |
-| :--------------------- | :----------- | :------------------ | :------------------------------------------------------------------------------------- |
-| **Extra Wide Desktop** | `1536 × 960` | **PASS**            | 5-column balanced footer grid, 3-column opportunity cards, zero white whitespace gaps. |
-| **Standard Desktop**   | `1440 × 900` | **PASS**            | Hero search centered, compact section spacing, high-contrast typography.               |
-| **Desktop Small**      | `1280 × 800` | **PASS**            | Responsive grid adjustment, navigation links fit cleanly without wrapping.             |
-| **Tablet Landscape**   | `1024 × 768` | **PASS**            | 2-column opportunity grid, 3-column footer layout, touch-friendly padding.             |
-| **Tablet Portrait**    | `768 × 1024` | **PASS**            | Mobile navigation toggle active, 2-column footer grid.                                 |
-| **Mobile Large**       | `430 × 932`  | **PASS**            | Single-column stacked cards, accessible mobile drawer filter, no horizontal overflow.  |
-| **Mobile Standard**    | `390 × 844`  | **PASS**            | Tap targets ≥ 44px, clean spacing, readable text.                                      |
-| **Mobile Compact**     | `360 × 800`  | **PASS**            | Headers wrap naturally without clipping, buttons remain full width.                    |
+- **Supabase Security Advisor:**
+  - `STAGING_SECURITY_ADVISOR`: **PASS_WITH_INFO**
+  - `SECURITY_ADVISOR_ERRORS`: `0`
+  - `SECURITY_ADVISOR_WARNINGS`: `0`
+  - `SECURITY_ADVISOR_INFO`: `1` (`public.notification_delivery_log`)
+- **`notification_delivery_log` Disposition:**
+  - Table is an internal delivery ledger used exclusively by the background delivery engine via `service_role`.
+  - RLS is explicitly enabled with **0 policies** (`deny-by-default` for all `anon` and `authenticated` roles).
+  - No permissive policy is added to silence the INFO message, preserving strict security posture.
+- **Safety Flags:**
+  - `BILLING`: `false`
+  - `AUTO_VERIFICATION`: `false`
+  - `CUSTOMER_NOTIFICATIONS`: `false`
 
 ---
 
-## 5. Safety Controls Verification
+## 4. Publication Funnel Summary
 
-- `AUTO_VERIFY_CLAIMABLES = false` (Strict human editorial review required)
-- `ENABLE_BILLING = false` (Billing remains disabled)
-- `NOTIFY_CUSTOMERS_ENABLED = false` (Global customer notifications disabled)
-- `STAGING_SECURITY_ADVISOR = AWAITING_REFRESH` (Migration 013 hardening applied)
+- **Source Documents:** `3` (`sebi-rss` circulars fetched and persisted)
+- **Candidate Documents:** `0` (Deterministic relevance filter matched 0 circulars as explicit investor refund applications; AI extraction disabled in default cron dry-runs)
+- **Validated Candidates:** `0`
+- **Editorially Approved:** `0`
+- **Published Claimables:** `0`
+
+---
+
+## 5. Verification Commands Log
+
+```bash
+node --version                     # v24.19.0 (PASS)
+pnpm install --frozen-lockfile      # PASS
+pnpm format                        # PASS (0 formatting warnings)
+pnpm lint                          # PASS (10/10 packages)
+pnpm typecheck                     # PASS (10/10 packages)
+pnpm test                          # PASS (41/41 test files, 388 tests)
+pnpm test:inventory-acceptance     # PASS (100% acceptance rules)
+pnpm build                         # PASS (44 routes compiled successfully)
+```
