@@ -110,7 +110,7 @@ describe('Keyword Classifier', () => {
 
     it('Positive Case 2: SEBI Citrus Check Inns / Royal Twinkle refund public notice', () => {
       const result = scoreDocument({
-        text: 'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II). Application portal open for affected investors to submit claim applications with original certificates.',
+        text: 'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II). Official public notice for refund order and compensation distribution to all affected investors. Application portal open for affected investors to submit claim applications with original certificates.',
         title:
           'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II)',
       });

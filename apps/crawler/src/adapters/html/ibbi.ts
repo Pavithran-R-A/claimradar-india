@@ -1,4 +1,5 @@
 import { load } from 'cheerio';
+import { createHash } from 'node:crypto';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type {
   SourceAdapter,
@@ -167,7 +168,7 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
         url: document.url,
         content: fallbackContent,
         contentType: 'text/html',
-        contentHash: crypto.createHash('sha256').update(fallbackContent).digest('hex'),
+        contentHash: createHash('sha256').update(fallbackContent).digest('hex'),
         etag: null,
         lastModified: null,
         fetchedAt: new Date(),
