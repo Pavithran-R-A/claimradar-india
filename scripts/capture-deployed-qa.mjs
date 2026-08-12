@@ -1,8 +1,8 @@
 /**
  * ClaimRadar Deployed Staging Visual QA & Accessibility Suite
  *
- * Runs against the canonical Vercel staging URL using Vercel's official
- * automation bypass header protocol (extraHTTPHeaders on BrowserContext).
+ * Runs against the exact permanent Vercel deployment URL
+ * using Vercel's official automation bypass header protocol.
  */
 
 import { chromium } from 'playwright';
@@ -42,7 +42,7 @@ if (!BYPASS_SECRET) {
   process.exit(1);
 }
 
-const OUT_DIR = path.resolve(__dirname, '../docs/checkpoints/browser-evidence');
+const OUT_DIR = path.resolve(__dirname, '../docs/checkpoints/browser-evidence/deployed-4000fcb');
 mkdirSync(OUT_DIR, { recursive: true });
 
 const BYPASS_HEADERS = {
@@ -83,7 +83,7 @@ async function newCtx(browser, width, height) {
 async function loadPage(ctx, url, label) {
   const page = await ctx.newPage();
   console.log(`  [${label}] GET ${url}`);
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
   const finalUrl = page.url();
   const title = await page.title();
@@ -103,6 +103,7 @@ async function loadPage(ctx, url, label) {
 
 const results = {
   baseUrl: BASE_URL,
+  sha: '4000fcbb88e875359aeda3c5798e47bc333c2e89',
   timestamp: new Date().toISOString(),
   pages: {},
   accessibility: {},
@@ -358,6 +359,7 @@ async function run() {
   const resultsPath = path.resolve(__dirname, '../docs/checkpoints/deployed-qa-results.json');
   writeFileSync(resultsPath, JSON.stringify(results, null, 2));
   console.log(`\nResults written to: ${resultsPath}`);
+  console.log(`Screenshots stored in: ${OUT_DIR}`);
 }
 
 run().catch((err) => {
