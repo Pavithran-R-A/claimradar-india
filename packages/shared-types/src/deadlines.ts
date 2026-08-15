@@ -9,9 +9,9 @@ export type DeadlineStatus = 'CURRENT' | 'CLOSING_TODAY' | 'EXPIRED' | 'UNKNOWN'
 
 export interface DeadlineCalculationOptions {
   /** Injectable clock date for deterministic testing. Defaults to new Date(). */
-  clockDate?: Date | string;
+  clockDate?: Date | string | undefined;
   /** Authoritative timezone. Defaults to 'Asia/Kolkata'. */
-  timezone?: string;
+  timezone?: string | undefined;
 }
 
 export interface DeadlineCalculationResult {
