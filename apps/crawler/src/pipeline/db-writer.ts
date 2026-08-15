@@ -225,7 +225,7 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   public publicationEvents: Array<Record<string, unknown>> = [];
   public sourceHealthEvents: Array<Record<string, unknown>> = [];
 
-  constructor(private initialSources?: any[]) {}
+  constructor(private initialSources?: Array<Record<string, unknown>>) {}
 
   async createCrawlRun(status: string): Promise<string> {
     const id = crypto.randomUUID();
@@ -322,9 +322,9 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   }
 
   async getEnabledSources(): Promise<Source[]> {
-    const sourcesToMap: any[] =
-      this.initialSources ?? (await import('@claimradar/source-registry')).initialSources;
-    return sourcesToMap.map((s) => ({
+    const sourcesToMap: Array<Record<string, unknown>> =
+      this.initialSources ?? ((await import('@claimradar/source-registry')).initialSources as unknown as Array<Record<string, unknown>>);
+    return sourcesToMap.map((s: Record<string, unknown>) => ({
       id: s.id,
       name: s.name,
       domain: s.domain,

@@ -1,5 +1,4 @@
 import { load } from 'cheerio';
-import { createHash } from 'node:crypto';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type {
   SourceAdapter,
