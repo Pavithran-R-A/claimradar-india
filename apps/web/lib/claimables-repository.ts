@@ -20,6 +20,7 @@
  */
 
 import { z } from 'zod';
+import { calculateDeadlineStatus } from '@claimradar/shared-types';
 import { getAdminDb } from './admin-db';
 import { DEMO_CLAIMABLES } from './demo-claimables';
 
@@ -141,7 +142,6 @@ const STATUS_DETAIL_LABELS: Record<PublicSafeStatus, string> = {
 /*  Display-status derivation                                                  */
 /* -------------------------------------------------------------------------- */
 
-const CLOSING_SOON_WINDOW_MS = 7 * 86400 * 1000;
 const NEW_WINDOW_MS = 30 * 86400 * 1000;
 const STALE_VERIFICATION_MS = 14 * 86400 * 1000;
 
@@ -150,14 +150,11 @@ export function deriveDisplayStatus(params: {
   deadline: string | null | undefined;
   now?: Date;
 }): DisplayStatus {
-  const now = params.now ?? new Date();
   if (params.claimStatus === 'closed') return 'closed';
   if (params.deadline) {
-    const deadlineMs = new Date(params.deadline).getTime();
-    if (!Number.isNaN(deadlineMs)) {
-      if (deadlineMs <= now.getTime()) return 'closed';
-      if (deadlineMs - now.getTime() <= CLOSING_SOON_WINDOW_MS) return 'closing_soon';
-    }
+    const deadlineCalc = calculateDeadlineStatus(params.deadline, { clockDate: params.now });
+    if (deadlineCalc.status === 'EXPIRED') return 'closed';
+    if (deadlineCalc.isClosingSoon) return 'closing_soon';
   }
   if (params.claimStatus === 'potential_claimable') return 'under_review';
   return 'open';
@@ -233,8 +230,8 @@ function buildStatusExplanation(row: ClaimableRow): string {
 
 function buildFreshnessWarning(row: ClaimableRow, now: Date): string | undefined {
   if (row.deadline) {
-    const deadlineMs = new Date(row.deadline).getTime();
-    if (!Number.isNaN(deadlineMs) && deadlineMs - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+    const deadlineCalc = calculateDeadlineStatus(row.deadline, { clockDate: now });
+    if (deadlineCalc.isClosingSoon) {
       return 'Deadline falls within 7 days. Re-verify directly with the official source before acting.';
     }
   }
@@ -364,7 +361,11 @@ export function applyClaimableFilters(
     list = list.filter((c) => c.status === filter.status);
   }
   if (filter.closingSoonOnly) {
-    list = list.filter((c) => c.status === 'closing_soon');
+    list = list.filter((c) => {
+      if (c.status === 'closed') return false;
+      if (!c.deadlineDate) return false;
+      return calculateDeadlineStatus(c.deadlineDate, { clockDate: now }).isClosingSoon;
+    });
   }
   if (filter.newOnly) {
     list = list.filter((c) => {

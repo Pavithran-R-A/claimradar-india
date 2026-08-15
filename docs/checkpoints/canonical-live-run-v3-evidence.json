@@ -122,9 +122,10 @@
     "expired": 0,
     "closingToday": 0,
     "duplicate": 0,
-    "unknown": 0,
+    "unknown": 4,
     "precision": "100.0%",
-    "emptyBodyHashUsedAsEntityHash": false
+    "emptyBodyHashUsedAsEntityHash": false,
+    "current": 20
   },
   "candidateAuditRows": [
     {
@@ -145,7 +146,7 @@
       "announcementType": "SEBI Investor Refund Public Notice",
       "announcementDate": "2026-08-15",
       "claimDeadline": "UNKNOWN / NOT_STATED",
-      "deadlineStatus": "CURRENT",
+      "deadlineStatus": "UNKNOWN",
       "daysRemaining": "N/A",
       "actionabilityStatus": "TRUE_ACTIONABLE",
       "reason": "Active SEBI public refund notice for eligible investors"
@@ -168,7 +169,7 @@
       "announcementType": "SEBI Investor Refund Public Notice",
       "announcementDate": "2026-08-15",
       "claimDeadline": "UNKNOWN / NOT_STATED",
-      "deadlineStatus": "CURRENT",
+      "deadlineStatus": "UNKNOWN",
       "daysRemaining": "N/A",
       "actionabilityStatus": "TRUE_ACTIONABLE",
       "reason": "Active SEBI public refund notice for eligible investors"
@@ -191,7 +192,7 @@
       "announcementType": "SEBI Investor Refund Public Notice",
       "announcementDate": "2026-08-15",
       "claimDeadline": "UNKNOWN / NOT_STATED",
-      "deadlineStatus": "CURRENT",
+      "deadlineStatus": "UNKNOWN",
       "daysRemaining": "N/A",
       "actionabilityStatus": "TRUE_ACTIONABLE",
       "reason": "Active SEBI public refund notice for eligible investors"
@@ -214,7 +215,7 @@
       "announcementType": "SEBI Investor Refund Public Notice",
       "announcementDate": "2026-08-15",
       "claimDeadline": "UNKNOWN / NOT_STATED",
-      "deadlineStatus": "CURRENT",
+      "deadlineStatus": "UNKNOWN",
       "daysRemaining": "N/A",
       "actionabilityStatus": "TRUE_ACTIONABLE",
       "reason": "Active SEBI public refund notice for eligible investors"

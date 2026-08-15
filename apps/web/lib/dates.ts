@@ -1,17 +1,21 @@
 /**
  * Date display helpers for the public directory.
  *
- * All deadline and timestamp displays use Indian Standard Time explicitly so
- * server and client rendering agree regardless of host timezone, and every
- * rendered date is paired with a machine-readable `<time dateTime>` element
- * in the markup.
+ * All deadline calculations delegate to canonical @claimradar/shared-types
+ * in Indian Standard Time (Asia/Kolkata) explicitly so server and client
+ * rendering agree regardless of host timezone, and every rendered date is
+ * paired with a machine-readable <time dateTime> element in the markup.
  */
+
+import { calculateDeadlineStatus, parseDeadlineDate } from '@claimradar/shared-types';
 
 const IST = 'Asia/Kolkata';
 
 function parse(iso: string | null | undefined): Date | null {
   if (!iso) return null;
-  const date = new Date(iso);
+  const parsedStr = parseDeadlineDate(iso);
+  if (!parsedStr) return null;
+  const date = new Date(parsedStr);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
@@ -29,8 +33,9 @@ export function formatIstDate(iso: string | null | undefined): string | null {
 
 /** e.g. "31 Oct 2026, 11:59 pm IST" for detail pages. */
 export function formatIstDateTime(iso: string | null | undefined): string | null {
-  const date = parse(iso);
-  if (!date) return null;
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
   return `${new Intl.DateTimeFormat('en-IN', {
     timeZone: IST,
     day: 'numeric',
@@ -42,20 +47,22 @@ export function formatIstDateTime(iso: string | null | undefined): string | null
   }).format(date)} IST`;
 }
 
-/** Whole days from `now` until the deadline (negative when past). */
-export function daysUntil(iso: string, now: Date = new Date()): number | null {
-  const date = parse(iso);
-  if (!date) return null;
-  return Math.ceil((date.getTime() - now.getTime()) / 86_400_000);
+/** Whole calendar days from `now` until the deadline in Asia/Kolkata (negative when past, null when missing). */
+export function daysUntil(iso: string | null | undefined, now: Date = new Date()): number | null {
+  const result = calculateDeadlineStatus(iso, { clockDate: now, timezone: IST });
+  return result.daysRemaining;
 }
 
-/** Relative, non-urgent phrasing for deadlines. Never a countdown. */
-export function deadlinePhrase(iso: string, now: Date = new Date()): string | null {
-  const days = daysUntil(iso, now);
-  if (days === null) return null;
-  if (days < 0) return 'Deadline passed';
-  if (days === 0) return 'Closes today';
-  if (days === 1) return 'Closes tomorrow';
-  if (days <= 30) return `Closes in ${days} days`;
-  return `Closes in ${Math.round(days / 30)} months`;
+/** Relative, non-urgent phrasing for deadlines using canonical shared semantics. */
+export function deadlinePhrase(
+  iso: string | null | undefined,
+  now: Date = new Date(),
+): string | null {
+  const result = calculateDeadlineStatus(iso, { clockDate: now, timezone: IST });
+  if (result.status === 'UNKNOWN' || result.daysRemaining === null) return null;
+  if (result.status === 'EXPIRED') return 'Deadline passed';
+  if (result.status === 'CLOSING_TODAY') return 'Closes today';
+  if (result.daysRemaining === 1) return 'Closes tomorrow';
+  if (result.daysRemaining <= 30) return `Closes in ${result.daysRemaining} days`;
+  return `Closes in ${Math.round(result.daysRemaining / 30)} months`;
 }

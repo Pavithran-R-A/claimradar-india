@@ -129,3 +129,5 @@ export const LEGAL_SAFETY = {
     'caipc.gov.in',
   ],
 } as const;
+
+export * from './deadlines.js';

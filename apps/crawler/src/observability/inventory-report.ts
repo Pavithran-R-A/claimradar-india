@@ -5,6 +5,7 @@
  * AI accuracy, and primary-source metrics for ClaimRadar India.
  */
 
+import { calculateDeadlineStatus } from '@claimradar/shared-types';
 import type { IDatabaseWriter } from '../pipeline/db-writer.js';
 
 export interface InventoryReportParams {
@@ -13,6 +14,7 @@ export interface InventoryReportParams {
   to?: string | undefined;
   storage?: IDatabaseWriter | undefined;
   fixtureData?: InventoryFixtureRecord[] | undefined;
+  clockDate?: Date | string | undefined;
 }
 
 export interface InventoryFixtureRecord {
@@ -27,6 +29,7 @@ export interface InventoryFixtureRecord {
   sector_id?: string;
   evidence_rejected?: boolean;
   ai_failed?: boolean;
+  deadline?: string;
 }
 
 export interface InventoryReportResult {
@@ -48,6 +51,10 @@ export interface InventoryReportResult {
   sourcesFailed: number;
   queueBacklog: number;
   crawlDurationMs: number;
+  closingSoonCount?: number;
+  expiredCount?: number;
+  currentCount?: number;
+  unknownDeadlineCount?: number;
   status: string;
   isDbConnected: boolean;
 }
@@ -76,7 +83,7 @@ export async function generateInventoryReport(
     if (days <= 0) {
       throw new Error("'days' parameter must be a positive number");
     }
-    endDate = new Date();
+    endDate = params.clockDate ? new Date(params.clockDate) : new Date();
     startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
   }
 
@@ -114,6 +121,19 @@ export async function generateInventoryReport(
     const evidenceRejectedCount = docs.filter((d) => d.evidence_rejected).length;
     const aiFailedCount = docs.filter((d) => d.ai_failed).length;
 
+    let closingSoonCount = 0;
+    let expiredCount = 0;
+    let currentCount = 0;
+    let unknownDeadlineCount = 0;
+
+    for (const doc of docs) {
+      const dl = calculateDeadlineStatus(doc.deadline, { clockDate: params.clockDate });
+      if (dl.isClosingSoon) closingSoonCount++;
+      if (dl.status === 'EXPIRED') expiredCount++;
+      if (dl.status === 'CURRENT') currentCount++;
+      if (dl.status === 'UNKNOWN') unknownDeadlineCount++;
+    }
+
     const evidenceRejectionRate =
       candidateCount > 0 ? (evidenceRejectedCount / candidateCount) * 100 : 0;
     const primarySourceCoverage = discoveredCount > 0 ? 100 : 0; // 100% of discovered docs come from official primary sources
@@ -137,6 +157,10 @@ export async function generateInventoryReport(
       sourcesFailed: 0,
       queueBacklog: 0,
       crawlDurationMs: 1500,
+      closingSoonCount,
+      expiredCount,
+      currentCount,
+      unknownDeadlineCount,
       status: 'Fixture reporting mode (Deterministic test data)',
       isDbConnected: false,
     };

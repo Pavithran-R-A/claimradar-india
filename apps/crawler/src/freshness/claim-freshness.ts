@@ -3,6 +3,8 @@
  * Evaluates record freshness, closing-soon verification thresholds, and legal status stability.
  */
 
+import { calculateDeadlineStatus } from '@claimradar/shared-types';
+
 export interface ClaimFreshnessInput {
   claimId: string;
   deadlineDate?: Date | string | null;
@@ -40,11 +42,8 @@ export function evaluateClaimFreshness(
     ? (now.getTime() - verifiedDate.getTime()) / (3600 * 1000)
     : Infinity;
 
-  const deadline = deadlineDate ? new Date(deadlineDate) : null;
-  const isClosingSoon = deadline
-    ? deadline.getTime() - now.getTime() > 0 &&
-      deadline.getTime() - now.getTime() <= 7 * 86400 * 1000
-    : false;
+  const deadlineCalc = calculateDeadlineStatus(deadlineDate, { clockDate: now });
+  const isClosingSoon = deadlineCalc.isClosingSoon;
 
   // Rule 9 & 10: Source failure never changes procedural legal status or closes a claim
   const proceduralStatusUnchanged = true;
@@ -54,7 +53,7 @@ export function evaluateClaimFreshness(
   const needsReverification = verifiedAgeHours > verificationThresholdHours;
 
   // Rule 12: Old orders remain actionable when official routes and deadlines remain valid
-  const isDeadlineValid = deadline ? deadline.getTime() > now.getTime() : true;
+  const isDeadlineValid = deadlineCalc.status !== 'EXPIRED';
   const isActionable = isOfficialRouteValid && isDeadlineValid;
 
   // Rule 13: Stale active records receive explicit warning or are withheld according to policy
