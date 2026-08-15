@@ -19,7 +19,13 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/tests/**/*.ts', '**/*.test.ts', '**/*.spec.ts'],
+    files: [
+      '**/tests/**/*.ts',
+      '**/*.test.ts',
+      '**/*.spec.ts',
+      '**/vitest.config.ts',
+      '**/scripts/**/*.ts',
+    ],
     languageOptions: {
       parserOptions: {
         project: null,
@@ -38,9 +44,11 @@ export default tseslint.config(
       '**/*.mjs',
       '**/*.js',
       '**/*.d.ts',
+      '**/scripts/**',
       'scripts/**',
       'supabase/**',
       'vitest.workspace.ts',
+      '**/vitest.config.ts',
       // Transient review-diff snapshots kept at the repo root.
       '.review-*',
     ],
