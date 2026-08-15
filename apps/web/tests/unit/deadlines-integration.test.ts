@@ -14,7 +14,6 @@ describe('Web Deadlines & Display Status Integration (Asia/Kolkata)', () => {
     id: 'test-claim-1',
     slug: 'test-claim-1',
     title: 'Test Claimable Opportunity',
-    summary: 'Test summary',
     companyName: 'Test Debtor Corp',
     companySlug: 'test-debtor-corp',
     sector: 'Financial Services',
