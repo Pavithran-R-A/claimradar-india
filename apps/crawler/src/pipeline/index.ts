@@ -228,46 +228,37 @@ async function processSource(params: {
         }
 
         // Create candidate_document
-        let candidateId: string;
-        if (!options.dryRun) {
-          candidateId = await db.insertCandidateDocument({
-            crawl_run_id: runId,
-            source_document_id: sourceDocId,
-            keyword_score: scoringResult.score,
-            ai_extraction_status: 'pending',
-            ai_provider: null,
-            ai_model: null,
-            ai_prompt_version: null,
-            ai_schema_version: null,
-            ai_raw_output: null,
-            ai_extracted_data: null,
-            ai_confidence: null,
-            ai_duration_ms: null,
-            ai_token_count: null,
-            ai_error_category: null,
-            ai_retry_count: 0,
-            second_pass_status: 'not_started',
-            second_pass_output: null,
-            validation_status: 'pending',
-            publication_decision: 'pending',
-          });
-          stats.candidates++;
-          summary.candidatesCreated++;
-        } else {
-          candidateId = randomUUID();
-          stats.candidates++;
-          summary.candidatesCreated++;
-        }
+        const candidateId = await db.insertCandidateDocument({
+          crawl_run_id: runId,
+          source_document_id: sourceDocId,
+          keyword_score: scoringResult.score,
+          ai_extraction_status: 'pending',
+          ai_provider: null,
+          ai_model: null,
+          ai_prompt_version: null,
+          ai_schema_version: null,
+          ai_raw_output: null,
+          ai_extracted_data: null,
+          ai_confidence: null,
+          ai_duration_ms: null,
+          ai_token_count: null,
+          ai_error_category: null,
+          ai_retry_count: 0,
+          second_pass_status: 'not_started',
+          second_pass_output: null,
+          validation_status: 'pending',
+          publication_decision: 'pending',
+        });
+        stats.candidates++;
+        summary.candidatesCreated++;
 
         // AI extraction
         if (options.skipAI || !aiExtractor) {
           summary.recordsQueued++;
-          if (!options.dryRun) {
-            await db.updateCandidateDocument(candidateId, {
-              ai_extraction_status: 'deferred',
-              publication_decision: 'human_review',
-            });
-          }
+          await db.updateCandidateDocument(candidateId, {
+            ai_extraction_status: 'deferred',
+            publication_decision: 'human_review',
+          });
           continue;
         }
 

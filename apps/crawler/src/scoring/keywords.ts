@@ -41,6 +41,10 @@ export const POSITIVE_KEYWORDS: KeywordEntry[] = [
   { term: 'eligible investors', weight: 10 },
   { term: 'cirp creditor claim', weight: 15 },
   { term: 'public notice for refund', weight: 15 },
+  { term: 'for refund (phase', weight: 15 },
+  { term: 'refund (phase', weight: 15 },
+  { term: 'for refund', weight: 12 },
+  { term: 'public notice in the matter of', weight: 12 },
   { term: 'submit claim applications', weight: 15 },
 
   // ── Medium weight (5-8): Supporting indicators (require combined signal) ──

@@ -108,11 +108,21 @@ describe('Keyword Classifier', () => {
       expect(result.score).toBeGreaterThanOrEqual(30);
     });
 
-    it('Positive Case 2: SEBI Citrus Check Inns / Royal Twinkle refund public notice', () => {
+    it('Positive Case 2: SEBI Citrus Check Inns / Royal Twinkle refund public notice (Exact Live Shape)', () => {
       const result = scoreDocument({
-        text: 'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II). Official public notice for refund order and compensation distribution to all affected investors. Application portal open for affected investors to submit claim applications with original certificates.',
+        text: 'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II). Jul 29, 2026| Public Notices PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II).',
         title:
-          'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II)',
+          'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT. LTD FOR REFUND (PHASE-II).',
+      });
+      expect(result.isCandidate).toBe(true);
+      expect(result.score).toBeGreaterThanOrEqual(30);
+    });
+
+    it('Positive Case 3: IBBI Voluntary Liquidation claim invitation', () => {
+      const result = scoreDocument({
+        text: 'Public Announcement of Voluntary Liquidation Process for ROSSLAND PHARMACEUTICALS PRIVATE LIMITED. Notice inviting proof of claim from all stakeholders and claimants. Last date for submission of claims: 07-09-2026.',
+        title:
+          'IBBI Voluntary Liquidation Creditor Claim Notice: ROSSLAND PHARMACEUTICALS PRIVATE LIMITED (Claims Deadline: 07-09-2026)',
       });
       expect(result.isCandidate).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(30);

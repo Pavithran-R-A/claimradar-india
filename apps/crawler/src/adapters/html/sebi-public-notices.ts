@@ -23,8 +23,7 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
   async discover(context: CrawlContext): Promise<DiscoveredDocument[]> {
     const client = this.createHttpClient(context);
     const listingUrls = [
-      'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=2&smid=2',
-      'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=2&sub_sid=11',
+      'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=6&smid=0&ssid=25',
     ];
 
     const documents: DiscoveredDocument[] = [];
@@ -42,17 +41,35 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
         );
 
         const html = result.body.toString('utf-8');
-        const $ = load(html);
+        const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+        let match;
 
-        $('table tr, div.list-item, td a, div.fixed-table-container a').each((_, elem) => {
-          const text = $(elem).text().trim().replace(/\s+/g, ' ');
-          const href = $(elem).find('a').attr('href') || $(elem).attr('href');
+        while ((match = linkRegex.exec(html)) !== null) {
+          if (!match[1] || !match[2]) {
+            continue;
+          }
+          const rawHref = match[1];
+          const text = match[2]
+            .replace(/<[^>]+>/g, '')
+            .trim()
+            .replace(/\s+/g, ' ');
 
-          if (text.length > 15 && href && !seenUrls.has(href)) {
-            seenUrls.add(href);
-            const fullUrl = href.startsWith('http')
-              ? href
-              : `https://www.sebi.gov.in${href.startsWith('/') ? '' : '/'}${href}`;
+          if (
+            !rawHref ||
+            rawHref.startsWith('javascript:') ||
+            rawHref.startsWith('#') ||
+            rawHref.startsWith('mailto:') ||
+            rawHref.includes('doRegister') ||
+            rawHref.includes('HomeAction.do?doListing')
+          ) {
+            continue;
+          }
+
+          if (text.length > 10 && !seenUrls.has(rawHref)) {
+            seenUrls.add(rawHref);
+            const fullUrl = rawHref.startsWith('http')
+              ? rawHref
+              : `https://www.sebi.gov.in${rawHref.startsWith('/') ? '' : '/'}${rawHref}`;
 
             documents.push({
               url: fullUrl,
@@ -63,19 +80,10 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
               },
             });
           }
-        });
+        }
       } catch (err) {
         console.error(`[${this.sourceKey}] Failed to fetch listing ${listingUrl}:`, err);
       }
-    }
-
-    // Add explicit live benchmark refund notice for SEBI PACL / Recovery if listing is filtered
-    if (documents.length === 0) {
-      documents.push({
-        url: 'https://www.sebi.gov.in/enforcement/orders/aug-2026/order-in-the-matter-of-nirman-agri-genetics-limited_103467.html',
-        title: 'SEBI Order & Refund Public Notice in the matter of Nirman Agri Genetics Limited',
-        publishedAt: new Date().toISOString(),
-      });
     }
 
     return documents;
@@ -86,57 +94,40 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
     context: CrawlContext,
   ): Promise<FetchedDocument> {
     const client = this.createHttpClient(context);
-    try {
-      const result = await client.fetch(
-        {
-          url: document.url,
-          method: 'GET',
-          timeoutMs: context.timeoutMs,
-          allowedMimeTypes: [
-            'text/html',
-            'application/xhtml+xml',
-            'text/xml',
-            'application/xml',
-            'application/pdf',
-          ],
-        },
-        this.source.rateLimit,
-      );
-
-      const html = result.body.toString('utf-8');
-      const extracted = extractHtmlContent(html, document.url);
-
-      return {
+    const result = await client.fetch(
+      {
         url: document.url,
-        content: extracted.text || document.title || 'SEBI Notice',
-        contentType: result.contentType ?? 'text/html',
-        contentHash: result.contentHash,
-        etag: result.etag,
-        lastModified: result.lastModified,
-        fetchedAt: new Date(),
-        metadata: {
-          title: extracted.title ?? document.title,
-          publishedAt: document.publishedAt,
-          dates: extracted.dates,
-          pdfLinks: extracted.pdfLinks,
-        },
-      };
-    } catch {
-      const fallbackContent = document.title || 'SEBI Notice';
-      return {
-        url: document.url,
-        content: fallbackContent,
-        contentType: 'text/html',
-        contentHash: createHash('sha256').update(fallbackContent).digest('hex'),
-        etag: null,
-        lastModified: null,
-        fetchedAt: new Date(),
-        metadata: {
-          title: document.title,
-          publishedAt: document.publishedAt,
-        },
-      };
-    }
+        method: 'GET',
+        timeoutMs: context.timeoutMs,
+        allowedMimeTypes: [
+          'text/html',
+          'application/xhtml+xml',
+          'text/xml',
+          'application/xml',
+          'application/pdf',
+        ],
+      },
+      this.source.rateLimit,
+    );
+
+    const html = result.body.toString('utf-8');
+    const extracted = extractHtmlContent(html, document.url);
+
+    return {
+      url: document.url,
+      content: extracted.text || document.title || 'SEBI Notice',
+      contentType: result.contentType ?? 'text/html',
+      contentHash: result.contentHash,
+      etag: result.etag,
+      lastModified: result.lastModified,
+      fetchedAt: new Date(),
+      metadata: {
+        title: extracted.title ?? document.title,
+        publishedAt: document.publishedAt,
+        dates: extracted.dates,
+        pdfLinks: extracted.pdfLinks,
+      },
+    };
   }
 
   async healthCheck(context: CrawlContext): Promise<SourceHealthResult> {

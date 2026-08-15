@@ -111,74 +111,56 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
     context: CrawlContext,
   ): Promise<FetchedDocument> {
     const client = this.createHttpClient(context);
-    try {
-      const result = await client.fetch(
-        {
-          url: document.url,
-          method: 'GET',
-          timeoutMs: context.timeoutMs,
-          allowedMimeTypes: [
-            'text/html',
-            'application/xhtml+xml',
-            'text/xml',
-            'application/xml',
-            'application/pdf',
-          ],
-        },
-        this.source.rateLimit,
-      );
-
-      const isPdf =
-        document.url.toLowerCase().endsWith('.pdf') || result.contentType?.includes('pdf');
-      let textContent = '';
-
-      if (isPdf) {
-        textContent =
-          `IBBI Public Announcement Document for ${document.metadata?.['corporateDebtor'] ?? document.title}. ` +
-          `Announcement Type: ${document.metadata?.['announcementType'] ?? 'Insolvency Claims'}. ` +
-          `Corporate Debtor: ${document.metadata?.['corporateDebtor'] ?? ''}. ` +
-          `Applicant: ${document.metadata?.['applicant'] ?? ''}. ` +
-          `Insolvency Professional: ${document.metadata?.['insolvencyProfessional'] ?? ''}. ` +
-          `Date of Announcement: ${document.metadata?.['announcementDate'] ?? ''}. ` +
-          `Last Date for Submission of Claims: ${document.metadata?.['claimDeadline'] ?? ''}. ` +
-          `Notice inviting proof of claim from all creditors and claimants.`;
-      } else {
-        const html = result.body.toString('utf-8');
-        const extracted = extractHtmlContent(html, document.url);
-        textContent = extracted.text || document.title || 'IBBI Announcement';
-      }
-
-      return {
+    const result = await client.fetch(
+      {
         url: document.url,
-        content: textContent,
-        contentType: result.contentType ?? (isPdf ? 'application/pdf' : 'text/html'),
-        contentHash: result.contentHash,
-        etag: result.etag,
-        lastModified: result.lastModified,
-        fetchedAt: new Date(),
-        metadata: {
-          title: document.title,
-          publishedAt: document.publishedAt,
-          ...document.metadata,
-        },
-      };
-    } catch {
-      const fallbackContent = `IBBI Public Announcement for ${(document.metadata?.['corporateDebtor'] as string) ?? document.title}. Claims Deadline: ${(document.metadata?.['claimDeadline'] as string) ?? ''}.`;
-      return {
-        url: document.url,
-        content: fallbackContent,
-        contentType: 'text/html',
-        contentHash: createHash('sha256').update(fallbackContent).digest('hex'),
-        etag: null,
-        lastModified: null,
-        fetchedAt: new Date(),
-        metadata: {
-          title: document.title,
-          publishedAt: document.publishedAt,
-          ...document.metadata,
-        },
-      };
+        method: 'GET',
+        timeoutMs: context.timeoutMs,
+        allowedMimeTypes: [
+          'text/html',
+          'application/xhtml+xml',
+          'text/xml',
+          'application/xml',
+          'application/pdf',
+        ],
+      },
+      this.source.rateLimit,
+    );
+
+    const isPdf =
+      document.url.toLowerCase().endsWith('.pdf') || result.contentType?.includes('pdf');
+    let textContent = '';
+
+    if (isPdf) {
+      textContent =
+        `IBBI Public Announcement Document for ${document.metadata?.['corporateDebtor'] ?? document.title}. ` +
+        `Announcement Type: ${document.metadata?.['announcementType'] ?? 'Insolvency Claims'}. ` +
+        `Corporate Debtor: ${document.metadata?.['corporateDebtor'] ?? ''}. ` +
+        `Applicant: ${document.metadata?.['applicant'] ?? ''}. ` +
+        `Insolvency Professional: ${document.metadata?.['insolvencyProfessional'] ?? ''}. ` +
+        `Date of Announcement: ${document.metadata?.['announcementDate'] ?? ''}. ` +
+        `Last Date for Submission of Claims: ${document.metadata?.['claimDeadline'] ?? ''}. ` +
+        `Notice inviting proof of claim from all creditors and claimants.`;
+    } else {
+      const html = result.body.toString('utf-8');
+      const extracted = extractHtmlContent(html, document.url);
+      textContent = extracted.text || document.title || 'IBBI Announcement';
     }
+
+    return {
+      url: document.url,
+      content: textContent,
+      contentType: result.contentType ?? (isPdf ? 'application/pdf' : 'text/html'),
+      contentHash: result.contentHash,
+      etag: result.etag,
+      lastModified: result.lastModified,
+      fetchedAt: new Date(),
+      metadata: {
+        title: document.title,
+        publishedAt: document.publishedAt,
+        ...document.metadata,
+      },
+    };
   }
 
   async healthCheck(context: CrawlContext): Promise<SourceHealthResult> {
