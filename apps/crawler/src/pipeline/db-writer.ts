@@ -323,7 +323,10 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
 
   async getEnabledSources(): Promise<Source[]> {
     const sourcesToMap: Array<Record<string, unknown>> =
-      this.initialSources ?? ((await import('@claimradar/source-registry')).initialSources as unknown as Array<Record<string, unknown>>);
+      this.initialSources ??
+      ((await import('@claimradar/source-registry')).initialSources as unknown as Array<
+        Record<string, unknown>
+      >);
     return sourcesToMap.map((s: Record<string, unknown>) => ({
       id: s.id,
       name: s.name,

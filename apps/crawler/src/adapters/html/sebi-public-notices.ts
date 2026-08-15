@@ -1,4 +1,3 @@
-
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type {
   SourceAdapter,
