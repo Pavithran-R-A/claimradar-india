@@ -6,6 +6,7 @@
  */
 
 import { createAdminClient } from '@claimradar/database';
+import type { SourceDefinition } from '@claimradar/source-registry';
 import type {
   CrawlRun,
   CrawlRunSource,
@@ -322,33 +323,29 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   }
 
   async getEnabledSources(): Promise<Source[]> {
-    const sourcesToMap: Array<Record<string, unknown>> =
-      this.initialSources ??
-      ((await import('@claimradar/source-registry')).initialSources as unknown as Array<
-        Record<string, unknown>
-      >);
-    return sourcesToMap.map((s: Record<string, unknown>) => ({
+    const sourcesToMap: SourceDefinition[] =
+      this.initialSources ?? (await import('@claimradar/source-registry')).initialSources;
+    return sourcesToMap.map((s) => ({
       id: s.id,
       name: s.name,
       domain: s.domain,
-      source_type: s.sourceType ?? s.source_type,
-      adapter_name: s.adapterType ?? s.adapter_name,
-      adapterType: s.adapterType ?? s.adapter_name,
-      baseUrl: s.baseUrl ?? s.base_url,
-      base_url: s.baseUrl ?? s.base_url,
-      feedUrl: s.feedUrl ?? s.metadata?.feedUrl,
-      trustLevel: s.trustLevel ?? s.trust_level,
-      trust_level: s.trustLevel ?? s.trust_level,
+      source_type: s.sourceType,
+      adapter_name: s.adapterType,
+      adapterType: s.adapterType,
+      baseUrl: s.baseUrl,
+      base_url: s.baseUrl,
+      feedUrl: s.feedUrl,
+      trustLevel: s.trustLevel,
+      trust_level: s.trustLevel,
       enabled: true,
       fetch_frequency_hours: 24,
-      rate_limit_per_minute: s.rateLimit?.requestsPerMinute ?? s.rate_limit_per_minute ?? 10,
+      rate_limit_per_minute: s.rateLimit?.requestsPerMinute ?? 10,
       robots_checked_at: null,
       terms_checked_at: null,
       last_run_at: null,
       last_success_at: null,
       failure_count: 0,
-      metadata:
-        s.feedUrl || s.metadata?.feedUrl ? { feedUrl: s.feedUrl || s.metadata?.feedUrl } : {},
+      metadata: s.feedUrl ? { feedUrl: s.feedUrl } : {},
       created_at: new Date().toISOString(),
     })) as unknown as Source[];
   }
