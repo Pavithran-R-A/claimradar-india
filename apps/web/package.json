@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm --filter @claimradar/shared-types build && pnpm --filter @claimradar/claim-schema build && pnpm --filter @claimradar/source-registry build && pnpm --filter @claimradar/config build && pnpm --filter @claimradar/database build && pnpm --filter @claimradar/design-system build && pnpm --filter @claimradar/seo build && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
