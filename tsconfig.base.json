@@ -14,8 +14,7 @@
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "incremental": true
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "dist"]
 }
