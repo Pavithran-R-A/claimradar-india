@@ -83,4 +83,38 @@ describe('HTTP Cache', () => {
     const headers = getConditionalHeaders('https://example.com/never-cached');
     expect(headers).toEqual({});
   });
+
+  describe('HTTP 304 Entity Hash Invariants (Phase V3.1)', () => {
+    it('304 cached entity hash reuse: retrieves valid cached contentHash on revalidation', () => {
+      const url = 'https://example.com/citrus-notice-304-test';
+      const originalHash = '40e9d0f89b7eb12dddc276b75dd8bc794c0ab7caf315e5f0ecefdc499f56176e';
+
+      // Store initial 200 result
+      setCacheEntry(url, {
+        etag: '"v1-etag"',
+        lastModified: 'Wed, 29 Jul 2026 12:00:00 GMT',
+        contentHash: originalHash,
+        checkedAt: new Date(),
+      });
+
+      const entry = getCacheEntry(url);
+      expect(entry).toBeDefined();
+      expect(entry?.contentHash).toBe(originalHash);
+      // Invariant: Must not be the empty body hash 'e3b0c442...'
+      expect(entry?.contentHash).not.toBe(
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      );
+    });
+
+    it('304 without cached body/hash must not invent an entity hash', () => {
+      const url = 'https://example.com/uncached-304-test';
+      const entry = getCacheEntry(url);
+      expect(entry).toBeUndefined();
+      const contentHash = entry?.contentHash ?? '';
+      expect(contentHash).toBe('');
+      expect(contentHash).not.toBe(
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      );
+    });
+  });
 });

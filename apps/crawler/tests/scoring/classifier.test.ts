@@ -181,5 +181,32 @@ describe('Keyword Classifier', () => {
       expect(result.isCandidate).toBe(false);
       expect(result.score).toBeLessThan(30);
     });
+
+    it('Negative Case 6: SEBI Settlement Order (3One 4 Capital Continuum IE)', () => {
+      const result = scoreDocument({
+        text: 'Settlement Order in the matter of 3One 4 Capital Continuum IE. The applicant submitted settlement application and paid settlement amount to SEBI in terms of SEBI (Settlement Proceedings) Regulations.',
+        title: 'Settlement Order in the matter of 3One 4 Capital Continuum IE',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Negative Case 7: SEBI Settlement Order (Jetha Global Master Fund)', () => {
+      const result = scoreDocument({
+        text: 'Settlement Order in the matter of Jetha Global Master Fund. High Powered Advisory Committee considered settlement terms and recommended settlement on payment of charges.',
+        title: 'Settlement Order in the matter of Jetha Global Master Fund',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBeLessThan(30);
+    });
+
+    it('Positive Case 4: Public compensation settlement with active claim invitation', () => {
+      const result = scoreDocument({
+        text: 'Public Notice for Settlement and Refund Scheme for affected consumers. Notice inviting proof of claim and claim application submission for refund ordered to eligible depositors by deadline 30-09-2026.',
+        title: 'Public Notice for Consumer Compensation Settlement and Refund Scheme',
+      });
+      expect(result.isCandidate).toBe(true);
+      expect(result.score).toBeGreaterThanOrEqual(30);
+    });
   });
 });

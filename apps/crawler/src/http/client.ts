@@ -3,7 +3,7 @@ import { validateUrl, resolveAndValidate, isPrivateIp } from './ssrf.js';
 import { lookup as dnsLookup } from 'node:dns';
 import type { LookupAddress } from 'node:dns';
 import { RateLimiter } from './rate-limiter.js';
-import { getConditionalHeaders, setCacheEntry } from './cache.js';
+import { getConditionalHeaders, setCacheEntry, getCacheEntry } from './cache.js';
 import { sha256 } from './hash.js';
 import { retry } from './retry.js';
 import { FetchError } from './types.js';
@@ -148,12 +148,24 @@ export class HttpClient {
 
       // 9. Update cache entry
       if (result.etag || result.lastModified) {
-        setCacheEntry(url, {
-          etag: result.etag,
-          lastModified: result.lastModified,
-          contentHash: result.contentHash,
-          checkedAt: new Date(),
-        });
+        if (result.statusCode === 200 && result.contentHash) {
+          setCacheEntry(url, {
+            etag: result.etag,
+            lastModified: result.lastModified,
+            contentHash: result.contentHash,
+            checkedAt: new Date(),
+          });
+        } else if (result.statusCode === 304) {
+          const existing = getCacheEntry(url);
+          if (existing) {
+            setCacheEntry(url, {
+              ...existing,
+              etag: result.etag ?? existing.etag,
+              lastModified: result.lastModified ?? existing.lastModified,
+              checkedAt: new Date(),
+            });
+          }
+        }
       }
 
       return {
@@ -214,15 +226,16 @@ export class HttpClient {
       if (statusCode === 304) {
         // Consume body to free resources
         await body.dump();
+        const cached = getCacheEntry(currentUrl);
         return {
           url: currentUrl,
           statusCode,
           headers: normalizedHeaders,
           body: Buffer.alloc(0),
           contentType,
-          etag,
-          lastModified,
-          contentHash: sha256(Buffer.alloc(0)),
+          etag: etag ?? cached?.etag ?? null,
+          lastModified: lastModified ?? cached?.lastModified ?? null,
+          contentHash: cached?.contentHash ?? '',
           wasCached: true,
         };
       }

@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [master, 'qoder/**']
+    branches:
+      - main
+      - 'qoder/**'
   pull_request:
-    branches: [master, 'qoder/**']
+    branches:
+      - main
+      - 'qoder/**'
   workflow_dispatch:
 
 concurrency:
