@@ -226,7 +226,7 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   public publicationEvents: Array<Record<string, unknown>> = [];
   public sourceHealthEvents: Array<Record<string, unknown>> = [];
 
-  constructor(private initialSources?: Array<Record<string, unknown>>) {}
+  constructor(private initialSources?: SourceDefinition[]) {}
 
   async createCrawlRun(status: string): Promise<string> {
     const id = crypto.randomUUID();
