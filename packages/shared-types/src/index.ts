@@ -130,4 +130,4 @@ export const LEGAL_SAFETY = {
   ],
 } as const;
 
-export * from './deadlines.js';
+export * from './deadlines';
