@@ -79,16 +79,34 @@ if (appEnv && appEnv !== 'staging' && appEnv !== 'development') {
       : 'APP_ENV unset (defaults to development; set APP_ENV=staging for staging deployments)',
   );
 }
+function parseEnvBool(val, defaultValue = false) {
+  if (val === undefined || val === null || val === '') return defaultValue;
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'string') {
+    const n = val.trim().toLowerCase();
+    if (n === 'true') return true;
+    if (n === 'false') return false;
+  }
+  throw new Error(`Invalid boolean value: '${val}'`);
+}
+
 for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOMERS_ENABLED']) {
   const raw = process.env[guard];
-  if (raw === 'true') {
-    record(`${guard}=false guard`, FAIL, `${guard} is 'true' — staging invariant violated`);
-  } else {
-    record(
-      `${guard}=false guard`,
-      PASS,
-      raw ? `${guard}='${raw}'` : `${guard} unset (defaults to false)`,
-    );
+  try {
+    const parsed = parseEnvBool(raw, false);
+    if (parsed) {
+      record(`${guard}=false guard`, FAIL, `${guard} is 'true' — staging invariant violated`);
+    } else {
+      record(
+        `${guard}=false guard`,
+        PASS,
+        raw !== undefined
+          ? `${guard}='${raw}' (parsed as false)`
+          : `${guard} unset (defaults to false)`,
+      );
+    }
+  } catch (err) {
+    record(`${guard}=false guard`, FAIL, `Malformed boolean: ${err.message}`);
   }
 }
 

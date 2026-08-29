@@ -6,6 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
+import * as path from 'node:path';
 import { loadCrawlerEnv } from '../env.js';
 import { getAdapter } from '../adapters/registry.js';
 import type { CrawlContext } from '../adapters/types.js';
@@ -34,6 +35,17 @@ import {
 import { initSentry, captureError } from '../observability/sentry.js';
 import { createAlertSink } from '../observability/alerts.js';
 import { classifyError } from '../observability/failure-categories.js';
+
+export class StagingPolicyViolationError extends Error {
+  readonly violations: string[];
+  constructor(violations: string[]) {
+    super(
+      `CRITICAL POLICY VIOLATION: Staging invariants violated (${violations.join(', ')}). Ingestion refused.`,
+    );
+    this.name = 'StagingPolicyViolationError';
+    this.violations = violations;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -599,22 +611,39 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   if (env.AUTO_VERIFY_CLAIMABLES) guardViolations.push('AUTO_VERIFY_CLAIMABLES=true');
   if (env.ENABLE_BILLING) guardViolations.push('ENABLE_BILLING=true');
   if (env.NOTIFY_CUSTOMERS_ENABLED) guardViolations.push('NOTIFY_CUSTOMERS_ENABLED=true');
+
   logger.info('pipeline', 'Pipeline started', {
     dryRun: options.dryRun,
     skipAI: options.skipAI,
     guards: {
+      APP_ENV: env.APP_ENV,
       AUTO_VERIFY_CLAIMABLES: env.AUTO_VERIFY_CLAIMABLES,
       ENABLE_BILLING: env.ENABLE_BILLING,
       NOTIFY_CUSTOMERS_ENABLED: env.NOTIFY_CUSTOMERS_ENABLED,
+      LIVE_ADAPTERS_ENABLED: env.LIVE_ADAPTERS_ENABLED,
     },
   });
+
+  // Populate effective policy guards snapshot
+  summary.effectivePolicyGuards = {
+    APP_ENV: env.APP_ENV,
+    AUTO_VERIFY_CLAIMABLES: env.AUTO_VERIFY_CLAIMABLES,
+    ENABLE_BILLING: env.ENABLE_BILLING,
+    NOTIFY_CUSTOMERS_ENABLED: env.NOTIFY_CUSTOMERS_ENABLED,
+    LIVE_ADAPTERS_ENABLED: env.LIVE_ADAPTERS_ENABLED,
+  };
+
   if (guardViolations.length > 0) {
+    const violationMessage = `Policy guard violation: ${guardViolations.join(', ')}`;
     alertSink.emit({
       alertType: 'policy-guard-violation',
       severity: 'critical',
-      message: `Policy guard violation: ${guardViolations.join(', ')}`,
+      message: violationMessage,
       runId,
     });
+    logger.error('pipeline', violationMessage);
+    // Fail closed: throw typed error so ingestion is refused and process exits non-zero
+    throw new StagingPolicyViolationError(guardViolations);
   }
 
   // Database / Storage Adapter
@@ -774,8 +803,11 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   // Persist machine-readable summary for CI artifacts / job summaries.
   if (env.CRAWLER_SUMMARY_FILE !== undefined && env.CRAWLER_SUMMARY_FILE !== '') {
     try {
-      writeFileSync(env.CRAWLER_SUMMARY_FILE, formatSummaryJson(summary), 'utf-8');
-      logger.info('pipeline', `Summary written to ${env.CRAWLER_SUMMARY_FILE}`);
+      const targetPath = path.isAbsolute(env.CRAWLER_SUMMARY_FILE)
+        ? env.CRAWLER_SUMMARY_FILE
+        : path.resolve(process.cwd(), env.CRAWLER_SUMMARY_FILE);
+      writeFileSync(targetPath, formatSummaryJson(summary), 'utf-8');
+      logger.info('pipeline', `Summary written to ${targetPath}`);
     } catch (err) {
       logger.warn('pipeline', `Failed to write summary file: ${env.CRAWLER_SUMMARY_FILE}`, {
         error: err instanceof Error ? err.message : 'unknown',

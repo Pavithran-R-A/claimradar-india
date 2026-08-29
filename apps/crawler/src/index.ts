@@ -615,39 +615,53 @@ async function main() {
 
       console.log(`Target Environment:     ${environment}`);
 
+      let env;
+      try {
+        env = loadCrawlerEnv();
+      } catch (err) {
+        console.error('\n❌ PREFLIGHT FAILED: Environment validation error', err);
+        process.exit(1);
+      }
+
       // Policy Rule 1: AUTO_VERIFY_CLAIMABLES must be false
-      const autoVerify = process.env.AUTO_VERIFY_CLAIMABLES === 'true';
       console.log(
-        `AUTO_VERIFY_CLAIMABLES: ${autoVerify ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
+        `AUTO_VERIFY_CLAIMABLES:   ${env.AUTO_VERIFY_CLAIMABLES ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
       );
 
       // Policy Rule 2: ENABLE_BILLING must be false
-      const enableBilling = process.env.ENABLE_BILLING === 'true';
       console.log(
-        `ENABLE_BILLING:         ${enableBilling ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
+        `ENABLE_BILLING:           ${env.ENABLE_BILLING ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
+      );
+
+      // Policy Rule 3: NOTIFY_CUSTOMERS_ENABLED must be false
+      console.log(
+        `NOTIFY_CUSTOMERS_ENABLED: ${env.NOTIFY_CUSTOMERS_ENABLED ? '❌ FAIL (Must be false)' : '✅ PASS (false)'}`,
       );
 
       // Environment & Credential Check
-      const hasUrl = Boolean(process.env.SUPABASE_URL);
-      const hasKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
-      console.log(
-        `SUPABASE_URL Declared:  ${hasUrl ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
+      const hasUrl = Boolean(env.SUPABASE_URL && !env.SUPABASE_URL.includes('dryrun.local'));
+      const hasKey = Boolean(
+        env.SUPABASE_SECRET_KEY && env.SUPABASE_SECRET_KEY !== 'dummy-dryrun-secret-key',
       );
-      console.log(`SERVICE_ROLE_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`);
+      console.log(
+        `SUPABASE_URL Declared:    ${hasUrl ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
+      );
+      console.log(
+        `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
+      );
 
       // Compliance Identity
-      const ua = process.env.CRAWLER_USER_AGENT ?? 'ClaimRadarBot/0.1 (+https://claimradar.in/bot)';
-      console.log(`Crawler Identity (UA):  ${ua}`);
+      console.log(`Crawler Identity (UA):    ${env.CRAWLER_USER_AGENT}`);
 
-      if (autoVerify || enableBilling) {
+      if (env.AUTO_VERIFY_CLAIMABLES || env.ENABLE_BILLING || env.NOTIFY_CUSTOMERS_ENABLED) {
         console.error(
-          '\n❌ PREFLIGHT REFUSED: Policy violations detected (AUTO_VERIFY or BILLING enabled).',
+          '\n❌ PREFLIGHT REFUSED: Policy violations detected (AUTO_VERIFY, BILLING, or NOTIFY_CUSTOMERS enabled).',
         );
         process.exit(1);
       }
 
       if (!hasUrl || !hasKey) {
-        console.log('\n⚠️ PREFLIGHT NOTICE: Staging credentials not present in local environment.');
+        console.log('\n⚠️ PREFLIGHT NOTICE: Staging credentials not present in environment.');
         console.log('                    Live database ingestion is SKIPPED.');
         process.exit(0);
       }

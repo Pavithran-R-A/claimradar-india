@@ -15,6 +15,14 @@ export interface SourceSummary {
   errors: number;
 }
 
+export interface EffectivePolicyGuards {
+  APP_ENV: string;
+  AUTO_VERIFY_CLAIMABLES: boolean;
+  ENABLE_BILLING: boolean;
+  NOTIFY_CUSTOMERS_ENABLED: boolean;
+  LIVE_ADAPTERS_ENABLED: boolean;
+}
+
 export interface CrawlSummary {
   runId: string;
   startedAt: Date;
@@ -38,6 +46,8 @@ export interface CrawlSummary {
   unexpectedErrorCount: number;
   /** One entry per attempted source, in attempt order — includes failed sources. */
   perSource: SourceSummary[];
+  /** Effective runtime policy values (immutable snapshot of parsed config). */
+  effectivePolicyGuards?: EffectivePolicyGuards;
 }
 
 export function createEmptySummary(runId: string): CrawlSummary {
