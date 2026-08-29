@@ -17,6 +17,35 @@ export const defaultFeatureFlags: FeatureFlags = {
   AUTO_VERIFY_CLAIMABLES: false,
 };
 
+/**
+ * Reusable environment boolean parser.
+ *
+ * Replaces broken `z.coerce.boolean()` which turns `"false"` into `true`.
+ *
+ * Rules:
+ * - "true"  (case-insensitive, trimmed) -> true
+ * - "false" (case-insensitive, trimmed) -> false
+ * - true    -> true
+ * - false   -> false
+ * - undefined / null / "" -> defaultValue
+ * - malformed strings ("0", "1", "yes", "no", "abc") -> fail closed with Zod validation error
+ */
+export const envBoolean = (defaultValue = false) =>
+  z.preprocess((value) => {
+    if (value === undefined || value === null || value === '') return defaultValue;
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true') return true;
+      if (normalized === 'false') return false;
+    }
+    return value;
+  }, z.boolean());
+
+export const envAppEnv = z
+  .enum(['development', 'staging', 'production', 'test'])
+  .default('development');
+
 export const serverEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_SECRET_KEY: z.string().optional(),
@@ -57,12 +86,16 @@ export const colors = {
 } as const;
 
 export const crawlerEnvSchema = z.object({
+  APP_ENV: envAppEnv,
   SUPABASE_URL: z.string().url(),
   SUPABASE_SECRET_KEY: z.string().optional(),
   AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
   AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),
   AI_SECOND_PASS_RESERVE: z.coerce.number().default(10),
-  LIVE_ADAPTERS_ENABLED: z.coerce.boolean().default(false),
+  LIVE_ADAPTERS_ENABLED: envBoolean(false),
+  AUTO_VERIFY_CLAIMABLES: envBoolean(false),
+  ENABLE_BILLING: envBoolean(false),
+  NOTIFY_CUSTOMERS_ENABLED: envBoolean(false),
   CRAWLER_CONCURRENCY: z.coerce.number().default(3),
 });
 

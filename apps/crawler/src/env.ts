@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import { readFileSync, existsSync } from 'node:fs';
 import * as path from 'node:path';
+import { envBoolean, envAppEnv } from '@claimradar/config';
 
 export const crawlerEnvSchema = z.object({
+  APP_ENV: envAppEnv,
   SUPABASE_URL: z.string().url(),
   SUPABASE_SECRET_KEY: z.string().optional(),
   CRAWLER_USER_AGENT: z.string().default('ClaimRadar India Bot/1.0 (+https://claimradar.in)'),
@@ -16,13 +18,13 @@ export const crawlerEnvSchema = z.object({
   AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),
   AI_SECOND_PASS_RESERVE: z.coerce.number().default(10),
   AI_MAX_ATTEMPTS_PER_DOCUMENT: z.coerce.number().default(2),
-  LIVE_ADAPTERS_ENABLED: z.coerce.boolean().default(false),
+  LIVE_ADAPTERS_ENABLED: envBoolean(false),
   CRAWLER_CONCURRENCY: z.coerce.number().default(3),
   CRAWLER_REQUEST_TIMEOUT_MS: z.coerce.number().default(30000),
-  AUTO_VERIFY_CLAIMABLES: z.coerce.boolean().default(false),
-  ENABLE_BILLING: z.coerce.boolean().default(false),
+  AUTO_VERIFY_CLAIMABLES: envBoolean(false),
+  ENABLE_BILLING: envBoolean(false),
   /** Staging must never notify real customers. */
-  NOTIFY_CUSTOMERS_ENABLED: z.coerce.boolean().default(false),
+  NOTIFY_CUSTOMERS_ENABLED: envBoolean(false),
   /** Optional file path to write the machine-readable crawl summary JSON. */
   CRAWLER_SUMMARY_FILE: z.string().optional(),
   /** Alert sink selection: 'log' (default, structured stderr) or 'none'. */
@@ -51,8 +53,20 @@ function readEnvFile(filePath: string): Record<string, string> {
 
 export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
   const rootDir = process.cwd();
-  const localEnv = readEnvFile(path.resolve(rootDir, '.env.local'));
-  const stagingEnv = readEnvFile(path.resolve(rootDir, '.env.staging'));
+  const candidates = [rootDir, path.resolve(rootDir, '..'), path.resolve(rootDir, '../..')];
+  let localEnv: Record<string, string> = {};
+  let stagingEnv: Record<string, string> = {};
+
+  for (const dir of candidates) {
+    const localPath = path.resolve(dir, '.env.local');
+    const stagingPath = path.resolve(dir, '.env.staging');
+    if (Object.keys(localEnv).length === 0 && existsSync(localPath)) {
+      localEnv = readEnvFile(localPath);
+    }
+    if (Object.keys(stagingEnv).length === 0 && existsSync(stagingPath)) {
+      stagingEnv = readEnvFile(stagingPath);
+    }
+  }
 
   const env = { ...stagingEnv, ...localEnv, ...process.env };
   const isDryRun = options?.dryRun ?? process.argv.includes('--dry-run');
@@ -60,7 +74,10 @@ export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
   if (isDryRun) {
     env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
   }
-  const resolvedKey = env.SUPABASE_SECRET_KEY || (isDryRun ? 'dummy-dryrun-secret-key' : undefined);
+  const resolvedKey =
+    env.SUPABASE_SECRET_KEY ||
+    env.SUPABASE_SERVICE_ROLE_KEY ||
+    (isDryRun ? 'dummy-dryrun-secret-key' : undefined);
 
   env.SUPABASE_SECRET_KEY = resolvedKey;
   return crawlerEnvSchema.parse(env);
