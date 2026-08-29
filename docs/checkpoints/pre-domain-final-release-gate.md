@@ -64,6 +64,7 @@ RECOVERY_RUNBOOK = PASS
 SOAK_SCHEDULE = 17 */6 * * * (Every 6 hours at :17 UTC)
 SOAK_AUTOMATION = PASS (.github/workflows/staging-soak.yml active)
 INVALIDATED_OLD_SOAK_RUN = 33258866043 (Boolean env parsing bug caused 0/0 crawl; discarded from soak duration)
+FIRST_VALID_SOAK_RUN = 33262610772 (7/7 sources, 106 docs, 0 errors, all guards false, artifact uploaded)
 SOAK_48_72H = PENDING_TIME_SOAK
 
 CUSTOM_DOMAIN = DEFERRED_HUMAN
