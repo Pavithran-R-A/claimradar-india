@@ -122,7 +122,7 @@ export function scoreDocument(
   const negative = evaluateKeywords(lowerText, lowerTitle, NEGATIVE_KEYWORDS);
 
   // Raw score: positive minus negative, clamped to [0, 100].
-  let raw = positive.total - negative.total;
+  const raw = positive.total - negative.total;
   let score = Math.max(0, Math.min(100, raw));
 
   // Explicit deterministic context overrides:
