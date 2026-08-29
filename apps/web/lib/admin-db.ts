@@ -12,10 +12,10 @@ export function getAdminDb(): any {
     throw new Error('Missing SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL environment variable');
   }
 
-  const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
   if (!secretKey) {
     throw new Error(
-      'Missing SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY environment variable — required for admin DB access',
+      'Missing SUPABASE_SECRET_KEY environment variable — required for admin DB access',
     );
   }
 

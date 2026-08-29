@@ -5,7 +5,6 @@ import * as path from 'node:path';
 export const crawlerEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_SECRET_KEY: z.string().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   CRAWLER_USER_AGENT: z.string().default('ClaimRadar India Bot/1.0 (+https://claimradar.in)'),
   CRAWLER_CONTACT_EMAIL: z.string().email().optional(),
   AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
@@ -61,12 +60,8 @@ export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
   if (isDryRun) {
     env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
   }
-  const resolvedKey =
-    env.SUPABASE_SECRET_KEY ||
-    env.SUPABASE_SERVICE_ROLE_KEY ||
-    (isDryRun ? 'dummy-dryrun-service-role-key' : undefined);
+  const resolvedKey = env.SUPABASE_SECRET_KEY || (isDryRun ? 'dummy-dryrun-secret-key' : undefined);
 
   env.SUPABASE_SECRET_KEY = resolvedKey;
-  env.SUPABASE_SERVICE_ROLE_KEY = resolvedKey;
   return crawlerEnvSchema.parse(env);
 }

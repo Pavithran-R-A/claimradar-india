@@ -97,16 +97,9 @@ for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOME
  * ------------------------------------------------------------------------- */
 console.log('\n--- Credential resolution ---');
 const supabaseUrl = pickEnv('STAGING_SUPABASE_URL', 'SUPABASE_URL');
-const serviceRoleKey = pickEnv(
-  'STAGING_SUPABASE_SERVICE_ROLE_KEY',
-  'SUPABASE_SERVICE_ROLE_KEY',
-  'STAGING_SUPABASE_SECRET_KEY',
-  'SUPABASE_SECRET_KEY',
-);
-const anonKey = pickEnv(
-  'STAGING_SUPABASE_ANON_KEY',
-  'SUPABASE_ANON_KEY',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+const serviceRoleKey = pickEnv('STAGING_SUPABASE_SECRET_KEY', 'SUPABASE_SECRET_KEY');
+const publishableKey = pickEnv(
+  'STAGING_SUPABASE_PUBLISHABLE_KEY',
   'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
   'SUPABASE_PUBLISHABLE_KEY',
 );
@@ -119,25 +112,25 @@ if (!supabaseUrl) {
   record('SUPABASE_URL present', PASS, maskUrl(supabaseUrl.value));
 }
 if (!serviceRoleKey) {
-  record('SUPABASE_SERVICE_ROLE_KEY present', SKIP, 'staging service-role key not set');
+  record('SUPABASE_SECRET_KEY present', SKIP, 'staging secret key not set');
 } else {
-  record('SUPABASE_SERVICE_ROLE_KEY present', PASS, 'set (never echoed)');
+  record('SUPABASE_SECRET_KEY present', PASS, 'set (never echoed)');
 }
-if (!anonKey) {
+if (!publishableKey) {
   record(
-    'SUPABASE_ANON_KEY present',
+    'SUPABASE_PUBLISHABLE_KEY present',
     SKIP,
-    'staging anon key not set (required for RLS spot checks)',
+    'staging publishable key not set (required for RLS spot checks)',
   );
 } else {
-  record('SUPABASE_ANON_KEY present', PASS, `via ${anonKey.name} (never echoed)`);
+  record('SUPABASE_PUBLISHABLE_KEY present', PASS, `via ${publishableKey.name} (never echoed)`);
 }
 
 if (!supabaseUrl) {
   record('Connectivity (REST API)', SKIP, 'no staging credentials');
   record('Migration list parity', SKIP, 'no staging credentials');
-  record('RLS spot check (anon denied on admin tables)', SKIP, 'no staging credentials');
-  record('RLS spot check (service role can read ingestion tables)', SKIP, 'no staging credentials');
+  record('RLS spot check (publishable denied on admin tables)', SKIP, 'no staging credentials');
+  record('RLS spot check (secret role can read ingestion tables)', SKIP, 'no staging credentials');
   finish(0);
 }
 
@@ -244,17 +237,17 @@ if (isLinked) {
  *    service role must read ingestion tables.
  * ------------------------------------------------------------------------- */
 console.log('\n--- RLS spot checks (read-only) ---');
-if (!anonKey) {
-  record('RLS spot check (anon denied on admin tables)', SKIP, 'anon key not set');
+if (!publishableKey) {
+  record('RLS spot check (publishable denied on admin tables)', SKIP, 'publishable key not set');
 } else {
-  // Admin/editorial tables must never be readable with the anon key.
+  // Admin/editorial tables must never be readable with the publishable key.
   const adminTables = ['audit_log', 'ai_runs', 'crawl_errors'];
   let leaked = [];
   let checked = 0;
   for (const table of adminTables) {
     try {
       const response = await fetch(`${supabaseUrl.value}/rest/v1/${table}?select=id&limit=1`, {
-        headers: { apikey: anonKey.value, Authorization: `Bearer ${anonKey.value}` },
+        headers: { apikey: publishableKey.value, Authorization: `Bearer ${publishableKey.value}` },
         signal: AbortSignal.timeout(15000),
       });
       checked += 1;
@@ -270,33 +263,29 @@ if (!anonKey) {
   }
   if (checked === 0) {
     record(
-      'RLS spot check (anon denied on admin tables)',
+      'RLS spot check (publishable denied on admin tables)',
       SKIP,
       'no table could be probed (connectivity issue)',
     );
   } else if (leaked.length > 0) {
     record(
-      'RLS spot check (anon denied on admin tables)',
+      'RLS spot check (publishable denied on admin tables)',
       FAIL,
-      `anon key returned rows from: ${leaked.join(', ')}`,
+      `publishable key returned rows from: ${leaked.join(', ')}`,
     );
   } else {
     record(
-      'RLS spot check (anon denied on admin tables)',
+      'RLS spot check (publishable denied on admin tables)',
       PASS,
-      `anon key denied on ${checked}/${adminTables.length} admin tables`,
+      `publishable key denied on ${checked}/${adminTables.length} admin tables`,
     );
   }
 }
 
 if (!serviceRoleKey) {
-  record(
-    'RLS spot check (service role can read ingestion tables)',
-    SKIP,
-    'service-role key not set',
-  );
+  record('RLS spot check (secret role can read ingestion tables)', SKIP, 'secret key not set');
 } else {
-  // Service role must read ingestion tables (proves schema + privileges).
+  // Secret key must read ingestion tables (proves schema + privileges).
   try {
     const response = await fetch(`${supabaseUrl.value}/rest/v1/crawl_runs?select=id&limit=1`, {
       headers: {
@@ -307,13 +296,13 @@ if (!serviceRoleKey) {
     });
     if (response.ok) {
       record(
-        'RLS spot check (service role can read ingestion tables)',
+        'RLS spot check (secret role can read ingestion tables)',
         PASS,
-        'service role read crawl_runs',
+        'secret key read crawl_runs',
       );
     } else {
       record(
-        'RLS spot check (service role can read ingestion tables)',
+        'RLS spot check (secret role can read ingestion tables)',
         FAIL,
         `HTTP ${response.status} on crawl_runs — migrations may not be applied`,
       );

@@ -7,8 +7,17 @@ import type { Database } from './types.js';
  * Uses SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.
  */
 export function createAdminClient() {
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) {
+    throw new Error('Missing SUPABASE_URL environment variable — required for admin DB access');
+  }
+
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error(
+      'Missing SUPABASE_SECRET_KEY environment variable — required for admin DB access',
+    );
+  }
 
   return createClient<Database>(supabaseUrl, secretKey, {
     auth: {
