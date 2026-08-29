@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param(
   [string]$ProjectRoot = '',
-  [string]$DestinationDir = 'C:\Users\Pavithran R A\Downloads\ClaimRadar-Backups'
+  [string]$DestinationDir = (Join-Path $env:USERPROFILE 'Downloads\ClaimRadar-Backups')
 )
 
 $ErrorActionPreference = 'Stop'

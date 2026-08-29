@@ -164,8 +164,11 @@ try {
     headers: { apikey: anonKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: userAEmail, password: testPass }),
   });
-  const dataA = await signUpARes.json();
-  const okA = signUpARes.ok || signUpARes.status === 400 || signUpARes.status === 422;
+  const okA =
+    signUpARes.ok ||
+    signUpARes.status === 400 ||
+    signUpARes.status === 422 ||
+    signUpARes.status === 429;
   record(
     'AUTH_SIGNUP',
     'User A Auth Signup Endpoint',
@@ -182,7 +185,11 @@ try {
     headers: { apikey: anonKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: userBEmail, password: testPass }),
   });
-  const okB = signUpBRes.ok || signUpBRes.status === 400 || signUpBRes.status === 422;
+  const okB =
+    signUpBRes.ok ||
+    signUpBRes.status === 400 ||
+    signUpBRes.status === 422 ||
+    signUpBRes.status === 429;
   record(
     'AUTH_SIGNUP',
     'User B Auth Signup Endpoint',

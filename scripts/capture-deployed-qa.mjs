@@ -50,11 +50,7 @@ if (!BYPASS_SECRET) {
   process.exit(1);
 }
 
-// Store screenshots OUTSIDE the git repository to preserve Git HEAD immutability
-const defaultOutDir = path.resolve(
-  'C:/Users/Pavithran R A/Downloads/ClaimRadar-Final-QA',
-  'latest',
-);
+const defaultOutDir = path.resolve(process.cwd(), 'docs', 'checkpoints', 'browser-evidence');
 const OUT_DIR = process.env.OUT_DIR || defaultOutDir;
 mkdirSync(OUT_DIR, { recursive: true });
 
