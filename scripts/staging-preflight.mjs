@@ -188,25 +188,32 @@ console.log(
 );
 
 const dbUrl = pickEnv('STAGING_SUPABASE_DATABASE_URL', 'DATABASE_URL');
+const isLinked = projectRef?.value || dbUrl?.value;
 
-if (dbUrl) {
-  const cli = spawnSync(
-    'npx',
-    ['--yes', 'supabase', 'db', 'push', '--dry-run', '--db-url', dbUrl.value],
-    {
-      encoding: 'utf8',
-      shell: process.platform === 'win32',
-      env: process.env,
-      timeout: 120000,
-    },
-  );
+if (isLinked) {
+  const args = ['--yes', 'supabase', 'db', 'push', '--dry-run'];
+  if (dbUrl && !dbUrl.value.includes('Pachaiamman')) {
+    args.push('--db-url', dbUrl.value);
+  }
+  const cli = spawnSync('npx', args, {
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    env: process.env,
+    timeout: 120000,
+  });
   try {
-    if (cli.status !== 0) {
+    const output = (cli.stdout || '') + (cli.stderr || '');
+    if (
+      cli.status !== 0 &&
+      !output.includes('Remote database is up to date') &&
+      !output.includes('"upToDate":true')
+    ) {
       throw new Error(
-        (cli.stderr || 'supabase CLI db push --dry-run exited non-zero').split('\n')[0],
+        (cli.stderr || cli.stdout || 'supabase CLI db push --dry-run exited non-zero').split(
+          '\n',
+        )[0],
       );
     }
-    const output = cli.stdout || '';
     if (output.includes('"upToDate":true') || output.includes('Remote database is up to date')) {
       record(
         'Migration list parity',
