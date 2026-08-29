@@ -61,11 +61,13 @@ jobs:
       - name: Preflight policy gate
         run: pnpm crawler:preflight -- --environment=staging
         env:
+          APP_ENV: 'staging'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'
+          NOTIFY_CUSTOMERS_ENABLED: 'false'
 
       - name: Run staging soak crawl
         shell: bash
@@ -85,7 +87,7 @@ jobs:
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'
           NOTIFY_CUSTOMERS_ENABLED: 'false'
-          CRAWLER_SUMMARY_FILE: 'soak-crawl-summary.json'
+          CRAWLER_SUMMARY_FILE: ${{ github.workspace }}/soak-crawl-summary.json
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           DRY_FLAG=""
@@ -94,13 +96,60 @@ jobs:
           fi
           pnpm crawler:daily $DRY_FLAG
 
+      - name: Post-crawl soak acceptance gate
+        shell: bash
+        env:
+          SUMMARY_FILE: ${{ github.workspace }}/soak-crawl-summary.json
+        run: |
+          if [ ! -s "$SUMMARY_FILE" ]; then
+            echo "::error::Soak crawl summary file is missing or empty at $SUMMARY_FILE"
+            exit 1
+          fi
+
+          node -e "
+            const fs = require('node:fs');
+            const summary = JSON.parse(fs.readFileSync(process.env.SUMMARY_FILE, 'utf-8'));
+            console.log('Validating soak crawl summary invariants:');
+            console.log(JSON.stringify(summary, null, 2));
+
+            const errors = [];
+            if (!(summary.sourcesAttempted > 0)) errors.push('sourcesAttempted must be > 0 (was ' + summary.sourcesAttempted + ')');
+            if (summary.sourcesSucceeded !== summary.sourcesAttempted) errors.push('sourcesSucceeded (' + summary.sourcesSucceeded + ') must equal sourcesAttempted (' + summary.sourcesAttempted + ')');
+            if (summary.sourcesFailed !== 0) errors.push('sourcesFailed must be 0 (was ' + summary.sourcesFailed + ')');
+            if (!(summary.documentsDiscovered > 0)) errors.push('documentsDiscovered must be > 0 (was ' + summary.documentsDiscovered + ')');
+            if (!(summary.documentsFetched > 0)) errors.push('documentsFetched must be > 0 (was ' + summary.documentsFetched + ')');
+            if (summary.errorCount !== 0) errors.push('errorCount must be 0 (was ' + summary.errorCount + ')');
+            if (summary.unexpectedErrorCount !== 0) errors.push('unexpectedErrorCount must be 0 (was ' + summary.unexpectedErrorCount + ')');
+            if (summary.recordsPublished !== 0) errors.push('recordsPublished must be 0 in staging (was ' + summary.recordsPublished + ')');
+
+            const g = summary.effectivePolicyGuards;
+            if (!g) {
+              errors.push('effectivePolicyGuards snapshot missing from summary');
+            } else {
+              if (g.APP_ENV !== 'staging') errors.push('effectivePolicyGuards.APP_ENV must be staging (was ' + g.APP_ENV + ')');
+              if (g.AUTO_VERIFY_CLAIMABLES !== false) errors.push('effectivePolicyGuards.AUTO_VERIFY_CLAIMABLES must be false');
+              if (g.ENABLE_BILLING !== false) errors.push('effectivePolicyGuards.ENABLE_BILLING must be false');
+              if (g.NOTIFY_CUSTOMERS_ENABLED !== false) errors.push('effectivePolicyGuards.NOTIFY_CUSTOMERS_ENABLED must be false');
+              if (g.LIVE_ADAPTERS_ENABLED !== true) errors.push('effectivePolicyGuards.LIVE_ADAPTERS_ENABLED must be true');
+            }
+
+            if (errors.length > 0) {
+              console.error('❌ SOAK ACCEPTANCE GATE FAILED:');
+              errors.forEach(e => console.error('  - ' + e));
+              process.exit(1);
+            }
+            console.log('✅ SOAK ACCEPTANCE GATE PASSED: all invariants satisfied.');
+          "
+
       - name: Publish sanitized soak job summary
         if: always()
         shell: bash
+        env:
+          SUMMARY_FILE: ${{ github.workspace }}/soak-crawl-summary.json
         run: |
           node - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
           const fs = require('node:fs');
-          const file = 'soak-crawl-summary.json';
+          const file = process.env.SUMMARY_FILE || 'soak-crawl-summary.json';
           if (!fs.existsSync(file)) {
             console.log('## Staging Soak Run');
             console.log('');
@@ -125,9 +174,11 @@ jobs:
             `| Duration | ${(num(s.durationMs) / 1000).toFixed(1)}s |`,
             '',
             '### Policy Guards',
-            '- `ENABLE_BILLING`: false',
-            '- `AUTO_VERIFY_CLAIMABLES`: false',
-            '- `NOTIFY_CUSTOMERS_ENABLED`: false',
+            `- \`APP_ENV\`: ${s.effectivePolicyGuards?.APP_ENV ?? 'staging'}`,
+            `- \`ENABLE_BILLING\`: ${s.effectivePolicyGuards?.ENABLE_BILLING ?? false}`,
+            `- \`AUTO_VERIFY_CLAIMABLES\`: ${s.effectivePolicyGuards?.AUTO_VERIFY_CLAIMABLES ?? false}`,
+            `- \`NOTIFY_CUSTOMERS_ENABLED\`: ${s.effectivePolicyGuards?.NOTIFY_CUSTOMERS_ENABLED ?? false}`,
+            `- \`LIVE_ADAPTERS_ENABLED\`: ${s.effectivePolicyGuards?.LIVE_ADAPTERS_ENABLED ?? false}`,
             '',
             '### Per-source status',
             '',
@@ -147,5 +198,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: staging-soak-summary
-          path: soak-crawl-summary.json
-          if-no-files-found: ignore
+          path: ${{ github.workspace }}/soak-crawl-summary.json
+          if-no-files-found: error

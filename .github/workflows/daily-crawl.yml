@@ -77,11 +77,13 @@ jobs:
       - name: Preflight policy gate
         run: pnpm crawler:preflight -- --environment=staging
         env:
+          APP_ENV: 'staging'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'
+          NOTIFY_CUSTOMERS_ENABLED: 'false'
 
       # Secrets are injected ONLY as step-scoped env vars (never echoed,
       # never interpolated into shell text). Dispatch inputs are passed via
@@ -106,7 +108,7 @@ jobs:
           # Staging must never notify real customers.
           NOTIFY_CUSTOMERS_ENABLED: 'false'
           # Machine-readable summary for the artifact + sanitized job summary.
-          CRAWLER_SUMMARY_FILE: 'crawl-summary.json'
+          CRAWLER_SUMMARY_FILE: ${{ github.workspace }}/crawl-summary.json
           DRY_RUN: ${{ inputs.dry_run }}
           SOURCE_FILTER: ${{ inputs.source }}
         run: |
@@ -126,10 +128,12 @@ jobs:
       - name: Publish sanitized job summary
         if: always()
         shell: bash
+        env:
+          SUMMARY_FILE: ${{ github.workspace }}/crawl-summary.json
         run: |
           node - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
           const fs = require('node:fs');
-          const file = 'crawl-summary.json';
+          const file = process.env.SUMMARY_FILE || 'crawl-summary.json';
           if (!fs.existsSync(file)) {
             console.log('## Daily Crawl');
             console.log('');
@@ -153,6 +157,13 @@ jobs:
             `| Errors | ${num(s.errorCount)} |`,
             `| Duration | ${(num(s.durationMs) / 1000).toFixed(1)}s |`,
             '',
+            '### Policy Guards',
+            `- \`APP_ENV\`: ${s.effectivePolicyGuards?.APP_ENV ?? 'staging'}`,
+            `- \`ENABLE_BILLING\`: ${s.effectivePolicyGuards?.ENABLE_BILLING ?? false}`,
+            `- \`AUTO_VERIFY_CLAIMABLES\`: ${s.effectivePolicyGuards?.AUTO_VERIFY_CLAIMABLES ?? false}`,
+            `- \`NOTIFY_CUSTOMERS_ENABLED\`: ${s.effectivePolicyGuards?.NOTIFY_CUSTOMERS_ENABLED ?? false}`,
+            `- \`LIVE_ADAPTERS_ENABLED\`: ${s.effectivePolicyGuards?.LIVE_ADAPTERS_ENABLED ?? false}`,
+            '',
             '### Per-source status',
             '',
             '| Source | Status | Discovered | Fetched | Candidates | Errors |',
@@ -171,7 +182,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: crawl-summary
-          path: crawl-summary.json
+          path: ${{ github.workspace }}/crawl-summary.json
           if-no-files-found: ignore
 
     # Notes:

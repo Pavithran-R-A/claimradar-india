@@ -71,6 +71,7 @@ jobs:
         id: healthcheck
         run: pnpm crawler:health
         env:
+          APP_ENV: 'staging'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
@@ -88,10 +89,12 @@ jobs:
         if: always()
         shell: bash
         env:
+          APP_ENV: 'staging'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
           MAX_AGE_HOURS: ${{ inputs.max_age_hours || '26' }}
+
         run: |
           pnpm crawler:crawl-status -- --max-age-hours "$MAX_AGE_HOURS"
 
