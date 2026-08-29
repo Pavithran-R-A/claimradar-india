@@ -9,17 +9,17 @@
 ## 1. Executive Status Matrix
 
 ```ini
-REPOSITORY_HEAD = 3e3230aabbd401230b736aa3418e7945b28dce55
-ORIGIN_MAIN = 3e3230aabbd401230b736aa3418e7945b28dce55
+REPOSITORY_HEAD = 3436d41c4359603b79ab21639ddf31c5aca55e4c
+ORIGIN_MAIN = 3436d41c4359603b79ab21639ddf31c5aca55e4c
 WORKTREE_CLEAN = PASS
 
 FORMAT = PASS
 LINT = PASS
 TYPECHECK = PASS
-TESTS = PASS (431/431 passing)
-INVENTORY_ACCEPTANCE = PASS (286/286 passing)
+TESTS = PASS (443/443 passing, including env boolean regression & fail-closed tests)
+INVENTORY_ACCEPTANCE = PASS (298/298 passing)
 BUILD = PASS (44/44 Next.js static routes compiled)
-CI = PASS (GitHub Actions Run 33254908887 succeeded)
+CI = PASS (GitHub Actions Run 33258846527 succeeded)
 
 LOCAL_SUPABASE_REPRODUCIBLE = PASS
 REMOTE_MIGRATION_PARITY = PASS
@@ -61,7 +61,9 @@ SEO_STRUCTURE = PASS (noindex on staging, clean sitemap, JSON-LD structured data
 OBSERVABILITY = PASS (structured logs, request tracing, runbook in docs/OPERATIONS_AND_RECOVERY.md)
 RECOVERY_RUNBOOK = PASS
 
+SOAK_SCHEDULE = 17 */6 * * * (Every 6 hours at :17 UTC)
 SOAK_AUTOMATION = PASS (.github/workflows/staging-soak.yml active)
+INVALIDATED_OLD_SOAK_RUN = 33258866043 (Boolean env parsing bug caused 0/0 crawl; discarded from soak duration)
 SOAK_48_72H = PENDING_TIME_SOAK
 
 CUSTOM_DOMAIN = DEFERRED_HUMAN
