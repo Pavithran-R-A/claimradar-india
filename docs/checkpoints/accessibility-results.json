@@ -1,10 +1,31 @@
 {
-  "timestamp": "2026-08-07T07:00:35.361Z",
+  "timestamp": "2026-08-29T14:11:34.265Z",
   "routesScanned": [
     {
       "route": "/",
-      "passesCount": 21,
-      "inapplicableCount": 41,
+      "passesCount": 25,
+      "inapplicableCount": 37,
+      "incompleteCount": 1,
+      "violationsCount": 1,
+      "critical": 0,
+      "serious": 1,
+      "moderate": 0,
+      "minor": 0,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 1
+        }
+      ]
+    },
+    {
+      "route": "/claimables",
+      "passesCount": 26,
+      "inapplicableCount": 36,
       "incompleteCount": 0,
       "violationsCount": 1,
       "critical": 0,
@@ -18,36 +39,12 @@
           "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
           "help": "Elements must meet minimum color contrast ratio thresholds",
           "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
-          "nodesCount": 4
+          "nodesCount": 1
         }
       ]
     },
     {
-      "route": "/claimables",
-      "passesCount": 26,
-      "inapplicableCount": 36,
-      "incompleteCount": 0,
-      "violationsCount": 0,
-      "critical": 0,
-      "serious": 0,
-      "moderate": 0,
-      "minor": 0,
-      "violations": []
-    },
-    {
       "route": "/claimables/iepf-unclaimed-dividends",
-      "passesCount": 20,
-      "inapplicableCount": 42,
-      "incompleteCount": 0,
-      "violationsCount": 0,
-      "critical": 0,
-      "serious": 0,
-      "moderate": 0,
-      "minor": 0,
-      "violations": []
-    },
-    {
-      "route": "/companies",
       "passesCount": 20,
       "inapplicableCount": 42,
       "incompleteCount": 0,
@@ -68,16 +65,46 @@
       ]
     },
     {
+      "route": "/companies",
+      "passesCount": 20,
+      "inapplicableCount": 42,
+      "incompleteCount": 0,
+      "violationsCount": 1,
+      "critical": 0,
+      "serious": 1,
+      "moderate": 0,
+      "minor": 0,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 2
+        }
+      ]
+    },
+    {
       "route": "/deadlines",
       "passesCount": 20,
       "inapplicableCount": 42,
       "incompleteCount": 0,
-      "violationsCount": 0,
+      "violationsCount": 1,
       "critical": 0,
-      "serious": 0,
+      "serious": 1,
       "moderate": 0,
       "minor": 0,
-      "violations": []
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 1
+        }
+      ]
     },
     {
       "route": "/login",
@@ -199,42 +226,69 @@
       "route": "/admin",
       "passesCount": 25,
       "inapplicableCount": 37,
-      "incompleteCount": 0,
-      "violationsCount": 0,
+      "incompleteCount": 1,
+      "violationsCount": 1,
       "critical": 0,
-      "serious": 0,
+      "serious": 1,
       "moderate": 0,
       "minor": 0,
-      "violations": []
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 1
+        }
+      ]
     },
     {
       "route": "/admin/candidates",
       "passesCount": 25,
       "inapplicableCount": 37,
-      "incompleteCount": 0,
-      "violationsCount": 0,
+      "incompleteCount": 1,
+      "violationsCount": 1,
       "critical": 0,
-      "serious": 0,
+      "serious": 1,
       "moderate": 0,
       "minor": 0,
-      "violations": []
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 1
+        }
+      ]
     },
     {
       "route": "/admin/sources",
       "passesCount": 25,
       "inapplicableCount": 37,
-      "incompleteCount": 0,
-      "violationsCount": 0,
+      "incompleteCount": 1,
+      "violationsCount": 1,
       "critical": 0,
-      "serious": 0,
+      "serious": 1,
       "moderate": 0,
       "minor": 0,
-      "violations": []
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=playwright",
+          "nodesCount": 1
+        }
+      ]
     }
   ],
-  "totalViolations": 10,
+  "totalViolations": 16,
   "criticalViolations": 0,
-  "seriousViolations": 10,
+  "seriousViolations": 16,
   "moderateViolations": 0,
   "minorViolations": 0,
   "suppressions": [],

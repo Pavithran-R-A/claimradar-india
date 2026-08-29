@@ -10,10 +10,10 @@
 
 | Route         | Load Duration | FCP (Paint) | Transferred Size | JS Weight | DOM Elements |
 | :------------ | :------------ | :---------- | :--------------- | :-------- | :----------- |
-| `/`           | **8232 ms**   | **7596 ms** | 29.4 KB          | 0.8 KB    | 375 elements |
-| `/claimables` | **7937 ms**   | **7204 ms** | 29.4 KB          | 0.8 KB    | 197 elements |
-| `/app`        | **728 ms**    | **144 ms**  | 29.1 KB          | 0.5 KB    | 66 elements  |
-| `/admin`      | **8001 ms**   | **7344 ms** | 29.4 KB          | 0.8 KB    | 375 elements |
+| `/`           | **845 ms**    | **204 ms**  | 29.4 KB          | 0.8 KB    | 321 elements |
+| `/claimables` | **979 ms**    | **192 ms**  | 29.6 KB          | 1.0 KB    | 200 elements |
+| `/app`        | **800 ms**    | **168 ms**  | 29.1 KB          | 0.5 KB    | 66 elements  |
+| `/admin`      | **1017 ms**   | **372 ms**  | 29.4 KB          | 0.8 KB    | 320 elements |
 
 ---
 
