@@ -200,10 +200,30 @@ describe('Keyword Classifier', () => {
       expect(result.score).toBeLessThan(30);
     });
 
-    it('Positive Case 4: Public compensation settlement with active claim invitation', () => {
+    it('Negative Case 8: IBBI Form G Resolution Applicant EOI (Non-Claimant)', () => {
       const result = scoreDocument({
-        text: 'Public Notice for Settlement and Refund Scheme for affected consumers. Notice inviting proof of claim and claim application submission for refund ordered to eligible depositors by deadline 30-09-2026.',
-        title: 'Public Notice for Consumer Compensation Settlement and Refund Scheme',
+        text: 'Corporate Insolvency Resolution Process: Form G - Invitation for Expression of Interest from prospective resolution applicants for Apex Buildtech Private Limited under Regulation 36A(1). Last date for receipt of expression of interest: 15-09-2026.',
+        title: 'Corporate Insolvency Resolution Process: Form G - Apex Buildtech Private Limited',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBe(0);
+      expect(result.reasoning).toContain('Form G');
+    });
+
+    it('Negative Case 9: RBI monetary penalty on cooperative bank (Live Shape)', () => {
+      const result = scoreDocument({
+        text: 'The Reserve Bank of India (RBI) has, by an order dated August 22, 2026, imposed a monetary penalty of Rs 5.00 Lakh on The Karad Urban Co-operative Bank Ltd., Karad, Maharashtra for non-compliance with the directions issued by RBI on Customer Protection. This action is based on deficiencies in regulatory compliance and is not intended to pronounce upon the validity of any transaction.',
+        title: 'PRESS RELEASE - RBI imposes monetary penalty on The Karad Urban Co-operative Bank Ltd.',
+      });
+      expect(result.isCandidate).toBe(false);
+      expect(result.score).toBe(0);
+      expect(result.reasoning).toContain('regulatory penalty');
+    });
+
+    it('Positive Case 5: RBI notice with explicit customer restitution and refund route', () => {
+      const result = scoreDocument({
+        text: 'The Reserve Bank of India has issued directions requiring the bank to repay depositors and commence refund to customers through the designated portal for claims. Notice inviting proof of claim from eligible depositors by last date for submission of claims 31-10-2026.',
+        title: 'RBI Directive on Repayment of Deposits and Refund to Depositors',
       });
       expect(result.isCandidate).toBe(true);
       expect(result.score).toBeGreaterThanOrEqual(30);

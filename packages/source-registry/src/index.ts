@@ -192,7 +192,6 @@ export const initialSources: SourceDefinition[] = [
   pibRssSource,
   sebiRssSource,
   rbiRssSource,
-  genericRssSource,
   rbiNotificationsRssSource,
   ibbiAnnouncementsSource,
   sebiPublicNoticesSource,

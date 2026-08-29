@@ -122,8 +122,52 @@ export function scoreDocument(
   const negative = evaluateKeywords(lowerText, lowerTitle, NEGATIVE_KEYWORDS);
 
   // Raw score: positive minus negative, clamped to [0, 100].
-  const raw = positive.total - negative.total;
-  const score = Math.max(0, Math.min(100, raw));
+  let raw = positive.total - negative.total;
+  let score = Math.max(0, Math.min(100, raw));
+
+  // Explicit deterministic context overrides:
+  // 1. Regulatory monetary penalties without explicit customer refund/repayment routes
+  const combinedText = `${lowerTitle} ${lowerText}`;
+  const isRegulatoryPenalty =
+    lowerTitle.includes('imposes monetary penalty') ||
+    lowerTitle.includes('monetary penalty on') ||
+    combinedText.includes('rbi imposes monetary penalty') ||
+    combinedText.includes('deficiencies in regulatory compliance');
+
+  const hasExplicitRestitutionRoute =
+    combinedText.includes('repay depositors') ||
+    combinedText.includes('repayment of deposits') ||
+    combinedText.includes('refund to depositors') ||
+    combinedText.includes('refund to customers') ||
+    combinedText.includes('reimbursement to customers') ||
+    combinedText.includes('portal for claims') ||
+    combinedText.includes('submit claim') ||
+    combinedText.includes('invitation of claims') ||
+    combinedText.includes('file claim') ||
+    combinedText.includes('proof of claim');
+
+  if (isRegulatoryPenalty && !hasExplicitRestitutionRoute) {
+    score = 0;
+  }
+
+  // 2. IBBI Form G / Resolution Applicant Expression of Interest notices
+  const isFormGEoi =
+    lowerTitle.includes('form g') ||
+    lowerTitle.includes('expression of interest') ||
+    combinedText.includes('expression of interest from prospective resolution applicants') ||
+    combinedText.includes('prospective resolution applicant') ||
+    combinedText.includes('receipt of expression of interest');
+
+  const isCreditorClaimNotice =
+    lowerTitle.includes('claims deadline') ||
+    lowerTitle.includes('public announcement of corporate insolvency') ||
+    combinedText.includes('proof of claim') ||
+    combinedText.includes('invitation of claims from creditors') ||
+    combinedText.includes('submission of claims by creditors');
+
+  if (isFormGEoi && !isCreditorClaimNotice) {
+    score = 0;
+  }
 
   const isCandidate = score >= threshold;
 
@@ -141,8 +185,15 @@ export function scoreDocument(
   const decision = isCandidate ? 'PASSES' : 'FAILS';
   const sourceNote = input.source ? ` [source: ${input.source}]` : '';
 
+  let contextNote = '';
+  if (isRegulatoryPenalty && !hasExplicitRestitutionRoute) {
+    contextNote = ' [Overridden: regulatory penalty without customer restitution route]';
+  } else if (isFormGEoi && !isCreditorClaimNotice) {
+    contextNote = ' [Overridden: Form G resolution applicant EOI (non-claimant)]';
+  }
+
   const reasoning =
-    `Scored ${score}/100 (threshold ${threshold}). ${decision}${sourceNote}. ` +
+    `Scored ${score}/100 (threshold ${threshold}). ${decision}${sourceNote}${contextNote}. ` +
     `Positive: ${positiveSummary}. Negative: ${negativeSummary}.`;
 
   return {

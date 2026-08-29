@@ -33,7 +33,7 @@ export interface SourceDocumentDedupItem {
 }
 
 export interface IDatabaseWriter {
-  createCrawlRun(status: string): Promise<string>;
+  createCrawlRun(status: string, runId?: string): Promise<string>;
   updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void>;
   createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string>;
   updateCrawlRunSource(id: string, updates: Partial<CrawlRunSource>): Promise<void>;
@@ -62,8 +62,8 @@ export class DatabaseWriter implements IDatabaseWriter {
     this.db = client ?? createAdminClient();
   }
 
-  async createCrawlRun(status: string): Promise<string> {
-    const id = crypto.randomUUID();
+  async createCrawlRun(status: string, runId?: string): Promise<string> {
+    const id = runId ?? crypto.randomUUID();
     const { error } = await this.db.from('crawl_runs').insert({
       id,
       started_at: new Date().toISOString(),
@@ -228,8 +228,8 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
 
   constructor(private initialSources?: SourceDefinition[]) {}
 
-  async createCrawlRun(status: string): Promise<string> {
-    const id = crypto.randomUUID();
+  async createCrawlRun(status: string, runId?: string): Promise<string> {
+    const id = runId ?? crypto.randomUUID();
     this.crawlRuns.set(id, { id, status, started_at: new Date().toISOString() });
     return id;
   }

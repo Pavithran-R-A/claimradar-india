@@ -625,7 +625,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   let crawlRunId: string | null = null;
   if (!options.dryRun) {
     try {
-      crawlRunId = await db.createCrawlRun('running');
+      crawlRunId = await db.createCrawlRun('running', runId);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Database error creating crawl_run';
       logger.error('pipeline', msg, { errorCode: 'DATABASE_ERROR' });
