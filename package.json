@@ -8,6 +8,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run --passWithNoTests",
     "format": "prettier --check .",
+    "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "crawler:daily": "pnpm --filter @claimradar/crawler dev -- daily",
     "crawler:source": "pnpm --filter @claimradar/crawler dev -- source",
