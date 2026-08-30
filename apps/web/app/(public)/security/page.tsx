@@ -36,8 +36,14 @@ export default function SecurityPage() {
       <h2>Vulnerability Management</h2>
       <p>
         We conduct regular security reviews and dependency audits. Critical vulnerabilities are
-        patched within 24 hours. We welcome responsible disclosure of security issues at
-        security@claimradar.example.
+        patched promptly. We welcome responsible disclosure of security issues via our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>
+        .
       </p>
 
       <h2>Data Minimisation</h2>
@@ -57,9 +63,15 @@ export default function SecurityPage() {
 
       <h2>Reporting a Vulnerability</h2>
       <p>
-        If you discover a security vulnerability, please report it to security@claimradar.example.
-        Include a description of the vulnerability, steps to reproduce, and any potential impact. We
-        will acknowledge receipt within 24 hours and work to resolve the issue promptly.
+        If you discover a security vulnerability, please report it through our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>
+        . Include a description of the vulnerability, steps to reproduce, and any potential impact.
+        We will review and investigate all valid reports.
       </p>
     </LegalPageTemplate>
   );

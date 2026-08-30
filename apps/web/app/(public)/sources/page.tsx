@@ -1,10 +1,9 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { MonitoredSourcesNetwork } from '@/components/landing/monitored-sources-network';
 import { ArrowRight, Landmark } from 'lucide-react';
-
-const supportEmail = 'support@claimradar.in';
 
 export default function SourcesPage() {
   return (
@@ -34,15 +33,15 @@ export default function SourcesPage() {
       <section className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm max-w-3xl mx-auto text-center">
         <h2 className="text-lg font-bold text-text-primary mb-2">Suggest an Official Source</h2>
         <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-4">
-          If there is an authentic official portal or regulatory source you believe our automated
-          ingestion desk should monitor, let our editorial team know.
+          If there is an authentic official portal or regulatory source you believe our team should
+          monitor, let our editorial desk know.
         </p>
-        <a
-          href={`mailto:${supportEmail}?subject=Official%20Source%20Suggestion`}
+        <Link
+          href="/contact"
           className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:underline"
         >
-          Contact Editorial Desk ({supportEmail}) <ArrowRight className="h-4 w-4" />
-        </a>
+          Contact Editorial Desk <ArrowRight className="h-4 w-4" />
+        </Link>
       </section>
     </div>
   );

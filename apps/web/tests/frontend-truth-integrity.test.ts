@@ -169,13 +169,96 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     }
   });
 
-  it('verifies Evidence Radar visual includes mandatory conceptual disclaimer microcopy', () => {
+  it('verifies Evidence Radar visual includes mandatory conceptual disclaimer microcopy and clean plain language', () => {
     const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
     const content = fs.readFileSync(radarPath, 'utf8');
 
-    expect(content).toContain('EVIDENCE RADAR');
-    expect(content).toContain('How ClaimRadar Monitors Sources');
-    expect(content).toContain('Illustration of ClaimRadar');
-    expect(content).toContain('not live activity');
+    expect(content).toContain('SOURCE VERIFICATION');
+    expect(content).toContain('Every listing is checked against the source.');
+    expect(content).toContain('Monitored official sources');
+    expect(content).toContain('Press Information Bureau');
+    expect(content).toContain(
+      'This shows our verification process. It is not a live activity feed.',
+    );
+    expect(content).toContain(
+      'ClaimRadar does not file claims or collect official filing fees. You act on the official portal.',
+    );
+
+    // Prohibit tiny text and old AI jargon
+    expect(content).not.toContain('text-[11px]');
+    expect(content).not.toContain('text-[10px]');
+    expect(content).not.toContain('text-[9px]');
+    expect(content).not.toContain('Monitored Statutory Authorities');
+    expect(content).not.toContain('Government Press Information');
+  });
+
+  it('prohibits placeholder domains, fake email addresses, and unstaffed SLA turnaround promises', () => {
+    const searchDirs = [
+      path.resolve(__dirname, '../components'),
+      path.resolve(__dirname, '../app/(public)'),
+    ];
+
+    const prohibitedStrings = [
+      'claimradar.example',
+      'support@claimradar.in',
+      'corrections@claimradar.in',
+      'grievance@claimradar.in',
+      'billing@claimradar.example',
+      'grievance@claimradar.example',
+      'press@claimradar.example',
+      'within 2 business days',
+      'within 4 business hours',
+      'within 48 hours',
+      'within 24 hours of receipt',
+      'Verified Ingestion Stream',
+      'Document Ingest',
+      'Evidence Desk Status',
+      'Current Ingestion & Verification Funnel',
+    ];
+
+    function checkDir(dir: string) {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          checkDir(full);
+        } else if (entry.isFile() && (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))) {
+          const content = fs.readFileSync(full, 'utf8');
+          for (const phrase of prohibitedStrings) {
+            expect(
+              content.includes(phrase),
+              `File ${path.relative(process.cwd(), full)} contains prohibited placeholder/jargon string: "${phrase}"`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+
+    for (const d of searchDirs) {
+      checkDir(d);
+    }
+  });
+
+  it('ensures zero-inventory empty directory renders human consumer copy without (0) counts', () => {
+    const pagePath = path.resolve(__dirname, '../app/(public)/page.tsx');
+    const pageContent = fs.readFileSync(pagePath, 'utf8');
+
+    expect(pageContent).toContain('Browse all verified notices (${items.length})');
+    expect(pageContent).toContain('Browse verified notices');
+    expect(pageContent).toContain('View directory (${items.length})');
+    expect(pageContent).toContain('View directory');
+    expect(pageContent).not.toContain('Browse all verified notices (0)');
+    expect(pageContent).not.toContain('View directory (0)');
+
+    const statePath = path.resolve(__dirname, '../components/repository-states.tsx');
+    const stateContent = fs.readFileSync(statePath, 'utf8');
+
+    expect(stateContent).toContain('Publication status');
+    expect(stateContent).toContain('No notice has cleared publication review yet');
+    expect(stateContent).toContain('How a notice becomes a listing');
+    expect(stateContent).toContain('Official notice found');
+    expect(stateContent).toContain('Source checked');
+    expect(stateContent).toContain('Editorial review');
+    expect(stateContent).toContain('Published with official link');
   });
 });

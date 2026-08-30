@@ -1,10 +1,33 @@
 import { z } from 'zod';
 
+const getEnv = (key: string): string | null => {
+  if (
+    typeof globalThis !== 'undefined' &&
+    (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+  ) {
+    return (
+      (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.[
+        key
+      ] || null
+    );
+  }
+  return null;
+};
+
+export const contactConfig = {
+  supportEmail: getEnv('NEXT_PUBLIC_SUPPORT_EMAIL'),
+  correctionsEmail: getEnv('NEXT_PUBLIC_CORRECTIONS_EMAIL'),
+  grievanceEmail: getEnv('NEXT_PUBLIC_GRIEVANCE_EMAIL'),
+  pressEmail: getEnv('NEXT_PUBLIC_PRESS_EMAIL'),
+  stagingNotice:
+    'Direct support email and formal contact channels will be published before unrestricted public release.',
+} as const;
+
 export const brandConfig = {
   siteName: 'ClaimRadar India',
   description: 'Discover and track claimable opportunities in India',
   url: 'https://claimradar.in',
-  supportEmail: 'support@claimradar.in',
+  supportEmail: contactConfig.supportEmail,
 } as const;
 
 export interface FeatureFlags {

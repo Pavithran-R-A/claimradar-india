@@ -31,9 +31,14 @@ export default function RefundPolicyPage() {
 
       <h2>4. How to Request a Refund</h2>
       <p>
-        To request a refund, email support@claimradar.example with your account email, subscription
-        plan, and reason for the refund request. Our team will process your request within 5
-        business days.
+        To request a refund, contact us through our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>{' '}
+        with your account email, subscription plan, and reason for the refund request.
       </p>
 
       <h2>5. Refund Processing</h2>

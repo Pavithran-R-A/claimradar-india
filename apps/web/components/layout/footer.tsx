@@ -7,7 +7,6 @@ import { ShieldCheck } from 'lucide-react';
 
 const brandConfig = {
   siteName: 'ClaimRadar India',
-  supportEmail: 'support@claimradar.in',
 } as const;
 
 const navigationGroups = [
@@ -44,6 +43,7 @@ const navigationGroups = [
 ] as const;
 
 const utilityLinks = [
+  { href: '/contact', label: 'Contact' },
   { href: '/disclaimer', label: 'Disclaimer' },
   { href: '/cookie-policy', label: 'Cookie policy' },
   { href: '/acceptable-use', label: 'Acceptable use' },
@@ -109,13 +109,6 @@ export function Footer() {
         {/* Bottom Utility Row */}
         <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <a
-              href={`mailto:${brandConfig.supportEmail}`}
-              className="text-slate-300 hover:text-white transition-colors"
-            >
-              {brandConfig.supportEmail}
-            </a>
-            <span className="text-slate-600 hidden sm:inline">•</span>
             {utilityLinks.map((link) => (
               <Link
                 key={link.href}

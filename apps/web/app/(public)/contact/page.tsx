@@ -1,4 +1,6 @@
 import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-page';
+import { contactConfig } from '@claimradar/config';
+import Link from 'next/link';
 
 export const metadata = generateLegalMetadata(
   'Contact Us',
@@ -7,88 +9,99 @@ export const metadata = generateLegalMetadata(
 
 export default function ContactPage() {
   return (
-    <LegalPageTemplate title="Contact Us" lastUpdated="July 27, 2026">
+    <LegalPageTemplate title="Contact Us" lastUpdated="August 30, 2026">
       <p className="text-base">We are here to help. Reach out to us through the channels below.</p>
 
       <h2>General Enquiries</h2>
       <p>For general questions about the Platform, features, or your account:</p>
-      <p>
-        <a
-          href="mailto:support@claimradar.example"
-          className="text-trust-primary hover:text-trust-primary-hover"
-        >
-          support@claimradar.example
-        </a>
-      </p>
-      <p>We aim to respond to all enquiries within 2 business days.</p>
+      {contactConfig.supportEmail ? (
+        <p>
+          <a
+            href={`mailto:${contactConfig.supportEmail}`}
+            className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+          >
+            {contactConfig.supportEmail}
+          </a>
+        </p>
+      ) : (
+        <p className="text-text-secondary italic">
+          Direct support email will be enabled before public launch.
+        </p>
+      )}
+      <p>We review incoming enquiries as soon as practicable during normal editorial operations.</p>
 
       <h2>Corrections &amp; Error Reports</h2>
       <p>To report incorrect information on the Platform:</p>
+      {contactConfig.correctionsEmail ? (
+        <p>
+          <a
+            href={`mailto:${contactConfig.correctionsEmail}`}
+            className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+          >
+            {contactConfig.correctionsEmail}
+          </a>
+        </p>
+      ) : (
+        <p className="text-text-secondary italic">
+          Dedicated corrections email will be enabled before public launch.
+        </p>
+      )}
       <p>
-        <a
-          href="mailto:corrections@claimradar.example"
-          className="text-trust-primary hover:text-trust-primary-hover"
+        Please include the listing URL and a link or citation to the official government source. See
+        our{' '}
+        <Link
+          href="/corrections"
+          className="text-trust-primary hover:text-trust-primary-hover underline"
         >
-          corrections@claimradar.example
-        </a>
-      </p>
-      <p>
-        Please include the listing URL and a description of the error. See our Corrections page for
-        the full correction workflow.
+          Corrections page
+        </Link>{' '}
+        for the full verification and retraction process.
       </p>
 
-      <h2>Billing &amp; Subscriptions</h2>
-      <p>For questions about your subscription, billing, or refund requests:</p>
+      <h2>Grievance &amp; Escalations</h2>
       <p>
-        <a
-          href="mailto:billing@claimradar.example"
-          className="text-trust-primary hover:text-trust-primary-hover"
-        >
-          billing@claimradar.example
-        </a>
+        Formal grievance contact channels and designated officer details will be published prior to
+        unrestricted public release as part of our governance pre-launch requirements.
       </p>
-      <p>Include your account email and subscription plan in your message for faster resolution.</p>
-
-      <h2>Grievance Officer</h2>
-      <p>As required under Indian law, our designated Grievance Officer can be contacted at:</p>
-      <p>
-        <a
-          href="mailto:grievance@claimradar.example"
-          className="text-trust-primary hover:text-trust-primary-hover"
-        >
-          grievance@claimradar.example
-        </a>
-      </p>
-      <p>
-        The Grievance Officer will acknowledge your complaint within 48 hours and resolve it within
-        30 days of receipt.
-      </p>
+      {contactConfig.grievanceEmail ? (
+        <p>
+          <a
+            href={`mailto:${contactConfig.grievanceEmail}`}
+            className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+          >
+            {contactConfig.grievanceEmail}
+          </a>
+        </p>
+      ) : (
+        <p className="text-text-secondary italic">
+          Grievance officer contact channel will be published prior to unrestricted public release.
+        </p>
+      )}
 
       <h2>Press &amp; Media</h2>
-      <p>For press enquiries, interviews, or partnership discussions:</p>
-      <p>
-        <a
-          href="mailto:press@claimradar.example"
-          className="text-trust-primary hover:text-trust-primary-hover"
-        >
-          press@claimradar.example
-        </a>
-      </p>
+      <p>For press enquiries or official communications:</p>
+      {contactConfig.pressEmail ? (
+        <p>
+          <a
+            href={`mailto:${contactConfig.pressEmail}`}
+            className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+          >
+            {contactConfig.pressEmail}
+          </a>
+        </p>
+      ) : (
+        <p className="text-text-secondary italic">
+          Press inquiries channel will be published prior to unrestricted public launch.
+        </p>
+      )}
 
       <h2>What We Do Not Provide</h2>
       <ul>
-        <li>We do not provide legal advice via email or any other channel</li>
+        <li>We do not provide legal or financial advice via email or any other channel</li>
         <li>We do not file claims or complaints on behalf of users</li>
+        <li>We do not collect government or regulatory filing fees</li>
         <li>We do not share individual claim outcomes or user data with third parties</li>
       </ul>
-
-      <div className="mt-10 rounded-lg border border-border bg-surface p-6">
-        <h3 className="text-lg font-semibold text-text-primary">Contact form</h3>
-        <p className="mt-2 text-sm text-text-secondary">
-          An interactive contact form will be available soon. In the meantime, please email us
-          directly at the addresses listed above.
-        </p>
-      </div>
     </LegalPageTemplate>
   );
 }

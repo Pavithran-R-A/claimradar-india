@@ -5,11 +5,11 @@ import { Landmark, FileText, CheckCircle2, ShieldAlert, ExternalLink } from 'luc
 import { cn } from '@claimradar/design-system';
 
 const MONITORED_AUTHORITIES = [
-  { code: 'SEBI', name: 'Securities & Exchange Board' },
+  { code: 'SEBI', name: 'Securities & Exchange Board of India' },
   { code: 'RBI', name: 'Reserve Bank of India' },
-  { code: 'IBBI', name: 'Insolvency & Bankruptcy' },
-  { code: 'TRAI', name: 'Telecom Regulatory Authority' },
-  { code: 'PIB', name: 'Government Press Information' },
+  { code: 'IBBI', name: 'Insolvency & Bankruptcy Board of India' },
+  { code: 'TRAI', name: 'Telecom Regulatory Authority of India' },
+  { code: 'PIB', name: 'Press Information Bureau' },
 ];
 
 const VERIFICATION_STEPS = [
@@ -62,19 +62,19 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       <div className="border-b border-white/10 pb-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-brand-bright">
-            EVIDENCE RADAR
+            SOURCE VERIFICATION
           </span>
-          <span className="text-xs text-slate-400">How ClaimRadar Monitors Sources</span>
+          <span className="text-xs text-slate-400">Official Source Standards</span>
         </div>
         <h2 className="mt-1.5 text-base sm:text-lg font-bold text-white tracking-tight font-serif">
           Every listing is checked against the source.
         </h2>
       </div>
 
-      {/* Monitored Statutory Authorities Row */}
+      {/* Monitored Official Sources Row */}
       <div className="my-4 rounded-lg border border-white/10 bg-white/5 p-3">
         <div className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-          Monitored Statutory Authorities
+          Monitored official sources
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {MONITORED_AUTHORITIES.map((auth) => (
@@ -116,10 +116,13 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       </div>
 
       {/* Grounded Guarantee Footer */}
-      <div className="mt-5 border-t border-white/10 pt-3.5 text-center text-xs text-slate-400">
-        <div>No filing fees · No personal data sold · Direct official portal handoff</div>
-        <div className="mt-1 text-[11px] text-slate-500">
-          Illustration of ClaimRadar verification standards — not live activity.
+      <div className="mt-5 border-t border-white/10 pt-3.5 text-center text-xs text-slate-300">
+        <div>
+          ClaimRadar does not file claims or collect official filing fees. You act on the official
+          portal.
+        </div>
+        <div className="mt-1 text-xs text-slate-400">
+          This shows our verification process. It is not a live activity feed.
         </div>
       </div>
     </div>

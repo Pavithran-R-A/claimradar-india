@@ -70,7 +70,16 @@ export default function PrivacyPage() {
         <li>Portability: You can request your data in a portable format</li>
         <li>Objection: You can object to certain processing activities</li>
       </ul>
-      <p>To exercise any of these rights, contact us at support@claimradar.example.</p>
+      <p>
+        To exercise any of these rights, reach out to us through our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>
+        .
+      </p>
 
       <h2>7. Children</h2>
       <p>
@@ -88,8 +97,14 @@ export default function PrivacyPage() {
 
       <h2>9. Contact</h2>
       <p>
-        For privacy-related inquiries, email us at support@claimradar.example. Our data protection
-        officer can be reached at the same address.
+        For privacy-related inquiries, reach out through our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>
+        .
       </p>
     </LegalPageTemplate>
   );

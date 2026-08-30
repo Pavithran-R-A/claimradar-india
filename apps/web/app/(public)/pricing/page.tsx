@@ -136,7 +136,7 @@ export default function PricingPage() {
             },
             {
               q: 'Do you offer discounts for students or NGOs?',
-              a: 'We are evaluating special pricing for students, NGOs and senior citizens. Contact us at support@claimradar.example if you are interested.',
+              a: 'We are evaluating special pricing for students, NGOs and senior citizens. Reach out through our contact page if you are interested.',
             },
             {
               q: 'Is my payment information secure?',

@@ -63,8 +63,14 @@ export default function AcceptableUsePage() {
 
       <h2>6. Reporting Violations</h2>
       <p>
-        If you believe someone is violating this policy, please report it to
-        support@claimradar.example with details of the suspected violation.
+        If you believe someone is violating this policy, please report it via our{' '}
+        <a
+          href="/contact"
+          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
+        >
+          Contact page
+        </a>{' '}
+        with details of the suspected violation.
       </p>
     </LegalPageTemplate>
   );

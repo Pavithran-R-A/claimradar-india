@@ -129,7 +129,11 @@ export default async function LandingPage() {
                   href="/claimables"
                   className="inline-flex items-center gap-1.5 text-brand-bright hover:text-white transition-colors"
                 >
-                  <span>Browse all verified notices ({items.length})</span>
+                  <span>
+                    {items.length > 0
+                      ? `Browse all verified notices (${items.length})`
+                      : 'Browse verified notices'}
+                  </span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <span className="text-slate-600">•</span>
@@ -191,7 +195,7 @@ export default async function LandingPage() {
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end mb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Verified Ingestion Stream
+              Verified notices
             </span>
             <h2
               id="latest-opps-heading"
@@ -208,7 +212,7 @@ export default async function LandingPage() {
             href="/claimables"
             className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover"
           >
-            <span>View directory ({items.length})</span>
+            <span>{items.length > 0 ? `View directory (${items.length})` : 'View directory'}</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

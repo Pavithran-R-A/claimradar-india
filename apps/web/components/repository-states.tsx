@@ -46,8 +46,8 @@ export function DataUnavailableNotice({ message }: { message: string }) {
  * Explains the strict verification funnel and builds customer trust when 0 records are published.
  */
 export function EmptyDirectoryNotice({
-  title = 'No opportunity has cleared publication review yet',
-  body = 'ClaimRadar deliberately leaves the public directory empty rather than publish weakly supported claims or unverified notices.',
+  title = 'No notice has cleared publication review yet',
+  body = 'We are monitoring official sources. A notice appears here only after its source, details and action route have been checked.',
   showActions = true,
 }: {
   title?: string;
@@ -59,7 +59,7 @@ export function EmptyDirectoryNotice({
       {/* Top Badge */}
       <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-4">
         <ShieldCheck className="h-4 w-4" />
-        Evidence Desk Status
+        Publication status
       </div>
 
       <h2 className="text-xl sm:text-2xl font-extrabold text-text-primary tracking-tight">
@@ -72,13 +72,13 @@ export function EmptyDirectoryNotice({
       {/* 4-Stage Verification Filter Visual */}
       <div className="mt-8 rounded-xl border border-border/80 bg-surface-strong p-4 text-left">
         <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
-          Current Ingestion & Verification Funnel
+          How a notice becomes a listing
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">01</span>
             <div>
-              <span className="font-semibold text-text-primary block">Official Notices</span>
+              <span className="font-semibold text-text-primary block">Official notice found</span>
               <span className="text-xs text-text-muted">
                 Crawled from SEBI, RBI, IBBI, TRAI, PIB
               </span>
@@ -87,21 +87,23 @@ export function EmptyDirectoryNotice({
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">02</span>
             <div>
-              <span className="font-semibold text-text-primary block">Document Ingest</span>
+              <span className="font-semibold text-text-primary block">Source checked</span>
               <span className="text-xs text-text-muted">PDF & order verification</span>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">03</span>
             <div>
-              <span className="font-semibold text-text-primary block">Editorial Review</span>
+              <span className="font-semibold text-text-primary block">Editorial review</span>
               <span className="text-xs text-text-muted">Human verification gate</span>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">04</span>
             <div>
-              <span className="font-semibold text-text-primary block">Public Listing</span>
+              <span className="font-semibold text-text-primary block">
+                Published with official link
+              </span>
               <span className="text-xs text-text-muted">Grounded with direct links</span>
             </div>
           </div>

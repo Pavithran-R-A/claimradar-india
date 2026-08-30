@@ -55,7 +55,7 @@ const faqItems = [
   {
     question: 'How do I report an error or outdated information?',
     answer:
-      'Visit our Corrections page or email support@claimradar.in with the listing URL, a description of the error, and a link to the official source if available. Our editorial team reviews all correction requests against the underlying official order.',
+      'Visit our Corrections page to submit the listing URL, a description of the error, and a link or citation to the authentic official source. Our editorial team reviews all correction requests against the underlying official order.',
   },
   {
     question: 'Can I cancel my subscription at any time?',
@@ -94,13 +94,14 @@ export default function FaqPage() {
       <div className="mt-12 rounded-lg border border-border bg-surface p-8 text-center">
         <h2 className="text-lg font-semibold text-text-primary">Still have questions?</h2>
         <p className="mt-2 text-sm text-text-secondary">
-          Our team is here to help. Reach out and we will get back to you within 2 business days.
+          Our team is here to help. Reach out through our contact page and we will review your
+          question.
         </p>
         <Link
           href="/contact"
-          className="mt-4 inline-flex h-10 items-center rounded-md bg-trust-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
+          className="mt-4 inline-flex items-center rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary/90"
         >
-          Contact Us
+          Contact us
         </Link>
       </div>
     </div>
