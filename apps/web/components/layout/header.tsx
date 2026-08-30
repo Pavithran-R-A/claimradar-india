@@ -187,14 +187,14 @@ export function Header() {
 
             {/* Mobile Actions in Drawer */}
             <div className="border-t border-border pt-4 flex flex-col gap-2.5">
-              <Link href="/login" className="w-full">
+              <Link href="/login" className="block w-full">
                 <Button variant="outline" size="lg" className="w-full justify-center rounded-lg">
                   <User className="mr-2 h-4 w-4" />
                   Sign in to account
                 </Button>
               </Link>
 
-              <Link href="/register" className="w-full">
+              <Link href="/register" className="block w-full">
                 <Button
                   variant="default"
                   size="lg"
