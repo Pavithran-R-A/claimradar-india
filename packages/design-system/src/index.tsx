@@ -581,7 +581,8 @@ const authorityStyles: Record<string, string> = {
   ibbi: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
   trai: 'bg-teal-500/10 text-teal-700 border-teal-500/20 dark:bg-teal-500/20 dark:text-teal-300 dark:border-teal-500/30',
   pib: 'bg-amber-500/10 text-amber-800 border-amber-500/25 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30',
-  default: 'bg-slate-500/10 text-slate-700 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30',
+  default:
+    'bg-slate-500/10 text-slate-700 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30',
 };
 
 export interface AuthorityBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -598,18 +599,17 @@ export function AuthorityBadge({
   ...props
 }: AuthorityBadgeProps) {
   const key = authority.toLowerCase();
-  const matchedKey =
-    key.includes('sebi')
-      ? 'sebi'
-      : key.includes('rbi')
-        ? 'rbi'
-        : key.includes('ibbi')
-          ? 'ibbi'
-          : key.includes('trai')
-            ? 'trai'
-            : key.includes('pib')
-              ? 'pib'
-              : 'default';
+  const matchedKey = key.includes('sebi')
+    ? 'sebi'
+    : key.includes('rbi')
+      ? 'rbi'
+      : key.includes('ibbi')
+        ? 'ibbi'
+        : key.includes('trai')
+          ? 'trai'
+          : key.includes('pib')
+            ? 'pib'
+            : 'default';
 
   const style = authorityStyles[matchedKey] || authorityStyles.default;
   const label = shortName || authority.toUpperCase();
@@ -656,7 +656,11 @@ export function DecisionCallout({
 
   return (
     <div
-      className={cn('rounded-r-lg p-4 sm:p-5 text-sm leading-relaxed shadow-sm', variantStyles[variant], className)}
+      className={cn(
+        'rounded-r-lg p-4 sm:p-5 text-sm leading-relaxed shadow-sm',
+        variantStyles[variant],
+        className,
+      )}
       {...props}
     >
       {(title || icon) && (

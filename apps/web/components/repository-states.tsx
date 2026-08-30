@@ -79,7 +79,9 @@ export function EmptyDirectoryNotice({
             <span className="font-bold text-trust-primary">01</span>
             <div>
               <span className="font-semibold text-text-primary block">Official Notices</span>
-              <span className="text-[11px] text-text-muted">Crawled from SEBI, RBI, IBBI, TRAI, PIB</span>
+              <span className="text-[11px] text-text-muted">
+                Crawled from SEBI, RBI, IBBI, TRAI, PIB
+              </span>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
