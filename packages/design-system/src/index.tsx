@@ -572,6 +572,105 @@ export function Alert({ className, variant, title, children, ...props }: AlertPr
 }
 
 /* -------------------------------------------------------------------------- */
+/*  AuthorityBadge                                                             */
+/* -------------------------------------------------------------------------- */
+
+const authorityStyles: Record<string, string> = {
+  sebi: 'bg-sky-500/10 text-sky-700 border-sky-500/20 dark:bg-sky-500/20 dark:text-sky-300 dark:border-sky-500/30',
+  rbi: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30',
+  ibbi: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
+  trai: 'bg-teal-500/10 text-teal-700 border-teal-500/20 dark:bg-teal-500/20 dark:text-teal-300 dark:border-teal-500/30',
+  pib: 'bg-amber-500/10 text-amber-800 border-amber-500/25 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30',
+  default: 'bg-slate-500/10 text-slate-700 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30',
+};
+
+export interface AuthorityBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  authority: string;
+  shortName?: string;
+  size?: 'sm' | 'md';
+}
+
+export function AuthorityBadge({
+  authority,
+  shortName,
+  size = 'md',
+  className,
+  ...props
+}: AuthorityBadgeProps) {
+  const key = authority.toLowerCase();
+  const matchedKey =
+    key.includes('sebi')
+      ? 'sebi'
+      : key.includes('rbi')
+        ? 'rbi'
+        : key.includes('ibbi')
+          ? 'ibbi'
+          : key.includes('trai')
+            ? 'trai'
+            : key.includes('pib')
+              ? 'pib'
+              : 'default';
+
+  const style = authorityStyles[matchedKey] || authorityStyles.default;
+  const label = shortName || authority.toUpperCase();
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center font-mono font-bold tracking-wider uppercase rounded border transition-colors',
+        size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs',
+        style,
+        className,
+      )}
+      {...props}
+    >
+      {label}
+    </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  DecisionCallout                                                            */
+/* -------------------------------------------------------------------------- */
+
+export interface DecisionCalloutProps extends React.HTMLAttributes<HTMLDivElement> {
+  title?: string;
+  variant?: 'editorial' | 'official' | 'warning' | 'neutral';
+  icon?: React.ReactNode;
+}
+
+export function DecisionCallout({
+  className,
+  title,
+  variant = 'editorial',
+  icon,
+  children,
+  ...props
+}: DecisionCalloutProps) {
+  const variantStyles = {
+    editorial: 'border-l-4 border-l-trust-primary bg-surface border border-border/80',
+    official: 'border-l-4 border-l-brand-bright bg-surface-strong/80 border border-border',
+    warning: 'border-l-4 border-l-deadline bg-deadline-background/40 border border-deadline/20',
+    neutral: 'border-l-4 border-l-text-muted bg-surface-strong border border-border',
+  };
+
+  return (
+    <div
+      className={cn('rounded-r-lg p-4 sm:p-5 text-sm leading-relaxed shadow-sm', variantStyles[variant], className)}
+      {...props}
+    >
+      {(title || icon) && (
+        <div className="flex items-center gap-2 mb-1.5 font-bold text-text-primary">
+          {icon}
+          {title && <span>{title}</span>}
+        </div>
+      )}
+      <div className="text-text-secondary text-xs sm:text-sm">{children}</div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Re-exports                                                                 */
 /* -------------------------------------------------------------------------- */
 

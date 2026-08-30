@@ -32,22 +32,22 @@
 /* Public site: white content surfaces on off-white, teal actions,
    saffron reserved for deadlines, red only for errors/expiry. */
 .theme-light {
-  --c-background: 246 247 244; /* off-white paper */
-  --c-background-elevated: 238 240 235;
-  --c-surface: 255 255 255; /* white card */
-  --c-surface-strong: 243 245 240;
-  --c-border: rgba(17, 24, 39, 0.12);
-  --c-text-primary: 17 24 39; /* gray-900 */
-  --c-text-secondary: 55 65 81; /* gray-700 */
-  --c-text-muted: 107 114 128; /* gray-500 */
-  --c-trust-primary: 15 118 110; /* teal-700 — 4.9:1 with white text */
-  --c-trust-primary-hover: 17 94 89; /* teal-800 */
-  --c-success: 4 120 87; /* emerald-700 */
-  --c-deadline: 158 74 8; /* saffron, AA on white */
-  --c-danger: 185 28 28; /* red-700 */
-  --c-info: 29 78 216; /* blue-700 */
-  --c-verified-background: rgba(4, 120, 87, 0.09);
-  --c-deadline-background: rgba(180, 83, 9, 0.1);
+  --c-background: 248 250 252; /* #F8FAFC slate-50 */
+  --c-background-elevated: 241 245 249; /* #F1F5F9 slate-100 */
+  --c-surface: 255 255 255; /* #FFFFFF crisp white */
+  --c-surface-strong: 241 245 249; /* #F1F5F9 */
+  --c-border: rgba(15, 23, 42, 0.1);
+  --c-text-primary: 15 23 42; /* #0F172A slate-900 */
+  --c-text-secondary: 71 85 105; /* #475569 slate-600 */
+  --c-text-muted: 100 116 139; /* #64748B slate-500 */
+  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (4.9:1 with white) */
+  --c-trust-primary-hover: 17 94 89; /* #115E59 teal-800 */
+  --c-success: 4 120 87; /* #047857 emerald-700 */
+  --c-deadline: 180 83 9; /* #B45309 amber-700 */
+  --c-danger: 185 28 28; /* #B91C1C red-700 */
+  --c-info: 29 78 216; /* #1D4ED8 blue-700 */
+  --c-verified-background: rgba(4, 120, 87, 0.08);
+  --c-deadline-background: rgba(180, 83, 9, 0.08);
 }
 
 html {
