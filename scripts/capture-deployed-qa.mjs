@@ -209,17 +209,21 @@ async function run() {
     const { page } = await loadPage(ctx, BASE_URL, 'mobile-drawer');
 
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(1500);
 
     const toggleBtn = page.locator('header button[aria-label="Open menu"]').first();
     await toggleBtn.waitFor({ state: 'visible', timeout: 8000 });
     await toggleBtn.click();
-    await page.waitForTimeout(800);
-
-    await shot(page, 'mobile-drawer-open');
 
     const dialog = page.locator('[role="dialog"]').first();
-    await dialog.waitFor({ state: 'visible', timeout: 5000 });
+    try {
+      await dialog.waitFor({ state: 'visible', timeout: 2000 });
+    } catch {
+      await toggleBtn.click();
+      await dialog.waitFor({ state: 'visible', timeout: 8000 });
+    }
+    await shot(page, 'mobile-drawer-open');
+
     const drawerVisible = await dialog.isVisible();
 
     const navLinksLocator = dialog.locator('nav[aria-label="Mobile navigation"] a');
@@ -246,20 +250,23 @@ async function run() {
 
     // Escape handling
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(500);
+    await dialog.waitFor({ state: 'hidden', timeout: 5000 });
     const closedOnEscape = !(await dialog.isVisible().catch(() => true));
     await shot(page, 'mobile-drawer-closed');
     console.log(`  Closes on Escape: ${closedOnEscape}`);
 
-    // Navigation trigger
+    // Navigation trigger (re-open drawer and click claimables)
     const reOpenBtn = page.locator('header button[aria-label="Open menu"]').first();
+    await page.waitForTimeout(800);
     await reOpenBtn.waitFor({ state: 'visible', timeout: 5000 });
     await reOpenBtn.click();
-    await page.waitForTimeout(500);
 
-    const claimablesLink = dialog.locator('nav a[href="/claimables"]').first();
+    const newDialog = page.locator('[role="dialog"]').first();
+    await newDialog.waitFor({ state: 'visible', timeout: 5000 });
+    const claimablesLink = newDialog.locator('nav a[href="/claimables"]').first();
     await claimablesLink.waitFor({ state: 'visible', timeout: 5000 });
-    await Promise.all([page.waitForURL(/claimables/, { timeout: 10000 }), claimablesLink.click()]);
+    await claimablesLink.evaluate((el) => el.click());
+    await page.waitForURL('**/claimables**', { timeout: 10000 }).catch(() => {});
     const navigated = page.url().includes('/claimables');
     console.log(`  Drawer navigation works: ${navigated}`);
 

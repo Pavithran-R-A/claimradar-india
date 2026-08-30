@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://claimradar-staging.vercel.app",
-  "timestamp": "2026-08-30T05:34:08.106Z",
+  "timestamp": "2026-08-30T07:56:36.826Z",
   "pages": {
     "home-desktop-1536": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
@@ -132,14 +132,14 @@
     },
     "sources-1440": {
       "title": "ClaimRadar India",
-      "h1": "Monitored Sources & Regulators",
+      "h1": "Monitored Official Sources",
       "status": 200,
       "finalUrl": "https://claimradar-staging.vercel.app/sources",
       "viewport": "1440x900"
     },
     "sources-390": {
       "title": "ClaimRadar India",
-      "h1": "Monitored Sources & Regulators",
+      "h1": "Monitored Official Sources",
       "status": 200,
       "finalUrl": "https://claimradar-staging.vercel.app/sources",
       "viewport": "390x844"
@@ -243,10 +243,10 @@
   "mobileDrawer": {
     "drawerVisible": true,
     "navLinksText": ["Find claims", "Closing soon", "Companies", "Sectors", "How it works"],
-    "signInVisible": false,
-    "getAlertsVisible": false,
+    "signInVisible": true,
+    "getAlertsVisible": true,
     "closedOnEscape": true,
-    "navigated": false
+    "navigated": true
   },
   "floatingControls": {
     "desktop-1536": 0,
