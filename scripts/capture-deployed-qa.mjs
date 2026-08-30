@@ -210,8 +210,9 @@ async function run() {
     await page.waitForTimeout(300);
 
     const toggleBtn = page.locator('header button[aria-label="Open menu"]').first();
-    await toggleBtn.click({ force: true });
-    await page.waitForTimeout(600);
+    await toggleBtn.waitFor({ state: 'visible', timeout: 8000 });
+    await toggleBtn.click();
+    await page.waitForTimeout(800);
 
     await shot(page, 'mobile-drawer-open');
 
@@ -221,11 +222,11 @@ async function run() {
       .locator('nav[aria-label="Mobile navigation"] a')
       .allTextContents()
       .catch(() => []);
-    const signInVisible = await page
+    const signInVisible = await dialog
       .locator('a[href="/login"]')
       .isVisible()
       .catch(() => false);
-    const getAlertsVisible = await page
+    const getAlertsVisible = await dialog
       .locator('a[href="/register"]')
       .isVisible()
       .catch(() => false);
@@ -243,11 +244,12 @@ async function run() {
     console.log(`  Closes on Escape: ${closedOnEscape}`);
 
     // Navigation trigger
-    await toggleBtn.click({ force: true });
+    const reOpenBtn = page.locator('header button[aria-label="Open menu"]').first();
+    await reOpenBtn.click();
     await page.waitForTimeout(500);
-    const claimablesLink = page.locator('[role="dialog"] a[href="/claimables"]').first();
+    const claimablesLink = dialog.locator('nav a[href="/claimables"]').first();
     const navigated = await claimablesLink
-      .click({ force: true })
+      .click()
       .then(() => page.waitForURL(/claimables/, { timeout: 10000 }))
       .then(() => page.url().includes('/claimables'))
       .catch(() => false);
