@@ -1,15 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import {
-  evaluateSoakMetrics,
+  validateSoakExecution,
   calculateElapsedSoakHours,
   calculateExpectedSoakRuns,
-  isRunValidSoakExecution,
+  evaluateSoakProvenance,
 } from '../../../scripts/summarize-soak-readiness.mjs';
 
 const mockBaselineConfig = {
   runtimeFreezeHead: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
   finalSoakBaselineGhaRun: '33310672900',
   finalSoakBaselineHead: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+  finalSoakBaselineCrawlRunId: '192c24d3-bcbb-4c21-bb38-b737be5261c0',
   finalSoakStartUtc: '2026-08-30T12:08:03Z',
   scheduleIntervalHours: 6,
   thresholdHours48: 48,
@@ -18,256 +19,320 @@ const mockBaselineConfig = {
   minRunsFor72h: 12,
 };
 
-function createMockRun(overrides = {}) {
+function createMockSoakSample(overrides = {}) {
+  const crawlRunId = 'crawl-' + Math.random().toString(36).substring(7);
   return {
-    id: 'test-run-' + Math.random().toString(36).substring(7),
-    started_at: '2026-08-30T12:08:03.000Z',
-    completed_at: '2026-08-30T12:12:01.000Z',
-    status: 'completed',
-    sources_attempted: 7,
-    sources_succeeded: 7,
-    sources_failed: 0,
-    documents_discovered: 106,
-    candidates_created: 0,
-    error_count: 0,
-    unexpected_error_count: 0,
-    records_published: 0,
-    metadata: {
+    executionType: 'FINAL_SOAK',
+    workflowRun: {
+      id: 'gha-' + Math.random().toString(36).substring(7),
+      workflow: 'staging-soak.yml',
+      conclusion: 'success',
+      headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+      startedAt: '2026-08-30T12:08:03Z',
+    },
+    summary: {
+      sourcesAttempted: 7,
+      sourcesSucceeded: 7,
+      sourcesFailed: 0,
+      documentsDiscovered: 106,
+      documentsFetched: 106,
+      errorCount: 0,
+      unexpectedErrorCount: 0,
+      recordsPublished: 0,
       effectivePolicyGuards: {
         APP_ENV: 'staging',
         AUTO_VERIFY_CLAIMABLES: false,
         ENABLE_BILLING: false,
         NOTIFY_CUSTOMERS_ENABLED: false,
+        LIVE_ADAPTERS_ENABLED: true,
       },
     },
+    crawlRunId,
+    dbCrawlRun: {
+      id: crawlRunId,
+      status: 'completed',
+      started_at: '2026-08-30T12:09:55Z',
+      sources_attempted: 7,
+      sources_succeeded: 7,
+      documents_discovered: 106,
+      metadata: {},
+    },
+    dbSources: Array.from({ length: 7 }, (_, i) => ({
+      id: 'source-' + i,
+      crawl_run_id: crawlRunId,
+      source_id: 'src-' + i,
+      status: 'completed',
+      documents_found: 15,
+      error_message: null,
+    })),
+    dbErrors: [],
     ...overrides,
   };
 }
 
-describe('Soak Readiness Accounting & Baseline Scoping', () => {
-  it('A: excludes old successful runs before baseline from final soak count', () => {
-    const oldRun = createMockRun({
-      started_at: '2026-08-29T10:00:00.000Z',
-      completed_at: '2026-08-29T10:02:00.000Z',
-    });
-    const currentRun = createMockRun({
-      started_at: '2026-08-30T12:09:00.000Z',
-      completed_at: '2026-08-30T12:11:00.000Z',
-    });
-
-    const metrics = evaluateSoakMetrics(
-      [oldRun, currentRun],
-      mockBaselineConfig,
-      new Date('2026-08-30T13:08:03Z'),
-    );
-
-    expect(metrics.preBaselineRunsCount).toBe(1);
-    expect(metrics.finalSoakRunsCount).toBe(1);
-    expect(metrics.validFinalSoakRunsCount).toBe(1);
+describe('Soak Provenance & Fail-Closed Accounting', () => {
+  it('A: validates an authentic GHA staging-soak execution with matching summary and DB evidence', () => {
+    const sample = createMockSoakSample();
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(true);
+    expect(res.evidenceStatus).toBe('PROVEN_VALID');
+    expect(res.failureReason).toBeNull();
   });
 
-  it('B: excludes old failed runs before baseline from FINAL_FAILED_SOAK_RUNS', () => {
-    const oldFailedRun = createMockRun({
-      started_at: '2026-08-29T12:00:00.000Z',
-      status: 'failed',
-      sources_failed: 2,
-    });
-    const validPostBaselineRun = createMockRun({
-      started_at: '2026-08-30T12:08:03.000Z',
-    });
-
-    const metrics = evaluateSoakMetrics(
-      [oldFailedRun, validPostBaselineRun],
-      mockBaselineConfig,
-      new Date('2026-08-30T13:08:03Z'),
-    );
-
-    expect(metrics.preBaselineFailuresCount).toBe(1);
-    expect(metrics.failedFinalSoakRunsCount).toBe(0);
-    expect(metrics.validFinalSoakRunsCount).toBe(1);
+  it('B: fails closed when executionType is not FINAL_SOAK (e.g. MANUAL or DAILY_CRAWL)', () => {
+    const sample = createMockSoakSample({ executionType: 'MANUAL' });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.evidenceStatus).toBe('NON_SOAK_PROVENANCE');
   });
 
-  it('C: counts successful runs after baseline', () => {
-    const run1 = createMockRun({ started_at: '2026-08-30T12:08:03.000Z' });
-    const run2 = createMockRun({ started_at: '2026-08-30T18:17:00.000Z' });
-
-    const metrics = evaluateSoakMetrics(
-      [run1, run2],
-      mockBaselineConfig,
-      new Date('2026-08-30T19:00:00Z'),
-    );
-
-    expect(metrics.finalSoakRunsCount).toBe(2);
-    expect(metrics.validFinalSoakRunsCount).toBe(2);
-    expect(metrics.failedFinalSoakRunsCount).toBe(0);
+  it('C: fails closed when workflow is not staging-soak.yml', () => {
+    const sample = createMockSoakSample({
+      workflowRun: {
+        id: 'gha-123',
+        workflow: 'daily-crawl.yml',
+        conclusion: 'success',
+        startedAt: '2026-08-30T12:08:03Z',
+      },
+    });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.failureReason).toContain('INVALID_WORKFLOW_NAME');
   });
 
-  it('D: counts failed run after baseline as failure and prevents PASS', () => {
-    const run1 = createMockRun({ started_at: '2026-08-30T12:08:03.000Z' });
-    const run2Failed = createMockRun({
-      started_at: '2026-08-30T18:17:00.000Z',
-      status: 'failed',
-      error_count: 1,
+  it('D: fails closed when GHA conclusion is failed', () => {
+    const sample = createMockSoakSample({
+      workflowRun: {
+        id: 'gha-123',
+        workflow: 'staging-soak.yml',
+        conclusion: 'failure',
+        startedAt: '2026-08-30T12:08:03Z',
+      },
+    });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.evidenceStatus).toBe('FAILED');
+    expect(res.failureReason).toContain('WORKFLOW_CONCLUSION_NOT_SUCCESS');
+  });
+
+  it('E: fails closed when summary artifact is missing or undefined (never defaults to zero)', () => {
+    const sample = createMockSoakSample({ summary: undefined });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.failureReason).toBe('SUMMARY_ARTIFACT_MISSING');
+  });
+
+  it('F: fails closed when any policy guard property is missing or differs', () => {
+    const missingLiveAdapter = createMockSoakSample({
+      summary: {
+        ...createMockSoakSample().summary,
+        effectivePolicyGuards: {
+          APP_ENV: 'staging',
+          AUTO_VERIFY_CLAIMABLES: false,
+          ENABLE_BILLING: false,
+          NOTIFY_CUSTOMERS_ENABLED: false,
+          // LIVE_ADAPTERS_ENABLED missing
+        },
+      },
+    });
+    expect(validateSoakExecution(missingLiveAdapter).isValid).toBe(false);
+
+    const billingEnabled = createMockSoakSample({
+      summary: {
+        ...createMockSoakSample().summary,
+        effectivePolicyGuards: {
+          APP_ENV: 'staging',
+          AUTO_VERIFY_CLAIMABLES: false,
+          ENABLE_BILLING: true,
+          NOTIFY_CUSTOMERS_ENABLED: false,
+          LIVE_ADAPTERS_ENABLED: true,
+        },
+      },
+    });
+    expect(validateSoakExecution(billingEnabled).isValid).toBe(false);
+  });
+
+  it('G: fails closed when DB crawl_errors contains error records', () => {
+    const sample = createMockSoakSample({
+      dbErrors: [{ id: 'err-1', error_type: 'NETWORK_TIMEOUT', error_message: 'socket hang up' }],
+    });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.evidenceStatus).toBe('DB_CORROBORATION_FAILED');
+    expect(res.failureReason).toBe('DB_ERRORS_NON_ZERO');
+  });
+
+  it('H: fails closed when DB crawl_run_sources contains a failed source row', () => {
+    const sources = Array.from({ length: 7 }, (_, i) => ({
+      id: 'source-' + i,
+      crawl_run_id: 'crawl-test',
+      source_id: 'src-' + i,
+      status: i === 3 ? 'failed' : 'completed',
+      documents_found: 10,
+      error_message: i === 3 ? 'HTTP 503 Service Unavailable' : null,
+    }));
+    const sample = createMockSoakSample({ dbSources: sources });
+    const res = validateSoakExecution(sample);
+    expect(res.isValid).toBe(false);
+    expect(res.evidenceStatus).toBe('DB_CORROBORATION_FAILED');
+    expect(res.failureReason).toBe('DB_SOURCES_CONTAIN_FAILURES');
+  });
+
+  it('I: excludes 20 manual post-baseline DB runs and gives VALID_FINAL_SOAK_RUNS = 0', () => {
+    const manualDbRuns = Array.from({ length: 20 }, (_, i) => ({
+      id: 'manual-run-' + i,
+      status: 'completed',
+      started_at: new Date('2026-08-30T13:00:00Z').toISOString(),
+      sources_attempted: 7,
+      sources_succeeded: 7,
+      documents_discovered: 100,
+      metadata: {},
+    }));
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [], // No GHA staging-soak executions
+      dbCrawlRuns: manualDbRuns,
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-08-30T14:00:00Z'),
     });
 
-    const metrics = evaluateSoakMetrics(
-      [run1, run2Failed],
-      mockBaselineConfig,
-      new Date('2026-09-02T13:00:00Z'), // >48h later
-    );
-
-    expect(metrics.failedFinalSoakRunsCount).toBe(1);
+    expect(metrics.validGhaSoakRunsCount).toBe(0);
+    expect(metrics.manualPostBaselineRunsCount).toBe(20);
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
   });
 
-  it('E: 47h59m elapsed -> SOAK_48H=PENDING_TIME_SOAK', () => {
-    // 47 hours and 59 minutes after 2026-08-30T12:08:03Z -> 2026-09-01T12:07:03Z
-    const currentTime = new Date('2026-09-01T12:07:03Z');
-    const runs = [];
-    for (let i = 0; i < 9; i++) {
-      runs.push(
-        createMockRun({
-          started_at: new Date(
-            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 5 * 3600000,
-          ).toISOString(),
-        }),
-      );
-    }
+  it('J: manual runs cannot accelerate elapsed soak time or satisfy schedule slots', () => {
+    const currentTime = new Date('2026-08-30T13:08:03Z'); // 1 hour after baseline
+    const manualDbRuns = Array.from({ length: 20 }, (_, i) => ({
+      id: 'manual-run-' + i,
+      status: 'completed',
+      started_at: new Date('2026-08-30T12:30:00Z').toISOString(),
+      sources_attempted: 7,
+      sources_succeeded: 7,
+      documents_discovered: 100,
+      metadata: {},
+    }));
 
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
-    expect(metrics.elapsedSoakHours).toBeLessThan(48);
+    const sample1 = createMockSoakSample(); // 1 real GHA soak sample
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [sample1],
+      dbCrawlRuns: manualDbRuns,
+      config: mockBaselineConfig,
+      currentTime,
+    });
+
+    expect(metrics.elapsedSoakHours).toBe(1);
+    expect(metrics.validGhaSoakRunsCount).toBe(1);
+    expect(metrics.manualPostBaselineRunsCount).toBe(20);
+    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
+    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
+  });
+
+  it('K: 48h elapsed with missing schedule slots remains PENDING_TIME_SOAK', () => {
+    const currentTime = new Date('2026-09-01T13:08:03Z'); // 49 hours
+    const sample1 = createMockSoakSample({ startedAt: '2026-08-30T12:08:03Z' });
+    const sample2 = createMockSoakSample({ startedAt: '2026-08-30T18:08:03Z' });
+    // Only 2 observed runs out of 9 expected slots
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [sample1, sample2],
+      dbCrawlRuns: [],
+      config: mockBaselineConfig,
+      currentTime,
+    });
+
+    expect(metrics.elapsedSoakHours).toBeGreaterThanOrEqual(48);
+    expect(metrics.expectedScheduleSlots).toBe(9);
+    expect(metrics.observedGhaSoakRunsCount).toBe(2);
+    expect(metrics.missingScheduleSlots).toBe(7);
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
   });
 
-  it('F: 48h elapsed but missing expected scheduled runs -> still not PASS', () => {
-    const currentTime = new Date('2026-09-01T13:08:03Z'); // 49 hours elapsed
-    // Only 2 runs present (expected at least 8)
-    const runs = [
-      createMockRun({ started_at: '2026-08-30T12:08:03.000Z' }),
-      createMockRun({ started_at: '2026-08-30T18:17:00.000Z' }),
-    ];
-
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
-    expect(metrics.elapsedSoakHours).toBeGreaterThanOrEqual(48);
-    expect(metrics.validFinalSoakRunsCount).toBe(2);
-    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('G: 48h elapsed with valid expected runs -> PASS', () => {
-    const currentTime = new Date('2026-09-01T13:08:03Z'); // 49 hours elapsed
-    const runs = [];
-    for (let i = 0; i < 9; i++) {
-      runs.push(
-        createMockRun({
-          started_at: new Date(
-            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 5 * 3600000,
+  it('L: 48h elapsed with all valid expected schedule slots qualifies as PASS', () => {
+    const currentTime = new Date('2026-09-01T13:08:03Z'); // 49 hours
+    const samples = Array.from({ length: 9 }, (_, i) =>
+      createMockSoakSample({
+        workflowRun: {
+          id: 'gha-' + i,
+          workflow: 'staging-soak.yml',
+          conclusion: 'success',
+          headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+          startedAt: new Date(
+            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 6 * 3600000,
           ).toISOString(),
-        }),
-      );
-    }
+        },
+      }),
+    );
 
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
+    const metrics = evaluateSoakProvenance({
+      soakSamples: samples,
+      dbCrawlRuns: [],
+      config: mockBaselineConfig,
+      currentTime,
+      runtimeBehaviorChanged: false,
+    });
+
     expect(metrics.elapsedSoakHours).toBeGreaterThanOrEqual(48);
-    expect(metrics.validFinalSoakRunsCount).toBe(9);
+    expect(metrics.validGhaSoakRunsCount).toBe(9);
+    expect(metrics.missingScheduleSlots).toBe(0);
     expect(metrics.soak48hStatus).toBe('PASS');
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
   });
 
-  it('H: 71h59m -> SOAK_72H=PENDING_TIME_SOAK', () => {
-    const currentTime = new Date('2026-09-02T12:07:03Z'); // 71h59m
-    const runs = [];
-    for (let i = 0; i < 13; i++) {
-      runs.push(
-        createMockRun({
-          started_at: new Date(
-            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 5 * 3600000,
-          ).toISOString(),
-        }),
-      );
-    }
-
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
-    expect(metrics.elapsedSoakHours).toBeLessThan(72);
-    expect(metrics.soak48hStatus).toBe('PASS');
-    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('I: 72h with valid schedule/run evidence -> PASS', () => {
+  it('M: 72h elapsed with all valid expected schedule slots qualifies as PASS', () => {
     const currentTime = new Date('2026-09-02T13:08:03Z'); // 73 hours
-    const runs = [];
-    for (let i = 0; i < 13; i++) {
-      runs.push(
-        createMockRun({
-          started_at: new Date(
-            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 5 * 3600000,
+    const samples = Array.from({ length: 13 }, (_, i) =>
+      createMockSoakSample({
+        workflowRun: {
+          id: 'gha-' + i,
+          workflow: 'staging-soak.yml',
+          conclusion: 'success',
+          headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+          startedAt: new Date(
+            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 6 * 3600000,
           ).toISOString(),
-        }),
-      );
-    }
+        },
+      }),
+    );
 
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
+    const metrics = evaluateSoakProvenance({
+      soakSamples: samples,
+      dbCrawlRuns: [],
+      config: mockBaselineConfig,
+      currentTime,
+      runtimeBehaviorChanged: false,
+    });
+
     expect(metrics.elapsedSoakHours).toBeGreaterThanOrEqual(72);
-    expect(metrics.validFinalSoakRunsCount).toBe(13);
+    expect(metrics.validGhaSoakRunsCount).toBe(13);
+    expect(metrics.missingScheduleSlots).toBe(0);
     expect(metrics.soak48hStatus).toBe('PASS');
     expect(metrics.soak72hStatus).toBe('PASS');
   });
 
-  it('J: many manual runs cannot accelerate elapsed soak time', () => {
-    const currentTime = new Date('2026-08-30T13:08:03Z'); // only 1 hour after baseline
-    const runs = [];
-    for (let i = 0; i < 20; i++) {
-      runs.push(
-        createMockRun({
-          started_at: new Date(
-            new Date(mockBaselineConfig.finalSoakStartUtc).getTime() + i * 60000,
-          ).toISOString(),
-        }),
-      );
-    }
+  it('N: runtime sensitive change invalidates soak qualification and fails closed', () => {
+    const currentTime = new Date('2026-09-02T13:08:03Z');
+    const samples = Array.from({ length: 13 }, (_, i) => createMockSoakSample());
 
-    const metrics = evaluateSoakMetrics(runs, mockBaselineConfig, currentTime);
-    expect(metrics.validFinalSoakRunsCount).toBe(20);
-    expect(metrics.elapsedSoakHours).toBe(1);
+    const metrics = evaluateSoakProvenance({
+      soakSamples: samples,
+      dbCrawlRuns: [],
+      config: mockBaselineConfig,
+      currentTime,
+      runtimeBehaviorChanged: true, // Runtime behavior modified
+    });
+
+    expect(metrics.runtimeBehaviorChanged).toBe(true);
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
   });
 
-  it('K: future or invalid baseline timestamp fails closed', () => {
-    const invalidConfig = {
-      ...mockBaselineConfig,
-      finalSoakStartUtc: '2099-01-01T00:00:00Z', // Future date
-    };
-    const metrics = evaluateSoakMetrics(
-      [createMockRun()],
-      invalidConfig,
-      new Date('2026-08-30T13:08:03Z'),
-    );
-
-    expect(metrics.isBaselineValid).toBe(false);
-    expect(metrics.elapsedSoakHours).toBe(0);
-    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
-    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('L: tests helper functions calculateElapsedSoakHours, calculateExpectedSoakRuns, and isRunValidSoakExecution', () => {
+  it('O: tests calculateElapsedSoakHours and calculateExpectedSoakRuns helpers', () => {
     expect(calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z')).toBe(6);
     expect(calculateExpectedSoakRuns(0)).toBe(1);
     expect(calculateExpectedSoakRuns(6)).toBe(2);
     expect(calculateExpectedSoakRuns(48)).toBe(9);
-
-    const validRun = createMockRun();
-    expect(isRunValidSoakExecution(validRun)).toBe(true);
-
-    const invalidRunNoSources = createMockRun({ sources_attempted: 0 });
-    expect(isRunValidSoakExecution(invalidRunNoSources)).toBe(false);
-
-    const invalidRunErrors = createMockRun({ error_count: 1 });
-    expect(isRunValidSoakExecution(invalidRunErrors)).toBe(false);
-
-    const invalidRunGuard = createMockRun({
-      metadata: { effectivePolicyGuards: { ENABLE_BILLING: true } },
-    });
-    expect(isRunValidSoakExecution(invalidRunGuard)).toBe(false);
   });
 });
