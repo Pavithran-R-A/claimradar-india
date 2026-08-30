@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Building2, Users, ShieldCheck, Radar } from 'lucide-react';
+import { ArrowRight, Building2, Users, ShieldCheck } from 'lucide-react';
 import { FaqAccordion } from '@/components/landing/interactive';
 import { InteractiveHeroSearch } from '@/components/landing/interactive-hero-search';
 import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
@@ -101,9 +101,9 @@ export default async function LandingPage() {
             {/* Left Column: Customer Messaging & Search */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
               {/* Civic Service Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-bright/30 bg-brand-bright/10 px-3.5 py-1 text-xs font-bold text-brand-bright backdrop-blur-md">
-                <Radar className="h-3.5 w-3.5" />
-                <span>Independent Public Information Service — India</span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-brand-bright/30 bg-brand-bright/10 px-3.5 py-1 text-xs font-semibold text-brand-bright">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Independent claims information service</span>
               </div>
 
               {/* Primary Customer Headline */}

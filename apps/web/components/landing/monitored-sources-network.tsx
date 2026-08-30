@@ -39,7 +39,7 @@ export function MonitoredSourcesNetwork() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-text-primary">{family.shortName}</h3>
-                    <span className="text-[11px] text-text-muted">{family.domain}</span>
+                    <span className="text-xs text-text-muted">{family.domain}</span>
                   </div>
                 </div>
 
@@ -47,13 +47,13 @@ export function MonitoredSourcesNetwork() {
                   {family.description}
                 </p>
 
-                <div className="rounded-md border border-border/70 bg-surface-strong px-2.5 py-1.5 text-[11px] text-text-muted">
+                <div className="rounded-md border border-border/70 bg-surface-strong px-2.5 py-1.5 text-xs text-text-muted">
                   <span className="font-semibold text-text-primary">Coverage: </span>
                   {family.scope}
                 </div>
               </div>
 
-              <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-[11px]">
+              <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-xs">
                 <span className="text-text-muted font-medium">Official source portal</span>
                 <span className="text-trust-primary font-semibold">
                   {family.activeSourceIds.length} official{' '}

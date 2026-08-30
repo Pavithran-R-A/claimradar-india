@@ -13,17 +13,17 @@ export function AccountCta() {
           <Bell className="h-6 w-6" />
         </div>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-          Know when something relevant appears.
+          Save companies and get deadline alerts.
         </h2>
         <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-300 max-w-xl mx-auto">
-          Save companies, sectors, and keywords to your personal ClaimRadar watchlist. When verified
-          opportunities match your criteria, find them in your dashboard.
+          Follow companies, sectors, and keywords you care about. We notify you as soon as official
+          refund notices or statutory claim windows are published.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <Link href="/register">
             <Button variant="signal" size="lg" className="rounded-xl font-bold">
-              <span>Create free account</span>
+              <span>Get deadline alerts</span>
               <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
           </Link>

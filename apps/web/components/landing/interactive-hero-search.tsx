@@ -63,17 +63,19 @@ export function InteractiveHeroSearch() {
       </form>
 
       {/* Suggested Search Examples */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-400">
-        <span className="font-medium text-slate-300">Common searches:</span>
-        {SEARCH_EXAMPLES.map((example) => (
-          <button
-            key={example}
-            type="button"
-            onClick={() => handleExampleClick(example)}
-            className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-slate-300 transition-colors hover:border-brand-bright/40 hover:bg-white/10 hover:text-white"
-          >
-            {example}
-          </button>
+      <div className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-slate-300">
+        <span className="text-slate-400">Try:</span>
+        {SEARCH_EXAMPLES.map((example, idx) => (
+          <React.Fragment key={example}>
+            <button
+              type="button"
+              onClick={() => handleExampleClick(example)}
+              className="font-medium text-brand-bright underline underline-offset-2 transition-colors hover:text-white"
+            >
+              {example}
+            </button>
+            {idx < SEARCH_EXAMPLES.length - 1 && <span className="text-slate-600">·</span>}
+          </React.Fragment>
         ))}
       </div>
     </div>

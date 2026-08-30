@@ -1,6 +1,6 @@
 # ClaimRadar India — Axe-Core Automated Accessibility Audit Report
 
-**Audit Date:** 2026-08-30T09:41:50.081Z  
+**Audit Date:** 2026-08-30T10:19:36.195Z  
 **Engine:** `@axe-core/playwright` (WCAG 2.0/2.1 AA Standards)  
 **Total Routes Scanned:** 12
 

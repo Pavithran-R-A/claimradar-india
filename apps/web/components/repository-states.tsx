@@ -34,7 +34,7 @@ export function DataUnavailableNotice({ message }: { message: string }) {
       </div>
       <h2 className="text-lg font-bold text-text-primary">Directory Ingestion Status</h2>
       <p className="mt-2 text-xs leading-relaxed text-text-secondary">{message}</p>
-      <p className="mt-3 text-[11px] text-text-muted">
+      <p className="mt-3 text-xs text-text-muted">
         ClaimRadar strictly serves verified database records. We never invent placeholder entries.
       </p>
     </div>
@@ -71,7 +71,7 @@ export function EmptyDirectoryNotice({
 
       {/* 4-Stage Verification Filter Visual */}
       <div className="mt-8 rounded-xl border border-border/80 bg-surface-strong p-4 text-left">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
           Current Ingestion & Verification Funnel
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
@@ -79,7 +79,7 @@ export function EmptyDirectoryNotice({
             <span className="font-bold text-trust-primary">01</span>
             <div>
               <span className="font-semibold text-text-primary block">Official Notices</span>
-              <span className="text-[11px] text-text-muted">
+              <span className="text-xs text-text-muted">
                 Crawled from SEBI, RBI, IBBI, TRAI, PIB
               </span>
             </div>
@@ -88,21 +88,21 @@ export function EmptyDirectoryNotice({
             <span className="font-bold text-trust-primary">02</span>
             <div>
               <span className="font-semibold text-text-primary block">Document Ingest</span>
-              <span className="text-[11px] text-text-muted">PDF & order verification</span>
+              <span className="text-xs text-text-muted">PDF & order verification</span>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">03</span>
             <div>
               <span className="font-semibold text-text-primary block">Editorial Review</span>
-              <span className="text-[11px] text-text-muted">Human verification gate</span>
+              <span className="text-xs text-text-muted">Human verification gate</span>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-lg bg-surface p-3 border border-border">
             <span className="font-bold text-trust-primary">04</span>
             <div>
               <span className="font-semibold text-text-primary block">Public Listing</span>
-              <span className="text-[11px] text-text-muted">Grounded with direct links</span>
+              <span className="text-xs text-text-muted">Grounded with direct links</span>
             </div>
           </div>
         </div>

@@ -10,119 +10,124 @@ const brandConfig = {
   supportEmail: 'support@claimradar.in',
 } as const;
 
-const footerColumns = [
+const navigationGroups = [
   {
-    title: 'Discover',
+    title: 'Explore',
     links: [
-      { href: '/claimables', label: 'Find claims' },
-      { href: '/new', label: 'Newly published' },
+      { href: '/claimables', label: 'Find all claims' },
       { href: '/closing-soon', label: 'Closing soon' },
-      { href: '/deadlines', label: 'Deadline schedule' },
-      { href: '/companies', label: 'Companies' },
+      { href: '/deadlines', label: 'Filing deadlines' },
+      { href: '/companies', label: 'Monitored companies' },
       { href: '/sectors', label: 'Industry sectors' },
     ],
   },
   {
-    title: 'Learn',
+    title: 'About & How It Works',
     links: [
-      { href: '/how-it-works', label: 'How it works' },
-      { href: '/methodology', label: 'Methodology' },
-      { href: '/sources', label: 'Monitored sources' },
-      { href: '/guides', label: 'Guides' },
-      { href: '/glossary', label: 'Glossary' },
-      { href: '/faq', label: 'FAQ' },
+      { href: '/how-it-works', label: 'How ClaimRadar works' },
+      { href: '/methodology', label: 'Verification methodology' },
+      { href: '/sources', label: 'Monitored official sources' },
+      { href: '/faq', label: 'Frequently asked questions' },
+      { href: '/guides', label: 'Consumer guides' },
     ],
   },
   {
-    title: 'Trust',
+    title: 'Trust & Governance',
     links: [
       { href: '/editorial-policy', label: 'Editorial policy' },
-      { href: '/corrections', label: 'Submit correction' },
-      { href: '/security', label: 'Security' },
+      { href: '/corrections', label: 'Submit a correction' },
+      { href: '/security', label: 'Security practices' },
       { href: '/privacy', label: 'Privacy policy' },
-      { href: '/contact', label: 'Contact support' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
       { href: '/terms', label: 'Terms of service' },
-      { href: '/disclaimer', label: 'Legal disclaimer' },
-      { href: '/refund-policy', label: 'Refund policy' },
-      { href: '/subscription-policy', label: 'Subscription policy' },
-      { href: '/cookie-policy', label: 'Cookie policy' },
-      { href: '/acceptable-use', label: 'Acceptable use' },
     ],
   },
+] as const;
+
+const utilityLinks = [
+  { href: '/disclaimer', label: 'Disclaimer' },
+  { href: '/cookie-policy', label: 'Cookie policy' },
+  { href: '/acceptable-use', label: 'Acceptable use' },
+  { href: '/refund-policy', label: 'Refund policy' },
+  { href: '/sitemap.xml', label: 'Sitemap' },
 ] as const;
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink-950 text-white border-t border-white/10" aria-label="Site footer">
+    <footer className="border-t border-white/10 bg-ink-950 text-white" aria-label="Site footer">
       <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           {/* Brand & Purpose Column */}
-          <div className="sm:col-span-2 md:col-span-3 lg:col-span-1">
+          <div className="md:col-span-4 flex flex-col items-start">
             <ClaimRadarBrand size="md" theme="dark" />
-            <p className="mt-3 text-xs leading-relaxed text-slate-300">
-              Independent information service discovering, structuring, and surfacing refund,
-              compensation and public claim notices from official Indian sources.
+            <p className="mt-3 text-xs leading-relaxed text-slate-300 max-w-sm">
+              Independent claims information directory discovering, structuring, and surfacing
+              public refund, compensation and recovery notices from official Indian regulatory
+              sources.
             </p>
-            <div className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-300">
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-bright" />
-              Not a government portal or law firm
+            <div className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300">
+              <ShieldCheck className="h-4 w-4 text-brand-bright shrink-0" />
+              <span>Independent consumer information service</span>
             </div>
           </div>
 
-          {/* 4 Balanced Navigation Columns */}
-          {footerColumns.map((col) => (
-            <nav key={col.title} aria-label={`Footer — ${col.title}`}>
-              <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">
-                {col.title}
-              </h3>
-              <ul className="space-y-2.5">
-                {col.links.map((link) => (
-                  <li key={link.href + link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-xs text-slate-300 transition-colors hover:text-brand-bright"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          {/* 3 Balanced Navigation Columns */}
+          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {navigationGroups.map((group) => (
+              <nav key={group.title} aria-label={`Footer — ${group.title}`}>
+                <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-300">
+                  {group.title}
+                </h3>
+                <ul className="space-y-2">
+                  {group.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-xs text-slate-300 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
 
-        {/* Independence Disclaimer Box */}
-        <div className="mt-10 rounded-xl border border-white/10 bg-ink-900/90 p-4 text-xs leading-relaxed text-slate-300">
-          <strong className="font-bold text-white">Independent information service: </strong>
-          {brandConfig.siteName} is not affiliated with the Government of India, any court,
-          tribunal, regulator, or listed company. We publish structured information from public
-          records and do not file claims or collect fees on users&apos; behalf. Every listing links
-          directly to the official portal where users act independently.
+        {/* Clear Independence Disclaimer */}
+        <div className="mt-10 rounded-xl border border-white/10 bg-ink-900/80 p-4 text-xs leading-relaxed text-slate-300">
+          <strong className="font-semibold text-white">Independence disclosure: </strong>
+          {brandConfig.siteName} is strictly an independent information directory and is not
+          affiliated with the Government of India, any regulator (SEBI, RBI, IBBI, TRAI), court,
+          tribunal, or listed company. We structure public notices and direct you to official
+          portals where you act directly. We do not file claims or charge fees on users&apos;
+          behalf.
         </div>
 
-        {/* Bottom Row */}
+        {/* Bottom Utility Row */}
         <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <a
               href={`mailto:${brandConfig.supportEmail}`}
-              className="hover:text-slate-200 transition-colors"
+              className="text-slate-300 hover:text-white transition-colors"
             >
               {brandConfig.supportEmail}
             </a>
-            <Link href="/sitemap.xml" className="hover:text-slate-200 transition-colors">
-              Sitemap
-            </Link>
-            <span>Public Information Utility — India</span>
+            <span className="text-slate-600 hidden sm:inline">•</span>
+            {utilityLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
-          <p>
-            © {year} {brandConfig.siteName}. All rights reserved.
+          <p className="text-slate-400">
+            © {year} {brandConfig.siteName}.
           </p>
         </div>
       </div>

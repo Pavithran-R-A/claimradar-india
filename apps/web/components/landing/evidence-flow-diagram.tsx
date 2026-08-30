@@ -89,7 +89,7 @@ export function EvidenceFlowDiagram() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-trust-primary">
+                  <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
                     Step {step.num}
                   </span>
                   <div
@@ -109,7 +109,7 @@ export function EvidenceFlowDiagram() {
               </div>
 
               <div className="mt-3 pt-2.5 border-t border-border/60">
-                <span className="text-[11px] font-medium text-text-muted">
+                <span className="text-xs font-medium text-text-muted">
                   {isFinal ? 'Official Portal' : 'ClaimRadar Rigor'}
                 </span>
               </div>
@@ -145,7 +145,7 @@ export function EvidenceFlowDiagram() {
                 <h3 className="text-base font-bold text-text-primary">{step.label}</h3>
                 <p className="mt-2 text-xs text-text-secondary leading-relaxed">{step.desc}</p>
               </div>
-              <p className="mt-3 text-[11px] text-text-muted border-t border-border pt-2">
+              <p className="mt-3 text-xs text-text-muted border-t border-border pt-2">
                 {step.detail}
               </p>
             </div>
