@@ -1,6 +1,6 @@
 # ClaimRadar India — Axe-Core Automated Accessibility Audit Report
 
-**Audit Date:** 2026-08-30T11:18:02.461Z  
+**Audit Date:** 2026-08-30T12:01:49.477Z  
 **Engine:** `@axe-core/playwright` (WCAG 2.0/2.1 AA Standards)  
 **Total Routes Scanned:** 12
 
@@ -23,7 +23,7 @@
 
 | Scanned Route                          | Axe Rules Passed | Violations | Critical | Serious | Moderate | Status   |
 | :------------------------------------- | :--------------- | :--------- | :------- | :------ | :------- | :------- |
-| `/`                                    | 26               | 0          | 0        | 0       | 0        | **PASS** |
+| `/`                                    | 22               | 0          | 0        | 0       | 0        | **PASS** |
 | `/claimables`                          | 26               | 0          | 0        | 0       | 0        | **PASS** |
 | `/claimables/iepf-unclaimed-dividends` | 20               | 0          | 0        | 0       | 0        | **PASS** |
 | `/companies`                           | 20               | 0          | 0        | 0       | 0        | **PASS** |

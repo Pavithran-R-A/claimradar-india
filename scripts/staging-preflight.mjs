@@ -115,7 +115,11 @@ for (const guard of ['AUTO_VERIFY_CLAIMABLES', 'ENABLE_BILLING', 'NOTIFY_CUSTOME
  * ------------------------------------------------------------------------- */
 console.log('\n--- Credential resolution ---');
 const supabaseUrl = pickEnv('STAGING_SUPABASE_URL', 'SUPABASE_URL');
-const serviceRoleKey = pickEnv('STAGING_SUPABASE_SECRET_KEY', 'SUPABASE_SECRET_KEY');
+const serviceRoleKey = pickEnv(
+  'STAGING_SUPABASE_SECRET_KEY',
+  'SUPABASE_SECRET_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+);
 const publishableKey = pickEnv(
   'STAGING_SUPABASE_PUBLISHABLE_KEY',
   'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
@@ -157,7 +161,7 @@ if (!supabaseUrl) {
  * ------------------------------------------------------------------------- */
 console.log('\n--- Connectivity ---');
 try {
-  const activeKey = serviceRoleKey?.value || anonKey?.value;
+  const activeKey = serviceRoleKey?.value || publishableKey?.value;
   const response = await fetch(`${supabaseUrl.value}/rest/v1/`, {
     headers: { apikey: activeKey, Authorization: `Bearer ${activeKey}` },
     signal: AbortSignal.timeout(15000),
