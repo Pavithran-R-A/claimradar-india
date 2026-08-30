@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   evaluateSoakMetrics,
   calculateElapsedSoakHours,
@@ -248,5 +248,26 @@ describe('Soak Readiness Accounting & Baseline Scoping', () => {
     expect(metrics.elapsedSoakHours).toBe(0);
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
+  });
+
+  it('L: tests helper functions calculateElapsedSoakHours, calculateExpectedSoakRuns, and isRunValidSoakExecution', () => {
+    expect(calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z')).toBe(6);
+    expect(calculateExpectedSoakRuns(0)).toBe(1);
+    expect(calculateExpectedSoakRuns(6)).toBe(2);
+    expect(calculateExpectedSoakRuns(48)).toBe(9);
+
+    const validRun = createMockRun();
+    expect(isRunValidSoakExecution(validRun)).toBe(true);
+
+    const invalidRunNoSources = createMockRun({ sources_attempted: 0 });
+    expect(isRunValidSoakExecution(invalidRunNoSources)).toBe(false);
+
+    const invalidRunErrors = createMockRun({ error_count: 1 });
+    expect(isRunValidSoakExecution(invalidRunErrors)).toBe(false);
+
+    const invalidRunGuard = createMockRun({
+      metadata: { effectivePolicyGuards: { ENABLE_BILLING: true } },
+    });
+    expect(isRunValidSoakExecution(invalidRunGuard)).toBe(false);
   });
 });
