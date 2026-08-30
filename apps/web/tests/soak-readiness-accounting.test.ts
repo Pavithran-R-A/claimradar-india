@@ -344,4 +344,17 @@ describe('Dynamic Soak Evidence Collection & Invariant Verification', () => {
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
   });
+
+  it('R: tests helper functions loadBaselineConfig, calculateElapsedSoakHours, and generateScheduledSlots', () => {
+    const cfg = loadBaselineConfig();
+    expect(cfg.runtimeFreezeHead).toBeDefined();
+    expect(cfg.finalSoakBaselineGhaRun).toBeDefined();
+
+    expect(calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z')).toBe(6);
+
+    const slots = generateScheduledSlots(mockBaselineConfig, new Date('2026-08-31T00:30:00Z'));
+    expect(slots.length).toBeGreaterThanOrEqual(2);
+    expect(slots[0].slotUtc).toBe('2026-08-30T18:17:00.000Z');
+    expect(slots[1].slotUtc).toBe('2026-08-31T00:17:00.000Z');
+  });
 });
