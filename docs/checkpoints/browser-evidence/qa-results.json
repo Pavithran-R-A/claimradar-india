@@ -1,68 +1,68 @@
 {
-  "baseUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app",
-  "timestamp": "2026-08-30T03:53:54.296Z",
+  "baseUrl": "https://claimradar-staging.vercel.app",
+  "timestamp": "2026-08-30T04:25:58.659Z",
   "pages": {
     "home-desktop-1536": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "1536x960",
       "floatingControls": 0
     },
     "home-desktop-1440": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "1440x900",
       "floatingControls": 0
     },
     "home-desktop-1280": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "1280x800",
       "floatingControls": 0
     },
     "home-tablet-1024": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "1024x768",
       "floatingControls": 0
     },
     "home-tablet-768": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "768x1024",
       "floatingControls": 0
     },
     "home-mobile-430": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "430x932",
       "floatingControls": 0
     },
     "home-mobile-390": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "390x844",
       "floatingControls": 0
     },
     "home-mobile-360": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
-      "h1": "Find refunds, compensation, and public claim opportunities in India.",
+      "h1": "Money you may be owed shouldn't stay hidden.",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/",
+      "finalUrl": "https://claimradar-staging.vercel.app/",
       "viewport": "360x800",
       "floatingControls": 0
     },
@@ -70,114 +70,127 @@
       "title": "Claimables Directory — Published Refund & Compensation Records | ClaimRadar India",
       "h1": "Claimables directory",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/claimables",
+      "finalUrl": "https://claimradar-staging.vercel.app/claimables",
       "viewport": "1440x900"
     },
     "claimables-390": {
       "title": "Claimables Directory — Published Refund & Compensation Records | ClaimRadar India",
       "h1": "Claimables directory",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/claimables",
+      "finalUrl": "https://claimradar-staging.vercel.app/claimables",
       "viewport": "390x844"
     },
     "closing-soon-1440": {
-      "title": "Closing Soon — Approaching Filing Deadlines | ClaimRadar India",
-      "h1": "Closing soon",
+      "title": "Closing Soon — Urgent Claim Deadlines | ClaimRadar India",
+      "h1": "Closing Soon",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/closing-soon",
+      "finalUrl": "https://claimradar-staging.vercel.app/closing-soon",
       "viewport": "1440x900"
     },
     "companies-1440": {
       "title": "Company Directory — ClaimRadar India",
       "h1": "Company directory",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/companies",
+      "finalUrl": "https://claimradar-staging.vercel.app/companies",
       "viewport": "1440x900"
     },
     "sectors-1440": {
       "title": "Sectors Directory — ClaimRadar India",
       "h1": "Industry sectors",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/sectors",
+      "finalUrl": "https://claimradar-staging.vercel.app/sectors",
       "viewport": "1440x900"
     },
     "deadlines-1440": {
       "title": "Filing Deadlines Schedule — ClaimRadar India",
       "h1": "Deadline schedule",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/deadlines",
+      "finalUrl": "https://claimradar-staging.vercel.app/deadlines",
       "viewport": "1440x900"
     },
     "how-it-works-1440": {
-      "title": "How It Works — ClaimRadar India",
-      "h1": "How It Works",
+      "title": "ClaimRadar India",
+      "h1": "How ClaimRadar Works",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/how-it-works",
+      "finalUrl": "https://claimradar-staging.vercel.app/how-it-works",
       "viewport": "1440x900"
     },
     "methodology-1440": {
-      "title": "Methodology — ClaimRadar India",
-      "h1": "Methodology",
+      "title": "ClaimRadar India",
+      "h1": "Verification Methodology",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/methodology",
+      "finalUrl": "https://claimradar-staging.vercel.app/methodology",
       "viewport": "1440x900"
     },
     "faq-1440": {
       "title": "FAQ | ClaimRadar India",
       "h1": "Frequently Asked Questions",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/faq",
+      "finalUrl": "https://claimradar-staging.vercel.app/faq",
       "viewport": "1440x900"
     },
     "login-1440": {
       "title": "ClaimRadar India",
-      "h1": "ClaimRadar India",
+      "h1": "(none)",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/login",
+      "finalUrl": "https://claimradar-staging.vercel.app/login",
       "viewport": "1440x900"
     },
     "login-390": {
       "title": "ClaimRadar India",
-      "h1": "ClaimRadar India",
+      "h1": "(none)",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/login",
+      "finalUrl": "https://claimradar-staging.vercel.app/login",
       "viewport": "390x844"
     },
     "register-1440": {
       "title": "ClaimRadar India",
-      "h1": "ClaimRadar India",
+      "h1": "(none)",
       "status": 200,
-      "finalUrl": "https://claimradar-staging-pqkk2cmy5-pavithrans-projects-cae184b1.vercel.app/register",
+      "finalUrl": "https://claimradar-staging.vercel.app/register",
       "viewport": "1440x900"
     }
   },
   "accessibility": {
     "skipLinkOperable": true,
     "firstFocusTag": "A",
-    "firstFocusText": "Skip to content",
+    "firstFocusText": "Skip to main content",
     "h1Count": 1,
-    "h1Text": "Find refunds, compensation, and public claim opportunities in India.",
+    "h1Text": "Money you may be owed shouldn't stay hidden.",
     "imgNoAlt": 0,
     "detailsCount": 5,
     "summaryCount": 5,
     "faqStartsCollapsed": true,
     "faqKeyboardToggle": true,
-    "headerNavLinks": ["Find claims", "Companies", "Sectors", "Deadlines", "How it works"],
-    "headerActionButtons": [
-      "CRClaimRadar",
+    "headerNavLinks": [
       "Find claims",
+      "Closing soon",
       "Companies",
       "Sectors",
-      "Deadlines",
+      "How it works"
+    ],
+    "headerActionButtons": [
+      "ClaimRadarIndia",
+      "Find claims",
+      "Closing soon",
+      "Companies",
+      "Sectors",
       "How it works",
+      "",
       "Sign in",
-      "Create watchlist"
+      "Get alerts"
     ],
     "faqImplementation": "NATIVE_DETAILS_SUMMARY"
   },
   "mobileDrawer": {
-    "drawerVisible": false,
-    "navLinksText": [],
+    "drawerVisible": true,
+    "navLinksText": [
+      "Find claims",
+      "Closing soon",
+      "Companies",
+      "Sectors",
+      "How it works"
+    ],
     "signInVisible": false,
     "getAlertsVisible": false,
     "closedOnEscape": true,
@@ -193,5 +206,5 @@
     "mobile-390": 0,
     "mobile-360": 0
   },
-  "claimableState": "DATABASE_ERROR"
+  "claimableState": "VALID_ZERO_RESULTS"
 }
