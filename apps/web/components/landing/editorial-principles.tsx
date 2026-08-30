@@ -7,7 +7,7 @@ import { ShieldCheck, ArrowRight } from 'lucide-react';
 const PRINCIPLES = [
   {
     title: '1. Official-Source Mandate',
-    body: 'Every listing requires an authentic official order, gazette notice, or court filing. We never publish speculative rumors or unverified social media claims.',
+    body: 'Every listing requires an authentic official order or regulatory publication. We never publish speculative rumors or unverified social media claims.',
   },
   {
     title: '2. Zero Automated Publishing',

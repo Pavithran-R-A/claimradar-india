@@ -22,12 +22,12 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities',
   description:
-    'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulators, courts and public notices.',
+    'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.',
   alternates: { canonical: '/' },
   openGraph: {
     title: 'ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities',
     description:
-      'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulators, courts and public notices.',
+      'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.',
     url: '/',
     type: 'website',
   },
@@ -47,12 +47,12 @@ const FAQ_ITEMS = [
   {
     question: 'Does ClaimRadar guarantee I will receive a refund or compensation?',
     answer:
-      'No. We surface potential opportunities based on official announcements and court orders. Whether you qualify or receive compensation depends strictly on the official eligibility criteria, your submitted evidence, and the official scheme process.',
+      'No. We surface potential opportunities based on official regulatory announcements and government notices. Whether you qualify or receive compensation depends strictly on the official eligibility criteria, your submitted evidence, and the official scheme process.',
   },
   {
     question: 'How does ClaimRadar discover and verify opportunities?',
     answer:
-      'We continuously monitor consumer authorities, courts and tribunals, financial regulators (SEBI, RBI), company public notices, and government press releases (PIB). Every extracted candidate undergoes strict human editorial verification before publication — zero automated or placeholder listings.',
+      'We continuously monitor statutory regulators (SEBI, RBI), insolvency authorities (IBBI), telecom regulation (TRAI), and government press releases (PIB). Every extracted candidate undergoes strict human editorial verification before publication — zero automated or placeholder listings.',
   },
   {
     question: 'How do I submit a correction or update for a listing?',
@@ -114,8 +114,8 @@ export default async function LandingPage() {
               {/* Supporting Copy */}
               <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-300 max-w-2xl">
                 ClaimRadar discovers public refund and compensation notices from official Indian
-                regulators, courts, and gazette orders, verifies the evidence, and shows you where
-                to act directly.
+                regulatory and government sources, verifies the evidence, and shows you where to act
+                directly.
               </p>
 
               {/* Large Search Input Experience */}
@@ -191,7 +191,7 @@ export default async function LandingPage() {
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end mb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Verified Ingestion Feed
+              Verified Ingestion Stream
             </span>
             <h2
               id="latest-opps-heading"
@@ -200,7 +200,7 @@ export default async function LandingPage() {
               Latest Verified Opportunities
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
-              Opportunities verified against official regulatory filings, court orders, and
+              Opportunities verified against official regulatory orders, public notifications, and
               government releases.
             </p>
           </div>
@@ -222,7 +222,7 @@ export default async function LandingPage() {
         ) : (
           <EmptyDirectoryNotice
             title="No opportunity has cleared publication review yet"
-            body="ClaimRadar actively ingests notices from SEBI, RBI, IBBI, and courts. We deliberately leave this feed empty rather than publish speculative or unverified claims."
+            body="ClaimRadar actively monitors notices from official statutory and government authorities (SEBI, RBI, IBBI, TRAI, and PIB). We deliberately leave this directory empty rather than publish speculative or unverified claims."
             showActions={true}
           />
         )}
@@ -368,8 +368,8 @@ export default async function LandingPage() {
               The ClaimRadar Evidence Pipeline
             </h2>
             <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-              Every listing traces back through seven strict stages from official gazette detection
-              to direct official portal submission.
+              Every listing traces back through strict verification stages from official source
+              detection to direct official portal submission.
             </p>
           </div>
 
@@ -401,11 +401,11 @@ export default async function LandingPage() {
             id="source-network-heading"
             className="mt-1 text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight"
           >
-            Regulated Sources We Monitor
+            Official Sources We Monitor
           </h2>
           <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-            ClaimRadar interfaces with authenticated government portals, insolvency authorities,
-            securities regulators, and high court gazettes across India.
+            ClaimRadar interfaces with authenticated statutory portals, insolvency authorities,
+            securities regulators, and central government bureaus across India.
           </p>
         </div>
 

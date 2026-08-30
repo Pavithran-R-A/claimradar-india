@@ -247,7 +247,7 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     domain: 'pib.gov.in',
     category: 'Government Press Releases',
     description:
-      'Central government compensation packages, court settlements, and ministry notifications.',
+      'Central government compensation packages, press announcements, and ministry notifications.',
     scope: 'Government compensation press releases',
     activeSourceIds: ['pib-rss'],
   },

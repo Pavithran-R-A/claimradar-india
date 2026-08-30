@@ -19,8 +19,8 @@ export default function HowItWorksPage() {
           How ClaimRadar Works
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
-          From official court notices to your direct action: how we discover, verify, structure, and
-          surface public refund and compensation schemes across India without middlemen or fees.
+          From official public notices to your direct action: how we discover, verify, structure,
+          and surface public refund and compensation schemes across India without middlemen or fees.
         </p>
       </header>
 
@@ -36,9 +36,9 @@ export default function HowItWorksPage() {
                 Continuous Monitoring of Official Indian Sources
               </h2>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-                Our ingestion pipelines monitor public notices, press releases, gazette
-                notifications, and regulatory orders from statutory authorities including SEBI, RBI,
-                IBBI, TRAI, and PIB. We do not crawl unverified blogs or social media rumors.
+                Our ingestion pipelines monitor public notices, press releases, and regulatory
+                orders from official authorities including SEBI, RBI, IBBI, TRAI, and PIB. We do not
+                crawl unverified blogs or social media rumors.
               </p>
             </div>
           </div>
@@ -90,9 +90,9 @@ export default function HowItWorksPage() {
               </h2>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                 Every listing surfaces the authentic official submission route. You submit your
-                claim directly on the official regulator or court committee website. ClaimRadar
-                never files claims for you, never takes a percentage, and never asks for bank
-                account details or Aadhaar numbers.
+                claim directly on the official regulator or statutory administrator website.
+                ClaimRadar never files claims for you, never takes a percentage, and never asks for
+                bank account details or Aadhaar numbers.
               </p>
             </div>
           </div>

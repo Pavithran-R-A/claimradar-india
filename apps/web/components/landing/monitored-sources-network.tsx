@@ -54,10 +54,10 @@ export function MonitoredSourcesNetwork() {
               </div>
 
               <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-[11px]">
-                <span className="text-text-muted font-medium">Official statutory portal</span>
+                <span className="text-text-muted font-medium">Official source portal</span>
                 <span className="text-trust-primary font-semibold">
                   {family.activeSourceIds.length} official{' '}
-                  {family.activeSourceIds.length === 1 ? 'feed' : 'feeds'} monitored
+                  {family.activeSourceIds.length === 1 ? 'source' : 'sources'} monitored
                 </span>
               </div>
             </div>
@@ -71,7 +71,7 @@ export function MonitoredSourcesNetwork() {
           className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-5 py-2.5 text-xs font-semibold text-text-primary hover:border-trust-primary hover:text-trust-primary transition-colors"
         >
           <ShieldCheck className="h-4 w-4 text-trust-primary" />
-          <span>View all monitored regulatory sources and verification protocols</span>
+          <span>View all monitored official sources and verification protocols</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>

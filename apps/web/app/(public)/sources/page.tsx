@@ -16,11 +16,12 @@ export default function SourcesPage() {
           Official Coverage
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
-          Monitored Sources &amp; Regulators
+          Monitored Official Sources
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
-          ClaimRadar continuously interfaces with authenticated public feeds and gazettes across
-          India. Below is the active coverage matrix.
+          ClaimRadar continuously interfaces with authenticated public channels from statutory
+          regulators and central government bureaus across India. Below is the active coverage
+          matrix.
         </p>
       </header>
 
@@ -33,7 +34,7 @@ export default function SourcesPage() {
       <section className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm max-w-3xl mx-auto text-center">
         <h2 className="text-lg font-bold text-text-primary mb-2">Suggest an Official Source</h2>
         <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-4">
-          If there is an authentic public tribunal or regulator portal you believe our automated
+          If there is an authentic official portal or regulatory source you believe our automated
           ingestion desk should monitor, let our editorial team know.
         </p>
         <a

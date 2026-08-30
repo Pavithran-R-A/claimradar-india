@@ -218,43 +218,49 @@ async function run() {
 
     await shot(page, 'mobile-drawer-open');
 
-    const dialog = page.locator('[role="dialog"]');
-    const drawerVisible = await dialog.isVisible({ timeout: 3000 }).catch(() => false);
-    const navLinksText = await page
-      .locator('nav[aria-label="Mobile navigation"] a')
-      .allTextContents()
-      .catch(() => []);
-    const signInVisible = await dialog
-      .locator('a[href="/login"]')
-      .isVisible()
-      .catch(() => false);
-    const getAlertsVisible = await dialog
-      .locator('a[href="/register"]')
-      .isVisible()
-      .catch(() => false);
+    const dialog = page.locator('[role="dialog"]').first();
+    await dialog.waitFor({ state: 'visible', timeout: 5000 });
+    const drawerVisible = await dialog.isVisible();
+
+    const navLinksLocator = dialog.locator('nav[aria-label="Mobile navigation"] a');
+    const navLinksText = await navLinksLocator.allTextContents();
+
+    const signInLocator = dialog.locator('a[href="/login"]').first();
+    await signInLocator.scrollIntoViewIfNeeded();
+    const signInVisible = await signInLocator.isVisible();
+
+    const getAlertsLocator = dialog.locator('a[href="/register"]').first();
+    await getAlertsLocator.scrollIntoViewIfNeeded();
+    const getAlertsVisible = await getAlertsLocator.isVisible();
 
     console.log(`  Drawer dialog visible: ${drawerVisible}`);
     console.log(`  Drawer nav links: ${JSON.stringify(navLinksText)}`);
     console.log(`  Drawer Sign in visible: ${signInVisible}`);
     console.log(`  Drawer Get alerts visible: ${getAlertsVisible}`);
 
+    if (!signInVisible || !getAlertsVisible) {
+      throw new Error(
+        `Mobile drawer action buttons not visible! signIn=${signInVisible}, getAlerts=${getAlertsVisible}`,
+      );
+    }
+
     // Escape handling
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(400);
-    const closedOnEscape = !(await dialog.isVisible({ timeout: 1000 }).catch(() => true));
+    await page.waitForTimeout(500);
+    const closedOnEscape = !(await dialog.isVisible().catch(() => true));
     await shot(page, 'mobile-drawer-closed');
     console.log(`  Closes on Escape: ${closedOnEscape}`);
 
     // Navigation trigger
     const reOpenBtn = page.locator('header button[aria-label="Open menu"]').first();
+    await reOpenBtn.waitFor({ state: 'visible', timeout: 5000 });
     await reOpenBtn.click();
     await page.waitForTimeout(500);
+
     const claimablesLink = dialog.locator('nav a[href="/claimables"]').first();
-    const navigated = await claimablesLink
-      .click()
-      .then(() => page.waitForURL(/claimables/, { timeout: 10000 }))
-      .then(() => page.url().includes('/claimables'))
-      .catch(() => false);
+    await claimablesLink.waitFor({ state: 'visible', timeout: 5000 });
+    await Promise.all([page.waitForURL(/claimables/, { timeout: 10000 }), claimablesLink.click()]);
+    const navigated = page.url().includes('/claimables');
     console.log(`  Drawer navigation works: ${navigated}`);
 
     results.mobileDrawer = {

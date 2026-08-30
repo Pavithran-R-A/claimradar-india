@@ -60,7 +60,7 @@ export default function MethodologyPage() {
               </li>
               <li>
                 <strong className="text-text-primary">Action Portal:</strong> The direct HTTPS
-                endpoint hosted by the regulator, tribunal, or court-appointed committee.
+                endpoint hosted by the official regulator or statutory administrator.
               </li>
             </ul>
           </section>
@@ -78,7 +78,7 @@ export default function MethodologyPage() {
               when:
             </p>
             <ol className="list-decimal pl-5 text-sm sm:text-base text-text-secondary space-y-2">
-              <li>The source URL resolves to an authentic government or tribunal domain.</li>
+              <li>The source URL resolves to an authentic government or regulatory domain.</li>
               <li>
                 The claim action route is active and does not charge unofficial intermediary fees.
               </li>

@@ -20,7 +20,7 @@ const faqItems = [
   {
     question: 'What is ClaimRadar?',
     answer:
-      'ClaimRadar is an independent information platform that aggregates publicly available refund, compensation and claim opportunities from official sources in India. We monitor consumer courts, financial regulators, government press releases, company public notices and other official channels to surface opportunities you might otherwise miss. We do not file claims on your behalf.',
+      'ClaimRadar is an independent information platform that aggregates publicly available refund, compensation and claim opportunities from official sources in India. We monitor financial regulators, insolvency authorities, telecom regulators, and government press releases to surface opportunities you might otherwise miss. We do not file claims on your behalf.',
   },
   {
     question: 'Is ClaimRadar a government website?',

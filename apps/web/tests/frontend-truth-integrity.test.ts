@@ -128,6 +128,47 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     }
   });
 
+  it('prohibits unsupported active court, tribunal, or gazette monitoring claims in UI files', () => {
+    const prohibitedOperationalClaims = [
+      'regulators, courts, and gazette orders',
+      'SEBI, RBI, IBBI, and courts',
+      'high court gazettes across India',
+      'consumer authorities, courts and tribunals',
+      'from official gazette detection',
+      'Official statutory portal',
+      'feeds monitored',
+      'Regulated Sources We Monitor',
+      'court filing',
+    ];
+
+    const searchDirs = [
+      path.resolve(__dirname, '../components/landing'),
+      path.resolve(__dirname, '../app/(public)'),
+    ];
+
+    function checkDir(dir: string) {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          checkDir(full);
+        } else if (entry.isFile() && (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))) {
+          const content = fs.readFileSync(full, 'utf8');
+          for (const phrase of prohibitedOperationalClaims) {
+            expect(
+              content.includes(phrase),
+              `File ${path.relative(process.cwd(), full)} contains prohibited operational claim: "${phrase}"`,
+            ).toBe(false);
+          }
+        }
+      }
+    }
+
+    for (const d of searchDirs) {
+      checkDir(d);
+    }
+  });
+
   it('verifies Evidence Radar visual includes mandatory conceptual disclaimer microcopy', () => {
     const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
     const content = fs.readFileSync(radarPath, 'utf8');

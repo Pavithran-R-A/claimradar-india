@@ -41,7 +41,7 @@ const POLAR_NODES: PolarNode[] = [
 ];
 
 const STAGES = [
-  { label: 'Signal Detected', desc: 'Monitored official regulatory feeds', icon: Search },
+  { label: 'Signal Detected', desc: 'Monitored official source channels', icon: Search },
   { label: 'Source Checked', desc: 'Authentic PDF / order verification', icon: Landmark },
   { label: 'Editorial Review', desc: 'Human verification against claims', icon: FileCheck2 },
   { label: 'Published with Source', desc: 'Direct link to official portal', icon: ShieldCheck },
@@ -82,9 +82,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
 
       {/* Screen-reader description */}
       <div className="sr-only">
-        Conceptual diagram illustrating how ClaimRadar monitors official Indian regulatory sources
-        including SEBI, RBI, IBBI, PIB, and TRAI. Notices are detected, verified by human editors
-        against official orders, and published with direct links to official portals.
+        Conceptual diagram illustrating how ClaimRadar monitors official Indian regulatory and
+        government sources including SEBI, RBI, IBBI, PIB, and TRAI. Notices are detected, verified
+        by human editors against official orders, and published with direct links to official
+        portals.
       </div>
 
       {/* SVG Radar Display */}
