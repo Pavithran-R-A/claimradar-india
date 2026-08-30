@@ -173,14 +173,15 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
     const content = fs.readFileSync(radarPath, 'utf8');
 
-    expect(content).toContain('SOURCE VERIFICATION');
-    expect(content).toContain('Every listing is checked against the source.');
-    expect(content).toContain('Monitored official sources');
-    expect(content).toContain('Press Information Bureau');
-    expect(content).toContain(
+    const normalized = content.replace(/\s+/g, ' ');
+    expect(normalized).toContain('SOURCE VERIFICATION');
+    expect(normalized).toContain('Every listing is checked against the source.');
+    expect(normalized).toContain('Monitored official sources');
+    expect(normalized).toContain('Press Information Bureau');
+    expect(normalized).toContain(
       'This shows our verification process. It is not a live activity feed.',
     );
-    expect(content).toContain(
+    expect(normalized).toContain(
       'ClaimRadar does not file claims or collect official filing fees. You act on the official portal.',
     );
 
