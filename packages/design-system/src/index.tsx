@@ -90,7 +90,13 @@ export function BrandMark({
         strokeWidth="2"
         strokeLinecap="round"
       />
-      <circle cx="21" cy="11.5" r="2.2" fill={secondaryStroke} />
+      <circle
+        cx="21"
+        cy="11.5"
+        r="2.2"
+        fill={secondaryStroke}
+        className={animated ? 'animate-beacon-pulse origin-[21px_11.5px]' : undefined}
+      />
       <circle cx="16" cy="16" r="1" fill={primaryStroke} />
     </svg>
   );
