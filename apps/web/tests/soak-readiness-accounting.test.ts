@@ -354,7 +354,7 @@ describe('Dynamic Soak Evidence Collection & Invariant Verification', () => {
 
     const slots = generateScheduledSlots(mockBaselineConfig, new Date('2026-08-31T00:30:00Z'));
     expect(slots.length).toBeGreaterThanOrEqual(2);
-    expect(slots[0].slotUtc).toBe('2026-08-30T18:17:00.000Z');
-    expect(slots[1].slotUtc).toBe('2026-08-31T00:17:00.000Z');
+    expect(slots[0]?.slotUtc).toBe('2026-08-30T18:17:00.000Z');
+    expect(slots[1]?.slotUtc).toBe('2026-08-31T00:17:00.000Z');
   });
 });
