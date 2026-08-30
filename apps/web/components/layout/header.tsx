@@ -3,10 +3,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@claimradar/design-system';
+import { cn, buttonVariants } from '@claimradar/design-system';
 import { Menu, X, Search, Bell, User } from 'lucide-react';
 import { ClaimRadarBrand } from './brand-mark';
-import { Button } from '@claimradar/design-system';
 
 const navLinks = [
   { href: '/claimables', label: 'Find claims' },
@@ -102,11 +101,15 @@ export function Header() {
               Sign in
             </Link>
 
-            <Link href="/register">
-              <Button variant="default" size="sm" className="rounded-lg font-bold">
-                <Bell className="mr-1.5 h-3.5 w-3.5" />
-                <span>Get alerts</span>
-              </Button>
+            <Link
+              href="/register"
+              className={cn(
+                buttonVariants({ variant: 'default', size: 'sm' }),
+                'rounded-lg font-bold',
+              )}
+            >
+              <Bell className="mr-1.5 h-3.5 w-3.5" />
+              <span>Get alerts</span>
             </Link>
           </div>
 
@@ -186,23 +189,27 @@ export function Header() {
             </nav>
 
             {/* Mobile Actions in Drawer */}
-            <div className="border-t border-border pt-4 flex flex-col gap-2.5">
-              <Link href="/login" className="block w-full">
-                <Button variant="outline" size="lg" className="w-full justify-center rounded-lg">
-                  <User className="mr-2 h-4 w-4" />
-                  Sign in to account
-                </Button>
+            <div className="border-t border-border pt-4 flex flex-col gap-2.5 w-full">
+              <Link
+                href="/login"
+                className={cn(
+                  buttonVariants({ variant: 'outline', size: 'lg' }),
+                  'w-full justify-center rounded-lg',
+                )}
+              >
+                <User className="mr-2 h-4 w-4" />
+                Sign in to account
               </Link>
 
-              <Link href="/register" className="block w-full">
-                <Button
-                  variant="default"
-                  size="lg"
-                  className="w-full justify-center rounded-lg font-bold"
-                >
-                  <Bell className="mr-2 h-4 w-4" />
-                  Get free alerts
-                </Button>
+              <Link
+                href="/register"
+                className={cn(
+                  buttonVariants({ variant: 'default', size: 'lg' }),
+                  'w-full justify-center rounded-lg font-bold',
+                )}
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                Get free alerts
               </Link>
 
               <p className="text-[11px] text-center text-text-muted mt-2">
