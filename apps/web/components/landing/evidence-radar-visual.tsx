@@ -5,7 +5,7 @@ import { Landmark, FileText, CheckCircle2, ShieldAlert, ExternalLink } from 'luc
 import { cn } from '@claimradar/design-system';
 
 const MONITORED_AUTHORITIES = [
-  { code: 'SEBI', name: 'Securities & Exchange Board of India' },
+  { code: 'SEBI', name: 'Securities and Exchange Board of India' },
   { code: 'RBI', name: 'Reserve Bank of India' },
   { code: 'IBBI', name: 'Insolvency & Bankruptcy Board of India' },
   { code: 'TRAI', name: 'Telecom Regulatory Authority of India' },
@@ -17,7 +17,7 @@ const VERIFICATION_STEPS = [
     step: '1',
     title: 'Official notice detected',
     description:
-      'Captured from statutory RSS feeds, public notice boards, or official press releases.',
+      'Captured from official RSS feeds, public notice boards, or official press releases.',
     icon: Landmark,
   },
   {
@@ -43,8 +43,7 @@ const VERIFICATION_STEPS = [
   {
     step: '5',
     title: 'Direct official action link',
-    description:
-      'We point you directly to the official statutory filing portal or nodal authority.',
+    description: 'We point you directly to the official filing portal or designated authority.',
     icon: ExternalLink,
   },
 ];

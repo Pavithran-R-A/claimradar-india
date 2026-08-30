@@ -177,6 +177,7 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     expect(normalized).toContain('SOURCE VERIFICATION');
     expect(normalized).toContain('Every listing is checked against the source.');
     expect(normalized).toContain('Monitored official sources');
+    expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
     expect(normalized).toContain(
       'This shows our verification process. It is not a live activity feed.',
@@ -189,6 +190,9 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     expect(content).not.toContain('text-[11px]');
     expect(content).not.toContain('text-[10px]');
     expect(content).not.toContain('text-[9px]');
+    expect(content).not.toContain('Securities & Exchange Board');
+    expect(content).not.toContain('statutory RSS');
+    expect(content).not.toContain('statutory filing portal');
     expect(content).not.toContain('Monitored Statutory Authorities');
     expect(content).not.toContain('Government Press Information');
   });
@@ -215,6 +219,9 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
       'Document Ingest',
       'Evidence Desk Status',
       'Current Ingestion & Verification Funnel',
+      'Securities & Exchange Board',
+      'statutory RSS',
+      'statutory filing portal',
     ];
 
     function checkDir(dir: string) {
