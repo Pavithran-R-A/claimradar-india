@@ -404,7 +404,7 @@ async function run() {
   await browser.close();
 
   const resultsPath = path.join(OUT_DIR, 'qa-results.json');
-  writeFileSync(resultsPath, JSON.stringify(results, null, 2));
+  writeFileSync(resultsPath, JSON.stringify(results, null, 2) + '\n');
   console.log(`\nResults written to external path: ${resultsPath}`);
   console.log(`Screenshots stored in external path: ${OUT_DIR}`);
 }

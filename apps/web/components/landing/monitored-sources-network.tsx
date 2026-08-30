@@ -54,9 +54,10 @@ export function MonitoredSourcesNetwork() {
               </div>
 
               <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-[11px]">
-                <span className="text-text-muted font-medium">Official regulatory portal</span>
+                <span className="text-text-muted font-medium">Official statutory portal</span>
                 <span className="text-trust-primary font-semibold">
-                  {family.sourceIds.length} feeds configured
+                  {family.activeSourceIds.length} official{' '}
+                  {family.activeSourceIds.length === 1 ? 'feed' : 'feeds'} monitored
                 </span>
               </div>
             </div>

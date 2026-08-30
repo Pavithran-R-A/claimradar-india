@@ -206,7 +206,7 @@ export interface PublicSourceFamily {
   category: string;
   description: string;
   scope: string;
-  sourceIds: string[];
+  activeSourceIds: string[];
 }
 
 export const publicSourceFamilies: PublicSourceFamily[] = [
@@ -218,7 +218,7 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     category: 'Securities & Market Regulation',
     description: 'Investor compensation schemes, refund orders, and recovery distributions.',
     scope: 'Securities notices & refund orders',
-    sourceIds: ['sebi-rss', 'sebi-orders-rss', 'sebi-public-notices'],
+    activeSourceIds: ['sebi-rss', 'sebi-public-notices'],
   },
   {
     id: 'rbi',
@@ -228,7 +228,7 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     category: 'Banking & Financial Depository',
     description: 'Banking directives, ombudsman resolutions, and depositor protection guidelines.',
     scope: 'Banking & ombudsman directives',
-    sourceIds: ['rbi-rss', 'rbi-notifications-rss'],
+    activeSourceIds: ['rbi-rss', 'rbi-notifications-rss'],
   },
   {
     id: 'ibbi',
@@ -238,7 +238,7 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     category: 'Insolvency & Corporate Resolution',
     description: 'Corporate insolvency resolution announcements and creditor claim filing notices.',
     scope: 'Insolvency creditor claim notices',
-    sourceIds: ['ibbi-public-announcements'],
+    activeSourceIds: ['ibbi-public-announcements'],
   },
   {
     id: 'pib',
@@ -249,7 +249,7 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     description:
       'Central government compensation packages, court settlements, and ministry notifications.',
     scope: 'Government compensation press releases',
-    sourceIds: ['pib-rss'],
+    activeSourceIds: ['pib-rss'],
   },
   {
     id: 'trai',
@@ -259,6 +259,9 @@ export const publicSourceFamilies: PublicSourceFamily[] = [
     category: 'Consumer & Telecom Regulation',
     description: 'Telecom tariff directives, overcharge refunds, and consumer protection notices.',
     scope: 'Telecom refund & consumer directives',
-    sourceIds: ['trai-press-releases'],
+    activeSourceIds: ['trai-press-releases'],
   },
 ];
+
+export const getActivePublicSourceIds = (): string[] =>
+  publicSourceFamilies.flatMap((f) => f.activeSourceIds);

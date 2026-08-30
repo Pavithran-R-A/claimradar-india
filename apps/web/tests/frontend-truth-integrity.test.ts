@@ -1,10 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { publicSourceFamilies, initialSources } from '@claimradar/source-registry';
+import {
+  publicSourceFamilies,
+  initialSources,
+  getActivePublicSourceIds,
+} from '@claimradar/source-registry';
 import fs from 'fs';
 import path from 'path';
 
 describe('Frontend Truth Integrity & Source Registry Parity', () => {
-  it('ensures all public source families are backed by real source definitions', () => {
+  it('enforces strict 100% resolution of every advertised public source ID to an active source', () => {
     expect(publicSourceFamilies.length).toBeGreaterThan(0);
 
     const initialSourceIds = new Set(initialSources.map((s) => s.id));
@@ -15,14 +19,54 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
       expect(family.shortName).toBeTruthy();
       expect(family.domain).toBeTruthy();
       expect(family.scope).toBeTruthy();
-      expect(family.sourceIds.length).toBeGreaterThan(0);
+      expect(family.activeSourceIds.length).toBeGreaterThan(0);
 
-      // At least one sourceId in each family must be in initialSources or valid configured sources
-      const hasConfiguredSource = family.sourceIds.some((id) => initialSourceIds.has(id));
+      // EVERY source ID in activeSourceIds must resolve to an active source in initialSources
+      for (const sourceId of family.activeSourceIds) {
+        expect(
+          initialSourceIds.has(sourceId),
+          `Public family ${family.shortName} contains inactive or unknown source ID: "${sourceId}"`,
+        ).toBe(true);
+      }
+    }
+  });
+
+  it('enforces strict reverse parity: every active source belongs to exactly one public family', () => {
+    const allActivePublicIds = getActivePublicSourceIds();
+
+    // Check no duplicates in active public sources
+    const uniqueIds = new Set(allActivePublicIds);
+    expect(uniqueIds.size, 'Duplicate source IDs found across public source families').toBe(
+      allActivePublicIds.length,
+    );
+
+    // Total count parity
+    expect(allActivePublicIds.length).toBe(initialSources.length);
+
+    // Check reverse mapping
+    for (const activeSource of initialSources) {
       expect(
-        hasConfiguredSource,
-        `Family ${family.shortName} (${family.id}) must have at least one active configured crawler source in initialSources`,
+        uniqueIds.has(activeSource.id),
+        `Active crawler source "${activeSource.id}" is missing from public source families`,
       ).toBe(true);
+    }
+  });
+
+  it('prohibits stale, inactive, or internal-only source IDs from public activeSourceIds', () => {
+    const prohibitedSourceIds = [
+      'sebi-orders-rss',
+      'cci-rss',
+      'generic-rss',
+      'irdai-notices',
+      'iepf-notices',
+    ];
+    const allActivePublicIds = new Set(getActivePublicSourceIds());
+
+    for (const prohibitedId of prohibitedSourceIds) {
+      expect(
+        allActivePublicIds.has(prohibitedId),
+        `Inactive source ID "${prohibitedId}" must not be listed in public activeSourceIds`,
+      ).toBe(false);
     }
   });
 
