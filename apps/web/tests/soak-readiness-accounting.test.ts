@@ -314,7 +314,7 @@ describe('Soak Provenance & Fail-Closed Accounting', () => {
 
   it('N: runtime sensitive change invalidates soak qualification and fails closed', () => {
     const currentTime = new Date('2026-09-02T13:08:03Z');
-    const samples = Array.from({ length: 13 }, (_, i) => createMockSoakSample());
+    const samples = Array.from({ length: 13 }, () => createMockSoakSample());
 
     const metrics = evaluateSoakProvenance({
       soakSamples: samples,
