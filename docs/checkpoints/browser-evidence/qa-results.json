@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://claimradar-staging.vercel.app",
-  "timestamp": "2026-08-30T04:25:58.659Z",
+  "timestamp": "2026-08-30T05:02:22.108Z",
   "pages": {
     "home-desktop-1536": {
       "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
@@ -66,6 +66,14 @@
       "viewport": "360x800",
       "floatingControls": 0
     },
+    "home-mobile-320": {
+      "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
+      "h1": "Money you may be owed shouldn't stay hidden.",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/",
+      "viewport": "320x568",
+      "floatingControls": 0
+    },
     "claimables-1440": {
       "title": "Claimables Directory — Published Refund & Compensation Records | ClaimRadar India",
       "h1": "Claimables directory",
@@ -86,6 +94,13 @@
       "status": 200,
       "finalUrl": "https://claimradar-staging.vercel.app/closing-soon",
       "viewport": "1440x900"
+    },
+    "closing-soon-390": {
+      "title": "Closing Soon — Urgent Claim Deadlines | ClaimRadar India",
+      "h1": "Closing Soon",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/closing-soon",
+      "viewport": "390x844"
     },
     "companies-1440": {
       "title": "Company Directory — ClaimRadar India",
@@ -108,6 +123,27 @@
       "finalUrl": "https://claimradar-staging.vercel.app/deadlines",
       "viewport": "1440x900"
     },
+    "deadlines-390": {
+      "title": "Filing Deadlines Schedule — ClaimRadar India",
+      "h1": "Deadline schedule",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/deadlines",
+      "viewport": "390x844"
+    },
+    "sources-1440": {
+      "title": "ClaimRadar India",
+      "h1": "Monitored Sources & Regulators",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/sources",
+      "viewport": "1440x900"
+    },
+    "sources-390": {
+      "title": "ClaimRadar India",
+      "h1": "Monitored Sources & Regulators",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/sources",
+      "viewport": "390x844"
+    },
     "how-it-works-1440": {
       "title": "ClaimRadar India",
       "h1": "How ClaimRadar Works",
@@ -115,12 +151,26 @@
       "finalUrl": "https://claimradar-staging.vercel.app/how-it-works",
       "viewport": "1440x900"
     },
+    "how-it-works-390": {
+      "title": "ClaimRadar India",
+      "h1": "How ClaimRadar Works",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/how-it-works",
+      "viewport": "390x844"
+    },
     "methodology-1440": {
       "title": "ClaimRadar India",
       "h1": "Verification Methodology",
       "status": 200,
       "finalUrl": "https://claimradar-staging.vercel.app/methodology",
       "viewport": "1440x900"
+    },
+    "methodology-390": {
+      "title": "ClaimRadar India",
+      "h1": "Verification Methodology",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/methodology",
+      "viewport": "390x844"
     },
     "faq-1440": {
       "title": "FAQ | ClaimRadar India",
@@ -149,6 +199,20 @@
       "status": 200,
       "finalUrl": "https://claimradar-staging.vercel.app/register",
       "viewport": "1440x900"
+    },
+    "app-1440": {
+      "title": "ClaimRadar India",
+      "h1": "(none)",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/login?next=%2Fapp",
+      "viewport": "1440x900"
+    },
+    "admin-1440": {
+      "title": "ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities",
+      "h1": "Money you may be owed shouldn't stay hidden.",
+      "status": 200,
+      "finalUrl": "https://claimradar-staging.vercel.app/",
+      "viewport": "1440x900"
     }
   },
   "accessibility": {
@@ -162,7 +226,13 @@
     "summaryCount": 5,
     "faqStartsCollapsed": true,
     "faqKeyboardToggle": true,
-    "headerNavLinks": ["Find claims", "Closing soon", "Companies", "Sectors", "How it works"],
+    "headerNavLinks": [
+      "Find claims",
+      "Closing soon",
+      "Companies",
+      "Sectors",
+      "How it works"
+    ],
     "headerActionButtons": [
       "ClaimRadarIndia",
       "Find claims",
@@ -177,8 +247,8 @@
     "faqImplementation": "NATIVE_DETAILS_SUMMARY"
   },
   "mobileDrawer": {
-    "drawerVisible": true,
-    "navLinksText": ["Find claims", "Closing soon", "Companies", "Sectors", "How it works"],
+    "drawerVisible": false,
+    "navLinksText": [],
     "signInVisible": false,
     "getAlertsVisible": false,
     "closedOnEscape": true,
@@ -192,7 +262,8 @@
     "tablet-768": 0,
     "mobile-430": 0,
     "mobile-390": 0,
-    "mobile-360": 0
+    "mobile-360": 0,
+    "mobile-320": 0
   },
   "claimableState": "VALID_ZERO_RESULTS"
 }
