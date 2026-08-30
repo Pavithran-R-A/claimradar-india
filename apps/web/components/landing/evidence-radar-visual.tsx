@@ -62,9 +62,9 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       <div className="border-b border-white/10 pb-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-brand-bright">
-            Verification Protocol
+            EVIDENCE RADAR
           </span>
-          <span className="text-xs text-slate-400">Official Source Standards</span>
+          <span className="text-xs text-slate-400">How ClaimRadar Monitors Sources</span>
         </div>
         <h2 className="mt-1.5 text-base sm:text-lg font-bold text-white tracking-tight font-serif">
           Every listing is checked against the source.
@@ -73,7 +73,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
 
       {/* Monitored Statutory Authorities Row */}
       <div className="my-4 rounded-lg border border-white/10 bg-white/5 p-3">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-300 mb-2">
+        <div className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
           Monitored Statutory Authorities
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -116,8 +116,11 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       </div>
 
       {/* Grounded Guarantee Footer */}
-      <div className="mt-5 border-t border-white/10 pt-3.5 text-center text-xs text-slate-300">
-        No filing fees · No personal data sold · Direct official portal handoff
+      <div className="mt-5 border-t border-white/10 pt-3.5 text-center text-xs text-slate-400">
+        <div>No filing fees · No personal data sold · Direct official portal handoff</div>
+        <div className="mt-1 text-[11px] text-slate-500">
+          Illustration of ClaimRadar verification standards — not live activity.
+        </div>
       </div>
     </div>
   );
