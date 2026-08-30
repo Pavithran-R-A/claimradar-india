@@ -74,25 +74,37 @@ export function LoginForm({ next }: LoginFormProps) {
       </form>
 
       <div className="mt-4 text-center text-sm text-text-secondary">
-        <Link href="/forgot-password" className="text-trust-primary hover:underline">
+        <Link
+          href="/forgot-password"
+          className="font-semibold text-trust-primary underline hover:text-trust-primary-hover"
+        >
           Forgot your password?
         </Link>
       </div>
 
       <div className="mt-3 text-center text-sm text-text-secondary">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-trust-primary hover:underline">
+        <Link
+          href="/register"
+          className="font-semibold text-trust-primary underline hover:text-trust-primary-hover"
+        >
           Create one
         </Link>
       </div>
 
-      <p className="mt-6 text-center text-xs text-text-secondary/60">
+      <p className="mt-6 text-center text-xs text-text-muted">
         By signing in, you agree to our{' '}
-        <Link href="/terms" className="underline hover:text-text-secondary">
+        <Link
+          href="/terms"
+          className="font-medium underline text-text-secondary hover:text-text-primary"
+        >
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href="/privacy" className="underline hover:text-text-secondary">
+        <Link
+          href="/privacy"
+          className="font-medium underline text-text-secondary hover:text-text-primary"
+        >
           Privacy Policy
         </Link>
         .

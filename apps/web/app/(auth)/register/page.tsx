@@ -124,18 +124,27 @@ export default function RegisterPage() {
 
       <div className="mt-4 text-center text-sm text-text-secondary">
         Already have an account?{' '}
-        <Link href="/login" className="text-trust-primary hover:underline">
+        <Link
+          href="/login"
+          className="font-semibold text-trust-primary underline hover:text-trust-primary-hover"
+        >
           Sign in
         </Link>
       </div>
 
-      <p className="mt-6 text-center text-xs text-text-secondary/60">
+      <p className="mt-6 text-center text-xs text-text-muted">
         By creating an account, you agree to our{' '}
-        <Link href="/terms" className="underline hover:text-text-secondary">
+        <Link
+          href="/terms"
+          className="font-medium underline text-text-secondary hover:text-text-primary"
+        >
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href="/privacy" className="underline hover:text-text-secondary">
+        <Link
+          href="/privacy"
+          className="font-medium underline text-text-secondary hover:text-text-primary"
+        >
           Privacy Policy
         </Link>
         .

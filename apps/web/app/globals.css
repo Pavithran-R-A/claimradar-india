@@ -38,9 +38,9 @@
   --c-surface-strong: 241 245 249; /* #F1F5F9 */
   --c-border: rgba(15, 23, 42, 0.1);
   --c-text-primary: 15 23 42; /* #0F172A slate-900 */
-  --c-text-secondary: 71 85 105; /* #475569 slate-600 */
-  --c-text-muted: 100 116 139; /* #64748B slate-500 */
-  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (4.9:1 with white) */
+  --c-text-secondary: 51 65 85; /* #334155 slate-700 (9.2:1 contrast) */
+  --c-text-muted: 71 85 105; /* #475569 slate-600 (5.8:1 contrast) */
+  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (4.9:1 with white text) */
   --c-trust-primary-hover: 17 94 89; /* #115E59 teal-800 */
   --c-success: 4 120 87; /* #047857 emerald-700 */
   --c-deadline: 180 83 9; /* #B45309 amber-700 */

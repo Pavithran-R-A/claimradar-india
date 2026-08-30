@@ -46,7 +46,12 @@ export function ClaimRadarBrand({
           ClaimRadar
         </span>
         {showDescriptor && (
-          <span className="text-[10px] font-bold uppercase tracking-widest text-trust-primary">
+          <span
+            className={cn(
+              'text-[10px] font-bold uppercase tracking-widest',
+              theme === 'dark' ? 'text-brand-bright' : 'text-trust-primary',
+            )}
+          >
             India
           </span>
         )}

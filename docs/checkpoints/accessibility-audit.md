@@ -1,40 +1,40 @@
 # ClaimRadar India — Axe-Core Automated Accessibility Audit Report
 
-**Audit Date:** 2026-08-29T14:11:34.265Z  
+**Audit Date:** 2026-08-30T09:41:50.081Z  
 **Engine:** `@axe-core/playwright` (WCAG 2.0/2.1 AA Standards)  
-**Total Routes Scanned:** 12
+**Total Routes Scanned:** 12  
 
 ---
 
 ## Executive Summary
 
-| Metric                         | Result | Status              |
-| :----------------------------- | :----- | :------------------ |
-| **Total Scanned Routes**       | `12`   | **COMPLETE**        |
-| **Total Violations**           | `16`   | **ISSUES DETECTED** |
-| **Critical Violations**        | `0`    | **PASS**            |
-| **Serious Violations**         | `16`   | **FAIL**            |
-| **Moderate / Minor**           | `0`    | **INFO**            |
-| **Manual Keyboard Compliance** | `PASS` | **VERIFIED**        |
+| Metric | Result | Status |
+| :--- | :--- | :--- |
+| **Total Scanned Routes** | `12` | **COMPLETE** |
+| **Total Violations** | `0` | **CLEAN PASS** |
+| **Critical Violations** | `0` | **PASS** |
+| **Serious Violations** | `0` | **PASS** |
+| **Moderate / Minor** | `0` | **INFO** |
+| **Manual Keyboard Compliance** | `PASS` | **VERIFIED** |
 
 ---
 
 ## Scanned Routes & Rule Evaluation Matrix
 
-| Scanned Route                          | Axe Rules Passed | Violations | Critical | Serious | Moderate | Status        |
-| :------------------------------------- | :--------------- | :--------- | :------- | :------ | :------- | :------------ |
-| `/`                                    | 25               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/claimables`                          | 26               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/claimables/iepf-unclaimed-dividends` | 20               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/companies`                           | 20               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/deadlines`                           | 20               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/login`                               | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
-| `/register`                            | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
-| `/app`                                 | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
-| `/app/matches`                         | 25               | 2          | 0        | 2       | 0        | **ATTENTION** |
-| `/admin`                               | 25               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/admin/candidates`                    | 25               | 1          | 0        | 1       | 0        | **ATTENTION** |
-| `/admin/sources`                       | 25               | 1          | 0        | 1       | 0        | **ATTENTION** |
+| Scanned Route | Axe Rules Passed | Violations | Critical | Serious | Moderate | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `/` | 22 | 0 | 0 | 0 | 0 | **PASS** |
+| `/claimables` | 26 | 0 | 0 | 0 | 0 | **PASS** |
+| `/claimables/iepf-unclaimed-dividends` | 20 | 0 | 0 | 0 | 0 | **PASS** |
+| `/companies` | 20 | 0 | 0 | 0 | 0 | **PASS** |
+| `/deadlines` | 20 | 0 | 0 | 0 | 0 | **PASS** |
+| `/login` | 25 | 0 | 0 | 0 | 0 | **PASS** |
+| `/register` | 25 | 0 | 0 | 0 | 0 | **PASS** |
+| `/app` | 25 | 0 | 0 | 0 | 0 | **PASS** |
+| `/app/matches` | 25 | 0 | 0 | 0 | 0 | **PASS** |
+| `/admin` | 26 | 0 | 0 | 0 | 0 | **PASS** |
+| `/admin/candidates` | 26 | 0 | 0 | 0 | 0 | **PASS** |
+| `/admin/sources` | 26 | 0 | 0 | 0 | 0 | **PASS** |
 
 ---
 

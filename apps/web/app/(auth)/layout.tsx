@@ -7,7 +7,7 @@ import { ShieldCheck } from 'lucide-react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="auth-backdrop relative flex min-h-screen flex-col bg-background">
+    <div className="theme-light relative flex min-h-screen flex-col bg-background text-text-primary">
       {/* Auth Header */}
       <header className="relative z-10 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-4 sm:px-6">
