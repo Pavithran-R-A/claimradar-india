@@ -1,0 +1,11 @@
+{
+  "runtimeFreezeHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
+  "finalSoakBaselineGhaRun": "33310672900",
+  "finalSoakBaselineHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
+  "finalSoakStartUtc": "2026-08-30T12:08:03Z",
+  "scheduleIntervalHours": 6,
+  "thresholdHours48": 48,
+  "thresholdHours72": 72,
+  "minRunsFor48h": 8,
+  "minRunsFor72h": 12
+}

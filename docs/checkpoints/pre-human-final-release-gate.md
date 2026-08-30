@@ -1,4 +1,4 @@
-﻿# ClaimRadar India — Pre-Human Final Release Gate Report
+# ClaimRadar India — Pre-Human Final Release Gate Report
 
 **Evaluation Timestamp:** August 30, 2026  
 **Topology:** Vercel (`claimradar-staging`) + Supabase (`qsshiksnyflwsybjyzob`) + GitHub Actions (`Pavithran-R-A/claimradar-india`)  
@@ -8,9 +8,13 @@
 
 ## 1. Executive Status Matrix
 
-`ini
-REPOSITORY_HEAD = 02dc1599320e8b1b22eefd0b678c187be09aa354
-ORIGIN_MAIN = 02dc1599320e8b1b22eefd0b678c187be09aa354
+```ini
+RUNTIME_FREEZE_HEAD = 02dc1590039c5d052d5f3fa05dac2765fcfb3b07
+FINAL_SOAK_BASELINE_HEAD = 02dc1590039c5d052d5f3fa05dac2765fcfb3b07
+FINAL_SOAK_BASELINE_RUN = 33310672900
+FINAL_SOAK_START = 2026-08-30T12:08:03Z
+REPORT_SOURCE_HEAD = 3fd01d472d18a1a0b76fed23b492d2d3e9335c63
+
 WORKTREE_CLEAN = PASS
 CI = PASS
 MAIN_BRANCH_PROTECTION = PASS
@@ -117,3 +121,4 @@ SAFE_FOR_UNRESTRICTED_PRODUCTION = DEFERRED_HUMAN
    - Set `NEXT_PUBLIC_SUPPORT_EMAIL` and `NEXT_PUBLIC_CORRECTIONS_EMAIL` environment variables.
 4. **Grievance Officer Designation**:
    - Appoint and publish the designated Grievance Officer name, address, and email for IT Rules compliance prior to unrestricted production launch.
+```
