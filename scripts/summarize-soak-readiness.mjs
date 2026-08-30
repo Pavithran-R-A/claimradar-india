@@ -283,13 +283,22 @@ export function calculateExpectedSoakRuns(elapsedHours, scheduleIntervalHours = 
   return Math.max(1, 1 + Math.floor(elapsedHours / scheduleIntervalHours));
 }
 
+/**
+ * @param {Object} [options]
+ * @param {Array<any>} [options.soakSamples]
+ * @param {Array<any>} [options.dbCrawlRuns]
+ * @param {any} [options.config]
+ * @param {Date|string} [options.currentTime]
+ * @param {boolean} [options.runtimeBehaviorChanged]
+ * @returns {any}
+ */
 export function evaluateSoakProvenance({
   soakSamples = [],
   dbCrawlRuns = [],
   config = loadBaselineConfig(),
   currentTime = new Date(),
   runtimeBehaviorChanged = false,
-}) {
+} = {}) {
   const currentDate = typeof currentTime === 'string' ? new Date(currentTime) : currentTime;
   const baselineDate = new Date(config.finalSoakStartUtc);
   const isBaselineValid = !isNaN(baselineDate.getTime()) && baselineDate <= currentDate;
