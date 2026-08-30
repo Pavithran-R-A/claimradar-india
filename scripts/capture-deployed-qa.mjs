@@ -11,6 +11,7 @@ import { chromium } from 'playwright';
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import prettier from 'prettier';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -404,7 +405,14 @@ async function run() {
   await browser.close();
 
   const resultsPath = path.join(OUT_DIR, 'qa-results.json');
-  writeFileSync(resultsPath, JSON.stringify(results, null, 2) + '\n');
+  const rawJson = JSON.stringify(results, null, 2);
+  const options = (await prettier.resolveConfig(resultsPath)) || {};
+  const formattedJson = await prettier.format(rawJson, {
+    ...options,
+    filepath: resultsPath,
+    parser: 'json',
+  });
+  writeFileSync(resultsPath, formattedJson);
   console.log(`\nResults written to external path: ${resultsPath}`);
   console.log(`Screenshots stored in external path: ${OUT_DIR}`);
 }
