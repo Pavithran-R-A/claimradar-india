@@ -1,91 +1,161 @@
+'use client';
+
+import * as React from 'react';
 import Link from 'next/link';
-import { ArrowRight, CalendarClock } from 'lucide-react';
+import { ArrowRight, CalendarClock, ShieldCheck, Landmark, Users } from 'lucide-react';
 import type { PublishedClaimable } from '@/lib/claimables-repository';
 import { formatIstDate } from '@/lib/dates';
-import { MetaPill, StatusBadge } from './status-badge';
+import { StatusBadge, MetaPill } from './status-badge';
+import { cn } from '@claimradar/design-system';
 
 /**
- * The atomic directory card. Fixed structure with reserved metadata rows so
- * hover motion and variable content never shift layout (CLS = 0).
+ * Atomic Directory Opportunity Card.
+ * Strict visual hierarchy:
+ * 1. What is the opportunity? (Title)
+ * 2. Who might be affected? (Target group)
+ * 3. What is the deadline? (Date / status)
+ * 4. Who is the official source? (Regulator / Provenance)
+ * 5. What should the user do next? (Action route)
  */
 export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
+  const isClosingSoon = claim.status === 'closing_soon';
 
   return (
-    <article className="group relative flex h-full flex-col rounded-card border border-border bg-surface p-5 shadow-card transition-[transform,box-shadow] duration-base ease-lift hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none">
-      <div className="relative z-10 mb-3 flex flex-wrap items-center gap-2">
-        <StatusBadge status={claim.status} />
-        <MetaPill href={claim.sectorSlug ? `/sectors/${claim.sectorSlug}` : undefined}>
-          {claim.sector}
-        </MetaPill>
+    <article className="group relative flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-trust-primary/40 hover:shadow-md">
+      <div>
+        {/* Top Badges: Status + Sector */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <StatusBadge status={claim.status} />
+          {claim.sector && (
+            <MetaPill href={claim.sectorSlug ? `/sectors/${claim.sectorSlug}` : undefined}>
+              {claim.sector}
+            </MetaPill>
+          )}
+        </div>
+
+        {/* 1. What is the opportunity? */}
+        <h3 className="text-lg font-bold leading-snug text-text-primary group-hover:text-trust-primary transition-colors">
+          <Link
+            href={`/claimables/${claim.slug}`}
+            className="after:absolute after:inset-0 focus-visible:outline-none"
+          >
+            {claim.title}
+          </Link>
+        </h3>
+
+        {/* 2. Who might be affected? */}
+        {claim.affectedGroup && (
+          <div className="mt-2.5 flex items-start gap-1.5 text-xs text-text-secondary">
+            <Users className="h-4 w-4 shrink-0 text-text-muted mt-0.5" />
+            <p className="line-clamp-2 leading-relaxed">
+              <span className="font-semibold text-text-primary">Affected: </span>
+              {claim.affectedGroup}
+            </p>
+          </div>
+        )}
+
+        {/* Summary Snippet */}
+        {claim.statusExplanation && (
+          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-text-muted">
+            {claim.statusExplanation}
+          </p>
+        )}
       </div>
 
-      <h3 className="text-lg font-semibold leading-snug text-text-primary">
-        <Link
-          href={`/claimables/${claim.slug}`}
-          className="transition-colors duration-fast after:absolute after:inset-0 group-hover:text-trust-primary focus-visible:text-trust-primary"
-        >
-          {claim.title}
-        </Link>
-      </h3>
+      {/* Footer Metadata & Provenance */}
+      <div className="mt-4 pt-3.5 border-t border-border flex flex-col gap-2">
+        <div className="flex items-center justify-between text-xs">
+          {/* 4. Who is the official source? */}
+          <div className="flex items-center gap-1.5 font-medium text-text-secondary">
+            <Landmark className="h-3.5 w-3.5 text-trust-primary" />
+            <span>{claim.companyName || 'Official Regulator'}</span>
+          </div>
 
-      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-secondary">
-        {claim.statusExplanation}
-      </p>
+          {/* 3. What is the deadline? */}
+          {deadline && claim.deadlineDate ? (
+            <span
+              className={cn(
+                'inline-flex items-center gap-1 text-xs font-semibold',
+                isClosingSoon ? 'text-amber-800 dark:text-amber-400' : 'text-text-muted',
+              )}
+            >
+              <CalendarClock className="h-3.5 w-3.5" />
+              <time dateTime={claim.deadlineDate}>{deadline}</time>
+            </span>
+          ) : (
+            <span className="text-[11px] text-text-muted">No deadline</span>
+          )}
+        </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border pt-3 text-xs text-text-muted">
-        <span className="font-medium text-text-secondary">{claim.companyName}</span>
-        {deadline && claim.deadlineDate ? (
-          <span
-            className={`inline-flex items-center gap-1.5 font-medium ${
-              claim.status === 'closing_soon' ? 'text-deadline' : 'text-text-muted'
-            }`}
-          >
-            <CalendarClock aria-hidden className="h-3.5 w-3.5" />
-            Deadline: <time dateTime={claim.deadlineDate}>{deadline}</time>
+        {/* 5. What next? */}
+        <div className="flex items-center justify-between pt-1 text-xs font-bold text-trust-primary">
+          <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+            Verified official source
           </span>
-        ) : (
-          <span>No deadline recorded</span>
-        )}
+          <span className="inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            View evidence <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
       </div>
     </article>
   );
 }
 
-/** Compact row variant for company/sector/deadline listings. */
+/** Editorial Row Variant for search results & closing-soon feeds */
 export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
+  const isClosingSoon = claim.status === 'closing_soon';
+
   return (
-    <article className="group relative rounded-card border border-border bg-surface p-5 shadow-card transition-[transform,box-shadow] duration-base ease-lift hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transform-none">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <article className="group relative rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-150 hover:border-trust-primary/40 hover:bg-surface-strong/50">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <div className="relative z-10 mb-2 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             <StatusBadge status={claim.status} />
-            <span className="text-xs text-text-muted">{claim.companyName}</span>
+            <span className="text-xs font-medium text-text-secondary">{claim.companyName}</span>
+            {claim.sector && (
+              <span className="rounded bg-surface-strong px-2 py-0.5 text-[11px] text-text-muted">
+                {claim.sector}
+              </span>
+            )}
           </div>
-          <h3 className="text-base font-semibold text-text-primary">
+
+          <h3 className="text-base sm:text-lg font-bold text-text-primary group-hover:text-trust-primary transition-colors">
             <Link
               href={`/claimables/${claim.slug}`}
-              className="after:absolute after:inset-0 transition-colors duration-fast group-hover:text-trust-primary"
+              className="after:absolute after:inset-0 focus-visible:outline-none"
             >
               {claim.title}
             </Link>
           </h3>
-          <p className="mt-1 line-clamp-2 text-sm text-text-secondary">{claim.affectedGroup}</p>
+
+          {claim.affectedGroup && (
+            <p className="mt-1 line-clamp-1 text-xs text-text-secondary">
+              <span className="font-semibold text-text-primary">Affected: </span>
+              {claim.affectedGroup}
+            </p>
+          )}
         </div>
-        <div className="relative z-10 flex shrink-0 flex-col items-end gap-2 text-xs">
-          {deadline && claim.deadlineDate && (
+
+        <div className="flex shrink-0 items-center justify-between sm:flex-col sm:items-end gap-2 border-t border-border sm:border-t-0 pt-2 sm:pt-0">
+          {deadline && claim.deadlineDate ? (
             <span
-              className={`inline-flex items-center gap-1.5 font-medium ${
-                claim.status === 'closing_soon' ? 'text-deadline' : 'text-text-muted'
-              }`}
+              className={cn(
+                'inline-flex items-center gap-1.5 text-xs font-semibold',
+                isClosingSoon ? 'text-amber-800 dark:text-amber-400' : 'text-text-muted',
+              )}
             >
-              <CalendarClock aria-hidden className="h-3.5 w-3.5" />
+              <CalendarClock className="h-3.5 w-3.5" />
               <time dateTime={claim.deadlineDate}>{deadline}</time>
             </span>
+          ) : (
+            <span className="text-xs text-text-muted">No deadline</span>
           )}
-          <span className="inline-flex items-center gap-1 font-semibold text-trust-primary">
-            Details <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-trust-primary group-hover:translate-x-1 transition-transform">
+            View evidence dossier <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>

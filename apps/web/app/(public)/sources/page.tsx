@@ -1,72 +1,48 @@
-import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-page';
+'use client';
 
-export const metadata = generateLegalMetadata(
-  'Sources',
-  'Official sources monitored by ClaimRadar India.',
-);
+import * as React from 'react';
+import { MonitoredSourcesNetwork } from '@/components/landing/monitored-sources-network';
+import { ArrowRight, Landmark } from 'lucide-react';
+
+const supportEmail = 'support@claimradar.in';
 
 export default function SourcesPage() {
   return (
-    <LegalPageTemplate title="Sources We Monitor" lastUpdated="July 27, 2026">
-      <p className="text-base">
-        ClaimRadar monitors 42+ official sources across five categories. Below is a representative
-        list of the source types we track.
-      </p>
+    <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="max-w-3xl mb-12">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
+          <Landmark className="h-4 w-4" />
+          Official Coverage
+        </div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
+          Monitored Sources &amp; Regulators
+        </h1>
+        <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
+          ClaimRadar continuously interfaces with authenticated public feeds and gazettes across
+          India. Below is the active coverage matrix.
+        </p>
+      </header>
 
-      <h2>Consumer Authorities</h2>
-      <ul>
-        <li>National Consumer Disputes Redressal Commission (NCDRC)</li>
-        <li>State Consumer Disputes Redressal Commissions</li>
-        <li>District Consumer Disputes Redressal Forums</li>
-        <li>National Consumer Helpline (NCH) — consumer grievance data</li>
-        <li>Central Consumer Protection Authority (CCPA) — orders and notices</li>
-      </ul>
+      {/* Monitored Sources Network */}
+      <section className="mb-16">
+        <MonitoredSourcesNetwork />
+      </section>
 
-      <h2>Courts and Tribunals</h2>
-      <ul>
-        <li>Supreme Court of India — judgments and orders on consumer matters</li>
-        <li>High Courts — consumer protection and class-action filings</li>
-        <li>National Company Law Tribunal (NCLT) — insolvency and consumer matters</li>
-        <li>Telecom Disputes Settlement and Appellate Tribunal (TDSAT)</li>
-        <li>Insurance Ombudsman — decisions and annual reports</li>
-      </ul>
-
-      <h2>Financial Regulators</h2>
-      <ul>
-        <li>Reserve Bank of India (RBI) — circulars, directives, penalty orders</li>
-        <li>Securities and Exchange Board of India (SEBI) — orders, consent settlements</li>
-        <li>Insurance Regulatory and Development Authority (IRDAI) — directives and notices</li>
-        <li>Banking Ombudsman Scheme — annual reports and case summaries</li>
-        <li>Pension Fund Regulatory and Development Authority (PFRDA)</li>
-      </ul>
-
-      <h2>Company Public Notices</h2>
-      <ul>
-        <li>Listed company announcements on BSE and NSE</li>
-        <li>Company websites — refund policies, recall notices, settlement announcements</li>
-        <li>Ministry of Corporate Affairs (MCA) — regulatory filings and notices</li>
-        <li>Competition Commission of India (CCI) — orders affecting consumers</li>
-      </ul>
-
-      <h2>Government Press Releases</h2>
-      <ul>
-        <li>Press Information Bureau (PIB) — government scheme announcements</li>
-        <li>Ministry of Consumer Affairs — notifications and circulars</li>
-        <li>State government portals — state-specific consumer schemes</li>
-        <li>Department of Consumer Affairs — price monitoring and grievance data</li>
-        <li>Food Safety and Standards Authority of India (FSSAI) — recall notices</li>
-      </ul>
-
-      <h2>Source Coverage Notes</h2>
-      <p>
-        This list is representative and may be updated as new sources become available or existing
-        sources change their publication practices. We do not display official logos or seals of any
-        government body or court.
-      </p>
-      <p>
-        If you know of an official source we should be monitoring, please let us know at
-        support@claimradar.example.
-      </p>
-    </LegalPageTemplate>
+      {/* Coverage Disclaimer */}
+      <section className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm max-w-3xl mx-auto text-center">
+        <h2 className="text-lg font-bold text-text-primary mb-2">Suggest an Official Source</h2>
+        <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-4">
+          If there is an authentic public tribunal or regulator portal you believe our automated
+          ingestion desk should monitor, let our editorial team know.
+        </p>
+        <a
+          href={`mailto:${supportEmail}?subject=Official%20Source%20Suggestion`}
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:underline"
+        >
+          Contact Editorial Desk ({supportEmail}) <ArrowRight className="h-4 w-4" />
+        </a>
+      </section>
+    </div>
   );
 }

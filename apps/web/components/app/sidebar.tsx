@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  BarChart3,
   Bell,
   Bookmark,
   Compass,
@@ -14,7 +13,7 @@ import {
   Shield,
   User,
 } from 'lucide-react';
-import { cn } from '@claimradar/design-system';
+import { cn, BrandMark } from '@claimradar/design-system';
 
 interface NavItem {
   href: string;
@@ -73,13 +72,11 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
     <>
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-background-elevated lg:flex">
-        <div className="flex h-16 items-center gap-2 border-b border-border px-5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-trust-primary/15">
-            <BarChart3 className="h-4 w-4 text-trust-primary" />
-          </span>
+        <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
+          <BrandMark size={28} variant="default" animated={false} />
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-text-primary">{siteName}</p>
-            <p className="text-xs text-text-muted">Personal workspace</p>
+            <p className="text-sm font-extrabold text-text-primary">{siteName}</p>
+            <p className="text-[11px] font-medium text-text-muted">Personal Workspace</p>
           </div>
         </div>
         <nav aria-label="Product navigation" className="flex-1 space-y-1 overflow-y-auto p-3">

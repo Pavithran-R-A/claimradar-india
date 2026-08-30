@@ -1,115 +1,191 @@
-import Link from 'next/link';
-import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-page';
+'use client';
 
-export const metadata = generateLegalMetadata(
-  'How It Works',
-  'Learn how ClaimRadar discovers and surfaces claimable opportunities for you.',
-);
+import * as React from 'react';
+import Link from 'next/link';
+import { ShieldCheck, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
+import { Button } from '@claimradar/design-system';
 
 export default function HowItWorksPage() {
   return (
-    <LegalPageTemplate title="How It Works" lastUpdated="July 27, 2026">
-      <p className="text-base">
-        ClaimRadar monitors official sources across India to surface refund, compensation and claim
-        opportunities — then matches them to companies and services you use.
-      </p>
-
-      <h2>Step 1: Build Your Watchlist</h2>
-      <p>
-        Start by adding companies, products, or services you use to your watchlist. This could be
-        your bank, telecom provider, e-commerce platform, travel service, or any company whose
-        products you have purchased.
-      </p>
-      <p>
-        Your watchlist is the foundation of your personalised alerts. The more companies you add,
-        the more opportunities we can match you to.
-      </p>
-
-      <h2>Step 2: Automated Source Monitoring</h2>
-      <p>Our systems continuously scan five categories of official sources:</p>
-      <ul>
-        <li>
-          <strong>Consumer authorities</strong> — Central and state consumer commission orders,
-          National Consumer Helpline data
-        </li>
-        <li>
-          <strong>Courts and tribunals</strong> — High court and Supreme Court judgments,
-          class-action filings, tribunal orders
-        </li>
-        <li>
-          <strong>Financial regulators</strong> — RBI circulars, SEBI orders, IRDAI directives,
-          banking ombudsman decisions
-        </li>
-        <li>
-          <strong>Company public notices</strong> — Refund announcements, recall notices, settlement
-          schemes, warranty extensions
-        </li>
-        <li>
-          <strong>Government press releases</strong> — PIB releases, ministry notifications, state
-          government schemes
-        </li>
-      </ul>
-      <p>
-        When our systems detect a new opportunity or update to an existing one, it enters our
-        editorial pipeline.
-      </p>
-
-      <h2>Step 3: AI Extraction &amp; Editorial Review</h2>
-      <p>
-        Automated extraction identifies key data points: who qualifies, deadlines, official process
-        links, required documentation. Our editorial team then reviews each extraction against our
-        publication criteria before anything goes live.
-      </p>
-      <p>
-        This two-layer approach — AI discovery plus human review — ensures accuracy while
-        maintaining coverage breadth.
-      </p>
-
-      <h2>Step 4: Matching &amp; Alerts</h2>
-      <p>
-        Published opportunities are matched against your watchlist. When a match is found, you
-        receive an email or push notification with:
-      </p>
-      <ul>
-        <li>The company or service name</li>
-        <li>What the opportunity is (refund, compensation, claim)</li>
-        <li>Who may qualify</li>
-        <li>Deadline (if applicable)</li>
-        <li>Link to the official source</li>
-        <li>Status classification (Verified, Under Review, Open)</li>
-      </ul>
-
-      <h2>Step 5: You Take Action</h2>
-      <p>
-        Each listing includes the official process for filing a claim or complaint. You file
-        directly with the relevant authority — ClaimRadar does not file on your behalf.
-      </p>
-      <p>
-        Our guides section provides educational content about consumer rights, complaint procedures,
-        and regulatory processes to help you navigate the official channels.
-      </p>
-
-      <h2>What ClaimRadar Does Not Do</h2>
-      <ul>
-        <li>We do not file claims or complaints on your behalf</li>
-        <li>We do not guarantee that you will receive any refund or compensation</li>
-        <li>We do not provide legal advice</li>
-        <li>We do not act as a law firm, claims manager, or financial advisor</li>
-        <li>We do not collect Aadhaar numbers, bank details, or other sensitive personal data</li>
-      </ul>
-
-      <div className="mt-10 rounded-lg border border-border bg-surface p-6 text-center">
-        <h3 className="text-lg font-semibold text-text-primary">Ready to get started?</h3>
-        <p className="mt-2 text-sm text-text-secondary">
-          Create a free account and build your watchlist today.
+    <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="max-w-3xl mb-12">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
+          <ShieldCheck className="h-4 w-4" />
+          Consumer Guide
+        </div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
+          How ClaimRadar Works
+        </h1>
+        <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
+          From official court notices to your direct action: how we discover, verify, structure, and
+          surface public refund and compensation schemes across India without middlemen or fees.
         </p>
-        <Link
-          href="/register"
-          className="mt-4 inline-flex h-10 items-center rounded-md bg-trust-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-trust-primary-hover"
-        >
-          Create Free Account
-        </Link>
-      </div>
-    </LegalPageTemplate>
+      </header>
+
+      {/* Step by Step Walkthrough */}
+      <section className="space-y-6 mb-16">
+        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+              01
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">
+                Continuous Monitoring of Official Indian Sources
+              </h2>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                Our ingestion pipelines monitor public notices, press releases, gazette
+                notifications, and regulatory orders from SEBI, RBI, IBBI, NCLT, NCDRC, and PIB. We
+                do not crawl unverified blogs or social media rumors.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+              02
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">
+                Structured Evidence Extraction &amp; Integrity Check
+              </h2>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                When an order or refund scheme is discovered, our systems extract deterministic
+                parameters: affected groups, eligible dates, compensation terms, required proofs,
+                and the official portal endpoint. The original PDF or order text is checked directly
+                against the regulator&apos;s server.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+              03
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">Human Editorial Review Gate</h2>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                No record is ever published automatically. ClaimRadar editors verify every extracted
+                fact against the primary source document. Only records that meet our strict
+                verification criteria are approved for the public directory.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+              04
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">
+                Direct Official Action — No Middlemen, No Fees
+              </h2>
+              <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                Every listing surfaces the authentic official submission route. You submit your
+                claim directly on the official regulator or court committee website. ClaimRadar
+                never files claims for you, never takes a percentage, and never asks for bank
+                account details or Aadhaar numbers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Pipeline Section */}
+      <section className="mb-16 rounded-2xl border border-border bg-surface-strong/40 p-6 sm:p-10">
+        <h2 className="text-2xl font-extrabold text-text-primary mb-6">
+          The 7-Stage Evidence Pipeline
+        </h2>
+        <EvidenceFlowDiagram />
+      </section>
+
+      {/* What ClaimRadar Does and Does NOT Do */}
+      <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
+          <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold mb-4">
+            <CheckCircle2 className="h-5 w-5" />
+            <h2 className="text-lg">What ClaimRadar Does</h2>
+          </div>
+          <ul className="space-y-3 text-sm text-text-secondary">
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Monitors official Indian regulators, courts, and gazette releases daily.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Translates complex legal notices into plain, clear English.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Links directly to authentic authority portals where you submit for free.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-600 font-bold">✓</span>
+              <span>Alerts you when relevant notices match your watchlist.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-6 sm:p-8">
+          <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold mb-4">
+            <XCircle className="h-5 w-5" />
+            <h2 className="text-lg">What ClaimRadar Does NOT Do</h2>
+          </div>
+          <ul className="space-y-3 text-sm text-text-secondary">
+            <li className="flex items-start gap-2">
+              <span className="text-rose-600 font-bold">✗</span>
+              <span>We do NOT file claims, collect fees, or take cuts of refunds.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-rose-600 font-bold">✗</span>
+              <span>We do NOT decide your legal eligibility — only the official scheme does.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-rose-600 font-bold">✗</span>
+              <span>We do NOT collect Aadhaar, PAN, bank credentials, or private IDs.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-rose-600 font-bold">✗</span>
+              <span>We are NOT affiliated with any government agency or law firm.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="rounded-2xl border border-border bg-ink-950 p-8 sm:p-12 text-white text-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
+          Explore Active Opportunities Now
+        </h2>
+        <p className="text-sm text-slate-300 max-w-xl mx-auto mb-6">
+          Browse verified listings in our directory or create your free watchlist to receive alerts.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link href="/claimables">
+            <Button variant="signal" size="lg" className="rounded-xl font-bold">
+              <span>Browse directory</span>
+              <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/register">
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-xl border-white/20 bg-white/5 text-white hover:bg-white/10"
+            >
+              Create free alert account
+            </Button>
+          </Link>
+        </div>
+      </section>
+    </div>
   );
 }

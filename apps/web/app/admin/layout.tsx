@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { Badge } from '@claimradar/design-system';
-import { Radar } from 'lucide-react';
+import { Badge, BrandMark } from '@claimradar/design-system';
 import type { StaffRole } from '@/lib/auth';
 import { isStaffRole, requireRoles } from '@/lib/auth';
 import { adminNavGroups, ALL_STAFF } from './_lib/roles';
@@ -38,10 +37,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             href="/admin"
             className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-trust-primary/15">
-              <Radar className="h-4 w-4 text-trust-primary" aria-hidden />
-            </span>
-            <span className="text-sm font-semibold text-text-primary">Admin Panel</span>
+            <BrandMark size={24} variant="default" animated={false} />
+            <span className="text-sm font-bold text-text-primary">Admin Operations</span>
           </Link>
           {role && (
             <div className="flex min-w-0 items-center gap-2">
@@ -57,7 +54,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <li>
               <Link
                 href="/admin"
-                className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
+                className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
               >
                 Dashboard
               </Link>
@@ -66,7 +63,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
+                  className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
                 >
                   {item.label}
                 </Link>
@@ -83,10 +80,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             href="/admin"
             className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-trust-primary/15">
-              <Radar className="h-4 w-4 text-trust-primary" aria-hidden />
-            </span>
-            <span className="text-base font-semibold text-text-primary">Admin Panel</span>
+            <BrandMark size={28} variant="default" animated={false} />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-extrabold text-text-primary">ClaimRadar</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-trust-primary">
+                Operations Desk
+              </span>
+            </div>
           </Link>
           {role && (
             <div className="mt-3 flex items-center gap-2">

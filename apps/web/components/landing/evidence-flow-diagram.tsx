@@ -3,103 +3,151 @@
 import * as React from 'react';
 import {
   Landmark,
+  Radio,
   FileCheck2,
+  Cpu,
   UserCheck,
   ShieldCheck,
   ExternalLink,
-  ArrowRight,
 } from 'lucide-react';
+import { cn } from '@claimradar/design-system';
 
-const FLOW_STEPS = [
+const PIPELINE_STEPS = [
   {
-    step: '01',
-    title: 'Official Notice Monitoring',
+    num: '01',
+    label: 'Official Notice',
     icon: Landmark,
-    description:
-      'Continuous monitoring of SEBI, RBI, PIB, consumer forums, and public corporate announcements.',
-    tag: 'Official Sources',
+    desc: 'Public notices from SEBI, RBI, IBBI, NCLT, and PIB.',
+    detail: 'Monitored across authenticated public portals and gazette releases.',
   },
   {
-    step: '02',
-    title: 'Structured Evidence Extraction',
+    num: '02',
+    label: 'Signal Detected',
+    icon: Radio,
+    desc: 'Automated discovery flags relevant refund and claim windows.',
+    detail: 'Ingested idempotently with hash-deduplicated canonical URLs.',
+  },
+  {
+    num: '03',
+    label: 'Document Checked',
     icon: FileCheck2,
-    description:
-      'Deterministic extraction of affected groups, compensation terms, evidence required, and deadlines.',
-    tag: 'Grounded Data',
+    desc: 'Authentic PDF / order text retrieved from source domain.',
+    detail: 'Direct cryptographic integrity checking against source host.',
   },
   {
-    step: '03',
-    title: 'Human Editorial Review',
+    num: '04',
+    label: 'Evidence Structured',
+    icon: Cpu,
+    desc: 'Affected parties, deadline dates, and claims criteria parsed.',
+    detail: 'Structured into deterministic claimable candidate records.',
+  },
+  {
+    num: '05',
+    label: 'Human Review',
     icon: UserCheck,
-    description:
-      'Strict editorial review and verification before any opportunity is published publicly.',
-    tag: 'Editorial Control',
+    desc: 'Editorial team verifies facts against the official order.',
+    detail: 'Zero automated publication. Every listing requires human verification.',
   },
   {
-    step: '04',
-    title: 'Direct Official Action Route',
+    num: '06',
+    label: 'Published with Source',
+    icon: ShieldCheck,
+    desc: 'Surfaced with direct provenance and official portal links.',
+    detail: 'Clear, plain-language guidance on eligibility and timeline.',
+  },
+  {
+    num: '07',
+    label: 'User Acts Directly',
     icon: ExternalLink,
-    description:
-      'Clear guidance surfacing exact official portals, forms, and deadlines to act directly.',
-    tag: 'Direct Action',
+    desc: 'You submit your claim directly on the official authority portal.',
+    detail: 'No intermediaries, no fees, no filing on your behalf.',
   },
 ];
 
 export function EvidenceFlowDiagram() {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState<number>(4);
 
   return (
-    <div className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-semibold text-trust-primary mb-3">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          Transparency & Methodology
-        </div>
-        <h2 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
-          From Official Source to Direct User Action
-        </h2>
-        <p className="mt-4 text-base text-text-secondary">
-          How ClaimRadar discovers, structures, and verifies claim opportunities across India.
-        </p>
-      </div>
+    <div className="w-full">
+      {/* Horizontal Continuous Rail for Desktop */}
+      <div className="hidden xl:grid xl:grid-cols-7 gap-3">
+        {PIPELINE_STEPS.map((step, idx) => {
+          const Icon = step.icon;
+          const isSelected = activeStep === idx;
+          const isFinal = idx === PIPELINE_STEPS.length - 1;
 
-      {/* Step Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {FLOW_STEPS.map((item, idx) => {
-          const Icon = item.icon;
-          const isActive = idx === activeStep;
           return (
             <div
-              key={item.step}
+              key={step.num}
               onClick={() => setActiveStep(idx)}
-              className={`group relative cursor-pointer rounded-card border p-6 transition-all duration-300 ${
-                isActive
-                  ? 'border-trust-primary bg-surface shadow-lift ring-1 ring-trust-primary/30'
-                  : 'border-border bg-surface/60 hover:border-trust-primary/40 hover:bg-surface'
-              }`}
-            >
-              {/* Connector line on desktop */}
-              {idx < FLOW_STEPS.length - 1 && (
-                <div className="hidden lg:block absolute -right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-surface border border-border p-1 text-text-muted">
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </div>
+              className={cn(
+                'group relative flex flex-col justify-between rounded-xl border p-4 cursor-pointer transition-all duration-150',
+                isSelected
+                  ? 'border-trust-primary bg-surface shadow-md ring-1 ring-trust-primary/20'
+                  : 'border-border bg-surface hover:border-trust-primary/30 hover:bg-surface-strong',
               )}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-trust-primary">
+                    Step {step.num}
+                  </span>
+                  <div
+                    className={cn(
+                      'flex h-7 w-7 items-center justify-center rounded-md transition-colors',
+                      isSelected
+                        ? 'bg-trust-primary text-white'
+                        : 'bg-surface-strong text-text-secondary group-hover:text-trust-primary',
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </div>
+                </div>
 
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-                  Step {item.step}
-                </span>
-                <span className="rounded-full bg-surface-strong px-2.5 py-0.5 text-[11px] font-medium text-text-muted">
-                  {item.tag}
-                </span>
+                <h3 className="text-sm font-bold text-text-primary leading-tight">{step.label}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-text-secondary">{step.desc}</p>
               </div>
 
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-trust-primary/10 text-trust-primary group-hover:scale-105 transition-transform duration-200">
-                <Icon className="h-6 w-6" />
+              <div className="mt-3 pt-2.5 border-t border-border/60">
+                <span className="text-[11px] font-medium text-text-muted">
+                  {isFinal ? 'Official Portal' : 'ClaimRadar Rigor'}
+                </span>
               </div>
+            </div>
+          );
+        })}
+      </div>
 
-              <h3 className="text-lg font-semibold text-text-primary mb-2">{item.title}</h3>
-              <p className="text-xs leading-relaxed text-text-secondary">{item.description}</p>
+      {/* Responsive Grid for Tablets & Small Desktops (2-3 Cols) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:hidden gap-4">
+        {PIPELINE_STEPS.map((step, idx) => {
+          const Icon = step.icon;
+          const isSelected = activeStep === idx;
+
+          return (
+            <div
+              key={step.num}
+              onClick={() => setActiveStep(idx)}
+              className={cn(
+                'flex flex-col justify-between rounded-xl border p-5 cursor-pointer transition-all',
+                isSelected
+                  ? 'border-trust-primary bg-surface shadow-sm ring-1 ring-trust-primary/20'
+                  : 'border-border bg-surface hover:border-trust-primary/30',
+              )}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-trust-primary">STEP {step.num}</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-strong text-trust-primary">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                </div>
+                <h3 className="text-base font-bold text-text-primary">{step.label}</h3>
+                <p className="mt-2 text-xs text-text-secondary leading-relaxed">{step.desc}</p>
+              </div>
+              <p className="mt-3 text-[11px] text-text-muted border-t border-border pt-2">
+                {step.detail}
+              </p>
             </div>
           );
         })}

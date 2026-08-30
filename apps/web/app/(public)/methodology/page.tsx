@@ -1,102 +1,138 @@
-import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-page';
+'use client';
 
-export const metadata = generateLegalMetadata(
-  'Methodology',
-  'How ClaimRadar discovers, verifies and classifies claimable opportunities.',
-);
+import * as React from 'react';
+import Link from 'next/link';
+import { Scale, ArrowRight } from 'lucide-react';
 
 export default function MethodologyPage() {
   return (
-    <LegalPageTemplate title="Methodology" lastUpdated="July 27, 2026">
-      <p className="text-base">
-        Our methodology combines automated source monitoring with human editorial review to ensure
-        accuracy, timeliness and transparency.
-      </p>
+    <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="max-w-3xl mb-12">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
+          <Scale className="h-4 w-4" />
+          Technical Standards
+        </div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
+          Verification Methodology
+        </h1>
+        <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
+          The principles, cryptographic provenance checks, and editorial standards governing every
+          record published on ClaimRadar India.
+        </p>
+      </header>
 
-      <h2>Source Tiers</h2>
-      <p>Sources are classified into tiers based on reliability and authority:</p>
-      <ul>
-        <li>
-          <strong>Tier 1 (Authoritative)</strong> — Court orders, regulatory directives, government
-          gazette notifications. These carry the highest confidence.
-        </li>
-        <li>
-          <strong>Tier 2 (Official)</strong> — Government press releases, regulatory circulars,
-          company public notices published on official channels.
-        </li>
-        <li>
-          <strong>Tier 3 (Supplementary)</strong> — News reports from established publications,
-          consumer forum summaries, industry analyses referencing primary sources.
-        </li>
-      </ul>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-8 space-y-12">
+          {/* Section 1 */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">
+              1. Deterministic Source Ingestion
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+              We ingest public notifications using deterministic crawler workers that target
+              authenticated regulatory domains. Each crawled document is hashed (SHA-256) and paired
+              with its canonical HTTP source URL and server timestamp. This ensures every extracted
+              datum has an auditable origin trail.
+            </p>
+          </section>
 
-      <h2>Discovery Phase</h2>
-      <p>
-        Automated crawlers scan Tier 1 and Tier 2 sources continuously. Our systems monitor 42+
-        official websites, databases and feeds. New documents are flagged for extraction when they
-        match claim-related keywords, entity patterns, or regulatory schema.
-      </p>
+          {/* Section 2 */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">
+              2. Structured Parameter Extraction
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+              Legal documents are parsed into structured database candidate entities consisting of:
+            </p>
+            <ul className="list-disc pl-5 text-sm sm:text-base text-text-secondary space-y-2">
+              <li>
+                <strong className="text-text-primary">Entity Identification:</strong> Exact legal
+                corporate name, CIN, or regulatory registration identifier.
+              </li>
+              <li>
+                <strong className="text-text-primary">Affected Scope:</strong> Clearly bounded group
+                of consumers, investors, or creditors.
+              </li>
+              <li>
+                <strong className="text-text-primary">Submission Deadline:</strong> Explicit cutoff
+                date parsed in Indian Standard Time (IST).
+              </li>
+              <li>
+                <strong className="text-text-primary">Action Portal:</strong> The direct HTTPS
+                endpoint hosted by the regulator, tribunal, or court-appointed committee.
+              </li>
+            </ul>
+          </section>
 
-      <h2>AI Extraction</h2>
-      <p>
-        Natural language processing models extract structured fields from unstructured official
-        documents:
-      </p>
-      <ul>
-        <li>Entity identification — company names, product names, service categories</li>
-        <li>Eligibility criteria — who qualifies, geographic scope, time periods</li>
-        <li>Deadlines — filing deadlines, claim windows, expiry dates</li>
-        <li>
-          Process links — URLs to official claim forms, complaint portals, contact information
-        </li>
-        <li>Amount references — only when explicitly stated in the source document</li>
-      </ul>
+          {/* Section 3 */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">3. The Human Editorial Gate</h2>
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+              Automated extraction alone is never trusted for publication. A trained editorial
+              reviewer manually compares each candidate record against the official order text. A
+              record is only marked{' '}
+              <code className="rounded bg-surface-strong px-1.5 py-0.5 text-xs">
+                is_published = true
+              </code>{' '}
+              when:
+            </p>
+            <ol className="list-decimal pl-5 text-sm sm:text-base text-text-secondary space-y-2">
+              <li>The source URL resolves to an authentic government or tribunal domain.</li>
+              <li>
+                The claim action route is active and does not charge unofficial intermediary fees.
+              </li>
+              <li>
+                The eligibility summary accurately reflects the official criteria without hyperbole.
+              </li>
+            </ol>
+          </section>
 
-      <h2>Deterministic Checks</h2>
-      <p>After AI extraction, deterministic validation rules verify:</p>
-      <ul>
-        <li>Source URL is still live and accessible</li>
-        <li>Extracted dates are in the future (for deadlines)</li>
-        <li>Company entities match our known entity database</li>
-        <li>No duplicate entries exist for the same claim event</li>
-        <li>Cross-reference with other sources for corroboration where available</li>
-      </ul>
+          {/* Section 4 */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">
+              4. Freshness and Lifecycle Tracking
+            </h2>
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+              Records in ClaimRadar undergo regular re-verification sweeps. If an official deadline
+              passes, the record status transitions immediately to{' '}
+              <code className="rounded bg-surface-strong px-1.5 py-0.5 text-xs">closed</code> or{' '}
+              <code className="rounded bg-surface-strong px-1.5 py-0.5 text-xs">expired</code>. If a
+              deadline is officially extended by a court, the record is updated with an editorial
+              change note.
+            </p>
+          </section>
+        </div>
 
-      <h2>Status Definitions</h2>
-      <p>Every listing on ClaimRadar carries one of four statuses:</p>
-      <ul>
-        <li>
-          <strong>Verified</strong> — Confirmed from Tier 1 sources. The claim opportunity is
-          documented in an official court order, regulatory directive, or government notification.
-        </li>
-        <li>
-          <strong>Open</strong> — Sourced from Tier 2 official channels (company notices, press
-          releases). The opportunity appears legitimate but has not been independently verified
-          through Tier 1 sources.
-        </li>
-        <li>
-          <strong>Under Review</strong> — Initial extraction complete but awaiting editorial review
-          or additional source corroboration before full publication.
-        </li>
-        <li>
-          <strong>Closed</strong> — The claim window has expired, the scheme has concluded, or the
-          opportunity has been withdrawn by the issuing authority.
-        </li>
-      </ul>
-
-      <h2>Claimability Score</h2>
-      <p>Each opportunity is assigned a Claimability Score (1–100) based on:</p>
-      <ul>
-        <li>Source tier and reliability (30%)</li>
-        <li>Clarity of eligibility criteria (25%)</li>
-        <li>Time remaining before deadline (20%)</li>
-        <li>Availability of official process documentation (15%)</li>
-        <li>Corroboration from multiple sources (10%)</li>
-      </ul>
-      <p>
-        The score helps users prioritise which opportunities to explore first. A higher score
-        indicates clearer eligibility, stronger sources, and more time to act.
-      </p>
-    </LegalPageTemplate>
+        {/* Right Rail: Principles Card */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+            <h3 className="text-base font-bold text-text-primary mb-3">Editorial Tenets</h3>
+            <div className="space-y-3 text-xs leading-relaxed text-text-secondary">
+              <div className="rounded-lg border border-border/80 bg-surface-strong p-3">
+                <strong className="text-text-primary block mb-1">Zero Speculation</strong>
+                We never publish unverified rumors, leak blogs, or social media speculation.
+              </div>
+              <div className="rounded-lg border border-border/80 bg-surface-strong p-3">
+                <strong className="text-text-primary block mb-1">Direct Official Links</strong>
+                Every listing must point to the legitimate government or official committee portal.
+              </div>
+              <div className="rounded-lg border border-border/80 bg-surface-strong p-3">
+                <strong className="text-text-primary block mb-1">Rapid Correction</strong>
+                Community and legal correction requests are reviewed promptly by our desk.
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-border">
+              <Link
+                href="/corrections"
+                className="inline-flex items-center gap-1 text-xs font-bold text-trust-primary hover:underline"
+              >
+                Submit a correction <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

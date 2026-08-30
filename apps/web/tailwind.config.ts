@@ -72,6 +72,9 @@ const config: Config = {
         rise: 'rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both',
         fade: 'fade 0.45s ease-out both',
         aurora: 'aurora 26s ease-in-out infinite alternate',
+        'radar-sweep': 'radar-sweep 8s linear infinite',
+        'radar-pulse': 'radar-pulse 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'beacon-pulse': 'beacon-pulse 2.5s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -90,6 +93,19 @@ const config: Config = {
         aurora: {
           '0%': { transform: 'translate3d(-4%, -2%, 0) scale(1)' },
           '100%': { transform: 'translate3d(4%, 2%, 0) scale(1.06)' },
+        },
+        'radar-sweep': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'radar-pulse': {
+          '0%': { transform: 'scale(0.8)', opacity: '0.8' },
+          '70%': { transform: 'scale(1.25)', opacity: '0' },
+          '100%': { transform: 'scale(1.25)', opacity: '0' },
+        },
+        'beacon-pulse': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.9' },
+          '50%': { transform: 'scale(1.35)', opacity: '0.4' },
         },
       },
       transitionTimingFunction: {

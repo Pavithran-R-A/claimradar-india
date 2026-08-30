@@ -2,88 +2,77 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Sparkles, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
+import { Button } from '@claimradar/design-system';
 
-interface QuickCategory {
-  query: string;
-  category: 'sector' | 'company' | 'trending';
-  label: string;
-}
-
-const COMMON_CATEGORIES: QuickCategory[] = [
-  { query: 'Banking & Financial Services', category: 'sector', label: 'Banking & Finance' },
-  { query: 'Aviation', category: 'sector', label: 'Airlines & Flight Refunds' },
-  { query: 'Insurance Claims', category: 'sector', label: 'Insurance & Claims' },
-  { query: 'Telecom', category: 'sector', label: 'Telecom & Tariff Refunds' },
-  { query: 'E-Commerce', category: 'sector', label: 'E-Commerce & Delivery' },
+const SEARCH_EXAMPLES = [
+  'PACL India',
+  'Sahara refund',
+  'SEBI recovery',
+  'Fixed deposit claim',
+  'NCLT insolvency notice',
 ];
 
 export function InteractiveHeroSearch() {
   const router = useRouter();
   const [query, setQuery] = React.useState('');
-  const [focused, setFocused] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/claimables?q=${encodeURIComponent(query.trim())}`);
+    const trimmed = query.trim();
+    if (trimmed) {
+      router.push(`/claimables?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      router.push('/claimables');
     }
   };
 
-  const handleCategoryClick = (categoryQuery: string) => {
-    setQuery(categoryQuery);
-    router.push(`/claimables?q=${encodeURIComponent(categoryQuery)}`);
+  const handleExampleClick = (example: string) => {
+    setQuery(example);
+    router.push(`/claimables?q=${encodeURIComponent(example)}`);
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      {/* Form Container */}
-      <form
-        onSubmit={handleSubmit}
-        className={`relative flex items-center rounded-2xl border transition-all duration-300 ${
-          focused
-            ? 'border-brand-bright bg-white/10 shadow-[0_0_24px_rgba(45,212,191,0.25)] ring-2 ring-brand-bright/30'
-            : 'border-white/20 bg-white/5 backdrop-blur-md hover:border-white/30'
-        }`}
-      >
-        <div className="pl-4 pr-2 text-white/50">
-          <Search className={`h-5 w-5 transition-colors ${focused ? 'text-brand-bright' : ''}`} />
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="relative flex w-full flex-col gap-2 sm:flex-row">
+        <div className="relative flex-1">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <label htmlFor="hero-search-input" className="sr-only">
+            Search company, regulator, scheme, or notice
+          </label>
+          <input
+            id="hero-search-input"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search a company, regulator, or notice (e.g. PACL, Sahara, SEBI)"
+            className="h-12 w-full rounded-xl border border-white/20 bg-ink-900/90 pl-11 pr-4 text-base text-white placeholder:text-slate-400 focus:border-brand-bright focus:outline-none focus:ring-2 focus:ring-brand-bright/30 transition-all shadow-inner"
+          />
         </div>
-        <input
-          ref={inputRef}
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setTimeout(() => setFocused(false), 200)}
-          placeholder="Search by company, sector, regulator, or notice..."
-          className="w-full bg-transparent py-4 text-base font-normal text-white placeholder-white/50 focus:outline-none"
-          aria-label="Search claim opportunities"
-        />
-        <button
+        <Button
           type="submit"
-          className="mr-2.5 inline-flex items-center gap-1.5 rounded-xl bg-brand-bright px-5 py-2.5 text-sm font-semibold text-ink-950 transition-all duration-200 hover:bg-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-bright"
+          variant="signal"
+          size="lg"
+          className="h-12 min-h-[48px] rounded-xl px-6 text-sm font-bold text-ink-950 sm:w-auto"
         >
-          <span>Search</span>
-          <ArrowRight className="h-4 w-4" />
-        </button>
+          <span>Search notices</span>
+          <ArrowRight className="ml-1.5 h-4 w-4" />
+        </Button>
       </form>
 
-      {/* Honest Category Bar (Not labeled popular searches) */}
-      <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2 text-xs">
-        <span className="flex items-center gap-1 font-medium text-white/60">
-          <Sparkles className="h-3.5 w-3.5 text-brand-bright" />
-          Explore sectors:
-        </span>
-        {COMMON_CATEGORIES.map((item) => (
+      {/* Suggested Search Examples */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-400">
+        <span className="font-medium text-slate-300">Common searches:</span>
+        {SEARCH_EXAMPLES.map((example) => (
           <button
-            key={item.query}
+            key={example}
             type="button"
-            onClick={() => handleCategoryClick(item.query)}
-            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-white/80 transition-colors hover:border-brand-bright/50 hover:bg-white/10 hover:text-white"
+            onClick={() => handleExampleClick(example)}
+            className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-slate-300 transition-colors hover:border-brand-bright/40 hover:bg-white/10 hover:text-white"
           >
-            {item.label}
+            {example}
           </button>
         ))}
       </div>

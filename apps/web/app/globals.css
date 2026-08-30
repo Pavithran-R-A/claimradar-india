@@ -50,15 +50,28 @@
   --c-deadline-background: rgba(180, 83, 9, 0.1);
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 17px;
+  }
+}
+
 body {
   background-color: rgb(var(--c-background));
   color: rgb(var(--c-text-primary));
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  line-height: 1.6;
 }
 
-/* Visible keyboard focus everywhere unless a component replaces it. */
+/* Visible keyboard focus everywhere */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid rgb(var(--c-trust-primary));
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* ==========================================================================

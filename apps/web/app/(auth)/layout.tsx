@@ -1,36 +1,40 @@
-import Link from 'next/link';
-import { Radar } from 'lucide-react';
+'use client';
 
-/**
- * Shared shell for login, register, password reset and email verification.
- * Calm, single-column, token-only styling; the decorative backdrop is pure
- * CSS (grid + soft trust-tinted wash) and collapses under reduced motion.
- */
+import * as React from 'react';
+import Link from 'next/link';
+import { ClaimRadarBrand } from '@/components/layout/brand-mark';
+import { ShieldCheck } from 'lucide-react';
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="auth-backdrop relative flex min-h-screen flex-col">
-      <header className="relative z-10 border-b border-border">
-        <div className="mx-auto flex h-14 w-full max-w-md items-center gap-2 px-4">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-trust-primary/15">
-            <Radar className="h-4 w-4 text-trust-primary" aria-hidden />
-          </span>
-          <h1 className="text-sm font-semibold text-text-primary">
-            ClaimRadar <span className="font-normal text-text-muted">India</span>
-          </h1>
+    <div className="auth-backdrop relative flex min-h-screen flex-col bg-background">
+      {/* Auth Header */}
+      <header className="relative z-10 border-b border-border bg-surface/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-4 sm:px-6">
+          <ClaimRadarBrand size="sm" />
+          <Link
+            href="/"
+            className="text-xs font-semibold text-text-secondary hover:text-trust-primary transition-colors"
+          >
+            ← Return to homepage
+          </Link>
         </div>
       </header>
 
-      <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-10">
-        <div className="anim-fade w-full max-w-md">
-          <div className="rounded-card border border-border bg-surface p-6 shadow-card sm:p-8">
+      {/* Main Auth Content */}
+      <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-card">
             {children}
           </div>
-          <p className="mt-6 text-center text-xs leading-relaxed text-text-muted">
-            We only ever ask for low-risk answers — never documents, IDs or payment details.{' '}
-            <Link href="/" className="text-trust-primary hover:underline">
-              Learn how matching works
-            </Link>
-          </p>
+
+          <div className="mt-6 rounded-xl border border-border/60 bg-surface-strong/60 p-3.5 text-center text-xs text-text-muted">
+            <p className="flex items-center justify-center gap-1.5 font-semibold text-text-secondary mb-1">
+              <ShieldCheck className="h-4 w-4 text-trust-primary" />
+              Privacy-First Platform
+            </p>
+            We never request Aadhaar, bank credentials, or claim filing fees.
+          </div>
         </div>
       </main>
     </div>
