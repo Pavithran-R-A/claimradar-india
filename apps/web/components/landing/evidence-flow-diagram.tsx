@@ -17,7 +17,7 @@ const PIPELINE_STEPS = [
     num: '01',
     label: 'Official Notice',
     icon: Landmark,
-    desc: 'Public notices from SEBI, RBI, IBBI, NCLT, and PIB.',
+    desc: 'Public notices from SEBI, RBI, IBBI, TRAI, and PIB.',
     detail: 'Monitored across authenticated public portals and gazette releases.',
   },
   {

@@ -13,6 +13,19 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname),
+      '@claimradar/source-registry': path.resolve(
+        __dirname,
+        '../../packages/source-registry/src/index.ts',
+      ),
+      '@claimradar/config': path.resolve(__dirname, '../../packages/config/src/index.ts'),
+      '@claimradar/design-system': path.resolve(
+        __dirname,
+        '../../packages/design-system/src/index.tsx',
+      ),
+      '@claimradar/shared-types': path.resolve(
+        __dirname,
+        '../../packages/shared-types/src/index.ts',
+      ),
     },
   },
   test: {

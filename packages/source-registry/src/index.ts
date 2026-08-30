@@ -197,3 +197,68 @@ export const initialSources: SourceDefinition[] = [
   sebiPublicNoticesSource,
   traiPressReleasesSource,
 ];
+
+export interface PublicSourceFamily {
+  id: string;
+  name: string;
+  shortName: string;
+  domain: string;
+  category: string;
+  description: string;
+  scope: string;
+  sourceIds: string[];
+}
+
+export const publicSourceFamilies: PublicSourceFamily[] = [
+  {
+    id: 'sebi',
+    name: 'Securities and Exchange Board of India',
+    shortName: 'SEBI',
+    domain: 'sebi.gov.in',
+    category: 'Securities & Market Regulation',
+    description: 'Investor compensation schemes, refund orders, and recovery distributions.',
+    scope: 'Securities notices & refund orders',
+    sourceIds: ['sebi-rss', 'sebi-orders-rss', 'sebi-public-notices'],
+  },
+  {
+    id: 'rbi',
+    name: 'Reserve Bank of India',
+    shortName: 'RBI',
+    domain: 'rbi.org.in',
+    category: 'Banking & Financial Depository',
+    description: 'Banking directives, ombudsman resolutions, and depositor protection guidelines.',
+    scope: 'Banking & ombudsman directives',
+    sourceIds: ['rbi-rss', 'rbi-notifications-rss'],
+  },
+  {
+    id: 'ibbi',
+    name: 'Insolvency and Bankruptcy Board of India',
+    shortName: 'IBBI',
+    domain: 'ibbi.gov.in',
+    category: 'Insolvency & Corporate Resolution',
+    description: 'Corporate insolvency resolution announcements and creditor claim filing notices.',
+    scope: 'Insolvency creditor claim notices',
+    sourceIds: ['ibbi-public-announcements'],
+  },
+  {
+    id: 'pib',
+    name: 'Press Information Bureau',
+    shortName: 'PIB',
+    domain: 'pib.gov.in',
+    category: 'Government Press Releases',
+    description:
+      'Central government compensation packages, court settlements, and ministry notifications.',
+    scope: 'Government compensation press releases',
+    sourceIds: ['pib-rss'],
+  },
+  {
+    id: 'trai',
+    name: 'Telecom Regulatory Authority of India',
+    shortName: 'TRAI',
+    domain: 'trai.gov.in',
+    category: 'Consumer & Telecom Regulation',
+    description: 'Telecom tariff directives, overcharge refunds, and consumer protection notices.',
+    scope: 'Telecom refund & consumer directives',
+    sourceIds: ['trai-press-releases'],
+  },
+];

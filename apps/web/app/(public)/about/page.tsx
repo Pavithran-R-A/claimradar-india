@@ -37,11 +37,11 @@ export default function AboutPage() {
 
       <h2>How Automation Works</h2>
       <p>
-        Our technology stack continuously scans 42+ official sources across five categories:
-        consumer authorities, courts and tribunals, financial regulators, company public notices,
-        and government press releases. Natural language processing extracts structured data —
-        company names, eligibility criteria, deadlines, official process links — from unstructured
-        official documents.
+        Our technology stack monitors verified official sources across statutory categories:
+        securities regulators (SEBI), banking authorities (RBI), insolvency boards (IBBI), telecom
+        regulation (TRAI), and government press releases (PIB). Extraction pipelines parse
+        structured parameters — authority names, eligibility criteria, deadlines, and official
+        process links — directly from official documents.
       </p>
 
       <h2>Human Safeguards</h2>

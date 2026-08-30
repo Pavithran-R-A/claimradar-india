@@ -35,7 +35,7 @@ const faqItems = [
   {
     question: 'How does ClaimRadar find opportunities?',
     answer:
-      'We monitor 42+ official sources across five categories: consumer authorities, courts and tribunals, financial regulators, company public notices, and government press releases. Our AI systems extract structured data and our editorial team reviews each extraction against our publication criteria before it goes live.',
+      'We monitor verified official sources across key statutory categories: securities regulators (SEBI), banking authorities (RBI), insolvency boards (IBBI), telecom regulation (TRAI), and government press releases (PIB). Our automated discovery systems extract structured parameters and our human editorial team reviews each candidate record before it goes live.',
   },
   {
     question: 'Is my personal data safe?',
@@ -55,7 +55,7 @@ const faqItems = [
   {
     question: 'How do I report an error or outdated information?',
     answer:
-      'Email corrections@claimradar.example with the listing URL, a description of the error, and a link to the official source if available. Our editorial team reviews all correction requests and aims to process them within 48 hours. All corrections are logged in our public correction register.',
+      'Visit our Corrections page or email support@claimradar.in with the listing URL, a description of the error, and a link to the official source if available. Our editorial team reviews all correction requests against the underlying official order.',
   },
   {
     question: 'Can I cancel my subscription at any time?',

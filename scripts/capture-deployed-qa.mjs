@@ -142,7 +142,7 @@ async function run() {
 
   const browser = await chromium.launch({ headless: true });
 
-  // 1. HOMEPAGE VIEWPORTS (8 viewports)
+  // 1. HOMEPAGE VIEWPORTS (9 viewports)
   const homeViewports = [
     ['desktop-1536', 1536, 960],
     ['desktop-1440', 1440, 900],
@@ -152,9 +152,10 @@ async function run() {
     ['mobile-430', 430, 932],
     ['mobile-390', 390, 844],
     ['mobile-360', 360, 800],
+    ['mobile-320', 320, 568],
   ];
 
-  console.log('--- 1. Homepage (8 viewports: top, mid, footer) ---');
+  console.log('--- 1. Homepage (9 viewports: top, mid, footer) ---');
   for (const [name, w, h] of homeViewports) {
     const ctx = await newCtx(browser, w, h);
     const { page, title, h1, status, finalUrl } = await loadPage(ctx, BASE_URL, name);
@@ -271,15 +272,23 @@ async function run() {
     ['claimables-1440', '/claimables', 1440, 900],
     ['claimables-390', '/claimables', 390, 844],
     ['closing-soon-1440', '/closing-soon', 1440, 900],
+    ['closing-soon-390', '/closing-soon', 390, 844],
     ['companies-1440', '/companies', 1440, 900],
     ['sectors-1440', '/sectors', 1440, 900],
     ['deadlines-1440', '/deadlines', 1440, 900],
+    ['deadlines-390', '/deadlines', 390, 844],
+    ['sources-1440', '/sources', 1440, 900],
+    ['sources-390', '/sources', 390, 844],
     ['how-it-works-1440', '/how-it-works', 1440, 900],
+    ['how-it-works-390', '/how-it-works', 390, 844],
     ['methodology-1440', '/methodology', 1440, 900],
+    ['methodology-390', '/methodology', 390, 844],
     ['faq-1440', '/faq', 1440, 900],
     ['login-1440', '/login', 1440, 900],
     ['login-390', '/login', 390, 844],
     ['register-1440', '/register', 1440, 900],
+    ['app-1440', '/app', 1440, 900],
+    ['admin-1440', '/admin', 1440, 900],
   ];
 
   console.log('\n--- 3. Secondary Pages Captures ---');

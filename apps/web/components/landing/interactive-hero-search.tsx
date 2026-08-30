@@ -10,7 +10,7 @@ const SEARCH_EXAMPLES = [
   'Sahara refund',
   'SEBI recovery',
   'Fixed deposit claim',
-  'NCLT insolvency notice',
+  'IBBI insolvency notice',
 ];
 
 export function InteractiveHeroSearch() {

@@ -162,13 +162,7 @@
     "summaryCount": 5,
     "faqStartsCollapsed": true,
     "faqKeyboardToggle": true,
-    "headerNavLinks": [
-      "Find claims",
-      "Closing soon",
-      "Companies",
-      "Sectors",
-      "How it works"
-    ],
+    "headerNavLinks": ["Find claims", "Closing soon", "Companies", "Sectors", "How it works"],
     "headerActionButtons": [
       "ClaimRadarIndia",
       "Find claims",
@@ -184,13 +178,7 @@
   },
   "mobileDrawer": {
     "drawerVisible": true,
-    "navLinksText": [
-      "Find claims",
-      "Closing soon",
-      "Companies",
-      "Sectors",
-      "How it works"
-    ],
+    "navLinksText": ["Find claims", "Closing soon", "Companies", "Sectors", "How it works"],
     "signInVisible": false,
     "getAlertsVisible": false,
     "closedOnEscape": true,

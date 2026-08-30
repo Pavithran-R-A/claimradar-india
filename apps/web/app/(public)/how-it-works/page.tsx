@@ -37,8 +37,8 @@ export default function HowItWorksPage() {
               </h2>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                 Our ingestion pipelines monitor public notices, press releases, gazette
-                notifications, and regulatory orders from SEBI, RBI, IBBI, NCLT, NCDRC, and PIB. We
-                do not crawl unverified blogs or social media rumors.
+                notifications, and regulatory orders from statutory authorities including SEBI, RBI,
+                IBBI, TRAI, and PIB. We do not crawl unverified blogs or social media rumors.
               </p>
             </div>
           </div>
