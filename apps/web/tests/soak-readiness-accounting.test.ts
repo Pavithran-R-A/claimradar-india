@@ -374,4 +374,12 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
     expect(diag.inferredSlotDelayMinutes).not.toBe(0);
     expect(diag.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
   });
+
+  it('L: tests helper functions loadBaselineConfig and calculateElapsedSoakHours', () => {
+    const config = loadBaselineConfig();
+    expect(config.runtimeFreezeHead).toBeDefined();
+    expect(config.finalSoakBaselineGhaRun).toBeDefined();
+
+    expect(calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z')).toBe(6);
+  });
 });
