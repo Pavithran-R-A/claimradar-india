@@ -35,7 +35,7 @@ export function loadBaselineConfig(configPath = BASELINE_CONFIG_PATH) {
     finalSoakBaselineHead: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
     finalSoakBaselineCrawlRunId: '192c24d3-bcbb-4c21-bb38-b737be5261c0',
     finalSoakStartUtc: '2026-08-30T12:08:03Z',
-    firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z',
+    firstPostBaselineScheduledSlot: '2026-08-30T12:17:00Z',
     scheduleCron: '17 */6 * * *',
     scheduleIntervalHours: 6,
     thresholdHours48: 48,
@@ -83,17 +83,66 @@ export function calculateElapsedSoakHours(baselineStartUtc, currentTime) {
   return Math.max(0, Math.floor((elapsedMs / (1000 * 60 * 60)) * 10) / 10);
 }
 
+// Deterministically derives the first nominal cron occurrence strictly after baselineStartUtc.
+export function deriveFirstNominalPostBaselineSlot(baselineStartUtc, cron = '17 */6 * * *') {
+  const baselineDate = new Date(baselineStartUtc);
+  if (isNaN(baselineDate.getTime())) {
+    return new Date('2026-08-30T12:17:00Z');
+  }
+
+  let targetMinute = 17;
+  let targetHours = [0, 6, 12, 18];
+
+  if (cron && typeof cron === 'string') {
+    const parts = cron.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      const minVal = parseInt(parts[0], 10);
+      if (!isNaN(minVal) && minVal >= 0 && minVal < 60) {
+        targetMinute = minVal;
+      }
+      if (parts[1].startsWith('*/')) {
+        const step = parseInt(parts[1].slice(2), 10);
+        if (!isNaN(step) && step > 0 && step <= 24) {
+          targetHours = [];
+          for (let h = 0; h < 24; h += step) {
+            targetHours.push(h);
+          }
+        }
+      }
+    }
+  }
+
+  const startYear = baselineDate.getUTCFullYear();
+  const startMonth = baselineDate.getUTCMonth();
+  const startDate = baselineDate.getUTCDate();
+
+  for (let d = 0; d < 3; d++) {
+    for (const h of targetHours) {
+      const slotTimeMs = Date.UTC(startYear, startMonth, startDate + d, h, targetMinute, 0, 0);
+      if (slotTimeMs > baselineDate.getTime()) {
+        return new Date(slotTimeMs);
+      }
+    }
+  }
+
+  return new Date(baselineDate.getTime() + 6 * 3600 * 1000);
+}
+
+// Generates all nominal cron slots strictly after baselineStartUtc up to currentTime.
 export function generateScheduledSlots(config, currentTime = new Date()) {
-  const firstSlot = new Date(config.firstPostBaselineScheduledSlot || '2026-08-30T18:17:00Z');
+  const baselineStartUtc = config.finalSoakStartUtc || '2026-08-30T12:08:03Z';
+  const cron = config.scheduleCron || '17 */6 * * *';
+  const derivedFirstSlot = deriveFirstNominalPostBaselineSlot(baselineStartUtc, cron);
+
   const currentDate = typeof currentTime === 'string' ? new Date(currentTime) : currentTime;
   const intervalMs = (config.scheduleIntervalHours || 6) * 60 * 60 * 1000;
 
-  if (isNaN(firstSlot.getTime()) || isNaN(currentDate.getTime())) {
-    return { passedSlots: [], nextSlot: null };
+  if (isNaN(derivedFirstSlot.getTime()) || isNaN(currentDate.getTime())) {
+    return { firstPostBaselineSlot: derivedFirstSlot, passedSlots: [], nextSlot: null };
   }
 
   const passedSlots = [];
-  let currentSlotTime = firstSlot.getTime();
+  let currentSlotTime = derivedFirstSlot.getTime();
 
   while (currentSlotTime <= currentDate.getTime()) {
     passedSlots.push(new Date(currentSlotTime));
@@ -101,7 +150,7 @@ export function generateScheduledSlots(config, currentTime = new Date()) {
   }
 
   const nextSlot = new Date(currentSlotTime);
-  return { passedSlots, nextSlot };
+  return { firstPostBaselineSlot: derivedFirstSlot, passedSlots, nextSlot };
 }
 
 export function validateSoakExecution(sample) {
@@ -379,16 +428,6 @@ export function validateSoakExecution(sample) {
   return { isValid: true, evidenceStatus: 'PROVEN_VALID', failureReason: null };
 }
 
-/**
- * @param {Object} [options]
- * @param {Array<any>} [options.soakSamples]
- * @param {Array<any>} [options.dbCrawlRuns]
- * @param {any} [options.config]
- * @param {Date|string} [options.currentTime]
- * @param {boolean} [options.runtimeBehaviorChanged]
- * @param {string} [options.githubEvidenceStatus]
- * @returns {any}
- */
 export function evaluateSoakProvenance({
   soakSamples = [],
   dbCrawlRuns = [],
@@ -409,7 +448,10 @@ export function evaluateSoakProvenance({
     : 0;
 
   // Nominal Schedule Slot Generation
-  const { passedSlots, nextSlot } = generateScheduledSlots(config, currentDate);
+  const { firstPostBaselineSlot, passedSlots, nextSlot } = generateScheduledSlots(
+    config,
+    currentDate,
+  );
   const expectedScheduleSlots = passedSlots.length;
   const nextExpectedScheduleSlot = nextSlot ? nextSlot.toISOString() : 'UNKNOWN';
 
@@ -489,29 +531,43 @@ export function evaluateSoakProvenance({
     return tA - tB;
   });
 
-  // Calculate schedule run deficit
+  // Calculate schedule run deficit (diagnostic only: scheduled evidence pending / delayed by GitHub)
   const scheduleRunCountDeficit = Math.max(0, expectedScheduleSlots - validScheduleRuns.length);
 
-  // Timing diagnostics: Max schedule start delay & Max gap between runs
+  // Timing diagnostics: Nearest preceding nominal slot & inferred delay
   let maxScheduleStartDelayMinutes = 0;
-  const delays = [];
+  const scheduleRunDiagnostics = [];
 
   for (let i = 0; i < validScheduleRuns.length; i++) {
     const run = validScheduleRuns[i];
     const runTime = new Date(run.workflowRun ? run.workflowRun.startedAt : run.startedAt).getTime();
 
-    // Find the nearest nominal slot preceding or matching this run
-    let nearestSlot = passedSlots[0]
-      ? passedSlots[0].getTime()
-      : new Date(config.firstPostBaselineScheduledSlot).getTime();
+    // Find the latest nominal slot strictly at or before this run
+    let nearestPrecedingSlot = null;
     for (const slot of passedSlots) {
       if (slot.getTime() <= runTime) {
-        nearestSlot = slot.getTime();
+        nearestPrecedingSlot = slot;
       }
     }
 
-    const delayMin = Math.max(0, Math.floor(((runTime - nearestSlot) / (60 * 1000)) * 10) / 10);
-    delays.push(delayMin);
+    // Fallback if run was before the first passed slot
+    if (!nearestPrecedingSlot) {
+      nearestPrecedingSlot = firstPostBaselineSlot;
+    }
+
+    let delayMin = 0;
+    if (nearestPrecedingSlot && runTime >= nearestPrecedingSlot.getTime()) {
+      delayMin = Math.round(((runTime - nearestPrecedingSlot.getTime()) / (60 * 1000)) * 10) / 10;
+    }
+
+    scheduleRunDiagnostics.push({
+      runId: run.workflowRun ? run.workflowRun.id : 'N/A',
+      startedAt: run.workflowRun ? run.workflowRun.startedAt : run.startedAt,
+      nearestPrecedingSlotUtc: nearestPrecedingSlot ? nearestPrecedingSlot.toISOString() : 'N/A',
+      inferredSlotDelayMinutes: delayMin,
+      associationType: 'INFERRED_NEAREST_PRECEDING_SLOT',
+    });
+
     if (delayMin > maxScheduleStartDelayMinutes) {
       maxScheduleStartDelayMinutes = delayMin;
     }
@@ -565,7 +621,7 @@ export function evaluateSoakProvenance({
 
   const isGhaAvailable = githubEvidenceStatus === 'AVAILABLE';
 
-  // Strict primary qualification conditions
+  // Strict primary qualification conditions (count + wall-clock + valid executions)
   const soak48hPassed =
     isBaselineValid &&
     isGhaAvailable &&
@@ -643,6 +699,8 @@ export function evaluateSoakProvenance({
     githubEvidenceStatus,
     runtimeBehaviorChanged,
     elapsedSoakHours,
+    derivedFirstNominalSlot: firstPostBaselineSlot.toISOString(),
+    nominalPassedSlots: passedSlots.map((s) => s.toISOString()),
     expectedScheduleSlots,
     observedScheduleRunsCount: observedScheduleRuns.length,
     validScheduleRunsCount: validScheduleRuns.length,
@@ -652,6 +710,7 @@ export function evaluateSoakProvenance({
     maxGapBetweenValidScheduleRunsHours,
     latestValidScheduleRun: latestValidScheduleRunInfo,
     nextExpectedScheduleSlot,
+    scheduleRunDiagnostics,
     observedGhaSoakRunsCount: observedGhaSoakRuns.length,
     validGhaSoakRunsCount: validGhaSoakRuns.length,
     failedGhaSoakRunsCount: failedGhaSoakRuns.length,
@@ -851,7 +910,7 @@ export async function main() {
       s.summary.runId === config.finalSoakBaselineCrawlRunId,
   );
 
-  const content =
+  let content =
     '# ClaimRadar India — 48–72h Soak Readiness Report\n\n' +
     '**Report Generated:** ' +
     metrics.currentTime +
@@ -877,8 +936,8 @@ export async function main() {
     'FINAL_SOAK_START = ' +
     config.finalSoakStartUtc +
     '\n' +
-    'FIRST_POST_BASELINE_SCHEDULED_SLOT = ' +
-    config.firstPostBaselineScheduledSlot +
+    'DERIVED_FIRST_POST_BASELINE_SLOT = ' +
+    metrics.derivedFirstNominalSlot +
     '\n' +
     'GITHUB_EVIDENCE_STATUS = ' +
     metrics.githubEvidenceStatus +
@@ -917,8 +976,8 @@ export async function main() {
     '\n' +
     'SCHEDULE_RUN_COUNT_DEFICIT = ' +
     metrics.scheduleRunCountDeficit +
-    '\n' +
-    'MAX_SCHEDULE_START_DELAY_MINUTES = ' +
+    ' (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)\n' +
+    'MAX_INFERRED_SCHEDULE_DELAY_MINUTES = ' +
     metrics.maxScheduleStartDelayMinutes +
     '\n' +
     'MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = ' +
@@ -959,7 +1018,30 @@ export async function main() {
     metrics.soakRunsTable +
     '\n' +
     '---\n\n' +
-    '## 4. Invariants Verified Under Soak\n' +
+    '## 4. Inferred Nominal Schedule Delay Diagnostics\n\n' +
+    '| Workflow Run ID | Started (UTC) | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note |\n' +
+    '| :--- | :--- | :--- | :--- | :--- |\n';
+
+  if (metrics.scheduleRunDiagnostics.length === 0) {
+    content += '| None | N/A | N/A | N/A | No schedule executions observed |\n';
+  } else {
+    for (const d of metrics.scheduleRunDiagnostics) {
+      content +=
+        '| `' +
+        d.runId +
+        '` | ' +
+        d.startedAt +
+        ' | `' +
+        d.nearestPrecedingSlotUtc +
+        '` | ' +
+        d.inferredSlotDelayMinutes +
+        ' min | Inferred nearest nominal slot (diagnostic only) |\n';
+    }
+  }
+
+  content +=
+    '\n---\n\n' +
+    '## 5. Invariants Verified Under Soak\n' +
     '- **Hard False Positive Rules Active**: 0 RBI monetary penalties, 0 IBBI Form G resolution applicant notices, 0 generic SEBI orders.\n' +
     '- **Deduplication Parity**: 100% hash and canonical URL deduplication active across runs.\n' +
     '- **Fail-Closed Secrets**: 0 exposed privileged keys in browser logs or client bundles.\n' +
