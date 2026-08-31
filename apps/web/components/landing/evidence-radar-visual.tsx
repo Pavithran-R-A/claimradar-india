@@ -27,7 +27,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 415,
     labelY: 140,
     textAnchor: 'start',
-    description: 'Statutory investor compensation, recovery proceedings & disgorgement funds.',
+    description: 'Investor compensation, recovery proceedings and disgorgement funds.',
     monitoringType: 'Official Orders & Public Notices',
   },
   {
@@ -39,8 +39,8 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 105,
     labelY: 140,
     textAnchor: 'end',
-    description: 'Unclaimed deposits, banking ombudsman schemes & depositor relief circulars.',
-    monitoringType: 'Statutory Circulars & Press Releases',
+    description: 'Unclaimed deposits, banking ombudsman schemes and depositor relief circulars.',
+    monitoringType: 'Official Circulars & Press Releases',
   },
   {
     code: 'IBBI',
@@ -51,8 +51,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 125,
     labelY: 400,
     textAnchor: 'end',
-    description:
-      'Statutory corporate insolvency claims windows, forms B/C/D & liquidation notices.',
+    description: 'Corporate insolvency claims windows, forms B/C/D and liquidation notices.',
     monitoringType: 'Public Announcements & Gazette Feeds',
   },
   {
@@ -65,7 +64,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelY: 400,
     textAnchor: 'start',
     description:
-      'Consumer compensation directives, telecom provider penalty distributions & refunds.',
+      'Consumer compensation directives, telecom provider penalty distributions and refunds.',
     monitoringType: 'Regulatory Directives & Gazettes',
   },
   {
@@ -78,7 +77,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelY: 48,
     textAnchor: 'middle',
     description:
-      'Official union ministry compensation announcements, tribunal settlements & gazettes.',
+      'Official union ministry compensation announcements, tribunal settlements and gazettes.',
     monitoringType: 'Official Government Press Dispatches',
   },
 ];
@@ -98,11 +97,13 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       <div className="mb-3 flex w-full items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 rounded-full bg-brand-bright animate-ping" />
-          <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-brand-bright">
-            MONITORED REGULATORY NETWORK
+          <span className="text-xs font-mono font-bold uppercase tracking-widest text-brand-bright">
+            SOURCE VERIFICATION
           </span>
         </div>
-        <span className="text-[11px] font-medium text-slate-400">Official Feeds Only</span>
+        <span className="text-xs font-medium text-slate-400">
+          Every listing is checked against the source.
+        </span>
       </div>
 
       {/* SVG Precision Radar Visual */}
@@ -141,226 +142,214 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             cx="260"
             cy="260"
             r="175"
-            stroke="rgba(45, 212, 191, 0.18)"
+            stroke="rgba(45, 212, 191, 0.3)"
             strokeWidth="1"
             strokeDasharray="2 4"
           />
 
-          {/* Range Ring 2 (Document Verified) */}
-          <circle cx="260" cy="260" r="120" stroke="rgba(255, 255, 255, 0.12)" strokeWidth="1" />
+          {/* Range Ring 2 (Verify Horizon) */}
+          <circle cx="260" cy="260" r="115" stroke="rgba(255, 255, 255, 0.12)" strokeWidth="1" />
+          <circle
+            cx="260"
+            cy="260"
+            r="115"
+            stroke="rgba(45, 212, 191, 0.35)"
+            strokeWidth="1"
+            strokeDasharray="2 2"
+          />
 
-          {/* Range Ring 1 (Notice Ingestion Core) */}
-          <circle cx="260" cy="260" r="65" stroke="rgba(45, 212, 191, 0.3)" strokeWidth="1.2" />
+          {/* Range Ring 1 (Ingest Core) */}
+          <circle
+            cx="260"
+            cy="260"
+            r="55"
+            stroke="rgba(45, 212, 191, 0.4)"
+            strokeWidth="1"
+            strokeDasharray="2 2"
+          />
 
-          {/* Precision Crosshair Coordinate Axes */}
+          {/* Crosshair Axes */}
           <line
             x1="260"
             y1="20"
             x2="260"
             y2="500"
-            stroke="rgba(255, 255, 255, 0.08)"
+            stroke="rgba(255, 255, 255, 0.1)"
             strokeWidth="1"
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
           />
           <line
             x1="20"
             y1="260"
             x2="500"
             y2="260"
-            stroke="rgba(255, 255, 255, 0.08)"
+            stroke="rgba(255, 255, 255, 0.1)"
             strokeWidth="1"
-            strokeDasharray="3 3"
+            strokeDasharray="4 4"
           />
 
-          {/* Diagonal Axis Guides */}
-          <line
-            x1="90"
-            y1="90"
-            x2="430"
-            y2="430"
-            stroke="rgba(255, 255, 255, 0.04)"
-            strokeWidth="1"
-          />
-          <line
-            x1="430"
-            y1="90"
-            x2="90"
-            y2="430"
-            stroke="rgba(255, 255, 255, 0.04)"
-            strokeWidth="1"
-          />
+          {/* Range Distance Markers */}
+          <text
+            x="264"
+            y="95"
+            fill="rgba(45, 212, 191, 0.6)"
+            fontSize="10"
+            fontFamily="monospace"
+            letterSpacing="1"
+          >
+            ACTIONABLE
+          </text>
+          <text
+            x="264"
+            y="152"
+            fill="rgba(45, 212, 191, 0.6)"
+            fontSize="10"
+            fontFamily="monospace"
+            letterSpacing="1"
+          >
+            REVIEW
+          </text>
+          <text
+            x="264"
+            y="212"
+            fill="rgba(45, 212, 191, 0.6)"
+            fontSize="10"
+            fontFamily="monospace"
+            letterSpacing="1"
+          >
+            VERIFY
+          </text>
 
-          {/* Rotating Radar Sweep Beam (CSS animated) */}
-          <g className="animate-radar-sweep origin-[260px_260px]">
+          {/* Radar Sweep Rotating Beam */}
+          <g className="origin-[260px_260px] animate-radar-sweep pointer-events-none">
+            {/* Pie Wedge Beam (45-degree conic sweep trail) */}
             <path d="M260 260 L490 260 A230 230 0 0 0 422 98 Z" fill="url(#sweepGradient)" />
+            {/* Leading Edge Line */}
             <line
               x1="260"
               y1="260"
               x2="490"
               y2="260"
               stroke="#2DD4BF"
-              strokeWidth="1.5"
-              strokeOpacity="0.75"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            {/* Leading Edge Glow */}
+            <line
+              x1="260"
+              y1="260"
+              x2="490"
+              y2="260"
+              stroke="#5EEAD4"
+              strokeWidth="4"
+              strokeOpacity="0.3"
+              strokeLinecap="round"
             />
           </g>
 
-          {/* Connected Evidence Pipeline Trail */}
-          <path
-            d="M260 65 Q330 110 405 145 T260 260 T135 385"
-            stroke="rgba(45, 212, 191, 0.2)"
-            strokeWidth="1.5"
-            strokeDasharray="4 4"
-          />
-
-          {/* Range Horizon Labels */}
-          <text x="264" y="275" fill="rgba(148, 163, 184, 0.6)" fontSize="9" fontFamily="monospace">
-            01 INGEST
-          </text>
-          <text x="264" y="195" fill="rgba(148, 163, 184, 0.6)" fontSize="9" fontFamily="monospace">
-            02 VERIFY
-          </text>
-          <text x="264" y="135" fill="rgba(148, 163, 184, 0.6)" fontSize="9" fontFamily="monospace">
-            03 REVIEW
-          </text>
-          <text x="264" y="45" fill="rgba(148, 163, 184, 0.6)" fontSize="9" fontFamily="monospace">
-            04 ACTIONABLE
-          </text>
-
-          {/* 5 Official Monitored Authority Nodes */}
+          {/* Monitored Authority Nodes */}
           {MONITORED_NODES.map((node) => {
             const isSelected = selectedNode?.code === node.code;
             return (
               <g
                 key={node.code}
-                className="cursor-pointer group"
+                className="cursor-pointer transition-all duration-200"
                 onClick={() => setSelectedNode(isSelected ? null : node)}
-                tabIndex={0}
-                role="button"
-                aria-label={`Inspect official source ${node.code}: ${node.name}`}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedNode(isSelected ? null : node);
-                  }
-                }}
               >
-                {/* Connecting lead line from center */}
-                <line
-                  x1="260"
-                  y1="260"
-                  x2={node.cx}
-                  y2={node.cy}
-                  stroke={isSelected ? '#2DD4BF' : 'rgba(45, 212, 191, 0.15)'}
-                  strokeWidth={isSelected ? '1.5' : '1'}
-                />
-
-                {/* Outer Beacon Pulse Ring */}
+                {/* Outer Ping Ring */}
                 <circle
                   cx={node.cx}
                   cy={node.cy}
                   r="14"
-                  fill="none"
                   stroke="#2DD4BF"
+                  strokeWidth="1.5"
+                  className="origin-[var(--cx)_var(--cy)] animate-beacon-ping"
+                  style={
+                    {
+                      '--cx': `${node.cx}px`,
+                      '--cy': `${node.cy}px`,
+                    } as React.CSSProperties
+                  }
+                />
+
+                {/* Second Pulse Ring */}
+                <circle
+                  cx={node.cx}
+                  cy={node.cy}
+                  r="8"
+                  stroke="#5EEAD4"
                   strokeWidth="1"
-                  className="animate-beacon-ping origin-center opacity-60"
+                  strokeOpacity="0.6"
+                  className="origin-[var(--cx)_var(--cy)] animate-radar-pulse-ring"
+                  style={
+                    {
+                      '--cx': `${node.cx}px`,
+                      '--cy': `${node.cy}px`,
+                    } as React.CSSProperties
+                  }
                 />
 
-                {/* Static Outer Halo */}
+                {/* Node Solid Center */}
                 <circle
                   cx={node.cx}
                   cy={node.cy}
-                  r="9"
-                  fill="#0A1322"
-                  stroke={isSelected ? '#FFFFFF' : '#2DD4BF'}
-                  strokeWidth={isSelected ? '2' : '1.5'}
-                />
-
-                {/* Solid Core Dot */}
-                <circle
-                  cx={node.cx}
-                  cy={node.cy}
-                  r="4.5"
+                  r={isSelected ? 6 : 4.5}
                   fill={isSelected ? '#FFFFFF' : '#2DD4BF'}
+                  stroke="#0A1322"
+                  strokeWidth="1.5"
                 />
 
-                {/* Node Code Label */}
+                {/* Authority Code Text Tag */}
                 <text
                   x={node.labelX}
                   y={node.labelY}
                   textAnchor={node.textAnchor}
-                  fill={isSelected ? '#FFFFFF' : '#F1F5F9'}
+                  fill={isSelected ? '#FFFFFF' : '#2DD4BF'}
                   fontSize="12"
                   fontWeight="bold"
                   fontFamily="monospace"
-                  className="transition-colors group-hover:fill-brand-bright"
+                  letterSpacing="0.5"
+                  className="transition-colors hover:fill-white"
                 >
                   {node.code}
-                </text>
-
-                {/* Subtitle Domain */}
-                <text
-                  x={node.labelX}
-                  y={node.labelY + 12}
-                  textAnchor={node.textAnchor}
-                  fill="rgba(148, 163, 184, 0.85)"
-                  fontSize="9"
-                  fontWeight="500"
-                >
-                  {node.domain}
                 </text>
               </g>
             );
           })}
 
-          {/* Central Civic Radar Hub */}
-          <g>
-            <circle
-              cx="260"
-              cy="260"
-              r="24"
-              fill="#060B14"
-              stroke="#2DD4BF"
-              strokeWidth="2"
-              className="drop-shadow-[0_0_8px_rgba(45,212,191,0.4)]"
-            />
-            <circle
-              cx="260"
-              cy="260"
-              r="16"
-              fill="#0A1322"
-              stroke="rgba(255,255,255,0.2)"
-              strokeWidth="1"
-            />
-            <circle cx="260" cy="260" r="4" fill="#2DD4BF" />
-          </g>
+          {/* Central Hub Core */}
+          <circle cx="260" cy="260" r="16" fill="#0A1322" stroke="#2DD4BF" strokeWidth="2" />
+          <circle cx="260" cy="260" r="6" fill="#2DD4BF" />
+          <circle cx="260" cy="260" r="10" stroke="#5EEAD4" strokeWidth="1" strokeDasharray="2 2" />
         </svg>
 
-        {/* Selected Source Detail Drawer / Tooltip overlay */}
+        {/* Selected Authority Quick Drawer Overlay */}
         {selectedNode && (
-          <div className="absolute inset-x-3 bottom-3 rounded-xl border border-brand-bright/40 bg-ink-950/95 p-3.5 shadow-2xl backdrop-blur-md transition-all duration-200">
-            <div className="flex items-start justify-between gap-2">
+          <div className="absolute inset-x-3 bottom-3 rounded-xl border border-brand-bright/30 bg-ink-950/95 p-3.5 shadow-2xl backdrop-blur-md transition-all">
+            <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-brand-bright/15 px-1.5 py-0.5 text-xs font-mono font-bold text-brand-bright">
+                  <span className="font-mono text-sm font-bold text-brand-bright">
                     {selectedNode.code}
                   </span>
-                  <span className="text-xs font-bold text-white tracking-tight">
-                    {selectedNode.name}
-                  </span>
+                  <span className="text-xs font-medium text-slate-300">{selectedNode.name}</span>
+                </div>
+                <div className="text-xs font-mono text-teal-400 mt-0.5">
+                  Focus: {selectedNode.domain}
                 </div>
                 <p className="mt-1 text-xs text-slate-300 leading-relaxed">
                   {selectedNode.description}
                 </p>
-                <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span>Coverage: {selectedNode.monitoringType}</span>
+                <div className="mt-1.5 text-xs text-slate-400">
+                  <span className="font-semibold text-slate-300">Pipeline:</span>{' '}
+                  {selectedNode.monitoringType}
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedNode(null)}
-                className="rounded-md p-1 text-slate-400 hover:bg-white/10 hover:text-white"
-                aria-label="Close source info"
+                className="rounded p-1 text-slate-400 hover:bg-white/10 hover:text-white"
+                aria-label="Close node inspector"
               >
                 ✕
               </button>
@@ -369,17 +358,19 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
         )}
       </div>
 
-      {/* Grounded Regulatory Guarantee Strip */}
-      <div className="mt-3.5 flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-slate-300">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-brand-bright shrink-0" />
-          <span className="text-[11px] sm:text-xs">
-            100% human-verified against official gazettes & orders.
+      {/* Footer Metainfo */}
+      <div className="mt-3 flex flex-col gap-1 text-center">
+        <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+          <ShieldCheck className="h-4 w-4 text-brand-bright" />
+          <span>
+            Monitored official sources &bull; Securities and Exchange Board of India &bull; Press
+            Information Bureau
           </span>
         </div>
-        <span className="hidden sm:inline-block font-mono text-[10px] uppercase text-slate-400">
-          Zero Hallucinations
-        </span>
+        <p className="text-xs text-slate-500">
+          This shows our verification process. It is not a live activity feed. ClaimRadar does not
+          file claims or collect official filing fees. You act on the official portal.
+        </p>
       </div>
     </div>
   );
