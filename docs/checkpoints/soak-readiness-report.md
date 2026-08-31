@@ -1,6 +1,6 @@
 # ClaimRadar India — 48–72h Soak Readiness Report
 
-**Report Generated:** 2026-08-31T05:13:38.555Z  
+**Report Generated:** 2026-08-31T05:29:34.880Z  
 **Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  
 **Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  
 **Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)
@@ -30,7 +30,7 @@ SOAK_AUTOMATION = PASS
 SOAK_48H = PENDING_TIME_SOAK
 SOAK_72H = PENDING_TIME_SOAK
 
-ELAPSED_FINAL_SOAK_HOURS = 17 / 72
+ELAPSED_FINAL_SOAK_HOURS = 17.3 / 72
 
 EXPECTED_SCHEDULE_SLOTS = 3
 OBSERVED_SCHEDULE_RUNS = 2
