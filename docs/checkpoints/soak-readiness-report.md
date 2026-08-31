@@ -1,6 +1,6 @@
 # ClaimRadar India — 48–72h Soak Readiness Report
 
-**Report Generated:** 2026-08-31T13:14:07.586Z  
+**Report Generated:** 2026-08-31T13:54:21.354Z  
 **Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  
 **Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  
 **Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)
@@ -18,7 +18,7 @@ FINAL_SOAK_START = 2026-08-30T12:08:03Z
 DERIVED_FIRST_POST_BASELINE_SLOT = 2026-08-30T12:17:00.000Z
 GITHUB_EVIDENCE_STATUS = AVAILABLE
 BASELINE_ARTIFACT_VERIFIED = true
-RUNTIME_BEHAVIOR_CHANGED_AFTER_BASELINE = true
+RUNTIME_BEHAVIOR_CHANGED_AFTER_BASELINE = false
 ```
 
 ---
@@ -27,12 +27,15 @@ RUNTIME_BEHAVIOR_CHANGED_AFTER_BASELINE = true
 
 ```ini
 SOAK_AUTOMATION = PASS
-SOAK_48H = FAIL (RUNTIME_BASELINE_INVALIDATED)
-SOAK_72H = FAIL (RUNTIME_BASELINE_INVALIDATED)
+SOAK_48H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
+SOAK_72H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
 
-ELAPSED_FINAL_SOAK_HOURS = 25.1 / 72
+ELAPSED_FINAL_SOAK_HOURS = 25.7 / 72
 
 EXPECTED_SCHEDULE_SLOTS = 5
+SATISFIED_SCHEDULE_SLOTS = 3
+PENDING_GRACE_SLOTS = 1
+MISSING_SCHEDULE_SLOTS = 1
 OBSERVED_SCHEDULE_RUNS = 3
 VALID_SCHEDULE_RUNS = 3
 FAILED_SCHEDULE_RUNS = 0
@@ -68,13 +71,15 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 ---
 
-## 4. Inferred Nominal Schedule Delay Diagnostics
+## 4. Nominal Schedule Slot Accounting & Delay Diagnostics
 
-| Workflow Run ID | Started (UTC)        | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note                                |
-| :-------------- | :------------------- | :----------------------------------- | :------------------- | :---------------------------------------------- |
-| `33323325684`   | 2026-08-30T16:45:02Z | `2026-08-30T12:17:00.000Z`           | 268 min              | Inferred nearest nominal slot (diagnostic only) |
-| `33335730116`   | 2026-08-30T21:11:31Z | `2026-08-30T18:17:00.000Z`           | 174.5 min            | Inferred nearest nominal slot (diagnostic only) |
-| `33361539030`   | 2026-08-31T05:43:25Z | `2026-08-31T00:17:00.000Z`           | 326.4 min            | Inferred nearest nominal slot (diagnostic only) |
+| Nominal Slot (UTC)         | Grace Window Closes (UTC)  | Status            | Assigned Run ID | Run Started At (UTC) | Inferred Delay (min) |
+| :------------------------- | :------------------------- | :---------------- | :-------------- | :------------------- | :------------------- |
+| `2026-08-30T12:17:00.000Z` | `2026-08-30T18:17:00.000Z` | **SATISFIED**     | `33323325684`   | 2026-08-30T16:45:02Z | 268 min              |
+| `2026-08-30T18:17:00.000Z` | `2026-08-31T00:17:00.000Z` | **SATISFIED**     | `33335730116`   | 2026-08-30T21:11:31Z | 174.5 min            |
+| `2026-08-31T00:17:00.000Z` | `2026-08-31T06:17:00.000Z` | **SATISFIED**     | `33361539030`   | 2026-08-31T05:43:25Z | 326.4 min            |
+| `2026-08-31T06:17:00.000Z` | `2026-08-31T12:17:00.000Z` | **MISSING**       | None            | N/A                  | N/A                  |
+| `2026-08-31T12:17:00.000Z` | `2026-08-31T18:17:00.000Z` | **PENDING_GRACE** | None            | N/A                  | N/A                  |
 
 ---
 

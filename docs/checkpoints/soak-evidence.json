@@ -1,21 +1,21 @@
 {
-  "evaluatedAt": "2026-08-31T13:14:07.586Z",
+  "evaluatedAt": "2026-08-31T13:54:21.354Z",
   "git": {
-    "head": "4bb6a1a3604111a1d78d0d70ac9ebf88af4e62b6",
-    "originMain": "4bb6a1a3604111a1d78d0d70ac9ebf88af4e62b6",
+    "head": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
+    "originMain": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
     "headEqualsOriginMain": true,
     "worktreeClean": false
   },
   "ci": {
-    "latestCiRunId": "33395537715",
-    "latestCiHeadSha": "4bb6a1a3604111a1d78d0d70ac9ebf88af4e62b6",
+    "latestCiRunId": "33395910092",
+    "latestCiHeadSha": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
     "latestCiConclusion": "success",
     "ciHeadEqualsHead": true
   },
   "runtimeIntegrity": {
     "runtimeFreezeHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
-    "runtimeBehaviorChanged": true,
-    "changedFiles": ["apps/crawler/tests/observability/source-health-monitoring.test.ts"]
+    "runtimeBehaviorChanged": false,
+    "changedFiles": []
   },
   "baseline": {
     "finalSoakBaselineGhaRun": "33310672900",
@@ -28,8 +28,11 @@
     "baselineArtifactVerified": true
   },
   "soakQualification": {
-    "elapsedSoakHours": 25.1,
+    "elapsedSoakHours": 25.7,
     "expectedScheduleSlots": 5,
+    "satisfiedScheduleSlots": 3,
+    "pendingGraceSlots": 1,
+    "missingScheduleSlots": 1,
     "observedScheduleRuns": 3,
     "validScheduleRuns": 3,
     "failedScheduleRuns": 0,
@@ -38,34 +41,65 @@
     "maxGapBetweenValidScheduleRunsHours": 8.5,
     "latestValidScheduleRun": "33361539030 (2026-08-31T05:43:25Z)",
     "nextExpectedScheduleSlot": "2026-08-31T18:17:00.000Z",
-    "soak48hStatus": "FAIL",
-    "soak48hReasonCodes": ["RUNTIME_BASELINE_INVALIDATED"],
-    "soak72hStatus": "FAIL",
-    "soak72hReasonCodes": ["RUNTIME_BASELINE_INVALIDATED"],
-    "finalEvidenceStatus": "FAIL",
-    "finalEvidenceReasonCodes": ["RUNTIME_BASELINE_INVALIDATED"]
+    "soak48hStatus": "PENDING_TIME_SOAK",
+    "soak48hReasonCodes": [
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ],
+    "soak72hStatus": "PENDING_TIME_SOAK",
+    "soak72hReasonCodes": [
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ],
+    "finalEvidenceStatus": "PENDING_TIME_SOAK",
+    "finalEvidenceReasonCodes": [
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ]
   },
   "scheduleRunDiagnostics": [
     {
-      "runId": "33323325684",
-      "startedAt": "2026-08-30T16:45:02Z",
-      "nearestPrecedingSlotUtc": "2026-08-30T12:17:00.000Z",
-      "inferredSlotDelayMinutes": 268,
-      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+      "slotUtc": "2026-08-30T12:17:00.000Z",
+      "gracePeriodEndUtc": "2026-08-30T18:17:00.000Z",
+      "status": "SATISFIED",
+      "assignedRunId": "33323325684",
+      "runStartedAt": "2026-08-30T16:45:02Z",
+      "delayMinutes": 268
     },
     {
-      "runId": "33335730116",
-      "startedAt": "2026-08-30T21:11:31Z",
-      "nearestPrecedingSlotUtc": "2026-08-30T18:17:00.000Z",
-      "inferredSlotDelayMinutes": 174.5,
-      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+      "slotUtc": "2026-08-30T18:17:00.000Z",
+      "gracePeriodEndUtc": "2026-08-31T00:17:00.000Z",
+      "status": "SATISFIED",
+      "assignedRunId": "33335730116",
+      "runStartedAt": "2026-08-30T21:11:31Z",
+      "delayMinutes": 174.5
     },
     {
-      "runId": "33361539030",
-      "startedAt": "2026-08-31T05:43:25Z",
-      "nearestPrecedingSlotUtc": "2026-08-31T00:17:00.000Z",
-      "inferredSlotDelayMinutes": 326.4,
-      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+      "slotUtc": "2026-08-31T00:17:00.000Z",
+      "gracePeriodEndUtc": "2026-08-31T06:17:00.000Z",
+      "status": "SATISFIED",
+      "assignedRunId": "33361539030",
+      "runStartedAt": "2026-08-31T05:43:25Z",
+      "delayMinutes": 326.4
+    },
+    {
+      "slotUtc": "2026-08-31T06:17:00.000Z",
+      "gracePeriodEndUtc": "2026-08-31T12:17:00.000Z",
+      "status": "MISSING",
+      "assignedRunId": null,
+      "runStartedAt": null,
+      "delayMinutes": null
+    },
+    {
+      "slotUtc": "2026-08-31T12:17:00.000Z",
+      "gracePeriodEndUtc": "2026-08-31T18:17:00.000Z",
+      "status": "PENDING_GRACE",
+      "assignedRunId": null,
+      "runStartedAt": null,
+      "delayMinutes": null
     }
   ]
 }

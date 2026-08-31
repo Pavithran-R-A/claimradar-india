@@ -7,6 +7,8 @@ import {
   calculateElapsedSoakHours,
   deriveFirstNominalPostBaselineSlot,
   generateScheduledSlots,
+  generateHistoricalScheduledSlots,
+  evaluateScheduleSlotAccounting,
   evaluateSoakProvenance,
   getGitState,
 } from '../../../scripts/summarize-soak-readiness.mjs';
@@ -100,8 +102,8 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
   });
 
   it('3. CI head SHA != HEAD is detectable and must prevent claiming exact-HEAD CI PASS', () => {
-    const currentHead: string = '0d44cc3af9e70645848f6d6be578d25443e2b342';
-    const staleCiSha: string = '77caad418fb864bde588be8d93b4ca58f14fff3b';
+    const currentHead = '0d44cc3af9e70645848f6d6be578d25443e2b342';
+    const staleCiSha = '77caad418fb864bde588be8d93b4ca58f14fff3b';
     expect(staleCiSha === currentHead).toBe(false);
   });
 
@@ -157,7 +159,7 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     const metrics = evaluateSoakProvenance({
       soakSamples: [baseline],
       config: mockBaselineConfig,
-      currentTime: new Date('2026-08-30T18:00:00Z'), // ~6h elapsed (< 48h)
+      currentTime: new Date('2026-08-30T18:00:00Z'),
     });
 
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
@@ -189,7 +191,7 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     const metrics = evaluateSoakProvenance({
       soakSamples: [baseline, run1],
       config: mockBaselineConfig,
-      currentTime: new Date('2026-09-02T13:00:00Z'), // 72h+ elapsed, but only 1 scheduled run (< 7 / 11)
+      currentTime: new Date('2026-09-02T13:00:00Z'),
     });
 
     expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
@@ -209,7 +211,7 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     expect(metrics.soak72hStatus).toBe('BLOCKED_EVIDENCE');
   });
 
-  it('9. malformed FINAL_SOAK_START does not produce a fabricated 2026 cron slot', () => {
+  it('9. malformed FINAL_SOAK_START does not produce a fabricated cron slot', () => {
     expect(() => deriveFirstNominalPostBaselineSlot('invalid-date', '17 */6 * * *')).toThrow(
       /MALFORMED_BASELINE_START_UTC/,
     );
@@ -220,15 +222,15 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
 
   it('10. malformed or unsupported cron expressions are rejected', () => {
     expect(parseAndValidateCron('invalid cron').isValid).toBe(false);
-    expect(parseAndValidateCron('17 */7 * * *').isValid).toBe(false); // 7 does not divide 24
-    expect(parseAndValidateCron('75 */6 * * *').isValid).toBe(false); // minute > 59
-    expect(parseAndValidateCron('17 */6 * * *', 8).isValid).toBe(false); // step mismatch (6 != 8)
+    expect(parseAndValidateCron('17 */7 * * *').isValid).toBe(false);
+    expect(parseAndValidateCron('75 */6 * * *').isValid).toBe(false);
+    expect(parseAndValidateCron('17 */6 * * *', 8).isValid).toBe(false);
   });
 
   it('11. mismatch between configured first slot and derived first slot is detected and fails closed', () => {
     const inconsistentConfig = {
       ...mockBaselineConfig,
-      firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z', // Inconsistent with derived 12:17:00Z
+      firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z',
     };
 
     const validation = validateBaselineConfig(inconsistentConfig);
@@ -253,116 +255,138 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     expect(validation.derivedFirstSlot?.toISOString()).toBe('2026-08-30T12:17:00.000Z');
   });
 
-  it('13. current valid scheduled-run delay diagnostics remain ~268.0 min and ~174.5 min', () => {
-    const run1 = createMockSoakSample({
-      workflowRun: {
-        id: '33323325684',
-        workflow: 'staging-soak.yml',
-        event: 'schedule',
-        conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
-        startedAt: '2026-08-30T16:45:02Z',
-      },
+  it('13. delayed run inside grace window satisfies nominal slot (Rule 2)', () => {
+    const slots = [new Date('2026-08-30T12:17:00Z')];
+    const runs = [{ workflowRun: { id: '33323325684', startedAt: '2026-08-30T16:45:02Z' } }];
+    const res = evaluateScheduleSlotAccounting({
+      passedSlots: slots,
+      validScheduleRuns: runs,
+      currentDate: new Date('2026-08-30T17:00:00Z'),
+      intervalHours: 6,
+      graceWindowHours: 6,
     });
 
-    const run2 = createMockSoakSample({
-      workflowRun: {
-        id: '33335730116',
-        workflow: 'staging-soak.yml',
-        event: 'schedule',
-        conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
-        startedAt: '2026-08-30T21:11:31Z',
-      },
-    });
-
-    const metrics = evaluateSoakProvenance({
-      soakSamples: [run1, run2],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-08-31T05:00:00Z'),
-    });
-
-    const diag1 = metrics.scheduleRunDiagnostics.find(
-      (d: Record<string, unknown>) => d.runId === '33323325684',
-    );
-    expect(diag1?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
-    expect(diag1?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
-
-    const diag2 = metrics.scheduleRunDiagnostics.find(
-      (d: Record<string, unknown>) => d.runId === '33335730116',
-    );
-    expect(diag2?.nearestPrecedingSlotUtc).toBe('2026-08-30T18:17:00.000Z');
-    expect(diag2?.inferredSlotDelayMinutes).toBeCloseTo(174.5, 0);
+    expect(res.satisfiedSlotsCount).toBe(1);
+    expect(res.slotStatuses[0].status).toBe('SATISFIED');
+    expect(res.slotStatuses[0].assignedRunId).toBe('33323325684');
+    expect(res.slotStatuses[0].delayMinutes).toBeCloseTo(268.0, 0);
   });
 
-  it('14. current healthy live evidence remains PENDING rather than FAIL', () => {
-    const baseline = createMockSoakSample({
+  it('14. execution before nominal slot cannot satisfy that slot (Rule 1)', () => {
+    const slots = [new Date('2026-08-30T18:17:00Z')];
+    const earlyRun = [{ workflowRun: { id: 'early-1', startedAt: '2026-08-30T17:00:00Z' } }];
+    const res = evaluateScheduleSlotAccounting({
+      passedSlots: slots,
+      validScheduleRuns: earlyRun,
+      currentDate: new Date('2026-08-30T19:00:00Z'),
+      intervalHours: 6,
+      graceWindowHours: 6,
+    });
+
+    expect(res.satisfiedSlotsCount).toBe(0);
+    expect(res.slotStatuses[0].status).toBe('PENDING_GRACE');
+  });
+
+  it('15. delayed execution outside grace window leaves slot as MISSING (Rule 8)', () => {
+    const slots = [new Date('2026-08-30T12:17:00Z')];
+    const lateRun = [{ workflowRun: { id: 'too-late', startedAt: '2026-08-30T19:00:00Z' } }]; // Grace ends at 18:17
+    const res = evaluateScheduleSlotAccounting({
+      passedSlots: slots,
+      validScheduleRuns: lateRun,
+      currentDate: new Date('2026-08-30T20:00:00Z'),
+      intervalHours: 6,
+      graceWindowHours: 6,
+    });
+
+    expect(res.satisfiedSlotsCount).toBe(0);
+    expect(res.missingSlotsCount).toBe(1);
+    expect(res.slotStatuses[0].status).toBe('MISSING');
+  });
+
+  it('16. multiple runs competing for one slot assign 1-to-1 without double-satisfaction (Rules 5, 6, 7)', () => {
+    const slots = [new Date('2026-08-30T12:17:00Z'), new Date('2026-08-30T18:17:00Z')];
+    const runs = [
+      { workflowRun: { id: 'run-1', startedAt: '2026-08-30T13:00:00Z' } },
+      { workflowRun: { id: 'run-2', startedAt: '2026-08-30T14:00:00Z' } },
+    ];
+    const res = evaluateScheduleSlotAccounting({
+      passedSlots: slots,
+      validScheduleRuns: runs,
+      currentDate: new Date('2026-08-31T01:00:00Z'),
+      intervalHours: 6,
+      graceWindowHours: 6,
+    });
+
+    expect(res.satisfiedSlotsCount).toBe(1);
+    expect(res.slotStatuses[0].assignedRunId).toBe('run-1');
+    expect(res.slotStatuses[1].status).toBe('MISSING');
+    expect(res.unassignedRunsCount).toBe(1);
+  });
+
+  it('17. manual workflow_dispatch runs are excluded from scheduled slot qualification (Rule 4)', () => {
+    const manualRun = createMockSoakSample({
+      executionType: 'MANUAL_GHA',
       workflowRun: {
-        id: '33310672900',
+        id: 'manual-1',
         workflow: 'staging-soak.yml',
         event: 'workflow_dispatch',
         conclusion: 'success',
-        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
-        startedAt: '2026-08-30T12:08:03Z',
-      },
-    });
-    const run1 = createMockSoakSample({
-      workflowRun: {
-        id: '33323325684',
-        workflow: 'staging-soak.yml',
-        event: 'schedule',
-        conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
         startedAt: '2026-08-30T16:45:02Z',
-      },
-    });
-    const run2 = createMockSoakSample({
-      workflowRun: {
-        id: '33335730116',
-        workflow: 'staging-soak.yml',
-        event: 'schedule',
-        conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
-        startedAt: '2026-08-30T21:11:31Z',
-      },
-    });
-    const run3 = createMockSoakSample({
-      workflowRun: {
-        id: '33361539030',
-        workflow: 'staging-soak.yml',
-        event: 'schedule',
-        conclusion: 'success',
-        headSha: '0d44cc3af9e70645848f6d6be578d25443e2b342',
-        startedAt: '2026-08-31T05:43:25Z',
       },
     });
 
     const metrics = evaluateSoakProvenance({
-      soakSamples: [baseline, run1, run2, run3],
+      soakSamples: [manualRun],
       config: mockBaselineConfig,
-      currentTime: new Date('2026-08-31T06:00:00Z'),
+      currentTime: new Date('2026-08-30T18:00:00Z'),
     });
 
-    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
-    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
-    expect(metrics.failedScheduleRunsCount).toBe(0);
-    expect(metrics.failedGhaSoakRunsCount).toBe(0);
+    expect(metrics.validScheduleRunsCount).toBe(0);
+    expect(metrics.manualGhaRunsCount).toBe(1);
   });
 
-  it('15. helper functions loadBaselineConfig, validateSoakExecution, calculateElapsedSoakHours, generateScheduledSlots work correctly', () => {
-    const config = loadBaselineConfig();
-    expect(config.runtimeFreezeHead).toBeDefined();
+  it('18. historical cron change timeline generates correct past intervals (Rule 3)', () => {
+    const historicalRules = [
+      {
+        effectiveFrom: '2026-08-29T00:00:00Z',
+        effectiveUntil: '2026-08-30T12:00:00Z',
+        cron: '0 */12 * * *',
+        intervalHours: 12,
+      },
+      {
+        effectiveFrom: '2026-08-30T12:00:00Z',
+        effectiveUntil: null,
+        cron: '17 */6 * * *',
+        intervalHours: 6,
+      },
+    ];
 
-    const sample = createMockSoakSample();
-    expect(validateSoakExecution(sample).isValid).toBe(true);
-
-    const elapsed = calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z');
-    expect(elapsed).toBe(6);
-
-    const { passedSlots } = generateScheduledSlots(
-      mockBaselineConfig,
-      new Date('2026-08-30T18:30:00Z'),
+    const { passedSlots } = generateHistoricalScheduledSlots(
+      historicalRules,
+      '2026-08-29T12:00:00Z',
+      new Date('2026-08-31T00:00:00Z'),
     );
-    expect(passedSlots.length).toBe(2);
+
+    expect(passedSlots.length).toBeGreaterThan(0);
+  });
+
+  it('19. missing artifact or missing DB records fails soak execution validation', () => {
+    const noArtifact = createMockSoakSample({ summary: null });
+    expect(validateSoakExecution(noArtifact).isValid).toBe(false);
+    expect(validateSoakExecution(noArtifact).failureReason).toBe('SUMMARY_ARTIFACT_MISSING');
+
+    const noDbRun = createMockSoakSample({ dbCrawlRun: null });
+    expect(validateSoakExecution(noDbRun).isValid).toBe(false);
+    expect(validateSoakExecution(noDbRun).failureReason).toBe('DB_CRAWL_RUN_MISSING');
+  });
+
+  it('20. runtime-sensitive SHA change marks execution invalid', () => {
+    const sampleWithRuntimeChange = createMockSoakSample({
+      runtimeBehaviorChangedForRun: true,
+    });
+    expect(validateSoakExecution(sampleWithRuntimeChange).isValid).toBe(false);
+    expect(validateSoakExecution(sampleWithRuntimeChange).failureReason).toBe(
+      'RUNTIME_BEHAVIOR_CHANGED_FOR_RUN',
+    );
   });
 });
