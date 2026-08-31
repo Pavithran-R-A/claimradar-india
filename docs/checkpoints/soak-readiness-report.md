@@ -1,6 +1,6 @@
 # ClaimRadar India — 48–72h Soak Readiness Report
 
-**Report Generated:** 2026-08-30T16:22:17.361Z  
+**Report Generated:** 2026-08-31T04:41:48.283Z  
 **Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  
 **Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  
 **Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)
@@ -30,15 +30,20 @@ SOAK_AUTOMATION = PASS
 SOAK_48H = PENDING_TIME_SOAK
 SOAK_72H = PENDING_TIME_SOAK
 
-ELAPSED_FINAL_SOAK_HOURS = 4.2 / 72
+ELAPSED_FINAL_SOAK_HOURS = 16.5 / 72
 
-DUE_SCHEDULE_SLOTS = 0
-SATISFIED_SCHEDULE_SLOTS = 0
-PENDING_GRACE_SLOTS = 0
-MISSING_SCHEDULE_SLOTS = 0
+EXPECTED_SCHEDULE_SLOTS = 2
+OBSERVED_SCHEDULE_RUNS = 2
+VALID_SCHEDULE_RUNS = 2
+FAILED_SCHEDULE_RUNS = 0
+SCHEDULE_RUN_COUNT_DEFICIT = 0
+MAX_SCHEDULE_START_DELAY_MINUTES = 174.5
+MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = 4.6
+LATEST_VALID_SCHEDULE_RUN = 33335730116 (2026-08-30T21:11:31Z)
+NEXT_EXPECTED_SCHEDULE_SLOT = 2026-08-31T06:17:00.000Z
 
-OBSERVED_GHA_SOAK_RUNS = 1
-VALID_GHA_SOAK_RUNS = 1
+OBSERVED_GHA_SOAK_RUNS = 3
+VALID_GHA_SOAK_RUNS = 3
 FAILED_GHA_SOAK_RUNS = 0
 
 MANUAL_GHA_RUNS_EXCLUDED = 0
@@ -56,6 +61,8 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 | Workflow Run ID | Event               | Head SHA   | Crawl Run ID                           | Started (UTC)        | Sources Succeeded | Docs Discovered | Status           | Provenance     |
 | :-------------- | :------------------ | :--------- | :------------------------------------- | :------------------- | :---------------- | :-------------- | :--------------- | :------------- |
+| `33335730116`   | `schedule`          | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33323325684`   | `schedule`          | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 | `33310672900`   | `workflow_dispatch` | `02dc1590` | `192c24d3-bcbb-4c21-bb38-b737be5261c0` | 2026-08-30T12:08:03Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 
 ---

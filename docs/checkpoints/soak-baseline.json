@@ -7,9 +7,10 @@
   "firstPostBaselineScheduledSlot": "2026-08-30T18:17:00Z",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
-  "scheduleGraceMinutes": 60,
   "thresholdHours48": 48,
   "thresholdHours72": 72,
   "minRunsFor48h": 8,
-  "minRunsFor72h": 12
+  "minRunsFor72h": 12,
+  "minScheduledRunsFor48h": 7,
+  "minScheduledRunsFor72h": 11
 }

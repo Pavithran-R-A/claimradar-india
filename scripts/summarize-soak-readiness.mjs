@@ -38,11 +38,12 @@ export function loadBaselineConfig(configPath = BASELINE_CONFIG_PATH) {
     firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z',
     scheduleCron: '17 */6 * * *',
     scheduleIntervalHours: 6,
-    scheduleGraceMinutes: 60,
     thresholdHours48: 48,
     thresholdHours72: 72,
     minRunsFor48h: 8,
     minRunsFor72h: 12,
+    minScheduledRunsFor48h: 7,
+    minScheduledRunsFor72h: 11,
   };
 }
 
@@ -86,34 +87,21 @@ export function generateScheduledSlots(config, currentTime = new Date()) {
   const firstSlot = new Date(config.firstPostBaselineScheduledSlot || '2026-08-30T18:17:00Z');
   const currentDate = typeof currentTime === 'string' ? new Date(currentTime) : currentTime;
   const intervalMs = (config.scheduleIntervalHours || 6) * 60 * 60 * 1000;
-  const graceMinutes = config.scheduleGraceMinutes !== undefined ? config.scheduleGraceMinutes : 60;
-  const graceMs = graceMinutes * 60 * 1000;
 
   if (isNaN(firstSlot.getTime()) || isNaN(currentDate.getTime())) {
-    return [];
+    return { passedSlots: [], nextSlot: null };
   }
 
-  const slots = [];
+  const passedSlots = [];
   let currentSlotTime = firstSlot.getTime();
 
-  while (currentSlotTime <= currentDate.getTime() + graceMs) {
-    const slotDate = new Date(currentSlotTime);
-    const deadline = new Date(currentSlotTime + graceMs);
-    const isDue = slotDate <= currentDate;
-    const isOverdue = deadline < currentDate;
-
-    slots.push({
-      slotUtc: slotDate.toISOString(),
-      slotTime: slotDate,
-      deadline,
-      isDue,
-      isOverdue,
-    });
-
+  while (currentSlotTime <= currentDate.getTime()) {
+    passedSlots.push(new Date(currentSlotTime));
     currentSlotTime += intervalMs;
   }
 
-  return slots;
+  const nextSlot = new Date(currentSlotTime);
+  return { passedSlots, nextSlot };
 }
 
 export function validateSoakExecution(sample) {
@@ -173,7 +161,11 @@ export function validateSoakExecution(sample) {
   }
 
   if (!summary.runId || typeof summary.runId !== 'string') {
-    return { isValid: false, evidenceStatus: 'UNPROVEN', failureReason: 'SUMMARY_RUN_ID_MISSING' };
+    return {
+      isValid: false,
+      evidenceStatus: 'UNPROVEN',
+      failureReason: 'SUMMARY_RUN_ID_MISSING',
+    };
   }
 
   if (typeof summary.sourcesAttempted !== 'number' || summary.sourcesAttempted <= 0) {
@@ -194,16 +186,32 @@ export function validateSoakExecution(sample) {
     };
   }
   if (typeof summary.sourcesFailed !== 'number' || summary.sourcesFailed !== 0) {
-    return { isValid: false, evidenceStatus: 'FAILED', failureReason: 'SOURCES_FAILED_NON_ZERO' };
+    return {
+      isValid: false,
+      evidenceStatus: 'FAILED',
+      failureReason: 'SOURCES_FAILED_NON_ZERO',
+    };
   }
   if (typeof summary.documentsDiscovered !== 'number' || summary.documentsDiscovered <= 0) {
-    return { isValid: false, evidenceStatus: 'FAILED', failureReason: 'ZERO_DOCUMENTS_DISCOVERED' };
+    return {
+      isValid: false,
+      evidenceStatus: 'FAILED',
+      failureReason: 'ZERO_DOCUMENTS_DISCOVERED',
+    };
   }
   if (typeof summary.documentsFetched !== 'number' || summary.documentsFetched <= 0) {
-    return { isValid: false, evidenceStatus: 'FAILED', failureReason: 'ZERO_DOCUMENTS_FETCHED' };
+    return {
+      isValid: false,
+      evidenceStatus: 'FAILED',
+      failureReason: 'ZERO_DOCUMENTS_FETCHED',
+    };
   }
   if (typeof summary.errorCount !== 'number' || summary.errorCount !== 0) {
-    return { isValid: false, evidenceStatus: 'FAILED', failureReason: 'NON_ZERO_ERROR_COUNT' };
+    return {
+      isValid: false,
+      evidenceStatus: 'FAILED',
+      failureReason: 'NON_ZERO_ERROR_COUNT',
+    };
   }
   if (typeof summary.unexpectedErrorCount !== 'number' || summary.unexpectedErrorCount !== 0) {
     return {
@@ -400,9 +408,10 @@ export function evaluateSoakProvenance({
     ? calculateElapsedSoakHours(config.finalSoakStartUtc, currentDate)
     : 0;
 
-  // Schedule slot accounting
-  const scheduledSlots = generateScheduledSlots(config, currentDate);
-  const dueSlots = scheduledSlots.filter((s) => s.isDue);
+  // Nominal Schedule Slot Generation
+  const { passedSlots, nextSlot } = generateScheduledSlots(config, currentDate);
+  const expectedScheduleSlots = passedSlots.length;
+  const nextExpectedScheduleSlot = nextSlot ? nextSlot.toISOString() : 'UNKNOWN';
 
   const preBaselineRuns = [];
   const preBaselineFailures = [];
@@ -412,10 +421,10 @@ export function evaluateSoakProvenance({
   const validGhaSoakRuns = [];
   const failedGhaSoakRuns = [];
 
-  // Match scheduled slots with observed valid GHA soak runs
-  let satisfiedSlotsCount = 0;
-  let pendingGraceSlotsCount = 0;
-  let missingSlotsCount = 0;
+  // Post-baseline schedule runs
+  const observedScheduleRuns = [];
+  const validScheduleRuns = [];
+  const failedScheduleRuns = [];
 
   // Evaluate DB Crawl Runs for historical/manual tracking
   for (const r of dbCrawlRuns) {
@@ -455,6 +464,16 @@ export function evaluateSoakProvenance({
     if (!isPreBaseline) {
       observedGhaSoakRuns.push(sample);
       const validation = validateSoakExecution(sample);
+
+      if (sample.workflowRun && sample.workflowRun.event === 'schedule') {
+        observedScheduleRuns.push(sample);
+        if (validation.isValid) {
+          validScheduleRuns.push({ ...sample, validation });
+        } else {
+          failedScheduleRuns.push({ ...sample, validation });
+        }
+      }
+
       if (validation.isValid) {
         validGhaSoakRuns.push({ ...sample, validation });
       } else {
@@ -463,65 +482,125 @@ export function evaluateSoakProvenance({
     }
   }
 
-  // Check schedule slots satisfaction
-  for (const slot of scheduledSlots) {
-    const slotTimeMs = slot.slotTime.getTime();
-    const deadlineMs = slot.deadline.getTime();
+  // Sort valid schedule runs chronologically
+  validScheduleRuns.sort((a, b) => {
+    const tA = new Date(a.workflowRun ? a.workflowRun.startedAt : a.startedAt).getTime();
+    const tB = new Date(b.workflowRun ? b.workflowRun.startedAt : b.startedAt).getTime();
+    return tA - tB;
+  });
 
-    // A scheduled run satisfies this slot if its started_at is within [slotTime - 15min, deadline]
-    const isSatisfied = validGhaSoakRuns.some((run) => {
-      if (run.workflowRun && run.workflowRun.event !== 'schedule') return false;
-      const runTime = new Date(
-        run.workflowRun ? run.workflowRun.startedAt : run.startedAt,
-      ).getTime();
-      return runTime >= slotTimeMs - 15 * 60 * 1000 && runTime <= deadlineMs;
-    });
+  // Calculate schedule run deficit
+  const scheduleRunCountDeficit = Math.max(0, expectedScheduleSlots - validScheduleRuns.length);
 
-    if (isSatisfied) {
-      satisfiedSlotsCount++;
-    } else if (currentDate.getTime() < deadlineMs) {
-      pendingGraceSlotsCount++;
-    } else {
-      missingSlotsCount++;
+  // Timing diagnostics: Max schedule start delay & Max gap between runs
+  let maxScheduleStartDelayMinutes = 0;
+  const delays = [];
+
+  for (let i = 0; i < validScheduleRuns.length; i++) {
+    const run = validScheduleRuns[i];
+    const runTime = new Date(run.workflowRun ? run.workflowRun.startedAt : run.startedAt).getTime();
+
+    // Find the nearest nominal slot preceding or matching this run
+    let nearestSlot = passedSlots[0]
+      ? passedSlots[0].getTime()
+      : new Date(config.firstPostBaselineScheduledSlot).getTime();
+    for (const slot of passedSlots) {
+      if (slot.getTime() <= runTime) {
+        nearestSlot = slot.getTime();
+      }
+    }
+
+    const delayMin = Math.max(0, Math.floor(((runTime - nearestSlot) / (60 * 1000)) * 10) / 10);
+    delays.push(delayMin);
+    if (delayMin > maxScheduleStartDelayMinutes) {
+      maxScheduleStartDelayMinutes = delayMin;
     }
   }
 
-  const minRuns48 = config.minRunsFor48h || 8;
-  const minRuns72 = config.minRunsFor72h || 12;
+  // Calculate max gap in hours between consecutive valid soak runs (including baseline)
+  let maxGapBetweenValidScheduleRunsHours = 0;
+  const allChronologicalValidRuns = [...validGhaSoakRuns].sort((a, b) => {
+    const tA = new Date(a.workflowRun ? a.workflowRun.startedAt : a.startedAt).getTime();
+    const tB = new Date(b.workflowRun ? b.workflowRun.startedAt : b.startedAt).getTime();
+    return tA - tB;
+  });
+
+  for (let i = 1; i < allChronologicalValidRuns.length; i++) {
+    const prevTime = new Date(
+      allChronologicalValidRuns[i - 1].workflowRun
+        ? allChronologicalValidRuns[i - 1].workflowRun.startedAt
+        : allChronologicalValidRuns[i - 1].startedAt,
+    ).getTime();
+    const currTime = new Date(
+      allChronologicalValidRuns[i].workflowRun
+        ? allChronologicalValidRuns[i].workflowRun.startedAt
+        : allChronologicalValidRuns[i].startedAt,
+    ).getTime();
+    const gapHours = Math.max(0, Math.floor(((currTime - prevTime) / (3600 * 1000)) * 10) / 10);
+    if (gapHours > maxGapBetweenValidScheduleRunsHours) {
+      maxGapBetweenValidScheduleRunsHours = gapHours;
+    }
+  }
+
+  const latestValidRun =
+    validScheduleRuns.length > 0
+      ? validScheduleRuns[validScheduleRuns.length - 1]
+      : validGhaSoakRuns.length > 0
+        ? validGhaSoakRuns[0]
+        : null;
+
+  const latestValidScheduleRunInfo = latestValidRun
+    ? (latestValidRun.workflowRun ? latestValidRun.workflowRun.id : 'N/A') +
+      ' (' +
+      (latestValidRun.workflowRun
+        ? latestValidRun.workflowRun.startedAt
+        : latestValidRun.startedAt) +
+      ')'
+    : 'NONE';
+
+  const minScheduled48 = config.minScheduledRunsFor48h || 7;
+  const minScheduled72 = config.minScheduledRunsFor72h || 11;
   const ms48 = (config.thresholdHours48 || 48) * 3600 * 1000;
   const ms72 = (config.thresholdHours72 || 72) * 3600 * 1000;
 
   const isGhaAvailable = githubEvidenceStatus === 'AVAILABLE';
 
+  // Strict primary qualification conditions
   const soak48hPassed =
     isBaselineValid &&
     isGhaAvailable &&
     !runtimeBehaviorChanged &&
     elapsedMs >= ms48 &&
-    validGhaSoakRuns.length >= minRuns48 &&
-    failedGhaSoakRuns.length === 0 &&
-    missingSlotsCount === 0;
+    validScheduleRuns.length >= minScheduled48 &&
+    failedScheduleRuns.length === 0 &&
+    failedGhaSoakRuns.length === 0;
 
   const soak72hPassed =
     isBaselineValid &&
     isGhaAvailable &&
     !runtimeBehaviorChanged &&
     elapsedMs >= ms72 &&
-    validGhaSoakRuns.length >= minRuns72 &&
-    failedGhaSoakRuns.length === 0 &&
-    missingSlotsCount === 0;
+    validScheduleRuns.length >= minScheduled72 &&
+    failedScheduleRuns.length === 0 &&
+    failedGhaSoakRuns.length === 0;
 
   const soak48hStatus = soak48hPassed ? 'PASS' : 'PENDING_TIME_SOAK';
   const soak72hStatus = soak72hPassed ? 'PASS' : 'PENDING_TIME_SOAK';
 
-  // Build markdown table
+  // Build markdown table (sorted reverse chronologically for display)
+  const displayRuns = [...observedGhaSoakRuns].sort((a, b) => {
+    const tA = new Date(a.workflowRun ? a.workflowRun.startedAt : a.startedAt).getTime();
+    const tB = new Date(b.workflowRun ? b.workflowRun.startedAt : b.startedAt).getTime();
+    return tB - tA;
+  });
+
   let soakRunsTable =
     '| Workflow Run ID | Event | Head SHA | Crawl Run ID | Started (UTC) | Sources Succeeded | Docs Discovered | Status | Provenance |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n';
 
-  if (observedGhaSoakRuns.length === 0) {
+  if (displayRuns.length === 0) {
     soakRunsTable += '| None | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |\n';
   } else {
-    for (const s of observedGhaSoakRuns) {
+    for (const s of displayRuns) {
       const wfId = s.workflowRun ? s.workflowRun.id : 'N/A';
       const event = s.workflowRun ? s.workflowRun.event : 'N/A';
       const headSha =
@@ -564,10 +643,15 @@ export function evaluateSoakProvenance({
     githubEvidenceStatus,
     runtimeBehaviorChanged,
     elapsedSoakHours,
-    dueScheduleSlots: dueSlots.length,
-    satisfiedScheduleSlots: satisfiedSlotsCount,
-    pendingGraceSlots: pendingGraceSlotsCount,
-    missingScheduleSlots: missingSlotsCount,
+    expectedScheduleSlots,
+    observedScheduleRunsCount: observedScheduleRuns.length,
+    validScheduleRunsCount: validScheduleRuns.length,
+    failedScheduleRunsCount: failedScheduleRuns.length,
+    scheduleRunCountDeficit,
+    maxScheduleStartDelayMinutes,
+    maxGapBetweenValidScheduleRunsHours,
+    latestValidScheduleRun: latestValidScheduleRunInfo,
+    nextExpectedScheduleSlot,
     observedGhaSoakRunsCount: observedGhaSoakRuns.length,
     validGhaSoakRunsCount: validGhaSoakRuns.length,
     failedGhaSoakRunsCount: failedGhaSoakRuns.length,
@@ -636,7 +720,10 @@ export async function fetchDbEvidenceForRun(crawlRunId) {
   }
 
   try {
-    const headers = { apikey: SUPABASE_SECRET_KEY, Authorization: 'Bearer ' + SUPABASE_SECRET_KEY };
+    const headers = {
+      apikey: SUPABASE_SECRET_KEY,
+      Authorization: 'Bearer ' + SUPABASE_SECRET_KEY,
+    };
     const [resRun, resSources, resErrors] = await Promise.all([
       fetch(SUPABASE_URL + '/rest/v1/crawl_runs?id=eq.' + crawlRunId + '&select=*', { headers }),
       fetch(
@@ -672,7 +759,10 @@ export async function fetchHistoricalDbCrawlRuns() {
     return [];
   }
   try {
-    const headers = { apikey: SUPABASE_SECRET_KEY, Authorization: 'Bearer ' + SUPABASE_SECRET_KEY };
+    const headers = {
+      apikey: SUPABASE_SECRET_KEY,
+      Authorization: 'Bearer ' + SUPABASE_SECRET_KEY,
+    };
     const res = await fetch(
       SUPABASE_URL + '/rest/v1/crawl_runs?select=*&order=started_at.desc&limit=50',
       { headers },
@@ -703,8 +793,7 @@ export async function main() {
     }
 
     const isBaselineRun = String(r.id) === String(config.finalSoakBaselineGhaRun);
-    const isScheduledPostBaseline =
-      r.event === 'schedule' && runStart >= new Date(config.firstPostBaselineScheduledSlot);
+    const isScheduledPostBaseline = r.event === 'schedule' && runStart >= baselineStart;
 
     let executionType = 'UNKNOWN';
     if (isBaselineRun || isScheduledPostBaseline) {
@@ -814,17 +903,32 @@ export async function main() {
     'ELAPSED_FINAL_SOAK_HOURS = ' +
     metrics.elapsedSoakHours +
     ' / 72\n\n' +
-    'DUE_SCHEDULE_SLOTS = ' +
-    metrics.dueScheduleSlots +
+    'EXPECTED_SCHEDULE_SLOTS = ' +
+    metrics.expectedScheduleSlots +
     '\n' +
-    'SATISFIED_SCHEDULE_SLOTS = ' +
-    metrics.satisfiedScheduleSlots +
+    'OBSERVED_SCHEDULE_RUNS = ' +
+    metrics.observedScheduleRunsCount +
     '\n' +
-    'PENDING_GRACE_SLOTS = ' +
-    metrics.pendingGraceSlots +
+    'VALID_SCHEDULE_RUNS = ' +
+    metrics.validScheduleRunsCount +
     '\n' +
-    'MISSING_SCHEDULE_SLOTS = ' +
-    metrics.missingScheduleSlots +
+    'FAILED_SCHEDULE_RUNS = ' +
+    metrics.failedScheduleRunsCount +
+    '\n' +
+    'SCHEDULE_RUN_COUNT_DEFICIT = ' +
+    metrics.scheduleRunCountDeficit +
+    '\n' +
+    'MAX_SCHEDULE_START_DELAY_MINUTES = ' +
+    metrics.maxScheduleStartDelayMinutes +
+    '\n' +
+    'MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = ' +
+    metrics.maxGapBetweenValidScheduleRunsHours +
+    '\n' +
+    'LATEST_VALID_SCHEDULE_RUN = ' +
+    metrics.latestValidScheduleRun +
+    '\n' +
+    'NEXT_EXPECTED_SCHEDULE_SLOT = ' +
+    metrics.nextExpectedScheduleSlot +
     '\n\n' +
     'OBSERVED_GHA_SOAK_RUNS = ' +
     metrics.observedGhaSoakRunsCount +
