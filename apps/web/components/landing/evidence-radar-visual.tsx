@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, X } from 'lucide-react';
 import { cn } from '@claimradar/design-system';
 
 interface AuthorityNode {
@@ -84,6 +84,17 @@ const MONITORED_NODES: AuthorityNode[] = [
 
 export function EvidenceRadarVisual({ className }: { className?: string }) {
   const [selectedNode, setSelectedNode] = React.useState<AuthorityNode | null>(null);
+
+  // Close drawer on Escape key
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && selectedNode) {
+        setSelectedNode(null);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedNode]);
 
   return (
     <div
@@ -253,9 +264,30 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             return (
               <g
                 key={node.code}
-                className="cursor-pointer transition-all duration-200"
+                role="button"
+                tabIndex={0}
+                aria-label={`View details for ${node.code}: ${node.name}`}
+                aria-expanded={isSelected}
+                className="cursor-pointer transition-all duration-200 group focus-visible:outline-none"
                 onClick={() => setSelectedNode(isSelected ? null : node)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedNode(isSelected ? null : node);
+                  }
+                }}
               >
+                {/* Visible Keyboard Focus Indicator */}
+                <circle
+                  cx={node.cx}
+                  cy={node.cy}
+                  r={isSelected ? 18 : 16}
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  strokeDasharray="3 3"
+                  className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity"
+                />
+
                 {/* Outer Ping Ring */}
                 <circle
                   cx={node.cx}
@@ -309,7 +341,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   fontWeight="bold"
                   fontFamily="monospace"
                   letterSpacing="0.5"
-                  className="transition-colors hover:fill-white"
+                  className="transition-colors group-hover:fill-white group-focus-visible:fill-white"
                 >
                   {node.code}
                 </text>
@@ -325,7 +357,12 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
 
         {/* Selected Authority Quick Drawer Overlay */}
         {selectedNode && (
-          <div className="absolute inset-x-3 bottom-3 rounded-xl border border-brand-bright/30 bg-ink-950/95 p-3.5 shadow-2xl backdrop-blur-md transition-all">
+          <div
+            role="region"
+            aria-live="polite"
+            aria-label={`Regulatory details for ${selectedNode.code}`}
+            className="absolute inset-x-3 bottom-3 rounded-xl border border-brand-bright/30 bg-ink-950/95 p-3.5 shadow-2xl backdrop-blur-md transition-all"
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -348,10 +385,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
               <button
                 type="button"
                 onClick={() => setSelectedNode(null)}
-                className="rounded p-1 text-slate-400 hover:bg-white/10 hover:text-white"
-                aria-label="Close node inspector"
+                className="rounded p-1.5 text-slate-400 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bright"
+                aria-label="Close authority inspector"
               >
-                ✕
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </div>

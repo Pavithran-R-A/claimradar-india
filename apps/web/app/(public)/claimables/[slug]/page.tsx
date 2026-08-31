@@ -468,7 +468,7 @@ function SummaryPanel({ claim }: { claim: PublishedClaimable }) {
           <BellRing aria-hidden className="h-4 w-4" />
           Watch this company
         </Link>
-        <p className="mt-3 text-[11px] leading-relaxed text-text-muted">
+        <p className="mt-3 text-xs leading-relaxed text-text-muted">
           Watching alerts you when new records are published. It does not guarantee eligibility.
         </p>
       </div>

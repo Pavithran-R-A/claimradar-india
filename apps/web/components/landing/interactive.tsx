@@ -116,7 +116,7 @@ function DemoClaimCard({
         </div>
         <span
           className={cn(
-            'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold',
+            'shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold',
             status === 'Verified' && 'bg-verified-background text-success',
             status === 'Under Review' && 'bg-info/10 text-info',
             status === 'Open' && 'bg-trust-primary/10 text-trust-primary',
@@ -125,7 +125,7 @@ function DemoClaimCard({
           {status}
         </span>
       </div>
-      <div className="mt-2 flex items-center gap-3 text-[11px] text-text-muted">
+      <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
         <span className={cn(urgent && 'text-deadline font-medium')}>⏱ {deadline}</span>
         <span className="inline-flex items-center gap-1">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />

@@ -83,7 +83,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <BrandMark size={28} variant="default" animated={false} />
             <div className="flex flex-col leading-none">
               <span className="text-sm font-extrabold text-text-primary">ClaimRadar</span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-trust-primary">
+              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
                 Operations Desk
               </span>
             </div>

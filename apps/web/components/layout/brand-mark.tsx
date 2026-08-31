@@ -48,7 +48,7 @@ export function ClaimRadarBrand({
         {showDescriptor && (
           <span
             className={cn(
-              'text-[10px] font-bold uppercase tracking-widest',
+              'text-xs font-bold uppercase tracking-widest',
               theme === 'dark' ? 'text-brand-bright' : 'text-trust-primary',
             )}
           >

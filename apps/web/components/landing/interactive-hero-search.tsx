@@ -81,7 +81,7 @@ export function InteractiveHeroSearch() {
             </button>
           ) : (
             <div className="pointer-events-none absolute inset-y-0 right-3.5 hidden sm:flex items-center">
-              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-slate-300">
+              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-xs font-mono text-slate-300">
                 /
               </kbd>
             </div>

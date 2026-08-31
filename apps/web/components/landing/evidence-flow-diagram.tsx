@@ -78,7 +78,7 @@ export function EvidenceFlowDiagram() {
               <div className="flex w-full items-center justify-between mb-2">
                 <span
                   className={cn(
-                    'text-[10px] font-mono font-bold tracking-wider',
+                    'text-xs font-mono font-bold tracking-wider',
                     isSelected ? 'text-trust-primary' : 'text-text-muted',
                   )}
                 >
