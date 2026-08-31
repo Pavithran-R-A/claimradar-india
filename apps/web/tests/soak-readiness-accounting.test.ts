@@ -99,8 +99,8 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
   });
 
   it('3. CI head SHA != HEAD is detectable and must prevent claiming exact-HEAD CI PASS', () => {
-    const currentHead = '0d44cc3af9e70645848f6d6be578d25443e2b342';
-    const staleCiSha = '77caad418fb864bde588be8d93b4ca58f14fff3b';
+    const currentHead: string = '0d44cc3af9e70645848f6d6be578d25443e2b342';
+    const staleCiSha: string = '77caad418fb864bde588be8d93b4ca58f14fff3b';
     expect(staleCiSha === currentHead).toBe(false);
   });
 
@@ -264,9 +264,9 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     });
 
     expect(res.satisfiedSlotsCount).toBe(1);
-    expect(res.slotStatuses[0].status).toBe('SATISFIED');
-    expect(res.slotStatuses[0].assignedRunId).toBe('33323325684');
-    expect(res.slotStatuses[0].delayMinutes).toBeCloseTo(268.0, 0);
+    expect(res.slotStatuses[0]!.status).toBe('SATISFIED');
+    expect(res.slotStatuses[0]!.assignedRunId).toBe('33323325684');
+    expect(res.slotStatuses[0]!.delayMinutes).toBeCloseTo(268.0, 0);
   });
 
   it('14. execution before nominal slot cannot satisfy that slot (Rule 1)', () => {
@@ -281,7 +281,7 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     });
 
     expect(res.satisfiedSlotsCount).toBe(0);
-    expect(res.slotStatuses[0].status).toBe('PENDING_GRACE');
+    expect(res.slotStatuses[0]!.status).toBe('PENDING_GRACE');
   });
 
   it('15. delayed execution outside grace window leaves slot as MISSING (Rule 8)', () => {
@@ -297,7 +297,7 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
 
     expect(res.satisfiedSlotsCount).toBe(0);
     expect(res.missingSlotsCount).toBe(1);
-    expect(res.slotStatuses[0].status).toBe('MISSING');
+    expect(res.slotStatuses[0]!.status).toBe('MISSING');
   });
 
   it('16. multiple runs competing for one slot assign 1-to-1 without double-satisfaction (Rules 5, 6, 7)', () => {
@@ -315,8 +315,8 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     });
 
     expect(res.satisfiedSlotsCount).toBe(1);
-    expect(res.slotStatuses[0].assignedRunId).toBe('run-1');
-    expect(res.slotStatuses[1].status).toBe('MISSING');
+    expect(res.slotStatuses[0]!.assignedRunId).toBe('run-1');
+    expect(res.slotStatuses[1]!.status).toBe('MISSING');
     expect(res.unassignedRunsCount).toBe(1);
   });
 
