@@ -1,14 +1,14 @@
 {
-  "evaluatedAt": "2026-08-31T06:02:53.129Z",
+  "evaluatedAt": "2026-08-31T06:10:59.751Z",
   "git": {
-    "head": "0d44cc3af9e70645848f6d6be578d25443e2b342",
-    "originMain": "0d44cc3af9e70645848f6d6be578d25443e2b342",
+    "head": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
+    "originMain": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
     "headEqualsOriginMain": true,
-    "worktreeClean": false
+    "worktreeClean": true
   },
   "ci": {
-    "latestCiRunId": "33360761225",
-    "latestCiHeadSha": "0d44cc3af9e70645848f6d6be578d25443e2b342",
+    "latestCiRunId": "33362947444",
+    "latestCiHeadSha": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
     "latestCiConclusion": "success",
     "ciHeadEqualsHead": true
   },
@@ -28,7 +28,7 @@
     "baselineArtifactVerified": true
   },
   "soakQualification": {
-    "elapsedSoakHours": 17.9,
+    "elapsedSoakHours": 18,
     "expectedScheduleSlots": 3,
     "observedScheduleRuns": 3,
     "validScheduleRuns": 3,
