@@ -25,7 +25,7 @@ const mockBaselineConfig = {
   minScheduledRunsFor72h: 11,
 };
 
-function createMockSoakSample(overrides: Record<string, unknown> = {}): any {
+function createMockSoakSample(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   const crawlRunId = 'crawl-' + Math.random().toString(36).substring(7);
   return {
     executionType: 'FINAL_SOAK',
