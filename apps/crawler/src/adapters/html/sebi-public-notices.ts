@@ -27,6 +27,7 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
     const documents: DiscoveredDocument[] = [];
     const seenUrls = new Set<string>();
 
+    let lastError: Error | null = null;
     for (const listingUrl of listingUrls) {
       try {
         const result = await client.fetch(
@@ -80,8 +81,13 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
           }
         }
       } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
         console.error(`[${this.sourceKey}] Failed to fetch listing ${listingUrl}:`, err);
       }
+    }
+
+    if (documents.length === 0 && lastError) {
+      throw lastError;
     }
 
     return documents;

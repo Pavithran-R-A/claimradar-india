@@ -97,7 +97,7 @@ jobs:
           AI_PROVIDER: ${{ vars.AI_PROVIDER || 'none' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          CRAWLER_USER_AGENT: 'ClaimRadar India Bot/1.0 (+https://claimradar.in)'
+          CRAWLER_USER_AGENT: 'ClaimRadar India/1.0'
           LIVE_ADAPTERS_ENABLED: 'true'
           AI_DAILY_REQUEST_BUDGET: ${{ vars.AI_DAILY_REQUEST_BUDGET || '40' }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

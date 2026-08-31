@@ -7,7 +7,7 @@ export const crawlerEnvSchema = z.object({
   APP_ENV: envAppEnv,
   SUPABASE_URL: z.string().url(),
   SUPABASE_SECRET_KEY: z.string().optional(),
-  CRAWLER_USER_AGENT: z.string().default('ClaimRadar India Bot/1.0 (+https://claimradar.in)'),
+  CRAWLER_USER_AGENT: z.string().default('ClaimRadar India/1.0'),
   CRAWLER_CONTACT_EMAIL: z.string().email().optional(),
   AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
   OPENROUTER_API_KEY: z.string().optional(),

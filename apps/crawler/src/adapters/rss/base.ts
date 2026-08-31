@@ -28,46 +28,41 @@ export class BaseRssAdapter implements SourceAdapter {
   async discover(_context: CrawlContext): Promise<DiscoveredDocument[]> {
     const feedUrl = this.getFeedUrl();
     if (!feedUrl) {
-      return [];
+      throw new Error(`[${this.sourceKey}] No feed URL configured for RSS adapter`);
     }
 
-    try {
-      const client = this.createHttpClient(_context);
-      const res = await client.fetch({
-        url: feedUrl,
-        method: 'GET',
-        timeoutMs: _context.timeoutMs,
-      });
-      const xml = res.body.toString('utf-8');
-      const feed = await this.parser.parseString(xml);
-      const documents: DiscoveredDocument[] = [];
+    const client = this.createHttpClient(_context);
+    const res = await client.fetch({
+      url: feedUrl,
+      method: 'GET',
+      timeoutMs: _context.timeoutMs,
+    });
+    const xml = res.body.toString('utf-8');
+    const feed = await this.parser.parseString(xml);
+    const documents: DiscoveredDocument[] = [];
 
-      for (const item of feed.items ?? []) {
-        if (!item.link) continue;
-        const rssItem: Parameters<typeof parseRssItem>[0] = { link: item.link };
-        if (item.title !== undefined) rssItem.title = item.title;
-        if (item.pubDate !== undefined) rssItem.pubDate = item.pubDate;
-        if (item.guid !== undefined) rssItem.guid = item.guid;
-        if (item.id !== undefined) rssItem.id = item.id;
-        if (item.contentSnippet !== undefined) rssItem.contentSnippet = item.contentSnippet;
-        if (item.content !== undefined) rssItem.content = item.content;
-        if ((item as { summary?: unknown }).summary !== undefined)
-          rssItem.summary = (item as { summary?: unknown }).summary;
-        if (item.description !== undefined) rssItem.description = item.description;
-        if ((item as Record<string, unknown>)['content:encoded'] !== undefined)
-          rssItem['content:encoded'] = (item as Record<string, unknown>)['content:encoded'];
+    for (const item of feed.items ?? []) {
+      if (!item.link) continue;
+      const rssItem: Parameters<typeof parseRssItem>[0] = { link: item.link };
+      if (item.title !== undefined) rssItem.title = item.title;
+      if (item.pubDate !== undefined) rssItem.pubDate = item.pubDate;
+      if (item.guid !== undefined) rssItem.guid = item.guid;
+      if (item.id !== undefined) rssItem.id = item.id;
+      if (item.contentSnippet !== undefined) rssItem.contentSnippet = item.contentSnippet;
+      if (item.content !== undefined) rssItem.content = item.content;
+      if ((item as { summary?: unknown }).summary !== undefined)
+        rssItem.summary = (item as { summary?: unknown }).summary;
+      if (item.description !== undefined) rssItem.description = item.description;
+      if ((item as Record<string, unknown>)['content:encoded'] !== undefined)
+        rssItem['content:encoded'] = (item as Record<string, unknown>)['content:encoded'];
 
-        const doc = parseRssItem(rssItem);
-        if (doc.url) {
-          documents.push(doc);
-        }
+      const doc = parseRssItem(rssItem);
+      if (doc.url) {
+        documents.push(doc);
       }
-
-      return documents;
-    } catch (err) {
-      console.error(`[${this.sourceKey}] Failed to discover documents:`, err);
-      return [];
     }
+
+    return documents;
   }
 
   async fetchDocument(
