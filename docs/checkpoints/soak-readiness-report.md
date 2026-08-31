@@ -59,24 +59,25 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 ## 3. Validated Final-Soak Executions (Workflow & Database Corroborated)
 
-| Workflow Run ID | Event | Head SHA | Crawl Run ID | Started (UTC) | Sources Succeeded | Docs Discovered | Status | Provenance |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `33335730116` | `schedule` | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
-| `33323325684` | `schedule` | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
-| `33310672900` | `workflow_dispatch` | `02dc1590` | `192c24d3-bcbb-4c21-bb38-b737be5261c0` | 2026-08-30T12:08:03Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
+| Workflow Run ID | Event               | Head SHA   | Crawl Run ID                           | Started (UTC)        | Sources Succeeded | Docs Discovered | Status           | Provenance     |
+| :-------------- | :------------------ | :--------- | :------------------------------------- | :------------------- | :---------------- | :-------------- | :--------------- | :------------- |
+| `33335730116`   | `schedule`          | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33323325684`   | `schedule`          | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33310672900`   | `workflow_dispatch` | `02dc1590` | `192c24d3-bcbb-4c21-bb38-b737be5261c0` | 2026-08-30T12:08:03Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 
 ---
 
 ## 4. Inferred Nominal Schedule Delay Diagnostics
 
-| Workflow Run ID | Started (UTC) | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note |
-| :--- | :--- | :--- | :--- | :--- |
-| `33323325684` | 2026-08-30T16:45:02Z | `2026-08-30T12:17:00.000Z` | 268 min | Inferred nearest nominal slot (diagnostic only) |
-| `33335730116` | 2026-08-30T21:11:31Z | `2026-08-30T18:17:00.000Z` | 174.5 min | Inferred nearest nominal slot (diagnostic only) |
+| Workflow Run ID | Started (UTC)        | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note                                |
+| :-------------- | :------------------- | :----------------------------------- | :------------------- | :---------------------------------------------- |
+| `33323325684`   | 2026-08-30T16:45:02Z | `2026-08-30T12:17:00.000Z`           | 268 min              | Inferred nearest nominal slot (diagnostic only) |
+| `33335730116`   | 2026-08-30T21:11:31Z | `2026-08-30T18:17:00.000Z`           | 174.5 min            | Inferred nearest nominal slot (diagnostic only) |
 
 ---
 
 ## 5. Invariants Verified Under Soak
+
 - **Hard False Positive Rules Active**: 0 RBI monetary penalties, 0 IBBI Form G resolution applicant notices, 0 generic SEBI orders.
 - **Deduplication Parity**: 100% hash and canonical URL deduplication active across runs.
 - **Fail-Closed Secrets**: 0 exposed privileged keys in browser logs or client bundles.
