@@ -1,16 +1,16 @@
 {
-  "evaluatedAt": "2026-08-31T06:10:59.751Z",
+  "evaluatedAt": "2026-08-31T12:55:33.465Z",
   "git": {
-    "head": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
-    "originMain": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
+    "head": "ab04e6ad917d9c34424e37aec3ab7e88d6c1a5b9",
+    "originMain": "ab04e6ad917d9c34424e37aec3ab7e88d6c1a5b9",
     "headEqualsOriginMain": true,
-    "worktreeClean": true
+    "worktreeClean": false
   },
   "ci": {
-    "latestCiRunId": "33362947444",
-    "latestCiHeadSha": "8e3044fc5a9d32e2688c89471c706c9bd95ec310",
+    "latestCiRunId": "33382657550",
+    "latestCiHeadSha": "56cc5db47e4ee9dda47612ab9a7bff424d3c8820",
     "latestCiConclusion": "success",
-    "ciHeadEqualsHead": true
+    "ciHeadEqualsHead": false
   },
   "runtimeIntegrity": {
     "runtimeFreezeHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
@@ -28,22 +28,35 @@
     "baselineArtifactVerified": true
   },
   "soakQualification": {
-    "elapsedSoakHours": 18,
-    "expectedScheduleSlots": 3,
+    "elapsedSoakHours": 24.7,
+    "expectedScheduleSlots": 5,
     "observedScheduleRuns": 3,
     "validScheduleRuns": 3,
     "failedScheduleRuns": 0,
-    "scheduleRunCountDeficit": 0,
+    "scheduleRunCountDeficit": 2,
     "maxInferredScheduleDelayMinutes": 326.4,
     "maxGapBetweenValidScheduleRunsHours": 8.5,
     "latestValidScheduleRun": "33361539030 (2026-08-31T05:43:25Z)",
-    "nextExpectedScheduleSlot": "2026-08-31T06:17:00.000Z",
+    "nextExpectedScheduleSlot": "2026-08-31T18:17:00.000Z",
     "soak48hStatus": "PENDING_TIME_SOAK",
-    "soak48hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
+    "soak48hReasonCodes": [
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ],
     "soak72hStatus": "PENDING_TIME_SOAK",
-    "soak72hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
+    "soak72hReasonCodes": [
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ],
     "finalEvidenceStatus": "PENDING_TIME_SOAK",
-    "finalEvidenceReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"]
+    "finalEvidenceReasonCodes": [
+      "CI_HEAD_NOT_EXACT_OR_FAILED",
+      "INSUFFICIENT_ELAPSED_TIME",
+      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
+      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
+    ]
   },
   "scheduleRunDiagnostics": [
     {

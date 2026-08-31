@@ -75,7 +75,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
-          CRAWLER_USER_AGENT: 'ClaimRadar India Bot/1.0 (+https://claimradar.in)'
+          CRAWLER_USER_AGENT: 'ClaimRadar India/1.0'
           LIVE_ADAPTERS_ENABLED: 'true'
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'

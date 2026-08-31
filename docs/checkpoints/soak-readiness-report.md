@@ -1,6 +1,6 @@
 # ClaimRadar India — 48–72h Soak Readiness Report
 
-**Report Generated:** 2026-08-31T06:10:59.751Z  
+**Report Generated:** 2026-08-31T12:55:33.465Z  
 **Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  
 **Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  
 **Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)
@@ -27,20 +27,20 @@ RUNTIME_BEHAVIOR_CHANGED_AFTER_BASELINE = false
 
 ```ini
 SOAK_AUTOMATION = PASS
-SOAK_48H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS)
-SOAK_72H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS)
+SOAK_48H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
+SOAK_72H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
 
-ELAPSED_FINAL_SOAK_HOURS = 18 / 72
+ELAPSED_FINAL_SOAK_HOURS = 24.7 / 72
 
-EXPECTED_SCHEDULE_SLOTS = 3
+EXPECTED_SCHEDULE_SLOTS = 5
 OBSERVED_SCHEDULE_RUNS = 3
 VALID_SCHEDULE_RUNS = 3
 FAILED_SCHEDULE_RUNS = 0
-SCHEDULE_RUN_COUNT_DEFICIT = 0 (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)
+SCHEDULE_RUN_COUNT_DEFICIT = 2 (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)
 MAX_INFERRED_SCHEDULE_DELAY_MINUTES = 326.4
 MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = 8.5
 LATEST_VALID_SCHEDULE_RUN = 33361539030 (2026-08-31T05:43:25Z)
-NEXT_EXPECTED_SCHEDULE_SLOT = 2026-08-31T06:17:00.000Z
+NEXT_EXPECTED_SCHEDULE_SLOT = 2026-08-31T18:17:00.000Z
 
 OBSERVED_GHA_SOAK_RUNS = 4
 VALID_GHA_SOAK_RUNS = 4
@@ -59,27 +59,26 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 ## 3. Validated Final-Soak Executions (Workflow & Database Corroborated)
 
-| Workflow Run ID | Event               | Head SHA   | Crawl Run ID                           | Started (UTC)        | Sources Succeeded | Docs Discovered | Status           | Provenance     |
-| :-------------- | :------------------ | :--------- | :------------------------------------- | :------------------- | :---------------- | :-------------- | :--------------- | :------------- |
-| `33361539030`   | `schedule`          | `0d44cc3a` | `96dc7365-41bd-41a3-b71b-998b87adf43c` | 2026-08-31T05:43:25Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
-| `33335730116`   | `schedule`          | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
-| `33323325684`   | `schedule`          | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
-| `33310672900`   | `workflow_dispatch` | `02dc1590` | `192c24d3-bcbb-4c21-bb38-b737be5261c0` | 2026-08-30T12:08:03Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
+| Workflow Run ID | Event | Head SHA | Crawl Run ID | Started (UTC) | Sources Succeeded | Docs Discovered | Status | Provenance |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `33361539030` | `schedule` | `0d44cc3a` | `96dc7365-41bd-41a3-b71b-998b87adf43c` | 2026-08-31T05:43:25Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33335730116` | `schedule` | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33323325684` | `schedule` | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
+| `33310672900` | `workflow_dispatch` | `02dc1590` | `192c24d3-bcbb-4c21-bb38-b737be5261c0` | 2026-08-30T12:08:03Z | 7/7 | 106 | **PROVEN_VALID** | **FINAL_SOAK** |
 
 ---
 
 ## 4. Inferred Nominal Schedule Delay Diagnostics
 
-| Workflow Run ID | Started (UTC)        | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note                                |
-| :-------------- | :------------------- | :----------------------------------- | :------------------- | :---------------------------------------------- |
-| `33323325684`   | 2026-08-30T16:45:02Z | `2026-08-30T12:17:00.000Z`           | 268 min              | Inferred nearest nominal slot (diagnostic only) |
-| `33335730116`   | 2026-08-30T21:11:31Z | `2026-08-30T18:17:00.000Z`           | 174.5 min            | Inferred nearest nominal slot (diagnostic only) |
-| `33361539030`   | 2026-08-31T05:43:25Z | `2026-08-31T00:17:00.000Z`           | 326.4 min            | Inferred nearest nominal slot (diagnostic only) |
+| Workflow Run ID | Started (UTC) | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note |
+| :--- | :--- | :--- | :--- | :--- |
+| `33323325684` | 2026-08-30T16:45:02Z | `2026-08-30T12:17:00.000Z` | 268 min | Inferred nearest nominal slot (diagnostic only) |
+| `33335730116` | 2026-08-30T21:11:31Z | `2026-08-30T18:17:00.000Z` | 174.5 min | Inferred nearest nominal slot (diagnostic only) |
+| `33361539030` | 2026-08-31T05:43:25Z | `2026-08-31T00:17:00.000Z` | 326.4 min | Inferred nearest nominal slot (diagnostic only) |
 
 ---
 
 ## 5. Invariants Verified Under Soak
-
 - **Hard False Positive Rules Active**: 0 RBI monetary penalties, 0 IBBI Form G resolution applicant notices, 0 generic SEBI orders.
 - **Deduplication Parity**: 100% hash and canonical URL deduplication active across runs.
 - **Fail-Closed Secrets**: 0 exposed privileged keys in browser logs or client bundles.
