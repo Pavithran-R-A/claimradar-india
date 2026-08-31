@@ -1,9 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { BaseRssAdapter } from '../../src/adapters/rss/base.js';
 import { PibRssAdapter } from '../../src/adapters/rss/pib.js';
 import { FetchError } from '../../src/http/types.js';
-import { runPipeline } from '../../src/pipeline/index.js';
-import { MemoryDatabaseWriter } from '../../src/pipeline/db-writer.js';
 import type { CrawlContext } from '../../src/adapters/types.js';
 import type { SourceDefinition } from '@claimradar/source-registry';
 
