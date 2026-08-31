@@ -3,11 +3,10 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   ClaimRadar design tokens — see docs/design/design-system.md
+   ClaimRadar design tokens — Civic Intelligence × Premium Financial Product
    --------------------------------------------------------------------------
    `:root` carries the dark theme (authenticated app shell, admin).
-   `.theme-light` remaps the same semantic variables for the public site, so
-   token-based components render correctly in both themes.
+   `.theme-light` remaps semantic variables for the public consumer site.
    ========================================================================== */
 
 :root {
@@ -29,21 +28,19 @@
   --c-deadline-background: rgba(244, 163, 64, 0.12);
 }
 
-/* Public site: white content surfaces on off-white, teal actions,
-   saffron reserved for deadlines, red only for errors/expiry. */
 .theme-light {
-  --c-background: 248 250 252; /* #F8FAFC slate-50 */
+  --c-background: 248 250 252; /* #F8FAFC crisp off-white */
   --c-background-elevated: 241 245 249; /* #F1F5F9 slate-100 */
   --c-surface: 255 255 255; /* #FFFFFF crisp white */
   --c-surface-strong: 241 245 249; /* #F1F5F9 */
-  --c-border: rgba(15, 23, 42, 0.1);
+  --c-border: rgba(15, 23, 42, 0.08);
   --c-text-primary: 15 23 42; /* #0F172A slate-900 */
   --c-text-secondary: 51 65 85; /* #334155 slate-700 (9.2:1 contrast) */
   --c-text-muted: 71 85 105; /* #475569 slate-600 (5.8:1 contrast) */
-  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (4.9:1 with white text) */
+  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (high-trust action) */
   --c-trust-primary-hover: 17 94 89; /* #115E59 teal-800 */
   --c-success: 4 120 87; /* #047857 emerald-700 */
-  --c-deadline: 180 83 9; /* #B45309 amber-700 */
+  --c-deadline: 180 83 9; /* #B45309 amber-700 (time-sensitive) */
   --c-danger: 185 28 28; /* #B91C1C red-700 */
   --c-info: 29 78 216; /* #1D4ED8 blue-700 */
   --c-verified-background: rgba(4, 120, 87, 0.08);
@@ -68,14 +65,14 @@ body {
   line-height: 1.6;
 }
 
-/* Visible keyboard focus everywhere */
+/* High-visibility focus indicators */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid rgb(var(--c-trust-primary));
   outline-offset: 3px;
 }
 
 /* ==========================================================================
-   Hero backdrop — restrained animated grid + aurora, CSS only.
+   Hero Backdrop — Precision coordinate grid + subtle ambient depth
    ========================================================================== */
 
 .hero-backdrop {
@@ -84,62 +81,99 @@ body {
   overflow: hidden;
   pointer-events: none;
   background-color: #060b14;
-  background-image: radial-gradient(circle at 50% -20%, #101d31, #060b14 70%);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, #101d31 0%, transparent 80%),
+    radial-gradient(circle 600px at 80% 20%, rgba(45, 212, 191, 0.04), transparent 70%);
 }
 
 .hero-backdrop::after {
-  /* Subtle structural division rule, faded toward the bottom. */
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent 90%);
+    linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, transparent 95%);
 }
 
 /* ==========================================================================
-   Motion utilities
-   --------------------------------------------------------------------------
-   .anim-rise / .anim-fade run on first paint (CSS only, no JS gate) so the
-   LCP text is always painted immediately; animation is decorative.
-   .reveal-* is applied ONLY after client JS opts in, so content is fully
-   visible without JS and under prefers-reduced-motion.
+   Motion System Utilities (Restrained, Composited, GPU-Optimized)
    ========================================================================== */
 
 .anim-rise {
-  animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 .anim-fade {
-  animation: fade 0.45s ease-out both;
+  animation: fade 0.4s ease-out both;
 }
+
 .anim-delay-1 {
-  animation-delay: 90ms;
+  animation-delay: 80ms;
 }
 .anim-delay-2 {
-  animation-delay: 180ms;
+  animation-delay: 160ms;
 }
 .anim-delay-3 {
-  animation-delay: 270ms;
+  animation-delay: 240ms;
 }
 .anim-delay-4 {
-  animation-delay: 360ms;
+  animation-delay: 320ms;
 }
 
-.reveal-ready {
-  opacity: 0;
-  transform: translateY(14px);
-}
-.reveal-shown {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
-    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+/* Radar Signature Animations */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-/* Nav underline micro-interaction. */
+@keyframes radar-pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes beacon-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 8s linear infinite;
+  transform-origin: 260px 260px;
+}
+
+.animate-radar-ring-pulse {
+  animation: radar-pulse-ring 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  transform-origin: center center;
+}
+
+.animate-beacon-ping {
+  animation: beacon-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  transform-origin: center center;
+}
+
+/* Nav Link Underline */
 .nav-link {
   position: relative;
 }
@@ -161,26 +195,18 @@ body {
   transform: scaleX(1);
 }
 
-/* ==========================================================================
-   Auth backdrop — quiet grid + single soft trust-tinted wash.
-   Static decoration only (no animation), token-derived colours.
-   ========================================================================== */
-
-.auth-backdrop {
-  background-color: rgb(var(--c-background));
-  background-image:
-    radial-gradient(34rem 20rem at 50% -6rem, rgb(var(--c-trust-primary) / 0.08), transparent 70%),
-    linear-gradient(rgb(var(--c-text-muted) / 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--c-text-muted) / 0.05) 1px, transparent 1px);
-  background-size:
-    100% 100%,
-    44px 44px,
-    44px 44px;
+/* Card Hover Elevation */
+.card-hover-lift {
+  transition:
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
-
-/* ==========================================================================
-   Reduced motion: immediate content, no ambient movement.
-   ========================================================================== */
+.card-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -10px rgba(15, 23, 42, 0.12);
+  border-color: rgba(15, 118, 110, 0.35);
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -192,16 +218,17 @@ body {
     scroll-behavior: auto !important;
   }
   .anim-rise,
-  .anim-fade {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .anim-fade,
+  .animate-radar-sweep,
+  .animate-radar-ring-pulse,
+  .animate-beacon-ping,
+  .animate-beacon-pulse {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
-  .hero-backdrop::before {
-    animation: none;
-  }
-  .animate-shimmer {
-    animation: none;
-    opacity: 0.7;
+  .hero-backdrop::before,
+  .hero-backdrop::after {
+    animation: none !important;
   }
 }

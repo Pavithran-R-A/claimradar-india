@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 /* -------------------------------------------------------------------------- */
@@ -74,7 +75,10 @@ export function BrandMark({
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('shrink-0 select-none', className)}
+      className={cn(
+        'shrink-0 select-none transition-transform duration-200 hover:scale-105',
+        className,
+      )}
       aria-hidden="true"
       {...props}
     >
@@ -106,23 +110,28 @@ export function BrandMark({
 /*  Button                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+export const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
   {
     variants: {
       variant: {
-        default: 'bg-trust-primary text-white shadow-sm hover:bg-trust-primary-hover hover:shadow',
+        default:
+          'bg-trust-primary text-white shadow-sm hover:bg-trust-primary-hover hover:shadow-md active:bg-trust-primary-hover',
         outline:
-          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary/40',
+          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary/40 hover:text-trust-primary',
         ghost: 'text-text-secondary hover:bg-surface-strong hover:text-text-primary',
-        secondary: 'bg-surface-strong text-text-primary hover:bg-border/60',
-        signal: 'bg-brand-bright text-ink-950 font-bold hover:bg-white hover:shadow-md',
-        danger: 'bg-danger text-white hover:bg-danger/90',
+        secondary: 'bg-surface-strong text-text-primary hover:bg-border/60 hover:text-text-primary',
+        signal:
+          'bg-brand-bright text-ink-950 font-bold shadow hover:bg-white hover:shadow-lg active:bg-slate-100',
+        danger: 'bg-danger text-white shadow-sm hover:bg-danger/90 hover:shadow-md',
+        official:
+          'bg-ink-900 border border-brand-bright/40 text-brand-bright font-semibold hover:bg-ink-800 hover:border-brand-bright hover:shadow-md',
       },
       size: {
-        default: 'h-11 min-h-[44px] px-5 py-2.5',
-        sm: 'h-9 min-h-[36px] px-3.5 text-xs',
-        lg: 'h-12 min-h-[48px] px-7 text-base',
+        xs: 'h-7 px-2.5 text-xs gap-1 rounded',
+        sm: 'h-9 min-h-[36px] px-3.5 text-xs gap-1.5',
+        default: 'h-11 min-h-[44px] px-5 py-2.5 gap-2',
+        lg: 'h-12 min-h-[48px] px-7 text-base gap-2.5 rounded-xl',
         icon: 'h-11 w-11 min-h-[44px] min-w-[44px] p-0',
       },
     },
@@ -133,38 +142,43 @@ const buttonVariants = cva(
   },
 );
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'ghost' | 'secondary' | 'signal' | 'danger';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
     );
   },
 );
 Button.displayName = 'Button';
 
 /* -------------------------------------------------------------------------- */
-/*  Badge                                                                      */
+/*  Badge / Status Pill                                                        */
 /* -------------------------------------------------------------------------- */
 
-const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-trust-primary',
+export const badgeVariants = cva(
+  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-trust-primary text-white',
-        secondary: 'border-border bg-surface-strong text-text-secondary',
-        success: 'border-success/20 bg-verified-background text-success',
-        deadline: 'border-deadline/30 bg-deadline-background text-deadline font-bold',
-        warning: 'border-deadline/30 bg-deadline-background text-deadline font-bold',
-        danger: 'border-danger/20 bg-danger/10 text-danger font-bold',
-        info: 'border-info/20 bg-info/10 text-info',
-        neutral: 'border-border bg-surface text-text-muted',
+        default: 'bg-surface-strong text-text-secondary border border-border',
+        secondary: 'bg-surface-strong text-text-primary border border-border/80',
+        outline: 'border border-border text-text-secondary',
+        success: 'bg-verified-background text-success border border-success/30 font-bold',
+        warning: 'bg-deadline-background text-deadline border border-deadline/30 font-bold',
+        danger: 'bg-danger/10 text-danger border border-danger/30 font-bold',
+        info: 'bg-info/10 text-info border border-info/30',
+        verified: 'bg-verified-background text-success border border-success/30 font-bold',
+        deadline: 'bg-deadline-background text-deadline border border-deadline/30 font-bold',
+        urgent: 'bg-danger/10 text-danger border border-danger/30 font-bold animate-pulse',
+        neutral: 'bg-surface-strong text-text-muted border border-border/80',
+        source: 'bg-ink-900 text-brand-bright border border-brand-bright/30 font-mono text-[11px]',
         signal: 'border-brand-bright/30 bg-brand-bright/10 text-brand-bright font-bold',
+        trust: 'bg-trust-primary/10 text-trust-primary border border-trust-primary/25',
       },
     },
     defaultVariants: {
@@ -173,40 +187,82 @@ const badgeVariants = cva(
   },
 );
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?:
-    | 'default'
-    | 'secondary'
-    | 'success'
-    | 'deadline'
-    | 'warning'
-    | 'danger'
-    | 'info'
-    | 'neutral'
-    | 'signal';
-}
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
 export function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+  return <span className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
 /* -------------------------------------------------------------------------- */
 /*  Card                                                                       */
 /* -------------------------------------------------------------------------- */
 
-export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        'rounded-xl border border-border bg-surface p-6 shadow-sm transition-all duration-150',
-        className,
-      )}
-      {...props}
-    />
-  ),
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'elevated' | 'sunken' | 'ink' | 'glass';
+  interactive?: boolean;
+}
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = 'default', interactive = false, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'rounded-card border transition-all duration-150',
+          variant === 'default' && 'bg-surface border-border shadow-card',
+          variant === 'elevated' && 'bg-surface border-border shadow-lift',
+          variant === 'sunken' && 'bg-background-elevated border-border/60 shadow-none',
+          variant === 'ink' && 'bg-ink-950 border-white/10 text-white shadow-panel',
+          variant === 'glass' && 'bg-surface/80 backdrop-blur-md border-border/80 shadow-sm',
+          interactive &&
+            'cursor-pointer hover:border-trust-primary/40 hover:shadow-lift hover:-translate-y-0.5',
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
 );
 Card.displayName = 'Card';
+
+export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('p-5 pb-3 flex flex-col gap-1.5', className)} {...props} />;
+}
+
+export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3
+      className={cn('text-base font-bold text-text-primary tracking-tight leading-snug', className)}
+      {...props}
+    />
+  );
+}
+
+export function CardDescription({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn('text-xs sm:text-sm text-text-secondary leading-relaxed', className)}
+      {...props}
+    />
+  );
+}
+
+export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('p-5 pt-0', className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('p-5 pt-3 border-t border-border flex items-center justify-between', className)}
+      {...props}
+    />
+  );
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Input                                                                      */
@@ -216,11 +272,13 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   label?: string;
   error?: string;
   hint?: string;
+  hasError?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, hint, id, ...props }, ref) => {
+  ({ className, label, error, hint, hasError, id, type = 'text', ...props }, ref) => {
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+    const isErr = Boolean(error || hasError);
     return (
       <div className="w-full">
         {label && (
@@ -231,9 +289,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           id={inputId}
           ref={ref}
+          type={type}
           className={cn(
             'h-11 min-h-[44px] w-full rounded-lg border border-border bg-surface px-3.5 text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
-            error && 'border-danger focus:border-danger focus:ring-danger/20',
+            isErr && 'border-danger focus:border-danger focus:ring-danger/20',
             className,
           )}
           {...props}
@@ -316,7 +375,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           className={cn(
-            'min-h-[100px] w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            'w-full rounded-lg border border-border bg-surface p-3.5 text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
             error && 'border-danger focus:border-danger focus:ring-danger/20',
             className,
           )}
@@ -358,76 +417,6 @@ export function Skeleton({ className, variant, ...props }: SkeletonProps) {
       className={cn(skeletonVariants({ variant }), className)}
       aria-label="Loading..."
       role="status"
-      {...props}
-    />
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Tooltip                                                                    */
-/* -------------------------------------------------------------------------- */
-
-export interface TooltipProps {
-  content: React.ReactNode;
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function Tooltip({ content, children, className }: TooltipProps) {
-  return (
-    <span className={cn('group relative inline-block', className)}>
-      {children}
-      <span
-        role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 ring-1 ring-white/10"
-      >
-        {content}
-      </span>
-    </span>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Separator                                                                  */
-/* -------------------------------------------------------------------------- */
-
-export interface SeparatorProps extends React.HTMLAttributes<HTMLHRElement> {
-  orientation?: 'horizontal' | 'vertical';
-}
-
-export function Separator({ className, orientation = 'horizontal', ...props }: SeparatorProps) {
-  return (
-    <hr
-      className={cn(
-        'border-border',
-        orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Container                                                                  */
-/* -------------------------------------------------------------------------- */
-
-export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'content';
-}
-
-const containerSizes: Record<string, string> = {
-  sm: 'max-w-screen-sm',
-  md: 'max-w-screen-md',
-  lg: 'max-w-screen-lg',
-  xl: 'max-w-screen-xl',
-  content: 'max-w-content',
-};
-
-export function Container({ className, size = 'content', ...props }: ContainerProps) {
-  return (
-    <div
-      className={cn('mx-auto w-full px-4 sm:px-6 lg:px-8', containerSizes[size], className)}
       {...props}
     />
   );
@@ -675,7 +664,5 @@ export function DecisionCallout({
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Re-exports                                                                 */
+/*  End of Design System Exports                                               */
 /* -------------------------------------------------------------------------- */
-
-export { buttonVariants, badgeVariants };
