@@ -428,6 +428,16 @@ export function validateSoakExecution(sample) {
   return { isValid: true, evidenceStatus: 'PROVEN_VALID', failureReason: null };
 }
 
+/**
+ * @param {Object} [options]
+ * @param {any[]} [options.soakSamples]
+ * @param {any[]} [options.dbCrawlRuns]
+ * @param {any} [options.config]
+ * @param {Date|string} [options.currentTime]
+ * @param {boolean} [options.runtimeBehaviorChanged]
+ * @param {string} [options.githubEvidenceStatus]
+ * @returns {any}
+ */
 export function evaluateSoakProvenance({
   soakSamples = [],
   dbCrawlRuns = [],

@@ -25,7 +25,7 @@ const mockBaselineConfig = {
   minScheduledRunsFor72h: 11,
 };
 
-function createMockSoakSample(overrides = {}) {
+function createMockSoakSample(overrides: Record<string, unknown> = {}): any {
   const crawlRunId = 'crawl-' + Math.random().toString(36).substring(7);
   return {
     executionType: 'FINAL_SOAK',
@@ -91,10 +91,10 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
       new Date('2026-08-31T04:48:00Z'),
     );
     expect(passedSlots.length).toBe(3);
-    expect(passedSlots[0].toISOString()).toBe('2026-08-30T12:17:00.000Z');
-    expect(passedSlots[1].toISOString()).toBe('2026-08-30T18:17:00.000Z');
-    expect(passedSlots[2].toISOString()).toBe('2026-08-31T00:17:00.000Z');
-    expect(nextSlot.toISOString()).toBe('2026-08-31T06:17:00.000Z');
+    expect(passedSlots[0]?.toISOString()).toBe('2026-08-30T12:17:00.000Z');
+    expect(passedSlots[1]?.toISOString()).toBe('2026-08-30T18:17:00.000Z');
+    expect(passedSlots[2]?.toISOString()).toBe('2026-08-31T00:17:00.000Z');
+    expect(nextSlot?.toISOString()).toBe('2026-08-31T06:17:00.000Z');
   });
 
   it('C & D: run at 16:45:02Z must never receive fabricated 0.0-min delay; nearest preceding slot is 12:17 with ~268.0 min delay', () => {
@@ -117,8 +117,8 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
 
     expect(metrics.scheduleRunDiagnostics.length).toBe(1);
     const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
-    expect(diag.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
+    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
+    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
     expect(metrics.maxScheduleStartDelayMinutes).toBeCloseTo(268.0, 0);
   });
 
@@ -142,8 +142,8 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
 
     expect(metrics.scheduleRunDiagnostics.length).toBe(1);
     const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag.nearestPrecedingSlotUtc).toBe('2026-08-30T18:17:00.000Z');
-    expect(diag.inferredSlotDelayMinutes).toBeCloseTo(174.5, 0);
+    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T18:17:00.000Z');
+    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(174.5, 0);
   });
 
   it('F: maximum nearest-preceding delay across both runs is ~268.0 minutes', () => {
@@ -370,9 +370,9 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
     });
 
     const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
-    expect(diag.inferredSlotDelayMinutes).not.toBe(0);
-    expect(diag.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
+    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
+    expect(diag?.inferredSlotDelayMinutes).not.toBe(0);
+    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
   });
 
   it('L: tests helper functions loadBaselineConfig and calculateElapsedSoakHours', () => {
