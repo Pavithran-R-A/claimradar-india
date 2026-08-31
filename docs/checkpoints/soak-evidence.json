@@ -1,0 +1,71 @@
+{
+  "evaluatedAt": "2026-08-31T06:02:53.129Z",
+  "git": {
+    "head": "0d44cc3af9e70645848f6d6be578d25443e2b342",
+    "originMain": "0d44cc3af9e70645848f6d6be578d25443e2b342",
+    "headEqualsOriginMain": true,
+    "worktreeClean": false
+  },
+  "ci": {
+    "latestCiRunId": "33360761225",
+    "latestCiHeadSha": "0d44cc3af9e70645848f6d6be578d25443e2b342",
+    "latestCiConclusion": "success",
+    "ciHeadEqualsHead": true
+  },
+  "runtimeIntegrity": {
+    "runtimeFreezeHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
+    "runtimeBehaviorChanged": false,
+    "changedFiles": []
+  },
+  "baseline": {
+    "finalSoakBaselineGhaRun": "33310672900",
+    "finalSoakBaselineHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
+    "finalSoakBaselineCrawlRunId": "192c24d3-bcbb-4c21-bb38-b737be5261c0",
+    "finalSoakStartUtc": "2026-08-30T12:08:03Z",
+    "scheduleCron": "17 */6 * * *",
+    "scheduleIntervalHours": 6,
+    "derivedFirstNominalSlot": "2026-08-30T12:17:00.000Z",
+    "baselineArtifactVerified": true
+  },
+  "soakQualification": {
+    "elapsedSoakHours": 17.9,
+    "expectedScheduleSlots": 3,
+    "observedScheduleRuns": 3,
+    "validScheduleRuns": 3,
+    "failedScheduleRuns": 0,
+    "scheduleRunCountDeficit": 0,
+    "maxInferredScheduleDelayMinutes": 326.4,
+    "maxGapBetweenValidScheduleRunsHours": 8.5,
+    "latestValidScheduleRun": "33361539030 (2026-08-31T05:43:25Z)",
+    "nextExpectedScheduleSlot": "2026-08-31T06:17:00.000Z",
+    "soak48hStatus": "PENDING_TIME_SOAK",
+    "soak48hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
+    "soak72hStatus": "PENDING_TIME_SOAK",
+    "soak72hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
+    "finalEvidenceStatus": "PENDING_TIME_SOAK",
+    "finalEvidenceReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"]
+  },
+  "scheduleRunDiagnostics": [
+    {
+      "runId": "33323325684",
+      "startedAt": "2026-08-30T16:45:02Z",
+      "nearestPrecedingSlotUtc": "2026-08-30T12:17:00.000Z",
+      "inferredSlotDelayMinutes": 268,
+      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+    },
+    {
+      "runId": "33335730116",
+      "startedAt": "2026-08-30T21:11:31Z",
+      "nearestPrecedingSlotUtc": "2026-08-30T18:17:00.000Z",
+      "inferredSlotDelayMinutes": 174.5,
+      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+    },
+    {
+      "runId": "33361539030",
+      "startedAt": "2026-08-31T05:43:25Z",
+      "nearestPrecedingSlotUtc": "2026-08-31T00:17:00.000Z",
+      "inferredSlotDelayMinutes": 326.4,
+      "associationType": "INFERRED_NEAREST_PRECEDING_SLOT"
+    }
+  ]
+}

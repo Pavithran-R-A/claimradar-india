@@ -10,6 +10,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 
 const BASELINE_CONFIG_PATH = path.resolve(REPO_ROOT, 'docs', 'checkpoints', 'soak-baseline.json');
 const REPORT_PATH = path.resolve(REPO_ROOT, 'docs', 'checkpoints', 'soak-readiness-report.md');
+const EVIDENCE_JSON_PATH = path.resolve(REPO_ROOT, 'docs', 'checkpoints', 'soak-evidence.json');
 
 export const RUNTIME_SENSITIVE_PATHS = [
   'apps/crawler/**',
@@ -23,6 +24,63 @@ export const RUNTIME_SENSITIVE_PATHS = [
   'pnpm-workspace.yaml',
   '.github/workflows/staging-soak.yml',
 ];
+
+export function parseAndValidateCron(cron, intervalHours = null) {
+  if (!cron || typeof cron !== 'string') {
+    return {
+      isValid: false,
+      error: 'CRON_MISSING_OR_INVALID_TYPE',
+      targetMinute: 0,
+      targetHours: [],
+    };
+  }
+
+  const match = cron.trim().match(/^(\d{1,2})\s+\*\/(\d{1,2})\s+\*\s+\*\s+\*$/);
+  if (!match) {
+    return {
+      isValid: false,
+      error: 'MALFORMED_OR_UNSUPPORTED_CRON_PATTERN: ' + cron,
+      targetMinute: 0,
+      targetHours: [],
+    };
+  }
+
+  const minute = parseInt(match[1], 10);
+  const step = parseInt(match[2], 10);
+
+  if (isNaN(minute) || minute < 0 || minute > 59) {
+    return {
+      isValid: false,
+      error: 'INVALID_CRON_MINUTE: ' + match[1],
+      targetMinute: 0,
+      targetHours: [],
+    };
+  }
+  if (isNaN(step) || step <= 0 || step > 24 || 24 % step !== 0) {
+    return {
+      isValid: false,
+      error: 'INVALID_CRON_STEP_INTERVAL: ' + match[2],
+      targetMinute: 0,
+      targetHours: [],
+    };
+  }
+  if (intervalHours !== null && intervalHours !== undefined && intervalHours !== step) {
+    return {
+      isValid: false,
+      error:
+        'CRON_STEP_INTERVAL_MISMATCH: cron step ' + step + ' != intervalHours ' + intervalHours,
+      targetMinute: 0,
+      targetHours: [],
+    };
+  }
+
+  const targetHours = [];
+  for (let h = 0; h < 24; h += step) {
+    targetHours.push(h);
+  }
+
+  return { isValid: true, error: null, targetMinute: minute, step, targetHours };
+}
 
 export function loadBaselineConfig(configPath = BASELINE_CONFIG_PATH) {
   if (fs.existsSync(configPath)) {
@@ -45,6 +103,61 @@ export function loadBaselineConfig(configPath = BASELINE_CONFIG_PATH) {
     minScheduledRunsFor48h: 7,
     minScheduledRunsFor72h: 11,
   };
+}
+
+export function validateBaselineConfig(config) {
+  if (!config || typeof config !== 'object') {
+    return { isValid: false, error: 'BASELINE_CONFIG_NULL_OR_INVALID', derivedFirstSlot: null };
+  }
+  if (!config.finalSoakStartUtc) {
+    return { isValid: false, error: 'MISSING_FINAL_SOAK_START_UTC', derivedFirstSlot: null };
+  }
+
+  const baselineDate = new Date(config.finalSoakStartUtc);
+  if (isNaN(baselineDate.getTime())) {
+    return {
+      isValid: false,
+      error: 'MALFORMED_FINAL_SOAK_START_UTC: ' + config.finalSoakStartUtc,
+      derivedFirstSlot: null,
+    };
+  }
+
+  const cronRes = parseAndValidateCron(config.scheduleCron, config.scheduleIntervalHours);
+  if (!cronRes.isValid) {
+    return { isValid: false, error: cronRes.error, derivedFirstSlot: null };
+  }
+
+  let derivedFirstSlot;
+  try {
+    derivedFirstSlot = deriveFirstNominalPostBaselineSlot(
+      config.finalSoakStartUtc,
+      config.scheduleCron,
+      config.scheduleIntervalHours,
+    );
+  } catch (err) {
+    return { isValid: false, error: err.message, derivedFirstSlot: null };
+  }
+
+  if (config.firstPostBaselineScheduledSlot) {
+    const configuredSlot = new Date(config.firstPostBaselineScheduledSlot);
+    if (
+      isNaN(configuredSlot.getTime()) ||
+      configuredSlot.toISOString() !== derivedFirstSlot.toISOString()
+    ) {
+      return {
+        isValid: false,
+        error:
+          'CONFIGURATION_INCONSISTENCY: configured first slot (' +
+          config.firstPostBaselineScheduledSlot +
+          ') != derived first slot (' +
+          derivedFirstSlot.toISOString() +
+          ')',
+        derivedFirstSlot,
+      };
+    }
+  }
+
+  return { isValid: true, error: null, derivedFirstSlot };
 }
 
 export function checkRuntimeIntegrity(baselineHead, targetHead = 'HEAD', cwd = REPO_ROOT) {
@@ -84,34 +197,26 @@ export function calculateElapsedSoakHours(baselineStartUtc, currentTime) {
 }
 
 // Deterministically derives the first nominal cron occurrence strictly after baselineStartUtc.
-export function deriveFirstNominalPostBaselineSlot(baselineStartUtc, cron = '17 */6 * * *') {
+export function deriveFirstNominalPostBaselineSlot(
+  baselineStartUtc,
+  cron = '17 */6 * * *',
+  intervalHours = null,
+) {
+  if (!baselineStartUtc) {
+    throw new Error('MALFORMED_BASELINE_START_UTC: baseline timestamp is required');
+  }
+
   const baselineDate = new Date(baselineStartUtc);
   if (isNaN(baselineDate.getTime())) {
-    return new Date('2026-08-30T12:17:00Z');
+    throw new Error('MALFORMED_BASELINE_START_UTC: ' + baselineStartUtc);
   }
 
-  let targetMinute = 17;
-  let targetHours = [0, 6, 12, 18];
-
-  if (cron && typeof cron === 'string') {
-    const parts = cron.trim().split(/\s+/);
-    if (parts.length >= 2) {
-      const minVal = parseInt(parts[0], 10);
-      if (!isNaN(minVal) && minVal >= 0 && minVal < 60) {
-        targetMinute = minVal;
-      }
-      if (parts[1].startsWith('*/')) {
-        const step = parseInt(parts[1].slice(2), 10);
-        if (!isNaN(step) && step > 0 && step <= 24) {
-          targetHours = [];
-          for (let h = 0; h < 24; h += step) {
-            targetHours.push(h);
-          }
-        }
-      }
-    }
+  const cronRes = parseAndValidateCron(cron, intervalHours);
+  if (!cronRes.isValid) {
+    throw new Error('INVALID_CRON_CONFIGURATION: ' + cronRes.error);
   }
 
+  const { targetMinute, targetHours } = cronRes;
   const startYear = baselineDate.getUTCFullYear();
   const startMonth = baselineDate.getUTCMonth();
   const startDate = baselineDate.getUTCDate();
@@ -125,20 +230,32 @@ export function deriveFirstNominalPostBaselineSlot(baselineStartUtc, cron = '17 
     }
   }
 
-  return new Date(baselineDate.getTime() + 6 * 3600 * 1000);
+  throw new Error('FAILED_TO_DERIVE_FIRST_NOMINAL_SLOT');
 }
 
 // Generates all nominal cron slots strictly after baselineStartUtc up to currentTime.
 export function generateScheduledSlots(config, currentTime = new Date()) {
-  const baselineStartUtc = config.finalSoakStartUtc || '2026-08-30T12:08:03Z';
-  const cron = config.scheduleCron || '17 */6 * * *';
-  const derivedFirstSlot = deriveFirstNominalPostBaselineSlot(baselineStartUtc, cron);
+  const configValidation = validateBaselineConfig(config);
+  if (!configValidation.isValid || !configValidation.derivedFirstSlot) {
+    return {
+      firstPostBaselineSlot: null,
+      passedSlots: [],
+      nextSlot: null,
+      error: configValidation.error,
+    };
+  }
 
+  const derivedFirstSlot = configValidation.derivedFirstSlot;
   const currentDate = typeof currentTime === 'string' ? new Date(currentTime) : currentTime;
   const intervalMs = (config.scheduleIntervalHours || 6) * 60 * 60 * 1000;
 
-  if (isNaN(derivedFirstSlot.getTime()) || isNaN(currentDate.getTime())) {
-    return { firstPostBaselineSlot: derivedFirstSlot, passedSlots: [], nextSlot: null };
+  if (isNaN(currentDate.getTime())) {
+    return {
+      firstPostBaselineSlot: derivedFirstSlot,
+      passedSlots: [],
+      nextSlot: null,
+      error: 'INVALID_CURRENT_TIME',
+    };
   }
 
   const passedSlots = [];
@@ -150,7 +267,7 @@ export function generateScheduledSlots(config, currentTime = new Date()) {
   }
 
   const nextSlot = new Date(currentSlotTime);
-  return { firstPostBaselineSlot: derivedFirstSlot, passedSlots, nextSlot };
+  return { firstPostBaselineSlot: derivedFirstSlot, passedSlots, nextSlot, error: null };
 }
 
 export function validateSoakExecution(sample) {
@@ -447,8 +564,10 @@ export function evaluateSoakProvenance({
   githubEvidenceStatus = 'AVAILABLE',
 } = {}) {
   const currentDate = typeof currentTime === 'string' ? new Date(currentTime) : currentTime;
+  const configValidation = validateBaselineConfig(config);
   const baselineDate = new Date(config.finalSoakStartUtc);
-  const isBaselineValid = !isNaN(baselineDate.getTime()) && baselineDate <= currentDate;
+  const isBaselineValid =
+    configValidation.isValid && !isNaN(baselineDate.getTime()) && baselineDate <= currentDate;
 
   const elapsedMs = isBaselineValid
     ? Math.max(0, currentDate.getTime() - baselineDate.getTime())
@@ -462,7 +581,7 @@ export function evaluateSoakProvenance({
     config,
     currentDate,
   );
-  const expectedScheduleSlots = passedSlots.length;
+  const expectedScheduleSlots = passedSlots ? passedSlots.length : 0;
   const nextExpectedScheduleSlot = nextSlot ? nextSlot.toISOString() : 'UNKNOWN';
 
   const preBaselineRuns = [];
@@ -554,9 +673,11 @@ export function evaluateSoakProvenance({
 
     // Find the latest nominal slot strictly at or before this run
     let nearestPrecedingSlot = null;
-    for (const slot of passedSlots) {
-      if (slot.getTime() <= runTime) {
-        nearestPrecedingSlot = slot;
+    if (passedSlots) {
+      for (const slot of passedSlots) {
+        if (slot.getTime() <= runTime) {
+          nearestPrecedingSlot = slot;
+        }
       }
     }
 
@@ -629,29 +750,78 @@ export function evaluateSoakProvenance({
   const ms48 = (config.thresholdHours48 || 48) * 3600 * 1000;
   const ms72 = (config.thresholdHours72 || 72) * 3600 * 1000;
 
-  const isGhaAvailable = githubEvidenceStatus === 'AVAILABLE';
+  // Tri-State Evaluation for 48h and 72h
+  const soak48hReasonCodes = [];
+  let soak48hStatus = 'PENDING_TIME_SOAK';
 
-  // Strict primary qualification conditions (count + wall-clock + valid executions)
-  const soak48hPassed =
-    isBaselineValid &&
-    isGhaAvailable &&
-    !runtimeBehaviorChanged &&
-    elapsedMs >= ms48 &&
-    validScheduleRuns.length >= minScheduled48 &&
-    failedScheduleRuns.length === 0 &&
-    failedGhaSoakRuns.length === 0;
+  if (!configValidation.isValid || !isBaselineValid) {
+    soak48hStatus = 'FAIL';
+    soak48hReasonCodes.push('CONFIGURATION_INCONSISTENCY');
+  } else if (runtimeBehaviorChanged) {
+    soak48hStatus = 'FAIL';
+    soak48hReasonCodes.push('RUNTIME_BASELINE_INVALIDATED');
+  } else if (failedScheduleRuns.length > 0) {
+    soak48hStatus = 'FAIL';
+    soak48hReasonCodes.push('FAILED_SCHEDULE_EXECUTION');
+  } else if (failedGhaSoakRuns.length > 0) {
+    soak48hStatus = 'FAIL';
+    soak48hReasonCodes.push('ARTIFACT_OR_DB_VALIDATION_FAILED');
+  } else if (githubEvidenceStatus !== 'AVAILABLE') {
+    soak48hStatus = 'BLOCKED_EVIDENCE';
+    soak48hReasonCodes.push('GITHUB_EVIDENCE_UNAVAILABLE');
+  } else {
+    if (elapsedMs >= ms48 && validScheduleRuns.length >= minScheduled48) {
+      soak48hStatus = 'PASS';
+      soak48hReasonCodes.push('QUALIFICATION_CRITERIA_MET');
+    } else {
+      soak48hStatus = 'PENDING_TIME_SOAK';
+      if (elapsedMs < ms48) {
+        soak48hReasonCodes.push('INSUFFICIENT_ELAPSED_TIME');
+      }
+      if (validScheduleRuns.length < minScheduled48) {
+        soak48hReasonCodes.push('INSUFFICIENT_VALID_SCHEDULE_RUNS');
+      }
+      if (scheduleRunCountDeficit > 0) {
+        soak48hReasonCodes.push('SCHEDULE_EVIDENCE_NOT_YET_OBSERVED');
+      }
+    }
+  }
 
-  const soak72hPassed =
-    isBaselineValid &&
-    isGhaAvailable &&
-    !runtimeBehaviorChanged &&
-    elapsedMs >= ms72 &&
-    validScheduleRuns.length >= minScheduled72 &&
-    failedScheduleRuns.length === 0 &&
-    failedGhaSoakRuns.length === 0;
+  const soak72hReasonCodes = [];
+  let soak72hStatus = 'PENDING_TIME_SOAK';
 
-  const soak48hStatus = soak48hPassed ? 'PASS' : 'PENDING_TIME_SOAK';
-  const soak72hStatus = soak72hPassed ? 'PASS' : 'PENDING_TIME_SOAK';
+  if (!configValidation.isValid || !isBaselineValid) {
+    soak72hStatus = 'FAIL';
+    soak72hReasonCodes.push('CONFIGURATION_INCONSISTENCY');
+  } else if (runtimeBehaviorChanged) {
+    soak72hStatus = 'FAIL';
+    soak72hReasonCodes.push('RUNTIME_BASELINE_INVALIDATED');
+  } else if (failedScheduleRuns.length > 0) {
+    soak72hStatus = 'FAIL';
+    soak72hReasonCodes.push('FAILED_SCHEDULE_EXECUTION');
+  } else if (failedGhaSoakRuns.length > 0) {
+    soak72hStatus = 'FAIL';
+    soak72hReasonCodes.push('ARTIFACT_OR_DB_VALIDATION_FAILED');
+  } else if (githubEvidenceStatus !== 'AVAILABLE') {
+    soak72hStatus = 'BLOCKED_EVIDENCE';
+    soak72hReasonCodes.push('GITHUB_EVIDENCE_UNAVAILABLE');
+  } else {
+    if (elapsedMs >= ms72 && validScheduleRuns.length >= minScheduled72) {
+      soak72hStatus = 'PASS';
+      soak72hReasonCodes.push('QUALIFICATION_CRITERIA_MET');
+    } else {
+      soak72hStatus = 'PENDING_TIME_SOAK';
+      if (elapsedMs < ms72) {
+        soak72hReasonCodes.push('INSUFFICIENT_ELAPSED_TIME');
+      }
+      if (validScheduleRuns.length < minScheduled72) {
+        soak72hReasonCodes.push('INSUFFICIENT_VALID_SCHEDULE_RUNS');
+      }
+      if (scheduleRunCountDeficit > 0) {
+        soak72hReasonCodes.push('SCHEDULE_EVIDENCE_NOT_YET_OBSERVED');
+      }
+    }
+  }
 
   // Build markdown table (sorted reverse chronologically for display)
   const displayRuns = [...observedGhaSoakRuns].sort((a, b) => {
@@ -704,13 +874,16 @@ export function evaluateSoakProvenance({
 
   return {
     baselineConfig: config,
+    configValidation,
     currentTime: currentDate.toISOString(),
     isBaselineValid,
     githubEvidenceStatus,
     runtimeBehaviorChanged,
     elapsedSoakHours,
-    derivedFirstNominalSlot: firstPostBaselineSlot.toISOString(),
-    nominalPassedSlots: passedSlots.map((s) => s.toISOString()),
+    derivedFirstNominalSlot: firstPostBaselineSlot
+      ? firstPostBaselineSlot.toISOString()
+      : 'MALFORMED',
+    nominalPassedSlots: passedSlots ? passedSlots.map((s) => s.toISOString()) : [],
     expectedScheduleSlots,
     observedScheduleRunsCount: observedScheduleRuns.length,
     validScheduleRunsCount: validScheduleRuns.length,
@@ -729,7 +902,9 @@ export function evaluateSoakProvenance({
     preBaselineRunsCount: preBaselineRuns.length,
     preBaselineFailuresCount: preBaselineFailures.length,
     soak48hStatus,
+    soak48hReasonCodes,
     soak72hStatus,
+    soak72hReasonCodes,
     soakRunsTable,
   };
 }
@@ -746,6 +921,21 @@ export function fetchDynamicGhaWorkflowRuns(config = loadBaselineConfig(), cwd =
   } catch (err) {
     console.error('Failed to fetch GHA workflow runs:', err.message);
     return { status: 'UNAVAILABLE', runs: [] };
+  }
+}
+
+export function fetchLatestCiWorkflowRun(cwd = REPO_ROOT) {
+  try {
+    const raw = execSync(
+      'gh api "repos/Pavithran-R-A/claimradar-india/actions/workflows/ci.yml/runs?per_page=5"',
+      { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
+    );
+    const data = JSON.parse(raw);
+    const runs = data.workflow_runs || [];
+    return runs.length > 0 ? runs[0] : null;
+  } catch (err) {
+    console.error('Failed to fetch latest CI workflow run:', err.message);
+    return null;
   }
 }
 
@@ -843,10 +1033,34 @@ export async function fetchHistoricalDbCrawlRuns() {
   }
 }
 
+export function getGitState(cwd = REPO_ROOT) {
+  try {
+    const head = execSync('git rev-parse HEAD', { cwd, encoding: 'utf-8' }).trim();
+    const originMain = execSync('git rev-parse origin/main', { cwd, encoding: 'utf-8' }).trim();
+    const statusOut = execSync('git status --porcelain', { cwd, encoding: 'utf-8' }).trim();
+    return {
+      head,
+      originMain,
+      headEqualsOriginMain: head === originMain,
+      worktreeClean: statusOut.length === 0,
+    };
+  } catch (err) {
+    return {
+      head: 'UNKNOWN',
+      originMain: 'UNKNOWN',
+      headEqualsOriginMain: false,
+      worktreeClean: false,
+      error: err.message,
+    };
+  }
+}
+
 export async function main() {
   const config = loadBaselineConfig();
+  const gitState = getGitState();
   const runtimeCheck = checkRuntimeIntegrity(config.runtimeFreezeHead, 'HEAD');
   const ghaFetch = fetchDynamicGhaWorkflowRuns(config);
+  const latestCi = fetchLatestCiWorkflowRun();
 
   if (ghaFetch.status === 'UNAVAILABLE') {
     console.error('CRITICAL: GHA workflow evidence is unavailable. Failing closed.');
@@ -880,7 +1094,6 @@ export async function main() {
       dbData = await fetchDbEvidenceForRun(crawlRunId);
     }
 
-    // Check runtime sensitivity for this specific run head
     const runHeadCheck = checkRuntimeIntegrity(config.runtimeFreezeHead, r.head_sha || 'HEAD');
 
     soakSamples.push({
@@ -920,43 +1133,135 @@ export async function main() {
       s.summary.runId === config.finalSoakBaselineCrawlRunId,
   );
 
+  const ciHeadSha = latestCi ? latestCi.head_sha : 'NONE';
+  const ciRunId = latestCi ? String(latestCi.id) : 'NONE';
+  const ciConclusion = latestCi ? latestCi.conclusion : 'NONE';
+  const ciHeadEqualsHead = latestCi ? latestCi.head_sha === gitState.head : false;
+
+  // Final evidence status derivation
+  let finalEvidenceStatus = 'PENDING_TIME_SOAK';
+  const finalEvidenceReasonCodes = [];
+
+  if (!gitState.headEqualsOriginMain) {
+    finalEvidenceStatus = 'FAIL';
+    finalEvidenceReasonCodes.push('GIT_HEAD_NOT_ORIGIN_MAIN');
+  }
+  if (!ciHeadEqualsHead || ciConclusion !== 'success') {
+    finalEvidenceStatus = 'FAIL';
+    finalEvidenceReasonCodes.push('CI_HEAD_NOT_EXACT_OR_FAILED');
+  }
+  if (metrics.soak48hStatus === 'FAIL' || metrics.soak72hStatus === 'FAIL') {
+    finalEvidenceStatus = 'FAIL';
+    finalEvidenceReasonCodes.push(
+      ...metrics.soak48hReasonCodes.filter((c) => !finalEvidenceReasonCodes.includes(c)),
+    );
+  } else if (metrics.soak48hStatus === 'BLOCKED_EVIDENCE') {
+    finalEvidenceStatus = 'BLOCKED_EVIDENCE';
+    finalEvidenceReasonCodes.push('GITHUB_EVIDENCE_UNAVAILABLE');
+  } else if (metrics.soak48hStatus === 'PASS' && metrics.soak72hStatus === 'PASS') {
+    finalEvidenceStatus = 'PASS';
+    finalEvidenceReasonCodes.push('ALL_SOAK_CRITERIA_MET');
+  } else {
+    finalEvidenceStatus = 'PENDING_TIME_SOAK';
+    finalEvidenceReasonCodes.push(
+      ...metrics.soak48hReasonCodes.filter((c) => !finalEvidenceReasonCodes.includes(c)),
+    );
+  }
+
+  // Build machine-readable snapshot object
+  const evidenceSnapshot = {
+    evaluatedAt: metrics.currentTime,
+    git: {
+      head: gitState.head,
+      originMain: gitState.originMain,
+      headEqualsOriginMain: gitState.headEqualsOriginMain,
+      worktreeClean: gitState.worktreeClean,
+    },
+    ci: {
+      latestCiRunId: ciRunId,
+      latestCiHeadSha: ciHeadSha,
+      latestCiConclusion: ciConclusion,
+      ciHeadEqualsHead,
+    },
+    runtimeIntegrity: {
+      runtimeFreezeHead: config.runtimeFreezeHead,
+      runtimeBehaviorChanged: metrics.runtimeBehaviorChanged,
+      changedFiles: runtimeCheck.changedFiles,
+    },
+    baseline: {
+      finalSoakBaselineGhaRun: config.finalSoakBaselineGhaRun,
+      finalSoakBaselineHead: config.finalSoakBaselineHead,
+      finalSoakBaselineCrawlRunId: config.finalSoakBaselineCrawlRunId,
+      finalSoakStartUtc: config.finalSoakStartUtc,
+      scheduleCron: config.scheduleCron,
+      scheduleIntervalHours: config.scheduleIntervalHours,
+      derivedFirstNominalSlot: metrics.derivedFirstNominalSlot,
+      baselineArtifactVerified,
+    },
+    soakQualification: {
+      elapsedSoakHours: metrics.elapsedSoakHours,
+      expectedScheduleSlots: metrics.expectedScheduleSlots,
+      observedScheduleRuns: metrics.observedScheduleRunsCount,
+      validScheduleRuns: metrics.validScheduleRunsCount,
+      failedScheduleRuns: metrics.failedScheduleRunsCount,
+      scheduleRunCountDeficit: metrics.scheduleRunCountDeficit,
+      maxInferredScheduleDelayMinutes: metrics.maxScheduleStartDelayMinutes,
+      maxGapBetweenValidScheduleRunsHours: metrics.maxGapBetweenValidScheduleRunsHours,
+      latestValidScheduleRun: metrics.latestValidScheduleRun,
+      nextExpectedScheduleSlot: metrics.nextExpectedScheduleSlot,
+      soak48hStatus: metrics.soak48hStatus,
+      soak48hReasonCodes: metrics.soak48hReasonCodes,
+      soak72hStatus: metrics.soak72hStatus,
+      soak72hReasonCodes: metrics.soak72hReasonCodes,
+      finalEvidenceStatus,
+      finalEvidenceReasonCodes,
+    },
+    scheduleRunDiagnostics: metrics.scheduleRunDiagnostics,
+  };
+
+  fs.writeFileSync(EVIDENCE_JSON_PATH, JSON.stringify(evidenceSnapshot, null, 2), 'utf-8');
+  console.log('Saved machine-readable soak evidence snapshot to ' + EVIDENCE_JSON_PATH);
+
+  // Render markdown report directly from evidenceSnapshot
   let content =
     '# ClaimRadar India — 48–72h Soak Readiness Report\n\n' +
     '**Report Generated:** ' +
-    metrics.currentTime +
+    evidenceSnapshot.evaluatedAt +
     '  \n' +
     '**Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  \n' +
-    '**Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  \n' +
+    '**Soak Schedule:** Every 6 Hours via GitHub Actions (`' +
+    evidenceSnapshot.baseline.scheduleCron +
+    '`)  \n' +
     '**Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)\n\n' +
     '---\n\n' +
     '## 1. Frozen Runtime Soak Baseline\n\n' +
     '```ini\n' +
     'RUNTIME_FREEZE_HEAD = ' +
-    config.runtimeFreezeHead +
+    evidenceSnapshot.runtimeIntegrity.runtimeFreezeHead +
     '\n' +
     'FINAL_SOAK_BASELINE_RUN = ' +
-    config.finalSoakBaselineGhaRun +
+    evidenceSnapshot.baseline.finalSoakBaselineGhaRun +
     '\n' +
     'FINAL_SOAK_BASELINE_HEAD = ' +
-    config.finalSoakBaselineHead +
+    evidenceSnapshot.baseline.finalSoakBaselineHead +
     '\n' +
     'FINAL_SOAK_BASELINE_CRAWL_RUN = ' +
-    config.finalSoakBaselineCrawlRunId +
+    evidenceSnapshot.baseline.finalSoakBaselineCrawlRunId +
     '\n' +
     'FINAL_SOAK_START = ' +
-    config.finalSoakStartUtc +
+    evidenceSnapshot.baseline.finalSoakStartUtc +
     '\n' +
     'DERIVED_FIRST_POST_BASELINE_SLOT = ' +
-    metrics.derivedFirstNominalSlot +
+    evidenceSnapshot.baseline.derivedFirstNominalSlot +
     '\n' +
     'GITHUB_EVIDENCE_STATUS = ' +
     metrics.githubEvidenceStatus +
     '\n' +
     'BASELINE_ARTIFACT_VERIFIED = ' +
-    baselineArtifactVerified +
+    evidenceSnapshot.baseline.baselineArtifactVerified +
     '\n' +
     'RUNTIME_BEHAVIOR_CHANGED_AFTER_BASELINE = ' +
-    metrics.runtimeBehaviorChanged +
+    evidenceSnapshot.runtimeIntegrity.runtimeBehaviorChanged +
     '\n' +
     '```\n\n' +
     '---\n\n' +
@@ -964,40 +1269,44 @@ export async function main() {
     '```ini\n' +
     'SOAK_AUTOMATION = PASS\n' +
     'SOAK_48H = ' +
-    metrics.soak48hStatus +
-    '\n' +
+    evidenceSnapshot.soakQualification.soak48hStatus +
+    ' (' +
+    evidenceSnapshot.soakQualification.soak48hReasonCodes.join(', ') +
+    ')\n' +
     'SOAK_72H = ' +
-    metrics.soak72hStatus +
-    '\n\n' +
+    evidenceSnapshot.soakQualification.soak72hStatus +
+    ' (' +
+    evidenceSnapshot.soakQualification.soak72hReasonCodes.join(', ') +
+    ')\n\n' +
     'ELAPSED_FINAL_SOAK_HOURS = ' +
-    metrics.elapsedSoakHours +
+    evidenceSnapshot.soakQualification.elapsedSoakHours +
     ' / 72\n\n' +
     'EXPECTED_SCHEDULE_SLOTS = ' +
-    metrics.expectedScheduleSlots +
+    evidenceSnapshot.soakQualification.expectedScheduleSlots +
     '\n' +
     'OBSERVED_SCHEDULE_RUNS = ' +
-    metrics.observedScheduleRunsCount +
+    evidenceSnapshot.soakQualification.observedScheduleRuns +
     '\n' +
     'VALID_SCHEDULE_RUNS = ' +
-    metrics.validScheduleRunsCount +
+    evidenceSnapshot.soakQualification.validScheduleRuns +
     '\n' +
     'FAILED_SCHEDULE_RUNS = ' +
-    metrics.failedScheduleRunsCount +
+    evidenceSnapshot.soakQualification.failedScheduleRuns +
     '\n' +
     'SCHEDULE_RUN_COUNT_DEFICIT = ' +
-    metrics.scheduleRunCountDeficit +
+    evidenceSnapshot.soakQualification.scheduleRunCountDeficit +
     ' (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)\n' +
     'MAX_INFERRED_SCHEDULE_DELAY_MINUTES = ' +
-    metrics.maxScheduleStartDelayMinutes +
+    evidenceSnapshot.soakQualification.maxInferredScheduleDelayMinutes +
     '\n' +
     'MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = ' +
-    metrics.maxGapBetweenValidScheduleRunsHours +
+    evidenceSnapshot.soakQualification.maxGapBetweenValidScheduleRunsHours +
     '\n' +
     'LATEST_VALID_SCHEDULE_RUN = ' +
-    metrics.latestValidScheduleRun +
+    evidenceSnapshot.soakQualification.latestValidScheduleRun +
     '\n' +
     'NEXT_EXPECTED_SCHEDULE_SLOT = ' +
-    metrics.nextExpectedScheduleSlot +
+    evidenceSnapshot.soakQualification.nextExpectedScheduleSlot +
     '\n\n' +
     'OBSERVED_GHA_SOAK_RUNS = ' +
     metrics.observedGhaSoakRunsCount +
@@ -1032,10 +1341,10 @@ export async function main() {
     '| Workflow Run ID | Started (UTC) | Nearest Preceding Nominal Slot (UTC) | Inferred Delay (min) | Association Note |\n' +
     '| :--- | :--- | :--- | :--- | :--- |\n';
 
-  if (metrics.scheduleRunDiagnostics.length === 0) {
+  if (evidenceSnapshot.scheduleRunDiagnostics.length === 0) {
     content += '| None | N/A | N/A | N/A | No schedule executions observed |\n';
   } else {
-    for (const d of metrics.scheduleRunDiagnostics) {
+    for (const d of evidenceSnapshot.scheduleRunDiagnostics) {
       content +=
         '| `' +
         d.runId +

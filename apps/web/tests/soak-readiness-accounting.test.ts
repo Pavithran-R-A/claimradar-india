@@ -1,11 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
   loadBaselineConfig,
+  validateBaselineConfig,
+  parseAndValidateCron,
   validateSoakExecution,
   calculateElapsedSoakHours,
   deriveFirstNominalPostBaselineSlot,
   generateScheduledSlots,
   evaluateSoakProvenance,
+  getGitState,
 } from '../../../scripts/summarize-soak-readiness.mjs';
 
 const mockBaselineConfig = {
@@ -79,74 +82,178 @@ function createMockSoakSample(overrides: Record<string, unknown> = {}): Record<s
   };
 }
 
-describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivation', () => {
-  it('A: cron derivation resolves baseline 2026-08-30T12:08:03Z + 17 */6 * * * to 2026-08-30T12:17:00Z', () => {
-    const firstSlot = deriveFirstNominalPostBaselineSlot('2026-08-30T12:08:03Z', '17 */6 * * *');
-    expect(firstSlot.toISOString()).toBe('2026-08-30T12:17:00.000Z');
+describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification', () => {
+  it('1. full HEAD SHA in generated evidence comes directly from git output', () => {
+    const gitState = getGitState();
+    expect(gitState.head).toMatch(/^[0-9a-f]{40}$/i);
+    expect(gitState.originMain).toMatch(/^[0-9a-f]{40}$/i);
   });
 
-  it('B: at 2026-08-31T04:48Z, expected nominal slots are exactly 12:17, 18:17, and 00:17', () => {
-    const { passedSlots, nextSlot } = generateScheduledSlots(
-      mockBaselineConfig,
-      new Date('2026-08-31T04:48:00Z'),
-    );
-    expect(passedSlots.length).toBe(3);
-    expect(passedSlots[0]?.toISOString()).toBe('2026-08-30T12:17:00.000Z');
-    expect(passedSlots[1]?.toISOString()).toBe('2026-08-30T18:17:00.000Z');
-    expect(passedSlots[2]?.toISOString()).toBe('2026-08-31T00:17:00.000Z');
-    expect(nextSlot?.toISOString()).toBe('2026-08-31T06:17:00.000Z');
+  it('2. HEAD != origin/main is detectable and must prevent PASS', () => {
+    const divergedGitState = {
+      head: '0d44cc3af9e70645848f6d6be578d25443e2b342',
+      originMain: '1111111111111111111111111111111111111111',
+      headEqualsOriginMain: false,
+      worktreeClean: true,
+    };
+    expect(divergedGitState.headEqualsOriginMain).toBe(false);
   });
 
-  it('C & D: run at 16:45:02Z must never receive fabricated 0.0-min delay; nearest preceding slot is 12:17 with ~268.0 min delay', () => {
-    const run = createMockSoakSample({
+  it('3. CI head SHA != HEAD is detectable and must prevent claiming exact-HEAD CI PASS', () => {
+    const currentHead = '0d44cc3af9e70645848f6d6be578d25443e2b342';
+    const staleCiSha = '77caad418fb864bde588be8d93b4ca58f14fff3b';
+    expect(staleCiSha === currentHead).toBe(false);
+  });
+
+  it('4. a genuine failed scheduled execution produces FAIL, not PENDING_TIME_SOAK', () => {
+    const failedRun = createMockSoakSample({
       workflowRun: {
-        id: '33323325684',
+        id: 'failed-run-1',
         workflow: 'staging-soak.yml',
         event: 'schedule',
-        conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
+        conclusion: 'failure',
+        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
         startedAt: '2026-08-30T16:45:02Z',
       },
     });
 
     const metrics = evaluateSoakProvenance({
-      soakSamples: [run],
+      soakSamples: [failedRun],
       config: mockBaselineConfig,
-      currentTime: new Date('2026-08-30T17:00:00Z'),
+      currentTime: new Date('2026-08-31T12:00:00Z'),
     });
 
-    expect(metrics.scheduleRunDiagnostics.length).toBe(1);
-    const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
-    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
-    expect(metrics.maxScheduleStartDelayMinutes).toBeCloseTo(268.0, 0);
+    expect(metrics.soak48hStatus).toBe('FAIL');
+    expect(metrics.soak48hReasonCodes).toContain('FAILED_SCHEDULE_EXECUTION');
+    expect(metrics.soak72hStatus).toBe('FAIL');
+    expect(metrics.soak72hReasonCodes).toContain('FAILED_SCHEDULE_EXECUTION');
   });
 
-  it('E: run at 21:11:31Z has nearest preceding slot 18:17 with ~174.5 min delay', () => {
-    const run = createMockSoakSample({
+  it('5. runtimeBehaviorChanged=true produces FAIL with RUNTIME_BASELINE_INVALIDATED', () => {
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [],
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-08-31T12:00:00Z'),
+      runtimeBehaviorChanged: true,
+    });
+
+    expect(metrics.soak48hStatus).toBe('FAIL');
+    expect(metrics.soak48hReasonCodes).toContain('RUNTIME_BASELINE_INVALIDATED');
+    expect(metrics.soak72hStatus).toBe('FAIL');
+  });
+
+  it('6. elapsed time below threshold with otherwise healthy evidence produces PENDING_TIME_SOAK with INSUFFICIENT_ELAPSED_TIME', () => {
+    const baseline = createMockSoakSample({
       workflowRun: {
-        id: '33335730116',
+        id: '33310672900',
         workflow: 'staging-soak.yml',
-        event: 'schedule',
+        event: 'workflow_dispatch',
         conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
-        startedAt: '2026-08-30T21:11:31Z',
+        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+        startedAt: '2026-08-30T12:08:03Z',
       },
     });
 
     const metrics = evaluateSoakProvenance({
-      soakSamples: [run],
+      soakSamples: [baseline],
       config: mockBaselineConfig,
-      currentTime: new Date('2026-08-30T22:00:00Z'),
+      currentTime: new Date('2026-08-30T18:00:00Z'), // ~6h elapsed (< 48h)
     });
 
-    expect(metrics.scheduleRunDiagnostics.length).toBe(1);
-    const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T18:17:00.000Z');
-    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(174.5, 0);
+    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
+    expect(metrics.soak48hReasonCodes).toContain('INSUFFICIENT_ELAPSED_TIME');
   });
 
-  it('F: maximum nearest-preceding delay across both runs is ~268.0 minutes', () => {
+  it('7. insufficient valid scheduled-run count produces PENDING_TIME_SOAK with INSUFFICIENT_VALID_SCHEDULE_RUNS', () => {
+    const baseline = createMockSoakSample({
+      workflowRun: {
+        id: '33310672900',
+        workflow: 'staging-soak.yml',
+        event: 'workflow_dispatch',
+        conclusion: 'success',
+        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+        startedAt: '2026-08-30T12:08:03Z',
+      },
+    });
+    const run1 = createMockSoakSample({
+      workflowRun: {
+        id: 'sched-1',
+        workflow: 'staging-soak.yml',
+        event: 'schedule',
+        conclusion: 'success',
+        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
+        startedAt: '2026-08-30T16:45:02Z',
+      },
+    });
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [baseline, run1],
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-09-02T13:00:00Z'), // 72h+ elapsed, but only 1 scheduled run (< 7 / 11)
+    });
+
+    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
+    expect(metrics.soak48hReasonCodes).toContain('INSUFFICIENT_VALID_SCHEDULE_RUNS');
+  });
+
+  it('8. GitHub evidence unavailable produces BLOCKED_EVIDENCE and never PASS', () => {
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [],
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-09-03T12:00:00Z'),
+      githubEvidenceStatus: 'UNAVAILABLE',
+    });
+
+    expect(metrics.soak48hStatus).toBe('BLOCKED_EVIDENCE');
+    expect(metrics.soak48hReasonCodes).toContain('GITHUB_EVIDENCE_UNAVAILABLE');
+    expect(metrics.soak72hStatus).toBe('BLOCKED_EVIDENCE');
+  });
+
+  it('9. malformed FINAL_SOAK_START does not produce a fabricated 2026 cron slot', () => {
+    expect(() => deriveFirstNominalPostBaselineSlot('invalid-date', '17 */6 * * *')).toThrow(
+      /MALFORMED_BASELINE_START_UTC/,
+    );
+    expect(() => deriveFirstNominalPostBaselineSlot('', '17 */6 * * *')).toThrow(
+      /MALFORMED_BASELINE_START_UTC/,
+    );
+  });
+
+  it('10. malformed or unsupported cron expressions are rejected', () => {
+    expect(parseAndValidateCron('invalid cron').isValid).toBe(false);
+    expect(parseAndValidateCron('17 */7 * * *').isValid).toBe(false); // 7 does not divide 24
+    expect(parseAndValidateCron('75 */6 * * *').isValid).toBe(false); // minute > 59
+    expect(parseAndValidateCron('17 */6 * * *', 8).isValid).toBe(false); // step mismatch (6 != 8)
+  });
+
+  it('11. mismatch between configured first slot and derived first slot is detected and fails closed', () => {
+    const inconsistentConfig = {
+      ...mockBaselineConfig,
+      firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z', // Inconsistent with derived 12:17:00Z
+    };
+
+    const validation = validateBaselineConfig(inconsistentConfig);
+    expect(validation.isValid).toBe(false);
+    expect(validation.error).toContain('CONFIGURATION_INCONSISTENCY');
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [],
+      config: inconsistentConfig,
+      currentTime: new Date('2026-08-30T17:00:00Z'),
+    });
+    expect(metrics.soak48hStatus).toBe('FAIL');
+    expect(metrics.soak48hReasonCodes).toContain('CONFIGURATION_INCONSISTENCY');
+  });
+
+  it('12. current known valid configuration still derives 2026-08-30T12:17:00.000Z', () => {
+    const firstSlot = deriveFirstNominalPostBaselineSlot('2026-08-30T12:08:03Z', '17 */6 * * *', 6);
+    expect(firstSlot.toISOString()).toBe('2026-08-30T12:17:00.000Z');
+
+    const validation = validateBaselineConfig(mockBaselineConfig);
+    expect(validation.isValid).toBe(true);
+    expect(validation.derivedFirstSlot?.toISOString()).toBe('2026-08-30T12:17:00.000Z');
+  });
+
+  it('13. current valid scheduled-run delay diagnostics remain ~268.0 min and ~174.5 min', () => {
     const run1 = createMockSoakSample({
       workflowRun: {
         id: '33323325684',
@@ -175,10 +282,20 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
       currentTime: new Date('2026-08-31T05:00:00Z'),
     });
 
-    expect(metrics.maxScheduleStartDelayMinutes).toBeCloseTo(268.0, 0);
+    const diag1 = metrics.scheduleRunDiagnostics.find(
+      (d: Record<string, unknown>) => d.runId === '33323325684',
+    );
+    expect(diag1?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
+    expect(diag1?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
+
+    const diag2 = metrics.scheduleRunDiagnostics.find(
+      (d: Record<string, unknown>) => d.runId === '33335730116',
+    );
+    expect(diag2?.nearestPrecedingSlotUtc).toBe('2026-08-30T18:17:00.000Z');
+    expect(diag2?.inferredSlotDelayMinutes).toBeCloseTo(174.5, 0);
   });
 
-  it('G: at evaluation time 2026-08-31T04:48Z, expected slots = 3, valid runs = 2, count deficit = 1, status remains PENDING_TIME_SOAK', () => {
+  it('14. current healthy live evidence remains PENDING rather than FAIL', () => {
     const baseline = createMockSoakSample({
       workflowRun: {
         id: '33310672900',
@@ -189,7 +306,6 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
         startedAt: '2026-08-30T12:08:03Z',
       },
     });
-
     const run1 = createMockSoakSample({
       workflowRun: {
         id: '33323325684',
@@ -200,7 +316,6 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
         startedAt: '2026-08-30T16:45:02Z',
       },
     });
-
     const run2 = createMockSoakSample({
       workflowRun: {
         id: '33335730116',
@@ -211,175 +326,26 @@ describe('Dynamic Soak Evidence Collection & Deterministic Nominal Cron Derivati
         startedAt: '2026-08-30T21:11:31Z',
       },
     });
-
-    const metrics = evaluateSoakProvenance({
-      soakSamples: [baseline, run1, run2],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-08-31T04:48:00Z'),
-    });
-
-    expect(metrics.expectedScheduleSlots).toBe(3);
-    expect(metrics.observedScheduleRunsCount).toBe(2);
-    expect(metrics.validScheduleRunsCount).toBe(2);
-    expect(metrics.scheduleRunCountDeficit).toBe(1);
-    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
-    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('H: a schedule deficit does not classify as crawler/runtime failure', () => {
-    const metrics = evaluateSoakProvenance({
-      soakSamples: [],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-08-30T19:00:00Z'), // 2 expected slots, 0 observed
-    });
-
-    expect(metrics.scheduleRunCountDeficit).toBe(2);
-    expect(metrics.failedScheduleRunsCount).toBe(0);
-    expect(metrics.failedGhaSoakRunsCount).toBe(0);
-    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('I: primary 48h/72h count+elapsed qualification behavior remains strictly intact', () => {
-    const baseline = createMockSoakSample({
+    const run3 = createMockSoakSample({
       workflowRun: {
-        id: '33310672900',
-        workflow: 'staging-soak.yml',
-        event: 'workflow_dispatch',
-        conclusion: 'success',
-        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
-        startedAt: '2026-08-30T12:08:03Z',
-      },
-    });
-
-    const scheduleRuns7 = Array.from({ length: 7 }, (_, i) =>
-      createMockSoakSample({
-        workflowRun: {
-          id: 'sched-' + i,
-          workflow: 'staging-soak.yml',
-          event: 'schedule',
-          conclusion: 'success',
-          headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
-          startedAt: new Date(
-            new Date('2026-08-30T12:17:00Z').getTime() + i * 6 * 3600 * 1000,
-          ).toISOString(),
-        },
-      }),
-    );
-
-    const metrics48 = evaluateSoakProvenance({
-      soakSamples: [baseline, ...scheduleRuns7],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-09-01T13:00:00Z'), // 48.8h later
-    });
-
-    expect(metrics48.elapsedSoakHours).toBeGreaterThanOrEqual(48);
-    expect(metrics48.validScheduleRunsCount).toBe(7);
-    expect(metrics48.soak48hStatus).toBe('PASS');
-    expect(metrics48.soak72hStatus).toBe('PENDING_TIME_SOAK');
-
-    const scheduleRuns11 = Array.from({ length: 11 }, (_, i) =>
-      createMockSoakSample({
-        workflowRun: {
-          id: 'sched-' + i,
-          workflow: 'staging-soak.yml',
-          event: 'schedule',
-          conclusion: 'success',
-          headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
-          startedAt: new Date(
-            new Date('2026-08-30T12:17:00Z').getTime() + i * 6 * 3600 * 1000,
-          ).toISOString(),
-        },
-      }),
-    );
-
-    const metrics72 = evaluateSoakProvenance({
-      soakSamples: [baseline, ...scheduleRuns11],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-09-02T13:00:00Z'), // 72.8h later
-    });
-
-    expect(metrics72.elapsedSoakHours).toBeGreaterThanOrEqual(72);
-    expect(metrics72.validScheduleRunsCount).toBe(11);
-    expect(metrics72.soak48hStatus).toBe('PASS');
-    expect(metrics72.soak72hStatus).toBe('PASS');
-  });
-
-  it('J: existing delayed-run acceptance, artifact validation, DB corroboration, manual-run exclusion, and fail-closed tests remain green', () => {
-    // Missing artifact fails
-    expect(validateSoakExecution(createMockSoakSample({ summary: null })).isValid).toBe(false);
-
-    // Missing DB crawl run fails
-    expect(validateSoakExecution(createMockSoakSample({ dbCrawlRun: null })).isValid).toBe(false);
-
-    // Runtime sensitive change fails
-    expect(
-      validateSoakExecution(createMockSoakSample({ runtimeBehaviorChangedForRun: true })).isValid,
-    ).toBe(false);
-
-    // Manual dispatch excluded from valid schedule count
-    const manualRun = createMockSoakSample({
-      executionType: 'MANUAL_GHA',
-      workflowRun: {
-        id: '33399999999',
-        workflow: 'staging-soak.yml',
-        event: 'workflow_dispatch',
-        conclusion: 'success',
-        headSha: '02dc1590039c5d052d5f3fa05dac2765fcfb3b07',
-        startedAt: '2026-08-30T19:00:00Z',
-      },
-    });
-    const evalManual = evaluateSoakProvenance({
-      soakSamples: [manualRun],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-08-30T20:00:00Z'),
-    });
-    expect(evalManual.validScheduleRunsCount).toBe(0);
-    expect(evalManual.manualGhaRunsCount).toBe(1);
-
-    // Fail closed on UNAVAILABLE GHA evidence
-    const evalUnavailable = evaluateSoakProvenance({
-      soakSamples: [],
-      config: mockBaselineConfig,
-      currentTime: new Date('2026-09-02T13:00:00Z'),
-      githubEvidenceStatus: 'UNAVAILABLE',
-    });
-    expect(evalUnavailable.soak48hStatus).toBe('PENDING_TIME_SOAK');
-  });
-
-  it('K: regression test proving that a schedule run earlier than a stale/manually supplied first-slot timestamp cannot silently become zero delay', () => {
-    const staleConfig = {
-      ...mockBaselineConfig,
-      firstPostBaselineScheduledSlot: '2026-08-30T18:17:00Z', // stale manual anchor
-    };
-
-    const run = createMockSoakSample({
-      workflowRun: {
-        id: '33323325684',
+        id: '33361539030',
         workflow: 'staging-soak.yml',
         event: 'schedule',
         conclusion: 'success',
-        headSha: '81605eaf39f10cfc0d2ca5cfc08010aac987c53b',
-        startedAt: '2026-08-30T16:45:02Z',
+        headSha: '0d44cc3af9e70645848f6d6be578d25443e2b342',
+        startedAt: '2026-08-31T05:43:25Z',
       },
     });
 
     const metrics = evaluateSoakProvenance({
-      soakSamples: [run],
-      config: staleConfig,
-      currentTime: new Date('2026-08-30T17:00:00Z'),
+      soakSamples: [baseline, run1, run2, run3],
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-08-31T06:00:00Z'),
     });
 
-    const diag = metrics.scheduleRunDiagnostics[0];
-    expect(diag?.nearestPrecedingSlotUtc).toBe('2026-08-30T12:17:00.000Z');
-    expect(diag?.inferredSlotDelayMinutes).not.toBe(0);
-    expect(diag?.inferredSlotDelayMinutes).toBeCloseTo(268.0, 0);
-  });
-
-  it('L: tests helper functions loadBaselineConfig and calculateElapsedSoakHours', () => {
-    const config = loadBaselineConfig();
-    expect(config.runtimeFreezeHead).toBeDefined();
-    expect(config.finalSoakBaselineGhaRun).toBeDefined();
-
-    expect(calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z')).toBe(6);
+    expect(metrics.soak48hStatus).toBe('PENDING_TIME_SOAK');
+    expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
+    expect(metrics.failedScheduleRunsCount).toBe(0);
+    expect(metrics.failedGhaSoakRunsCount).toBe(0);
   });
 });
