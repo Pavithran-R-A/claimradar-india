@@ -1,15 +1,15 @@
 {
-  "evaluatedAt": "2026-08-31T13:54:21.354Z",
+  "evaluatedAt": "2026-08-31T14:07:10.485Z",
   "git": {
-    "head": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
-    "originMain": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
+    "head": "9b4633f77332efd4340ff49b79d2510e04a9fc32",
+    "originMain": "9b4633f77332efd4340ff49b79d2510e04a9fc32",
     "headEqualsOriginMain": true,
     "worktreeClean": false
   },
   "ci": {
-    "latestCiRunId": "33395910092",
-    "latestCiHeadSha": "6e50c36a1f5034f272f383c0ac69c221ac2ac3ef",
-    "latestCiConclusion": "success",
+    "latestCiRunId": "33400617597",
+    "latestCiHeadSha": "9b4633f77332efd4340ff49b79d2510e04a9fc32",
+    "latestCiConclusion": "failure",
     "ciHeadEqualsHead": true
   },
   "runtimeIntegrity": {
@@ -28,18 +28,18 @@
     "baselineArtifactVerified": true
   },
   "soakQualification": {
-    "elapsedSoakHours": 25.7,
+    "elapsedSoakHours": 25.9,
     "expectedScheduleSlots": 5,
-    "satisfiedScheduleSlots": 3,
-    "pendingGraceSlots": 1,
+    "satisfiedScheduleSlots": 4,
+    "pendingGraceSlots": 0,
     "missingScheduleSlots": 1,
-    "observedScheduleRuns": 3,
-    "validScheduleRuns": 3,
+    "observedScheduleRuns": 4,
+    "validScheduleRuns": 4,
     "failedScheduleRuns": 0,
-    "scheduleRunCountDeficit": 2,
+    "scheduleRunCountDeficit": 1,
     "maxInferredScheduleDelayMinutes": 326.4,
     "maxGapBetweenValidScheduleRunsHours": 8.5,
-    "latestValidScheduleRun": "33361539030 (2026-08-31T05:43:25Z)",
+    "latestValidScheduleRun": "33400053888 (2026-08-31T13:59:52Z)",
     "nextExpectedScheduleSlot": "2026-08-31T18:17:00.000Z",
     "soak48hStatus": "PENDING_TIME_SOAK",
     "soak48hReasonCodes": [
@@ -55,6 +55,7 @@
     ],
     "finalEvidenceStatus": "PENDING_TIME_SOAK",
     "finalEvidenceReasonCodes": [
+      "CI_HEAD_NOT_EXACT_OR_FAILED",
       "INSUFFICIENT_ELAPSED_TIME",
       "INSUFFICIENT_VALID_SCHEDULE_RUNS",
       "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
@@ -96,10 +97,10 @@
     {
       "slotUtc": "2026-08-31T12:17:00.000Z",
       "gracePeriodEndUtc": "2026-08-31T18:17:00.000Z",
-      "status": "PENDING_GRACE",
-      "assignedRunId": null,
-      "runStartedAt": null,
-      "delayMinutes": null
+      "status": "SATISFIED",
+      "assignedRunId": "33400053888",
+      "runStartedAt": "2026-08-31T13:59:52Z",
+      "delayMinutes": 102.9
     }
   ]
 }

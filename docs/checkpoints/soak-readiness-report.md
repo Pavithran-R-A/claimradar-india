@@ -1,6 +1,6 @@
 # ClaimRadar India — 48–72h Soak Readiness Report
 
-**Report Generated:** 2026-08-31T13:54:21.354Z  
+**Report Generated:** 2026-08-31T14:07:10.485Z  
 **Target Environment:** Staging (`qsshiksnyflwsybjyzob`)  
 **Soak Schedule:** Every 6 Hours via GitHub Actions (`17 */6 * * *`)  
 **Policy Guards:** Hard-Disabled (`ENABLE_BILLING=false`, `AUTO_VERIFY_CLAIMABLES=false`, `NOTIFY_CUSTOMERS_ENABLED=false`)
@@ -30,23 +30,23 @@ SOAK_AUTOMATION = PASS
 SOAK_48H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
 SOAK_72H = PENDING_TIME_SOAK (INSUFFICIENT_ELAPSED_TIME, INSUFFICIENT_VALID_SCHEDULE_RUNS, SCHEDULE_EVIDENCE_NOT_YET_OBSERVED)
 
-ELAPSED_FINAL_SOAK_HOURS = 25.7 / 72
+ELAPSED_FINAL_SOAK_HOURS = 25.9 / 72
 
 EXPECTED_SCHEDULE_SLOTS = 5
-SATISFIED_SCHEDULE_SLOTS = 3
-PENDING_GRACE_SLOTS = 1
+SATISFIED_SCHEDULE_SLOTS = 4
+PENDING_GRACE_SLOTS = 0
 MISSING_SCHEDULE_SLOTS = 1
-OBSERVED_SCHEDULE_RUNS = 3
-VALID_SCHEDULE_RUNS = 3
+OBSERVED_SCHEDULE_RUNS = 4
+VALID_SCHEDULE_RUNS = 4
 FAILED_SCHEDULE_RUNS = 0
-SCHEDULE_RUN_COUNT_DEFICIT = 2 (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)
+SCHEDULE_RUN_COUNT_DEFICIT = 1 (SCHEDULE_NOT_YET_OBSERVED / PENDING evidence)
 MAX_INFERRED_SCHEDULE_DELAY_MINUTES = 326.4
 MAX_GAP_BETWEEN_VALID_SCHEDULE_RUNS_HOURS = 8.5
-LATEST_VALID_SCHEDULE_RUN = 33361539030 (2026-08-31T05:43:25Z)
+LATEST_VALID_SCHEDULE_RUN = 33400053888 (2026-08-31T13:59:52Z)
 NEXT_EXPECTED_SCHEDULE_SLOT = 2026-08-31T18:17:00.000Z
 
-OBSERVED_GHA_SOAK_RUNS = 4
-VALID_GHA_SOAK_RUNS = 4
+OBSERVED_GHA_SOAK_RUNS = 5
+VALID_GHA_SOAK_RUNS = 5
 FAILED_GHA_SOAK_RUNS = 0
 
 MANUAL_GHA_RUNS_EXCLUDED = 0
@@ -64,6 +64,7 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 | Workflow Run ID | Event               | Head SHA   | Crawl Run ID                           | Started (UTC)        | Sources Succeeded | Docs Discovered | Status           | Provenance     |
 | :-------------- | :------------------ | :--------- | :------------------------------------- | :------------------- | :---------------- | :-------------- | :--------------- | :------------- |
+| `33400053888`   | `schedule`          | `6e50c36a` | `b4ee6211-bb70-441e-a756-0d8a953c1003` | 2026-08-31T13:59:52Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 | `33361539030`   | `schedule`          | `0d44cc3a` | `96dc7365-41bd-41a3-b71b-998b87adf43c` | 2026-08-31T05:43:25Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 | `33335730116`   | `schedule`          | `81605eaf` | `4cba323c-3a90-4706-aabb-26b6f348ad6a` | 2026-08-30T21:11:31Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
 | `33323325684`   | `schedule`          | `81605eaf` | `a971a8dd-7555-4d27-b222-c25485f93e02` | 2026-08-30T16:45:02Z | 7/7               | 106             | **PROVEN_VALID** | **FINAL_SOAK** |
@@ -73,13 +74,13 @@ PRE_BASELINE_FAILURES_EXCLUDED = 1
 
 ## 4. Nominal Schedule Slot Accounting & Delay Diagnostics
 
-| Nominal Slot (UTC)         | Grace Window Closes (UTC)  | Status            | Assigned Run ID | Run Started At (UTC) | Inferred Delay (min) |
-| :------------------------- | :------------------------- | :---------------- | :-------------- | :------------------- | :------------------- |
-| `2026-08-30T12:17:00.000Z` | `2026-08-30T18:17:00.000Z` | **SATISFIED**     | `33323325684`   | 2026-08-30T16:45:02Z | 268 min              |
-| `2026-08-30T18:17:00.000Z` | `2026-08-31T00:17:00.000Z` | **SATISFIED**     | `33335730116`   | 2026-08-30T21:11:31Z | 174.5 min            |
-| `2026-08-31T00:17:00.000Z` | `2026-08-31T06:17:00.000Z` | **SATISFIED**     | `33361539030`   | 2026-08-31T05:43:25Z | 326.4 min            |
-| `2026-08-31T06:17:00.000Z` | `2026-08-31T12:17:00.000Z` | **MISSING**       | None            | N/A                  | N/A                  |
-| `2026-08-31T12:17:00.000Z` | `2026-08-31T18:17:00.000Z` | **PENDING_GRACE** | None            | N/A                  | N/A                  |
+| Nominal Slot (UTC)         | Grace Window Closes (UTC)  | Status        | Assigned Run ID | Run Started At (UTC) | Inferred Delay (min) |
+| :------------------------- | :------------------------- | :------------ | :-------------- | :------------------- | :------------------- |
+| `2026-08-30T12:17:00.000Z` | `2026-08-30T18:17:00.000Z` | **SATISFIED** | `33323325684`   | 2026-08-30T16:45:02Z | 268 min              |
+| `2026-08-30T18:17:00.000Z` | `2026-08-31T00:17:00.000Z` | **SATISFIED** | `33335730116`   | 2026-08-30T21:11:31Z | 174.5 min            |
+| `2026-08-31T00:17:00.000Z` | `2026-08-31T06:17:00.000Z` | **SATISFIED** | `33361539030`   | 2026-08-31T05:43:25Z | 326.4 min            |
+| `2026-08-31T06:17:00.000Z` | `2026-08-31T12:17:00.000Z` | **MISSING**   | None            | N/A                  | N/A                  |
+| `2026-08-31T12:17:00.000Z` | `2026-08-31T18:17:00.000Z` | **SATISFIED** | `33400053888`   | 2026-08-31T13:59:52Z | 102.9 min            |
 
 ---
 

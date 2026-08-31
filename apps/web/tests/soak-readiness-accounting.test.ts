@@ -1,12 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  loadBaselineConfig,
   validateBaselineConfig,
   parseAndValidateCron,
   validateSoakExecution,
-  calculateElapsedSoakHours,
   deriveFirstNominalPostBaselineSlot,
-  generateScheduledSlots,
   generateHistoricalScheduledSlots,
   evaluateScheduleSlotAccounting,
   evaluateSoakProvenance,
