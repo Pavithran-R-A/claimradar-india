@@ -25,6 +25,11 @@ export const RUNTIME_SENSITIVE_PATHS = [
   '.github/workflows/staging-soak.yml',
 ];
 
+/**
+ * @param {string} cron
+ * @param {number|null} [intervalHours]
+ * @returns {{ isValid: boolean, error: string|null, targetMinute: number, step?: number, targetHours: number[] }}
+ */
 export function parseAndValidateCron(cron, intervalHours = null) {
   if (!cron || typeof cron !== 'string') {
     return {
@@ -196,7 +201,12 @@ export function calculateElapsedSoakHours(baselineStartUtc, currentTime) {
   return Math.max(0, Math.floor((elapsedMs / (1000 * 60 * 60)) * 10) / 10);
 }
 
-// Deterministically derives the first nominal cron occurrence strictly after baselineStartUtc.
+/**
+ * @param {string|Date} baselineStartUtc
+ * @param {string} [cron]
+ * @param {number|null} [intervalHours]
+ * @returns {Date}
+ */
 export function deriveFirstNominalPostBaselineSlot(
   baselineStartUtc,
   cron = '17 */6 * * *',

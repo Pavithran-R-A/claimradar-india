@@ -100,8 +100,8 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
   });
 
   it('3. CI head SHA != HEAD is detectable and must prevent claiming exact-HEAD CI PASS', () => {
-    const currentHead = '0d44cc3af9e70645848f6d6be578d25443e2b342';
-    const staleCiSha = '77caad418fb864bde588be8d93b4ca58f14fff3b';
+    const currentHead: string = '0d44cc3af9e70645848f6d6be578d25443e2b342';
+    const staleCiSha: string = '77caad418fb864bde588be8d93b4ca58f14fff3b';
     expect(staleCiSha === currentHead).toBe(false);
   });
 
@@ -347,5 +347,22 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     expect(metrics.soak72hStatus).toBe('PENDING_TIME_SOAK');
     expect(metrics.failedScheduleRunsCount).toBe(0);
     expect(metrics.failedGhaSoakRunsCount).toBe(0);
+  });
+
+  it('15. helper functions loadBaselineConfig, validateSoakExecution, calculateElapsedSoakHours, generateScheduledSlots work correctly', () => {
+    const config = loadBaselineConfig();
+    expect(config.runtimeFreezeHead).toBeDefined();
+
+    const sample = createMockSoakSample();
+    expect(validateSoakExecution(sample).isValid).toBe(true);
+
+    const elapsed = calculateElapsedSoakHours('2026-08-30T12:08:03Z', '2026-08-30T18:08:03Z');
+    expect(elapsed).toBe(6);
+
+    const { passedSlots } = generateScheduledSlots(
+      mockBaselineConfig,
+      new Date('2026-08-30T18:30:00Z'),
+    );
+    expect(passedSlots.length).toBe(2);
   });
 });
