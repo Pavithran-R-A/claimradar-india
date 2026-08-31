@@ -1,105 +1,52 @@
 {
-  "evaluatedAt": "2026-08-31T14:21:08.720Z",
+  "evaluatedAt": "2026-08-31T16:39:36.092Z",
   "git": {
-    "head": "c92521cd3193e6b83f5833e402ac99d1915ba8c1",
-    "originMain": "c92521cd3193e6b83f5833e402ac99d1915ba8c1",
+    "head": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
+    "originMain": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
     "headEqualsOriginMain": true,
-    "worktreeClean": true
+    "worktreeClean": false
   },
   "ci": {
-    "latestCiRunId": "33401466408",
-    "latestCiHeadSha": "c92521cd3193e6b83f5833e402ac99d1915ba8c1",
+    "latestCiRunId": "33414408409",
+    "latestCiHeadSha": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
     "latestCiConclusion": "success",
     "ciHeadEqualsHead": true
   },
   "runtimeIntegrity": {
-    "runtimeFreezeHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
+    "runtimeFreezeHead": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
     "runtimeBehaviorChanged": false,
     "changedFiles": []
   },
   "baseline": {
-    "finalSoakBaselineGhaRun": "33310672900",
-    "finalSoakBaselineHead": "02dc1590039c5d052d5f3fa05dac2765fcfb3b07",
-    "finalSoakBaselineCrawlRunId": "192c24d3-bcbb-4c21-bb38-b737be5261c0",
-    "finalSoakStartUtc": "2026-08-30T12:08:03Z",
+    "finalSoakBaselineGhaRun": "33414698684",
+    "finalSoakBaselineHead": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
+    "finalSoakBaselineCrawlRunId": "fce1e5b4-65a3-4e76-a469-6ffc2b7d76e0",
+    "finalSoakStartUtc": "2026-08-31T16:32:47Z",
     "scheduleCron": "17 */6 * * *",
     "scheduleIntervalHours": 6,
-    "derivedFirstNominalSlot": "2026-08-30T12:17:00.000Z",
+    "derivedFirstNominalSlot": "2026-08-31T18:17:00.000Z",
     "baselineArtifactVerified": true
   },
   "soakQualification": {
-    "elapsedSoakHours": 26.2,
-    "expectedScheduleSlots": 5,
-    "satisfiedScheduleSlots": 4,
+    "elapsedSoakHours": 0.1,
+    "expectedScheduleSlots": 0,
+    "satisfiedScheduleSlots": 0,
     "pendingGraceSlots": 0,
-    "missingScheduleSlots": 1,
-    "observedScheduleRuns": 4,
-    "validScheduleRuns": 4,
+    "missingScheduleSlots": 0,
+    "observedScheduleRuns": 0,
+    "validScheduleRuns": 0,
     "failedScheduleRuns": 0,
-    "scheduleRunCountDeficit": 1,
-    "maxInferredScheduleDelayMinutes": 326.4,
-    "maxGapBetweenValidScheduleRunsHours": 8.5,
-    "latestValidScheduleRun": "33400053888 (2026-08-31T13:59:52Z)",
+    "scheduleRunCountDeficit": 0,
+    "maxInferredScheduleDelayMinutes": 0,
+    "maxGapBetweenValidScheduleRunsHours": 0,
+    "latestValidScheduleRun": "33414698684 (2026-08-31T16:32:47Z)",
     "nextExpectedScheduleSlot": "2026-08-31T18:17:00.000Z",
     "soak48hStatus": "PENDING_TIME_SOAK",
-    "soak48hReasonCodes": [
-      "INSUFFICIENT_ELAPSED_TIME",
-      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
-      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
-    ],
+    "soak48hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
     "soak72hStatus": "PENDING_TIME_SOAK",
-    "soak72hReasonCodes": [
-      "INSUFFICIENT_ELAPSED_TIME",
-      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
-      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
-    ],
+    "soak72hReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"],
     "finalEvidenceStatus": "PENDING_TIME_SOAK",
-    "finalEvidenceReasonCodes": [
-      "INSUFFICIENT_ELAPSED_TIME",
-      "INSUFFICIENT_VALID_SCHEDULE_RUNS",
-      "SCHEDULE_EVIDENCE_NOT_YET_OBSERVED"
-    ]
+    "finalEvidenceReasonCodes": ["INSUFFICIENT_ELAPSED_TIME", "INSUFFICIENT_VALID_SCHEDULE_RUNS"]
   },
-  "scheduleRunDiagnostics": [
-    {
-      "slotUtc": "2026-08-30T12:17:00.000Z",
-      "gracePeriodEndUtc": "2026-08-30T18:17:00.000Z",
-      "status": "SATISFIED",
-      "assignedRunId": "33323325684",
-      "runStartedAt": "2026-08-30T16:45:02Z",
-      "delayMinutes": 268
-    },
-    {
-      "slotUtc": "2026-08-30T18:17:00.000Z",
-      "gracePeriodEndUtc": "2026-08-31T00:17:00.000Z",
-      "status": "SATISFIED",
-      "assignedRunId": "33335730116",
-      "runStartedAt": "2026-08-30T21:11:31Z",
-      "delayMinutes": 174.5
-    },
-    {
-      "slotUtc": "2026-08-31T00:17:00.000Z",
-      "gracePeriodEndUtc": "2026-08-31T06:17:00.000Z",
-      "status": "SATISFIED",
-      "assignedRunId": "33361539030",
-      "runStartedAt": "2026-08-31T05:43:25Z",
-      "delayMinutes": 326.4
-    },
-    {
-      "slotUtc": "2026-08-31T06:17:00.000Z",
-      "gracePeriodEndUtc": "2026-08-31T12:17:00.000Z",
-      "status": "MISSING",
-      "assignedRunId": null,
-      "runStartedAt": null,
-      "delayMinutes": null
-    },
-    {
-      "slotUtc": "2026-08-31T12:17:00.000Z",
-      "gracePeriodEndUtc": "2026-08-31T18:17:00.000Z",
-      "status": "SATISFIED",
-      "assignedRunId": "33400053888",
-      "runStartedAt": "2026-08-31T13:59:52Z",
-      "delayMinutes": 102.9
-    }
-  ]
+  "scheduleRunDiagnostics": []
 }

@@ -1227,12 +1227,12 @@ export async function main() {
   const soakSamples = [];
 
   for (const r of ghaFetch.runs) {
+    const isBaselineRun = String(r.id) === String(config.finalSoakBaselineGhaRun);
     const runStart = new Date(r.run_started_at);
-    if (isNaN(runStart.getTime()) || runStart < baselineStart) {
+    if (isNaN(runStart.getTime()) || (runStart < baselineStart && !isBaselineRun)) {
       continue;
     }
 
-    const isBaselineRun = String(r.id) === String(config.finalSoakBaselineGhaRun);
     const isScheduledPostBaseline = r.event === 'schedule' && runStart >= baselineStart;
 
     let executionType = 'UNKNOWN';
