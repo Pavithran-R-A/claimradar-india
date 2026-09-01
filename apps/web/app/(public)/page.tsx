@@ -59,12 +59,20 @@ const FAQ_ITEMS = [
 const MONITORED_AUTHORITIES = [
   {
     code: 'SEBI',
-    name: 'Securities & Exchange Board of India',
+    name: 'Securities and Exchange Board of India',
     domain: 'Securities & Investor Refunds',
   },
   { code: 'RBI', name: 'Reserve Bank of India', domain: 'Banking & Unclaimed Deposits' },
-  { code: 'IBBI', name: 'Insolvency & Bankruptcy Board', domain: 'Corporate Insolvency Claims' },
-  { code: 'TRAI', name: 'Telecom Regulatory Authority', domain: 'Consumer Directives & Refunds' },
+  {
+    code: 'IBBI',
+    name: 'Insolvency and Bankruptcy Board of India',
+    domain: 'Corporate Insolvency Claims',
+  },
+  {
+    code: 'TRAI',
+    name: 'Telecom Regulatory Authority of India',
+    domain: 'Consumer Directives & Refunds',
+  },
   { code: 'PIB', name: 'Press Information Bureau', domain: 'Union Government Gazettes' },
 ];
 
