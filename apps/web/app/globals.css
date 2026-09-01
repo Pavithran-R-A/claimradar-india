@@ -14,7 +14,7 @@
   --c-background-elevated: 255 255 255; /* #FFFFFF surface */
   --c-surface: 255 255 255; /* #FFFFFF surface */
   --c-surface-strong: 240 239 234; /* #F0EFEA understated contrast surface */
-  --c-border: #D9DAD6; /* 1px hairline rule */
+  --c-border: #d9dad6; /* 1px hairline rule */
   --c-text-primary: 21 23 26; /* #15171A primary ink */
   --c-text-secondary: 82 90 101; /* #525A65 secondary text (8.8:1 contrast) */
   --c-text-muted: 112 119 130; /* #707782 muted text (4.9:1 contrast) */
@@ -33,7 +33,7 @@
   --c-background-elevated: 255 255 255;
   --c-surface: 255 255 255;
   --c-surface-strong: 240 239 234;
-  --c-border: #D9DAD6;
+  --c-border: #d9dad6;
   --c-text-primary: 21 23 26;
   --c-text-secondary: 82 90 101;
   --c-text-muted: 112 119 130;

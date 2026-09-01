@@ -16,8 +16,8 @@ export function AccountCta() {
           Save companies and receive deadline alerts.
         </h2>
         <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-lg mx-auto">
-          Follow companies, sectors, and keywords. We send notifications as soon as official
-          refund notices or statutory claim windows are published.
+          Follow companies, sectors, and keywords. We send notifications as soon as official refund
+          notices or statutory claim windows are published.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -28,11 +28,7 @@ export function AccountCta() {
             </Button>
           </Link>
           <Link href="/login">
-            <Button
-              variant="outline"
-              size="default"
-              className="rounded-md"
-            >
+            <Button variant="outline" size="default" className="rounded-md">
               Sign in to watchlist
             </Button>
           </Link>

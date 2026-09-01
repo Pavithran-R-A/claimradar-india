@@ -57,7 +57,11 @@ const FAQ_ITEMS = [
 ];
 
 const MONITORED_AUTHORITIES = [
-  { code: 'SEBI', name: 'Securities & Exchange Board of India', domain: 'Securities & Investor Refunds' },
+  {
+    code: 'SEBI',
+    name: 'Securities & Exchange Board of India',
+    domain: 'Securities & Investor Refunds',
+  },
   { code: 'RBI', name: 'Reserve Bank of India', domain: 'Banking & Unclaimed Deposits' },
   { code: 'IBBI', name: 'Insolvency & Bankruptcy Board', domain: 'Corporate Insolvency Claims' },
   { code: 'TRAI', name: 'Telecom Regulatory Authority', domain: 'Consumer Directives & Refunds' },
@@ -65,9 +69,7 @@ const MONITORED_AUTHORITIES = [
 ];
 
 export default async function LandingPage() {
-  const [claimables] = await Promise.all([
-    getPublishedClaimables({ limit: 200 }),
-  ]);
+  const [claimables] = await Promise.all([getPublishedClaimables({ limit: 200 })]);
 
   const ok = claimables.ok;
   const items = ok ? claimables.data.items : [];
@@ -100,7 +102,8 @@ export default async function LandingPage() {
               {/* Concise Supporting Copy */}
               <p className="mt-4 text-base sm:text-lg leading-relaxed text-text-secondary max-w-xl">
                 Search official Indian notices from regulators and public authorities. We monitor
-                government gazettes, insolvency filings, and court orders for verified claim opportunities.
+                government gazettes, insolvency filings, and court orders for verified claim
+                opportunities.
               </p>
 
               {/* Dominant Search Input Experience */}
@@ -114,7 +117,9 @@ export default async function LandingPage() {
                   <ShieldCheck className="h-4 w-4 text-trust-primary" />
                   Independent service
                 </span>
-                <span className="text-border" aria-hidden>•</span>
+                <span className="text-border" aria-hidden>
+                  •
+                </span>
                 <Link
                   href="/claimables"
                   className="text-trust-primary hover:underline font-semibold transition-colors"
@@ -123,7 +128,9 @@ export default async function LandingPage() {
                     ? `Browse all verified notices (${items.length})`
                     : 'Browse verified notices'}
                 </Link>
-                <span className="text-border" aria-hidden>•</span>
+                <span className="text-border" aria-hidden>
+                  •
+                </span>
                 <Link
                   href="/editorial-policy"
                   className="text-text-muted hover:text-text-primary transition-colors"
@@ -148,7 +155,10 @@ export default async function LandingPage() {
 
                 <div className="divide-y divide-border/60">
                   {MONITORED_AUTHORITIES.map((auth) => (
-                    <div key={auth.code} className="flex items-center justify-between py-2.5 text-xs">
+                    <div
+                      key={auth.code}
+                      className="flex items-center justify-between py-2.5 text-xs"
+                    >
                       <div className="flex items-center gap-2 min-w-0 pr-2">
                         <span className="font-bold text-text-primary shrink-0">{auth.code}</span>
                         <span className="text-text-muted truncate hidden sm:inline">
@@ -164,7 +174,10 @@ export default async function LandingPage() {
 
                 <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
                   <span>Continuous statutory indexing</span>
-                  <Link href="/sources" className="font-semibold text-trust-primary hover:underline">
+                  <Link
+                    href="/sources"
+                    className="font-semibold text-trust-primary hover:underline"
+                  >
                     All sources →
                   </Link>
                 </div>
@@ -200,7 +213,8 @@ export default async function LandingPage() {
               Latest Verified Opportunities
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
-              Extracted from official regulatory orders, public notifications, and government gazettes.
+              Extracted from official regulatory orders, public notifications, and government
+              gazettes.
             </p>
           </div>
           <Link

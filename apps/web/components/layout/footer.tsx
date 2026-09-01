@@ -55,7 +55,10 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface border-t border-border text-text-primary" aria-label="Site footer">
+    <footer
+      className="border-t border-border bg-surface border-t border-border text-text-primary"
+      aria-label="Site footer"
+    >
       <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           {/* Brand & Purpose Column */}

@@ -105,7 +105,11 @@ export function InteractiveHeroSearch() {
             >
               {term}
             </button>
-            {idx < SUGGESTIONS.length - 1 && <span className="text-border mx-1" aria-hidden>·</span>}
+            {idx < SUGGESTIONS.length - 1 && (
+              <span className="text-border mx-1" aria-hidden>
+                ·
+              </span>
+            )}
           </React.Fragment>
         ))}
       </div>

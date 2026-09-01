@@ -121,8 +121,7 @@ export const buttonVariants = cva(
           'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary hover:text-trust-primary',
         ghost: 'text-text-secondary hover:bg-surface-strong hover:text-text-primary',
         secondary: 'bg-surface-strong text-text-primary hover:bg-border/60 hover:text-text-primary',
-        signal:
-          'bg-trust-primary text-white font-bold shadow-sm hover:bg-trust-primary-hover',
+        signal: 'bg-trust-primary text-white font-bold shadow-sm hover:bg-trust-primary-hover',
         danger: 'bg-danger text-white shadow-sm hover:bg-danger/90',
         official:
           'bg-surface border border-trust-primary text-trust-primary font-semibold hover:bg-trust-primary hover:text-white',

@@ -54,7 +54,8 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 125,
     labelY: 400,
     textAnchor: 'end',
-    description: 'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
+    description:
+      'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
     monitoringType: 'Public Announcements & Gazette Feeds',
     delaySec: 10.5,
   },
@@ -116,9 +117,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
         <div className="flex items-center justify-between border-b border-border pb-2.5 mb-2.5 text-xs text-text-muted">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-trust-primary" />
-            <span className="font-bold text-text-primary">
-              SOURCE VERIFICATION
-            </span>
+            <span className="font-bold text-text-primary">SOURCE VERIFICATION</span>
           </div>
           <span className="text-text-secondary text-xs">Monitored official sources</span>
         </div>
@@ -209,7 +208,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           {/* Radar Sweep Rotating Beam (14s slow sweep) */}
           <g className="origin-[260px_260px] animate-radar-sweep pointer-events-none">
             {/* Pie Wedge Beam */}
-            <path d="M260 260 L490 260 A230 230 0 0 0 422 98 Z" fill="url(#editorialSweepGradient)" />
+            <path
+              d="M260 260 L490 260 A230 230 0 0 0 422 98 Z"
+              fill="url(#editorialSweepGradient)"
+            />
             {/* Leading Edge Line */}
             <line
               x1="260"
@@ -297,20 +299,8 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           })}
 
           {/* Central Radar Receiver Core */}
-          <circle
-            cx="260"
-            cy="260"
-            r="14"
-            fill="#FFFFFF"
-            stroke="#214E80"
-            strokeWidth="1.5"
-          />
-          <circle
-            cx="260"
-            cy="260"
-            r="4"
-            fill="#214E80"
-          />
+          <circle cx="260" cy="260" r="14" fill="#FFFFFF" stroke="#214E80" strokeWidth="1.5" />
+          <circle cx="260" cy="260" r="4" fill="#214E80" />
         </svg>
 
         {/* Footer Mandatory Plain Language Notice */}
