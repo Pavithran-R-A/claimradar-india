@@ -7,35 +7,35 @@ import { cn } from '@claimradar/design-system';
 const STAGES = [
   {
     step: '01',
-    title: 'Statutory Ingestion',
+    title: 'Statutory ingestion',
     icon: Database,
     description:
-      'Raw orders, circulars, and gazettes ingested from SEBI, RBI, IBBI, TRAI, and PIB feeds.',
+      'Raw orders, circulars, and gazettes ingested directly from official SEBI, RBI, IBBI, TRAI, and PIB feeds.',
     detail: 'Cryptographic SHA-256 deduplication & timestamping',
   },
   {
     step: '02',
-    title: 'Deterministic Extraction',
+    title: 'Deterministic extraction',
     icon: Cpu,
     description:
-      'Statutory entities, relief clauses, submission deadlines, and claim forms parsed precisely.',
-    detail: 'Zero hallucinated numbers or speculative relief',
+      'Statutory entities, relief clauses, submission deadlines, and claim forms parsed with zero speculation.',
+    detail: 'Deterministic schema parsing & validation',
   },
   {
     step: '03',
-    title: 'Editorial Verification',
+    title: 'Editorial verification',
     icon: CheckCircle2,
     description:
-      'Senior editors independently verify source document links and official filing instructions.',
-    detail: 'Mandatory human approval before publication',
+      'Senior editors independently verify source document links and official filing instructions before publication.',
+    detail: 'Mandatory human approval gate',
   },
   {
     step: '04',
-    title: 'Direct Portal Route',
+    title: 'Direct portal route',
     icon: Landmark,
     description:
-      'Citizens are guided directly to authentic official portals to submit their claims for free.',
-    detail: 'Zero middleman fees, zero claim brokerage',
+      'Citizens are guided directly to authentic official portals to submit their claims for free without intermediaries.',
+    detail: 'Zero middleman fees, direct official access',
   },
 ];
 
@@ -71,73 +71,48 @@ export function EvidenceFlowDiagram() {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* Connecting Track Rail SVG (Desktop Horizontal) */}
-      <div className="hidden lg:block absolute top-[44px] left-[5%] right-[5%] h-[2px] pointer-events-none z-0">
-        <svg className="w-full h-[2px] overflow-visible" preserveAspectRatio="none">
-          <line
-            x1="0"
-            y1="1"
-            x2="100%"
-            y2="1"
-            stroke="#D9DAD6"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-          />
-          <line
-            x1="0"
-            y1="1"
-            x2="100%"
-            y2="1"
-            stroke="#214E80"
-            strokeWidth="2"
+      {/* Vertical Editorial Timeline */}
+      <div className="relative pl-7 sm:pl-8 space-y-6 sm:space-y-7">
+        {/* Continuous Connecting Timeline Line */}
+        <div className="absolute left-[13px] sm:left-[15px] top-3 bottom-3 w-[2px] bg-border pointer-events-none">
+          {/* Progressive Draw Line in Deep Editorial Blue */}
+          <div
             className={cn(
-              'transition-all duration-1000 ease-out',
-              isInView ? 'opacity-100 animate-draw-line' : 'opacity-0',
+              'w-full bg-trust-primary transition-all duration-1000 ease-out origin-top',
+              isInView ? 'h-full opacity-100' : 'h-0 opacity-0',
             )}
           />
-        </svg>
-      </div>
+        </div>
 
-      {/* Grid of 4 Stages */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {STAGES.map((stage, idx) => {
           const Icon = stage.icon;
           return (
             <div
               key={stage.step}
               style={{
-                transitionDelay: isInView ? `${idx * 160}ms` : '0ms',
-                transform: isInView ? 'none' : 'translateY(12px)',
+                transitionDelay: isInView ? `${idx * 120}ms` : '0ms',
+                transform: isInView ? 'none' : 'translateY(8px)',
                 opacity: isInView ? 1 : 0,
               }}
-              className={cn(
-                'group relative flex flex-col justify-between rounded-md border border-border bg-surface p-5 sm:p-6 shadow-xs transition-all duration-enter ease-out hover:border-trust-primary hover:shadow-sm hover:-translate-y-[1px] motion-reduce:!opacity-100 motion-reduce:!transform-none',
-              )}
+              className="group relative flex items-start gap-4 transition-all duration-enter ease-out motion-reduce:!opacity-100 motion-reduce:!transform-none"
             >
-              <div>
-                {/* Stage Number & Icon Header */}
-                <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded bg-surface-strong border border-border text-xs font-mono font-bold text-trust-primary group-hover:bg-trust-primary group-hover:text-white transition-colors duration-fast">
-                      {stage.step}
-                    </span>
-                    <span className="font-mono text-xs font-bold text-text-muted group-hover:text-trust-primary transition-colors duration-fast">
-                      STAGE {stage.step}
-                    </span>
-                  </div>
-                  <Icon className="h-4 w-4 text-text-muted group-hover:text-trust-primary group-hover:scale-110 transition-all duration-fast" />
-                </div>
-
-                <h4 className="text-base font-bold text-text-primary tracking-tight group-hover:text-trust-primary transition-colors duration-fast">
-                  {stage.title}
-                </h4>
-                <p className="mt-2 text-xs sm:text-sm text-text-secondary leading-relaxed">
-                  {stage.description}
-                </p>
+              {/* Numbered Marker Anchor */}
+              <div className="absolute -left-7 sm:-left-8 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border-2 border-surface bg-surface-strong text-trust-primary shadow-xs transition-colors duration-fast group-hover:border-trust-primary group-hover:bg-trust-primary group-hover:text-white">
+                <span className="font-mono text-xs font-bold leading-none">{stage.step}</span>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-border/60">
-                <span className="text-xs font-mono text-text-muted group-hover:text-text-secondary transition-colors duration-fast block">
+              {/* Content Block */}
+              <div className="flex-1 pt-0.5">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-base sm:text-lg font-bold text-text-primary tracking-tight group-hover:text-trust-primary transition-colors duration-fast">
+                    {stage.title}
+                  </h4>
+                  <Icon className="h-4 w-4 text-text-muted group-hover:text-trust-primary transition-colors duration-fast shrink-0" />
+                </div>
+                <p className="mt-1 text-sm sm:text-base leading-relaxed text-text-secondary">
+                  {stage.description}
+                </p>
+                <span className="mt-1.5 inline-block text-xs font-medium text-text-muted">
                   {stage.detail}
                 </span>
               </div>

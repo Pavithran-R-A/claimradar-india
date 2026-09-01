@@ -64,15 +64,50 @@ const SOURCES: AuthoritySource[] = [
 export function MonitoredSourcesNetwork() {
   return (
     <div className="w-full">
-      {/* Ledger Container */}
-      <div className="overflow-x-auto rounded-md border border-border bg-surface">
+      {/* 1. Mobile Responsive View (Zero horizontal scroll on small screens) */}
+      <div className="sm:hidden space-y-3">
+        {SOURCES.map((source) => (
+          <div
+            key={source.code}
+            className="rounded-md border border-border bg-surface p-4 shadow-xs"
+          >
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 mb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-surface-strong border border-border text-trust-primary">
+                  {source.code}
+                </span>
+                <span className="font-bold text-sm text-text-primary">{source.name}</span>
+              </div>
+              <a
+                href={source.officialPortal}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-trust-primary hover:underline shrink-0"
+                aria-label={`Visit official ${source.code} portal`}
+              >
+                <span>Portal</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+            <div className="text-xs text-text-secondary space-y-1">
+              <div>
+                <span className="font-semibold text-text-primary">Domain:</span> {source.domain}
+              </div>
+              <div className="text-text-muted">{source.statutoryRole}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 2. Tablet & Desktop Institutional Ledger Table */}
+      <div className="hidden sm:block overflow-hidden rounded-md border border-border bg-surface shadow-xs">
         <table className="w-full text-left text-sm border-collapse">
           <thead>
             <tr className="border-b border-border bg-surface-strong/60 text-xs font-semibold text-text-muted">
               <th className="py-3 px-4">Authority</th>
               <th className="py-3 px-4">Statutory Domain</th>
               <th className="py-3 px-4 hidden md:table-cell">Monitored Notice Types</th>
-              <th className="py-3 px-4 hidden sm:table-cell">Ingestion Cadence</th>
+              <th className="py-3 px-4 hidden lg:table-cell">Ingestion Cadence</th>
               <th className="py-3 px-4 text-right">Portal</th>
             </tr>
           </thead>
@@ -80,7 +115,7 @@ export function MonitoredSourcesNetwork() {
             {SOURCES.map((source) => (
               <tr
                 key={source.code}
-                className="row-hover-subtle transition-colors duration-fast text-text-primary"
+                className="hover:bg-surface-strong/50 transition-colors duration-fast text-text-primary"
               >
                 <td className="py-3.5 px-4">
                   <div className="flex items-center gap-2">
@@ -99,7 +134,7 @@ export function MonitoredSourcesNetwork() {
                 <td className="py-3.5 px-4 text-xs text-text-muted hidden md:table-cell">
                   {source.noticeTypes}
                 </td>
-                <td className="py-3.5 px-4 text-xs text-text-muted hidden sm:table-cell font-mono">
+                <td className="py-3.5 px-4 text-xs text-text-muted hidden lg:table-cell font-mono">
                   <span className="inline-flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     {source.frequency}
@@ -110,7 +145,7 @@ export function MonitoredSourcesNetwork() {
                     href={source.officialPortal}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-text-muted hover:text-trust-primary transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-text-muted hover:text-trust-primary transition-colors duration-fast"
                   >
                     <span>Visit</span>
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -122,13 +157,14 @@ export function MonitoredSourcesNetwork() {
         </table>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-xs text-text-muted px-1">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-text-muted px-1">
         <span className="flex items-center gap-1.5 font-medium">
-          <ShieldCheck className="h-4 w-4 text-trust-primary" />
-          Every ingested notice is cryptographically hashed and verified before human editorial
-          review.
+          <ShieldCheck className="h-4 w-4 text-trust-primary shrink-0" />
+          Every ingested notice is cryptographically hashed and verified before editorial review.
         </span>
-        <span className="font-mono text-[11px]">ZERO SPECULATIVE CLAIMS</span>
+        <span className="font-mono text-[11px] text-text-secondary">
+          INDEXED FROM OFFICIAL SOURCES
+        </span>
       </div>
     </div>
   );

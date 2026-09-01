@@ -285,18 +285,18 @@ export default async function LandingPage() {
       {/* ------------------------------------------------------------------ */}
       <Reveal as="section" className="border-t border-border bg-surface py-16 sm:py-20">
         <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             {/* Left: 4-Stage Precision Pipeline Narrative */}
-            <div className="lg:col-span-6 flex flex-col items-start">
+            <div className="lg:col-span-7 flex flex-col items-start">
               <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
                 Verification Methodology
               </span>
               <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-text-primary tracking-tight">
                 How ClaimRadar verifies an official notice.
               </h2>
-              <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary">
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-2xl">
                 Every record in our public index undergoes strict human and cryptographic
-                verification against primary Indian regulatory endpoints.
+                verification against primary Indian regulatory endpoints before publication.
               </p>
 
               <div className="mt-8 w-full">
@@ -305,7 +305,7 @@ export default async function LandingPage() {
             </div>
 
             {/* Right: Relocated Scientific Radar Visual */}
-            <div className="lg:col-span-6 flex justify-center w-full">
+            <div className="lg:col-span-5 flex justify-center w-full lg:pt-2">
               <EvidenceRadarVisual />
             </div>
           </div>
