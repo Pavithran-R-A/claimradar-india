@@ -5,13 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search, ArrowRight, X } from 'lucide-react';
 import { Button } from '@claimradar/design-system';
 
-const COMMON_LOOKUPS = [
-  'PACL India',
-  'Sahara refund',
-  'SEBI recovery',
-  'Fixed deposit claim',
-  'IBBI insolvency',
-];
+const SUGGESTIONS = ['PACL', 'Sahara', 'SEBI recovery', 'Fixed deposit claim', 'IBBI insolvency'];
 
 export function InteractiveHeroSearch() {
   const router = useRouter();
@@ -52,10 +46,10 @@ export function InteractiveHeroSearch() {
     <div className="w-full">
       <form
         onSubmit={handleSubmit}
-        className="relative flex w-full flex-col sm:flex-row items-stretch gap-2"
+        className="relative flex w-full flex-col sm:flex-row items-stretch gap-2.5 rounded-lg border border-border bg-surface p-2 shadow-sm transition-all focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20"
       >
-        <div className="relative flex-1 group">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-brand-bright transition-colors">
+        <div className="relative flex-1 flex items-center min-w-0">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-text-muted z-10">
             <Search className="h-5 w-5" aria-hidden="true" />
           </div>
           <label htmlFor="hero-search-input" className="sr-only">
@@ -68,20 +62,21 @@ export function InteractiveHeroSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search company, regulator, or notice (e.g. PACL, Sahara, SEBI)"
-            className="h-12 w-full rounded-md border border-white/20 bg-ink-900/90 pl-11 pr-14 text-base text-white placeholder:text-slate-400 focus:border-brand-bright focus:outline-none focus:ring-2 focus:ring-brand-bright/30 transition-colors shadow-inner"
+            style={{ paddingLeft: '48px', paddingRight: '48px' }}
+            className="h-12 sm:h-14 w-full rounded-md border-0 bg-transparent text-base sm:text-lg text-text-primary placeholder:text-text-muted focus:outline-none"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery('')}
-              className="absolute inset-y-0 right-3 my-auto flex h-7 w-7 items-center justify-center rounded text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="absolute inset-y-0 right-2 my-auto flex h-7 w-7 items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
             </button>
           ) : (
-            <div className="pointer-events-none absolute inset-y-0 right-3.5 hidden sm:flex items-center">
-              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[11px] font-mono text-slate-300">
+            <div className="pointer-events-none absolute inset-y-0 right-3 hidden sm:flex items-center">
+              <kbd className="rounded border border-border bg-surface-strong px-1.5 py-0.5 text-xs font-mono text-text-muted">
                 /
               </kbd>
             </div>
@@ -89,27 +84,29 @@ export function InteractiveHeroSearch() {
         </div>
         <Button
           type="submit"
-          variant="signal"
+          variant="default"
           size="default"
-          className="h-12 px-6 rounded-md text-sm font-bold text-ink-950 sm:w-auto shadow-sm transition-all"
+          className="h-12 sm:h-14 px-7 rounded-md text-sm font-bold text-white sm:w-auto shadow-sm transition-colors shrink-0"
         >
           <span>Search notices</span>
           <ArrowRight className="ml-1.5 h-4 w-4" />
         </Button>
       </form>
 
-      {/* Understated Common Lookups */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-400">
-        <span className="text-slate-500 font-medium">Common searches:</span>
-        {COMMON_LOOKUPS.map((term) => (
-          <button
-            key={term}
-            type="button"
-            onClick={() => handleLookup(term)}
-            className="rounded border border-white/10 bg-white/[0.04] px-2 py-0.5 text-slate-300 font-medium transition-colors hover:border-brand-bright/40 hover:bg-brand-bright/10 hover:text-brand-bright"
-          >
-            {term}
-          </button>
+      {/* Quiet Example Lookups */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-muted">
+        <span className="text-text-secondary font-medium mr-1">Try:</span>
+        {SUGGESTIONS.map((term, idx) => (
+          <React.Fragment key={term}>
+            <button
+              type="button"
+              onClick={() => handleLookup(term)}
+              className="text-text-secondary hover:text-trust-primary hover:underline transition-colors"
+            >
+              {term}
+            </button>
+            {idx < SUGGESTIONS.length - 1 && <span className="text-border mx-1" aria-hidden>·</span>}
+          </React.Fragment>
         ))}
       </div>
     </div>

@@ -99,7 +99,7 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
         <div className="flex items-center gap-4">
           <span
             aria-hidden
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-card bg-ink-900 text-lg font-bold text-brand-bright"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-card bg-ink-900 text-lg font-bold text-trust-primary"
           >
             {company.name.substring(0, 2).toUpperCase()}
           </span>

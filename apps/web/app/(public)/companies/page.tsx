@@ -61,7 +61,7 @@ export default async function CompaniesPage() {
                       <div className="flex items-center gap-3">
                         <span
                           aria-hidden
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-ink-900 text-sm font-bold text-brand-bright"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-ink-900 text-sm font-bold text-trust-primary"
                         >
                           {company.name.substring(0, 2).toUpperCase()}
                         </span>

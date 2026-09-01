@@ -92,7 +92,7 @@ export function MonitoredSourcesNetwork() {
                 </td>
                 <td className="py-3.5 px-4 text-xs text-text-secondary">
                   <span className="block font-medium">{source.domain}</span>
-                  <span className="text-text-muted text-[11px] mt-0.5 block">
+                  <span className="text-text-muted text-xs mt-0.5 block">
                     {source.statutoryRole}
                   </span>
                 </td>

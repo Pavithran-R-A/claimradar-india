@@ -45,28 +45,28 @@ export function BrandMark({
   const isMonochrome = variant === 'monochrome';
   const isSignal = variant === 'signal';
 
-  const bgFill = isLight ? '#060B14' : isDark ? '#FFFFFF' : isSignal ? '#0F766E' : '#0A1322';
+  const bgFill = isLight ? '#FFFFFF' : isDark ? '#FFFFFF' : isSignal ? '#214E80' : '#15171A';
   const primaryStroke = isMonochrome
     ? 'currentColor'
     : isDark
-      ? '#0F766E'
+      ? '#214E80'
       : isSignal
         ? '#FFFFFF'
-        : '#2DD4BF';
+        : '#214E80';
   const secondaryStroke = isMonochrome
     ? 'currentColor'
     : isDark
-      ? '#94A3B8'
+      ? '#525A65'
       : isSignal
         ? 'rgba(255,255,255,0.7)'
-        : '#5EEAD4';
+        : '#525A65';
   const ringStroke = isMonochrome
     ? 'currentColor'
     : isDark
-      ? 'rgba(15,118,110,0.25)'
+      ? 'rgba(33,78,128,0.2)'
       : isSignal
         ? 'rgba(255,255,255,0.25)'
-        : 'rgba(45,212,191,0.25)';
+        : 'rgba(217,218,214,0.6)';
 
   return (
     <svg
@@ -116,16 +116,16 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-trust-primary text-white shadow-sm hover:bg-trust-primary-hover hover:shadow-md active:bg-trust-primary-hover',
+          'bg-trust-primary text-white shadow-sm hover:bg-trust-primary-hover active:bg-trust-primary-hover',
         outline:
-          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary/40 hover:text-trust-primary',
+          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary hover:text-trust-primary',
         ghost: 'text-text-secondary hover:bg-surface-strong hover:text-text-primary',
         secondary: 'bg-surface-strong text-text-primary hover:bg-border/60 hover:text-text-primary',
         signal:
-          'bg-brand-bright text-ink-950 font-bold shadow hover:bg-white hover:shadow-lg active:bg-slate-100',
-        danger: 'bg-danger text-white shadow-sm hover:bg-danger/90 hover:shadow-md',
+          'bg-trust-primary text-white font-bold shadow-sm hover:bg-trust-primary-hover',
+        danger: 'bg-danger text-white shadow-sm hover:bg-danger/90',
         official:
-          'bg-ink-900 border border-brand-bright/40 text-brand-bright font-semibold hover:bg-ink-800 hover:border-brand-bright hover:shadow-md',
+          'bg-surface border border-trust-primary text-trust-primary font-semibold hover:bg-trust-primary hover:text-white',
       },
       size: {
         xs: 'h-7 px-2.5 text-xs gap-1 rounded',

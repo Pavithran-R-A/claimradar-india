@@ -57,11 +57,11 @@ export default async function SectorsPage() {
                     <div className="flex items-center justify-between">
                       <span
                         aria-hidden
-                        className="flex h-10 w-10 items-center justify-center rounded-field bg-ink-900 text-brand-bright"
+                        className="flex h-10 w-10 items-center justify-center rounded-field bg-ink-900 text-trust-primary"
                       >
                         <Layers className="h-5 w-5" />
                       </span>
-                      <span className="rounded-full bg-background-elevated px-2.5 py-1 text-xs font-semibold text-text-secondary">
+                      <span className="rounded bg-background-elevated px-2.5 py-1 text-xs font-semibold text-text-secondary">
                         {sector.activeClaimCount} active
                       </span>
                     </div>

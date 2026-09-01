@@ -49,7 +49,7 @@ export function ClaimRadarBrand({
           <span
             className={cn(
               'text-xs font-bold uppercase tracking-widest',
-              theme === 'dark' ? 'text-brand-bright' : 'text-trust-primary',
+              theme === 'dark' ? 'text-trust-primary' : 'text-trust-primary',
             )}
           >
             India

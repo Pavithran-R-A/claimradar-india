@@ -54,8 +54,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 125,
     labelY: 400,
     textAnchor: 'end',
-    description:
-      'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
+    description: 'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
     monitoringType: 'Public Announcements & Gazette Feeds',
     delaySec: 10.5,
   },
@@ -106,25 +105,25 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative flex flex-col items-center justify-center p-3 sm:p-5 select-none',
+        'relative flex flex-col items-center justify-center p-2 sm:p-4 select-none',
         className,
       )}
       aria-label="Monitored official sources diagram"
     >
-      {/* Precision Instrument Outer Frame */}
-      <div className="relative w-full max-w-[420px] aspect-square rounded-md border border-white/10 bg-ink-950/80 p-3.5 shadow-2xl backdrop-blur-md">
+      {/* Editorial Scientific Instrument Outer Frame */}
+      <div className="relative w-full max-w-[440px] aspect-square rounded-md border border-border bg-surface p-4 shadow-sm">
         {/* Instrument Header with Mandatory Truth Integrity Microcopy */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-2.5 text-xs font-mono text-slate-400">
+        <div className="flex items-center justify-between border-b border-border pb-2.5 mb-2.5 text-xs text-text-muted">
           <div className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-bright" />
-            <span className="tracking-wider uppercase text-slate-300 font-semibold">
+            <span className="h-2 w-2 rounded-full bg-trust-primary" />
+            <span className="font-bold text-text-primary">
               SOURCE VERIFICATION
             </span>
           </div>
-          <span className="text-slate-400 font-sans text-xs">Monitored official sources</span>
+          <span className="text-text-secondary text-xs">Monitored official sources</span>
         </div>
 
-        {/* SVG Radar Visual Canvas */}
+        {/* SVG Radar Visual Canvas (Editorial Slate & Blue) */}
         <svg
           viewBox="0 0 520 520"
           className="w-full h-full overflow-visible"
@@ -132,44 +131,47 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           aria-label="Radar diagram monitoring SEBI, RBI, IBBI, TRAI, and PIB"
         >
           <defs>
-            {/* Subtle rotating conic sweep trail gradient */}
-            <radialGradient id="sweepGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#2DD4BF" stopOpacity="0.18" />
-              <stop offset="70%" stopColor="#2DD4BF" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="#2DD4BF" stopOpacity="0" />
+            {/* Subtle rotating conic sweep trail gradient in deep editorial blue */}
+            <radialGradient id="editorialSweepGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#214E80" stopOpacity="0.12" />
+              <stop offset="70%" stopColor="#214E80" stopOpacity="0.03" />
+              <stop offset="100%" stopColor="#214E80" stopOpacity="0" />
             </radialGradient>
           </defs>
 
           {/* Coordinate Range Grid Rings */}
-          <circle cx="260" cy="260" r="230" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" />
+          <circle cx="260" cy="260" r="230" stroke="#D9DAD6" strokeWidth="1" />
           <circle
             cx="260"
             cy="260"
             r="230"
-            stroke="rgba(45, 212, 191, 0.2)"
+            stroke="#214E80"
             strokeWidth="1"
+            strokeOpacity="0.25"
             strokeDasharray="3 6"
           />
 
           {/* Range Ring 3 */}
-          <circle cx="260" cy="260" r="175" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" />
+          <circle cx="260" cy="260" r="175" stroke="#D9DAD6" strokeWidth="1" />
           <circle
             cx="260"
             cy="260"
             r="175"
-            stroke="rgba(45, 212, 191, 0.2)"
+            stroke="#214E80"
             strokeWidth="1"
+            strokeOpacity="0.25"
             strokeDasharray="2 4"
           />
 
           {/* Range Ring 2 */}
-          <circle cx="260" cy="260" r="115" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="1" />
+          <circle cx="260" cy="260" r="115" stroke="#D9DAD6" strokeWidth="1" />
           <circle
             cx="260"
             cy="260"
             r="115"
-            stroke="rgba(45, 212, 191, 0.25)"
+            stroke="#214E80"
             strokeWidth="1"
+            strokeOpacity="0.3"
             strokeDasharray="2 3"
           />
 
@@ -178,8 +180,9 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             cx="260"
             cy="260"
             r="55"
-            stroke="rgba(45, 212, 191, 0.3)"
+            stroke="#214E80"
             strokeWidth="1"
+            strokeOpacity="0.35"
             strokeDasharray="2 2"
           />
 
@@ -189,7 +192,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             y1="20"
             x2="260"
             y2="500"
-            stroke="rgba(255, 255, 255, 0.07)"
+            stroke="#D9DAD6"
             strokeWidth="1"
             strokeDasharray="4 4"
           />
@@ -198,7 +201,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             y1="260"
             x2="500"
             y2="260"
-            stroke="rgba(255, 255, 255, 0.07)"
+            stroke="#D9DAD6"
             strokeWidth="1"
             strokeDasharray="4 4"
           />
@@ -206,26 +209,15 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           {/* Radar Sweep Rotating Beam (14s slow sweep) */}
           <g className="origin-[260px_260px] animate-radar-sweep pointer-events-none">
             {/* Pie Wedge Beam */}
-            <path d="M260 260 L490 260 A230 230 0 0 0 422 98 Z" fill="url(#sweepGradient)" />
+            <path d="M260 260 L490 260 A230 230 0 0 0 422 98 Z" fill="url(#editorialSweepGradient)" />
             {/* Leading Edge Line */}
             <line
               x1="260"
               y1="260"
               x2="490"
               y2="260"
-              stroke="#2DD4BF"
+              stroke="#214E80"
               strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-            {/* Leading Edge Glow */}
-            <line
-              x1="260"
-              y1="260"
-              x2="490"
-              y2="260"
-              stroke="#5EEAD4"
-              strokeWidth="3"
-              strokeOpacity="0.25"
               strokeLinecap="round"
             />
           </g>
@@ -254,7 +246,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   cx={node.cx}
                   cy={node.cy}
                   r={isSelected ? 16 : 14}
-                  stroke="#FFFFFF"
+                  stroke="#214E80"
                   strokeWidth="2"
                   strokeDasharray="3 3"
                   className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity"
@@ -265,7 +257,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   cx={node.cx}
                   cy={node.cy}
                   r="12"
-                  stroke="#2DD4BF"
+                  stroke="#214E80"
                   strokeWidth="1"
                   className="origin-[var(--cx)_var(--cy)] animate-detection-blip pointer-events-none"
                   style={
@@ -282,8 +274,8 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   cx={node.cx}
                   cy={node.cy}
                   r={isSelected ? 5.5 : 4}
-                  fill={isSelected ? '#FFFFFF' : '#2DD4BF'}
-                  stroke="#0A1322"
+                  fill={isSelected ? '#15171A' : '#214E80'}
+                  stroke="#FFFFFF"
                   strokeWidth="1.5"
                 />
 
@@ -292,12 +284,11 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   x={node.labelX}
                   y={node.labelY}
                   textAnchor={node.textAnchor}
-                  fill={isSelected ? '#FFFFFF' : '#2DD4BF'}
+                  fill={isSelected ? '#15171A' : '#214E80'}
                   fontSize="12"
                   fontWeight="bold"
-                  fontFamily="monospace"
-                  letterSpacing="0.5"
-                  className="transition-colors group-hover:fill-white group-focus-visible:fill-white"
+                  fontFamily="sans-serif"
+                  className="transition-colors group-hover:fill-text-primary group-focus-visible:fill-text-primary"
                 >
                   {node.code}
                 </text>
@@ -306,14 +297,28 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           })}
 
           {/* Central Radar Receiver Core */}
-          <circle cx="260" cy="260" r="16" fill="#060B14" stroke="#2DD4BF" strokeWidth="1.5" />
-          <circle cx="260" cy="260" r="5" fill="#2DD4BF" />
+          <circle
+            cx="260"
+            cy="260"
+            r="14"
+            fill="#FFFFFF"
+            stroke="#214E80"
+            strokeWidth="1.5"
+          />
+          <circle
+            cx="260"
+            cy="260"
+            r="4"
+            fill="#214E80"
+          />
         </svg>
 
         {/* Footer Mandatory Plain Language Notice */}
-        <div className="mt-2.5 flex flex-col gap-1 border-t border-white/[0.08] pt-2 text-xs text-slate-400">
-          <p className="font-medium text-slate-300">Every listing is checked against the source.</p>
-          <p className="text-xs text-slate-500">
+        <div className="mt-2.5 flex flex-col gap-1 border-t border-border pt-2 text-xs text-text-muted">
+          <p className="font-semibold text-text-primary">
+            Every listing is checked against the source.
+          </p>
+          <p className="text-xs text-text-secondary leading-relaxed">
             This shows our verification process. It is not a live activity feed. ClaimRadar does not
             file claims or collect official filing fees. You act on the official portal.
           </p>
@@ -327,33 +332,35 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           aria-live="polite"
           aria-modal="true"
           aria-labelledby="radar-node-title"
-          className="absolute inset-x-2 bottom-2 z-20 rounded-md border border-brand-bright/40 bg-ink-900/95 p-4 shadow-2xl backdrop-blur-md text-white animate-in fade-in zoom-in-95 duration-140"
+          className="absolute inset-x-2 bottom-2 z-20 rounded-md border border-border bg-surface p-4 shadow-lg text-text-primary animate-in fade-in zoom-in-95 duration-140"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2">
-              <span className="rounded bg-brand-bright/20 border border-brand-bright/40 px-2 py-0.5 font-mono text-xs font-bold text-brand-bright">
+              <span className="rounded bg-surface-strong border border-border px-2 py-0.5 text-xs font-bold text-trust-primary">
                 {selectedNode.code}
               </span>
-              <h4 id="radar-node-title" className="text-sm font-bold text-white">
+              <h4 id="radar-node-title" className="text-sm font-bold text-text-primary">
                 {selectedNode.name}
               </h4>
             </div>
             <button
               type="button"
               onClick={() => setSelectedNode(null)}
-              className="rounded p-1 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="rounded p-1 text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors"
               aria-label="Close authority inspector"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-2 text-xs text-slate-300 leading-relaxed">{selectedNode.description}</p>
-          <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-text-secondary leading-relaxed">
+            {selectedNode.description}
+          </p>
+          <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-text-muted">
             <span className="flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-bright" />
+              <ShieldCheck className="h-3.5 w-3.5 text-trust-primary" />
               {selectedNode.monitoringType}
             </span>
-            <span className="text-brand-bright font-semibold">{selectedNode.domain}</span>
+            <span className="text-trust-primary font-semibold">{selectedNode.domain}</span>
           </div>
         </div>
       )}

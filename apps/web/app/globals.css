@@ -3,48 +3,67 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   ClaimRadar design tokens — Editorial Intelligence × Precision Instrument
+   ClaimRadar design tokens — Editorial Public-Benefit Finance
    --------------------------------------------------------------------------
-   `:root` carries the dark theme (authenticated app shell, admin, hero).
-   `.theme-light` remaps semantic variables for the public consumer site.
+   Light-first consumer identity with warm paper canvas, deep editorial blue,
+   and crisp hairline rules.
    ========================================================================== */
 
 :root {
-  --c-background: 6 11 20; /* #060B14 */
-  --c-background-elevated: 10 19 33; /* #0A1321 */
-  --c-surface: 14 24 40; /* #0E1828 */
-  --c-surface-strong: 19 33 54; /* #132136 */
-  --c-border: rgba(255, 255, 255, 0.08);
-  --c-text-primary: 248 250 252; /* #F8FAFC */
-  --c-text-secondary: 161 174 195; /* #A1AEC3 */
-  --c-text-muted: 100 116 139; /* #64748B */
-  --c-trust-primary: 45 212 191; /* #2DD4BF */
-  --c-trust-primary-hover: 94 234 212; /* #5EEAD4 */
-  --c-success: 52 211 153; /* #34D399 */
-  --c-deadline: 251 191 36; /* #FBBF24 */
-  --c-danger: 248 113 113; /* #F87171 */
-  --c-info: 96 165 250; /* #60A5FA */
-  --c-verified-background: rgba(52, 211, 153, 0.12);
-  --c-deadline-background: rgba(251, 191, 36, 0.12);
+  --c-background: 247 246 242; /* #F7F6F2 warm paper canvas */
+  --c-background-elevated: 255 255 255; /* #FFFFFF surface */
+  --c-surface: 255 255 255; /* #FFFFFF surface */
+  --c-surface-strong: 240 239 234; /* #F0EFEA understated contrast surface */
+  --c-border: #D9DAD6; /* 1px hairline rule */
+  --c-text-primary: 21 23 26; /* #15171A primary ink */
+  --c-text-secondary: 82 90 101; /* #525A65 secondary text (8.8:1 contrast) */
+  --c-text-muted: 112 119 130; /* #707782 muted text (4.9:1 contrast) */
+  --c-trust-primary: 33 78 128; /* #214E80 deep editorial blue */
+  --c-trust-primary-hover: 23 59 98; /* #173B62 */
+  --c-success: 35 112 90; /* #23705A verified subdued forest */
+  --c-deadline: 180 95 6; /* #B45F06 deadline ochre */
+  --c-danger: 180 35 24; /* #B42318 */
+  --c-info: 33 78 128; /* #214E80 */
+  --c-verified-background: rgba(35, 112, 90, 0.08);
+  --c-deadline-background: rgba(180, 95, 6, 0.08);
 }
 
 .theme-light {
-  --c-background: 248 250 252; /* #F8FAFC crisp off-white */
-  --c-background-elevated: 241 245 249; /* #F1F5F9 slate-100 */
-  --c-surface: 255 255 255; /* #FFFFFF clean paper */
-  --c-surface-strong: 241 245 249; /* #F1F5F9 */
-  --c-border: rgba(15, 23, 42, 0.08);
-  --c-text-primary: 15 23 42; /* #0F172A slate-900 */
-  --c-text-secondary: 51 65 85; /* #334155 slate-700 (9.2:1 contrast) */
-  --c-text-muted: 100 116 139; /* #64748B slate-500 (5.4:1 contrast) */
-  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (high-trust editorial) */
-  --c-trust-primary-hover: 17 94 89; /* #115E59 teal-800 */
-  --c-success: 4 120 87; /* #047857 emerald-700 */
-  --c-deadline: 180 83 9; /* #B45309 amber-700 */
-  --c-danger: 185 28 28; /* #B91C1C red-700 */
-  --c-info: 29 78 216; /* #1D4ED8 blue-700 */
-  --c-verified-background: rgba(4, 120, 87, 0.08);
-  --c-deadline-background: rgba(180, 83, 9, 0.08);
+  --c-background: 247 246 242;
+  --c-background-elevated: 255 255 255;
+  --c-surface: 255 255 255;
+  --c-surface-strong: 240 239 234;
+  --c-border: #D9DAD6;
+  --c-text-primary: 21 23 26;
+  --c-text-secondary: 82 90 101;
+  --c-text-muted: 112 119 130;
+  --c-trust-primary: 33 78 128;
+  --c-trust-primary-hover: 23 59 98;
+  --c-success: 35 112 90;
+  --c-deadline: 180 95 6;
+  --c-danger: 180 35 24;
+  --c-info: 33 78 128;
+  --c-verified-background: rgba(35, 112, 90, 0.08);
+  --c-deadline-background: rgba(180, 95, 6, 0.08);
+}
+
+.theme-dark {
+  --c-background: 23 28 35; /* #171C23 optional dark editorial field */
+  --c-background-elevated: 30 36 45;
+  --c-surface: 30 36 45;
+  --c-surface-strong: 38 45 56;
+  --c-border: rgba(255, 255, 255, 0.1);
+  --c-text-primary: 247 246 242;
+  --c-text-secondary: 161 174 195;
+  --c-text-muted: 112 119 130;
+  --c-trust-primary: 59 130 246;
+  --c-trust-primary-hover: 96 165 250;
+  --c-success: 52 211 153;
+  --c-deadline: 251 191 36;
+  --c-danger: 248 113 113;
+  --c-info: 96 165 250;
+  --c-verified-background: rgba(52, 211, 153, 0.12);
+  --c-deadline-background: rgba(251, 191, 36, 0.12);
 }
 
 html {
@@ -71,70 +90,30 @@ body {
 }
 
 /* ==========================================================================
-   Hero Backdrop — Precision coordinate grid + subtle dark depth
-   ========================================================================== */
-
-.hero-backdrop {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  background-color: #060b14;
-  background-image:
-    radial-gradient(ellipse 70% 40% at 50% 0%, #0d192b 0%, transparent 75%),
-    radial-gradient(circle 500px at 85% 15%, rgba(45, 212, 191, 0.03), transparent 70%);
-}
-
-.hero-backdrop::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(148, 163, 184, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.035) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 90%);
-}
-
-/* ==========================================================================
    Motion System (Restrained, Composited, GPU-Optimized)
    --------------------------------------------------------------------------
    Hover: 140ms ease
    Small state: 180ms ease
    Drawer/Modal: 250ms cubic-bezier(0.16, 1, 0.3, 1)
-   Page entrance: 380ms cubic-bezier(0.16, 1, 0.3, 1)
+   Page entrance: 350ms cubic-bezier(0.16, 1, 0.3, 1)
    Ambient: 14s linear
    ========================================================================== */
 
 .anim-rise {
-  animation: rise 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .anim-fade {
-  animation: fade 0.25s ease-out both;
+  animation: fade 0.22s ease-out both;
 }
 
-/* Radar Precision Animations */
+/* Scientific Editorial Radar Motion */
 @keyframes radar-sweep {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes radar-ring-pulse {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 0.12;
-  }
-  100% {
-    transform: scale(1.15);
-    opacity: 0;
   }
 }
 
@@ -145,83 +124,50 @@ body {
     transform: scale(1);
   }
   92% {
-    opacity: 0.7;
-    transform: scale(1.12);
+    opacity: 0.6;
+    transform: scale(1.1);
   }
   100% {
     opacity: 0;
-    transform: scale(1.22);
+    transform: scale(1);
   }
 }
 
 .animate-radar-sweep {
   animation: radar-sweep 14s linear infinite;
-  transform-origin: 260px 260px;
-}
-
-.animate-radar-ring-pulse {
-  animation: radar-ring-pulse 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  transform-origin: center center;
 }
 
 .animate-detection-blip {
-  animation: detection-blip 14s ease-out infinite;
-  transform-origin: center center;
+  animation: detection-blip 14s ease-in-out infinite;
 }
 
-/* Nav Link Underline */
-.nav-link {
-  position: relative;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  left: 0.6rem;
-  right: 0.6rem;
-  bottom: 0.25rem;
-  height: 2px;
-  border-radius: 1px;
-  background-color: rgb(var(--c-trust-primary));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.14s ease;
-}
-.nav-link:hover::after,
-.nav-link[aria-current='page']::after {
-  transform: scaleX(1);
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Subtle Row Hover */
-.row-hover-subtle {
-  transition:
-    background-color 0.14s ease,
-    border-color 0.14s ease;
-}
-.row-hover-subtle:hover {
-  background-color: rgb(var(--c-surface-strong) / 0.6);
-  border-color: rgb(var(--c-trust-primary) / 0.3);
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
-  ::before,
-  ::after {
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .anim-rise,
-  .anim-fade,
-  .animate-radar-sweep,
-  .animate-radar-ring-pulse,
-  .animate-detection-blip {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .hero-backdrop::before,
-  .hero-backdrop::after {
-    animation: none !important;
   }
 }

@@ -39,11 +39,11 @@ export default async function ClosingSoonPage() {
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       <header className="max-w-3xl mb-8">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-900 dark:text-amber-300 mb-3">
+        <div className="inline-flex items-center gap-1.5 rounded border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-900 dark:text-amber-300 mb-3">
           <Clock className="h-4 w-4" />
           Time-Sensitive Notices
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-display font-bold text-text-primary tracking-tight">
           Closing Soon
         </h1>
         <p className="mt-3 text-sm sm:text-base text-text-secondary leading-relaxed">

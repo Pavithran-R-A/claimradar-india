@@ -154,7 +154,7 @@ export function Header() {
           className="fixed inset-0 z-[100] lg:hidden"
         >
           <div
-            className="fixed inset-0 bg-ink-950/70 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-surface/70 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
