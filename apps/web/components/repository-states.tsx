@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { TriangleAlert, Bell, Eye, FileText, ShieldCheck } from 'lucide-react';
-import { Button } from '@claimradar/design-system';
+import { cn, buttonVariants } from '@claimradar/design-system';
 
 export function DemoDataBanner() {
   return (
@@ -69,62 +69,68 @@ export function EmptyDirectoryNotice({
 
       {/* Discreet 4-Stage Verification Summary */}
       <div className="mt-6 pt-5 border-t border-border text-left">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
           How a notice becomes a listing
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">01</span>
-            <span className="font-semibold text-text-primary block text-[11px]">
+            <span className="font-semibold text-text-primary block text-xs">
               Official notice found
             </span>
-            <span className="text-[10px] text-text-muted">
-              Crawled from SEBI, RBI, IBBI, TRAI, PIB
-            </span>
+            <span className="text-xs text-text-muted">Crawled from SEBI, RBI, IBBI, TRAI, PIB</span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">02</span>
-            <span className="font-semibold text-text-primary block text-[11px]">
-              Source checked
-            </span>
-            <span className="text-[10px] text-text-muted">PDF & order verification</span>
+            <span className="font-semibold text-text-primary block text-xs">Source checked</span>
+            <span className="text-xs text-text-muted">PDF & order verification</span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">03</span>
-            <span className="font-semibold text-text-primary block text-[11px]">
-              Editorial review
-            </span>
-            <span className="text-[10px] text-text-muted">Human verification gate</span>
+            <span className="font-semibold text-text-primary block text-xs">Editorial review</span>
+            <span className="text-xs text-text-muted">Human verification gate</span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">04</span>
-            <span className="font-semibold text-text-primary block text-[11px]">
+            <span className="font-semibold text-text-primary block text-xs">
               Published with official link
             </span>
-            <span className="text-[10px] text-text-muted">Grounded with direct links</span>
+            <span className="text-xs text-text-muted">Grounded with direct links</span>
           </div>
         </div>
       </div>
 
       {showActions && (
         <div className="mt-6 pt-5 border-t border-border flex flex-wrap items-center justify-center gap-3">
-          <Link href="/sources">
-            <Button variant="outline" size="sm" className="rounded-md">
-              <Eye className="mr-1.5 h-3.5 w-3.5" />
-              <span>Monitored authorities</span>
-            </Button>
+          <Link
+            href="/sources"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'sm' }),
+              'rounded-md shadow-xs',
+            )}
+          >
+            <Eye className="mr-1.5 h-3.5 w-3.5" />
+            <span>Monitored authorities</span>
           </Link>
-          <Link href="/editorial-policy">
-            <Button variant="outline" size="sm" className="rounded-md">
-              <FileText className="mr-1.5 h-3.5 w-3.5" />
-              <span>Editorial standards</span>
-            </Button>
+          <Link
+            href="/editorial-policy"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'sm' }),
+              'rounded-md shadow-xs',
+            )}
+          >
+            <FileText className="mr-1.5 h-3.5 w-3.5" />
+            <span>Editorial standards</span>
           </Link>
-          <Link href="/register">
-            <Button variant="default" size="sm" className="rounded-md font-bold">
-              <Bell className="mr-1.5 h-3.5 w-3.5" />
-              <span>Set up email alert</span>
-            </Button>
+          <Link
+            href="/register"
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'sm' }),
+              'rounded-md font-bold shadow-xs',
+            )}
+          >
+            <Bell className="mr-1.5 h-3.5 w-3.5" />
+            <span>Set up email alert</span>
           </Link>
         </div>
       )}

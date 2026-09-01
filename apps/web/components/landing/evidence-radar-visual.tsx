@@ -112,7 +112,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       aria-label="Monitored official sources diagram"
     >
       {/* Editorial Scientific Instrument Outer Frame */}
-      <div className="relative w-full max-w-[440px] aspect-square rounded-md border border-border bg-surface p-4 shadow-sm">
+      <div className="relative w-full max-w-[440px] aspect-square rounded-md border border-border bg-surface p-4 shadow-xs hover:border-border/90 transition-colors duration-180">
         {/* Instrument Header with Mandatory Truth Integrity Microcopy */}
         <div className="flex items-center justify-between border-b border-border pb-2.5 mb-2.5 text-xs text-text-muted">
           <div className="flex items-center gap-1.5">
@@ -130,10 +130,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           aria-label="Radar diagram monitoring SEBI, RBI, IBBI, TRAI, and PIB"
         >
           <defs>
-            {/* Subtle rotating conic sweep trail gradient in deep editorial blue */}
+            {/* Rotating conic sweep trail gradient in deep editorial blue */}
             <radialGradient id="editorialSweepGradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#214E80" stopOpacity="0.12" />
-              <stop offset="70%" stopColor="#214E80" stopOpacity="0.03" />
+              <stop offset="0%" stopColor="#214E80" stopOpacity="0.14" />
+              <stop offset="70%" stopColor="#214E80" stopOpacity="0.04" />
               <stop offset="100%" stopColor="#214E80" stopOpacity="0" />
             </radialGradient>
           </defs>
@@ -206,7 +206,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           />
 
           {/* Radar Sweep Rotating Beam (14s slow sweep) */}
-          <g className="origin-[260px_260px] animate-radar-sweep pointer-events-none">
+          <g className="origin-[260px_260px] animate-radar-sweep pointer-events-none motion-reduce:!animate-none">
             {/* Pie Wedge Beam */}
             <path
               d="M260 260 L490 260 A230 230 0 0 0 422 98 Z"
@@ -251,17 +251,17 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   stroke="#214E80"
                   strokeWidth="2"
                   strokeDasharray="3 3"
-                  className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity"
+                  className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity duration-140"
                 />
 
-                {/* Rare, subtle staggered detection pulse */}
+                {/* Subtle staggered detection pulse */}
                 <circle
                   cx={node.cx}
                   cy={node.cy}
                   r="12"
                   stroke="#214E80"
                   strokeWidth="1"
-                  className="origin-[var(--cx)_var(--cy)] animate-detection-blip pointer-events-none"
+                  className="origin-[var(--cx)_var(--cy)] animate-detection-blip pointer-events-none motion-reduce:!animate-none"
                   style={
                     {
                       '--cx': `${node.cx}px`,
@@ -279,6 +279,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   fill={isSelected ? '#15171A' : '#214E80'}
                   stroke="#FFFFFF"
                   strokeWidth="1.5"
+                  className="transition-transform duration-140 group-hover:scale-125"
                 />
 
                 {/* Authority Code Text Tag */}
@@ -290,7 +291,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   fontSize="12"
                   fontWeight="bold"
                   fontFamily="sans-serif"
-                  className="transition-colors group-hover:fill-text-primary group-focus-visible:fill-text-primary"
+                  className="transition-colors duration-140 group-hover:fill-text-primary group-focus-visible:fill-text-primary"
                 >
                   {node.code}
                 </text>
@@ -322,7 +323,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           aria-live="polite"
           aria-modal="true"
           aria-labelledby="radar-node-title"
-          className="absolute inset-x-2 bottom-2 z-20 rounded-md border border-border bg-surface p-4 shadow-lg text-text-primary animate-in fade-in zoom-in-95 duration-140"
+          style={{
+            animation: 'scale-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both',
+          }}
+          className="absolute inset-x-2 bottom-2 z-20 rounded-md border border-border bg-surface p-4 shadow-lg text-text-primary"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -336,7 +340,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             <button
               type="button"
               onClick={() => setSelectedNode(null)}
-              className="rounded p-1 text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors"
+              className="rounded p-1 text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors duration-140"
               aria-label="Close authority inspector"
             >
               <X className="h-4 w-4" />

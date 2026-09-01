@@ -76,7 +76,7 @@ export function BrandMark({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn(
-        'shrink-0 select-none transition-transform duration-200 hover:scale-105',
+        'shrink-0 select-none transition-transform duration-140 hover:scale-[1.02]',
         className,
       )}
       aria-hidden="true"
@@ -111,27 +111,30 @@ export function BrandMark({
 /* -------------------------------------------------------------------------- */
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none',
+  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-140 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.985] active:translate-y-0 [&_svg]:transition-transform [&_svg]:duration-140',
   {
     variants: {
       variant: {
         default:
-          'bg-trust-primary text-white shadow-sm hover:bg-trust-primary-hover active:bg-trust-primary-hover',
+          'bg-trust-primary text-white shadow-xs hover:bg-trust-primary-hover hover:-translate-y-[1px] hover:shadow-sm active:bg-trust-primary-hover active:shadow-xs [&>svg.lucide-arrow-right]:hover:translate-x-0.5',
         outline:
-          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary hover:text-trust-primary',
-        ghost: 'text-text-secondary hover:bg-surface-strong hover:text-text-primary',
-        secondary: 'bg-surface-strong text-text-primary hover:bg-border/60 hover:text-text-primary',
-        signal: 'bg-trust-primary text-white font-bold shadow-sm hover:bg-trust-primary-hover',
-        danger: 'bg-danger text-white shadow-sm hover:bg-danger/90',
+          'border border-border bg-surface text-text-primary hover:bg-surface-strong hover:border-trust-primary hover:text-trust-primary hover:-translate-y-[1px] shadow-xs active:shadow-xs [&>svg.lucide-arrow-right]:hover:translate-x-0.5',
+        ghost:
+          'text-text-secondary hover:bg-surface-strong hover:text-text-primary hover:-translate-y-[0.5px]',
+        secondary:
+          'bg-surface-strong text-text-primary border border-border/80 hover:bg-border/60 hover:text-text-primary hover:-translate-y-[0.5px]',
+        signal:
+          'bg-trust-primary text-white font-bold shadow-xs hover:bg-trust-primary-hover hover:-translate-y-[1px] hover:shadow-sm active:shadow-xs [&>svg.lucide-arrow-right]:hover:translate-x-0.5',
+        danger: 'bg-danger text-white shadow-xs hover:bg-danger/90 hover:-translate-y-[1px]',
         official:
-          'bg-surface border border-trust-primary text-trust-primary font-semibold hover:bg-trust-primary hover:text-white',
+          'bg-surface border border-trust-primary text-trust-primary font-semibold hover:bg-trust-primary hover:text-white hover:-translate-y-[1px] shadow-xs [&>svg.lucide-arrow-right]:hover:translate-x-0.5',
       },
       size: {
         xs: 'h-7 px-2.5 text-xs gap-1 rounded',
         sm: 'h-9 min-h-[36px] px-3.5 text-xs gap-1.5',
         default: 'h-11 min-h-[44px] px-5 py-2.5 gap-2',
         lg: 'h-12 min-h-[48px] px-7 text-base gap-2.5 rounded-md',
-        icon: 'h-11 w-11 min-h-[44px] min-w-[44px] p-0',
+        icon: 'h-11 w-11 min-h-[44px] min-w-[44px] p-0 hover:scale-[1.04] active:scale-[0.96]',
       },
     },
     defaultVariants: {
@@ -564,13 +567,12 @@ export function Alert({ className, variant, title, children, ...props }: AlertPr
 /* -------------------------------------------------------------------------- */
 
 const authorityStyles: Record<string, string> = {
-  sebi: 'bg-sky-500/10 text-sky-700 border-sky-500/20 dark:bg-sky-500/20 dark:text-sky-300 dark:border-sky-500/30',
-  rbi: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30',
-  ibbi: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
-  trai: 'bg-teal-500/10 text-teal-700 border-teal-500/20 dark:bg-teal-500/20 dark:text-teal-300 dark:border-teal-500/30',
-  pib: 'bg-amber-500/10 text-amber-800 border-amber-500/25 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30',
-  default:
-    'bg-slate-500/10 text-slate-700 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/30',
+  sebi: 'bg-trust-primary/10 text-trust-primary border-trust-primary/25',
+  rbi: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
+  ibbi: 'bg-verified-background text-success border-success/30',
+  trai: 'bg-teal-500/10 text-teal-800 border-teal-500/25',
+  pib: 'bg-deadline-background text-deadline border-deadline/30',
+  default: 'bg-surface-strong text-text-secondary border-border',
 };
 
 export interface AuthorityBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Bell, ArrowRight, ShieldCheck } from 'lucide-react';
-import { Button } from '@claimradar/design-system';
+import { cn, buttonVariants } from '@claimradar/design-system';
 
 export function AccountCta() {
   return (
@@ -21,16 +21,24 @@ export function AccountCta() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/register">
-            <Button variant="default" size="default" className="rounded-md font-bold px-6">
-              <span>Set up email alert</span>
-              <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Button>
+          <Link
+            href="/register"
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'default' }),
+              'rounded-md font-bold px-6 shadow-xs',
+            )}
+          >
+            <span>Set up email alert</span>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
           </Link>
-          <Link href="/login">
-            <Button variant="outline" size="default" className="rounded-md">
-              Sign in to watchlist
-            </Button>
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'default' }),
+              'rounded-md shadow-xs',
+            )}
+          >
+            Sign in to watchlist
           </Link>
         </div>
 

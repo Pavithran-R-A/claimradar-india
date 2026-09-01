@@ -131,7 +131,7 @@ function ClaimableDossier({
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <StatusBadge status={claim.status} />
-            <span className="font-mono text-[11px] text-text-muted">REF: {claim.slug}</span>
+            <span className="font-mono text-xs text-text-muted">REF: {claim.slug}</span>
           </div>
           <span className="text-text-muted">
             Verified:{' '}
@@ -371,9 +371,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
                 <div>
                   <time dateTime={claim.deadlineDate!}>{deadline}</time>
                   {phrase && (
-                    <span className="block text-deadline text-[11px] font-bold mt-0.5">
-                      {phrase}
-                    </span>
+                    <span className="block text-deadline text-xs font-bold mt-0.5">{phrase}</span>
                   )}
                 </div>
               ) : (
@@ -408,10 +406,10 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
 
       {/* Record Provenance Timeline */}
       <div className="rounded-md border border-border bg-surface p-4 text-xs">
-        <span className="font-bold uppercase tracking-wider text-text-muted block mb-2.5 text-[11px]">
+        <span className="font-bold uppercase tracking-wider text-text-muted block mb-2.5 text-xs">
           Record Provenance
         </span>
-        <dl className="space-y-2 text-[11px]">
+        <dl className="space-y-2 text-xs">
           <div className="flex justify-between">
             <dt className="text-text-muted">First Published:</dt>
             <dd className="font-mono text-text-primary">{formatIstDateTime(claim.publishedAt)}</dd>

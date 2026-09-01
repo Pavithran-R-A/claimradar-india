@@ -55,20 +55,20 @@ export function Header() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-trust-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-xl"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-trust-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg"
       >
         Skip to main content
       </a>
 
       <header
         className={cn(
-          'sticky top-0 z-50 transition-all duration-200 border-b',
+          'sticky top-0 z-50 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] border-b h-16',
           scrolled
-            ? 'border-border bg-background/95 backdrop-blur-md shadow-sm'
+            ? 'border-border bg-surface/95 backdrop-blur-md shadow-xs'
             : 'border-border/80 bg-background/90 backdrop-blur-sm',
         )}
       >
-        <div className="mx-auto flex h-16 max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <ClaimRadarBrand size="md" />
 
           <nav className="hidden lg:block" aria-label="Main navigation">
@@ -81,10 +81,10 @@ export function Header() {
                       href={link.href}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        'nav-link rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors duration-150',
+                        'nav-link nav-link-indicator rounded-md px-3.5 py-2 text-sm font-semibold transition-colors duration-140',
                         active
-                          ? 'text-trust-primary bg-surface-strong/80 shadow-xs'
-                          : 'text-text-secondary hover:bg-surface hover:text-text-primary',
+                          ? 'text-trust-primary font-bold'
+                          : 'text-text-secondary hover:text-text-primary',
                       )}
                     >
                       {link.label}
@@ -99,14 +99,14 @@ export function Header() {
             <Link
               href="/claimables"
               aria-label="Search all opportunities"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary hover:bg-surface hover:text-text-primary transition-colors border border-transparent hover:border-border"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-all duration-140 hover:scale-[1.04] active:scale-[0.96] border border-transparent hover:border-border"
             >
               <Search className="h-4 w-4" />
             </Link>
 
             <Link
               href="/login"
-              className="rounded-lg px-3.5 py-2 text-sm font-semibold text-text-secondary hover:bg-surface hover:text-text-primary transition-colors"
+              className="rounded-md px-3.5 py-2 text-sm font-semibold text-text-secondary hover:text-text-primary transition-colors duration-140 hover:-translate-y-[0.5px]"
             >
               Sign in
             </Link>
@@ -115,7 +115,7 @@ export function Header() {
               href="/claimables"
               className={cn(
                 buttonVariants({ variant: 'default', size: 'sm' }),
-                'shadow-sm font-bold',
+                'rounded-md font-bold px-4',
               )}
             >
               <span>Explore claims</span>
@@ -126,7 +126,7 @@ export function Header() {
             <Link
               href="/claimables"
               aria-label="Search all opportunities"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-text-secondary hover:bg-surface hover:text-text-primary transition-colors"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-colors"
             >
               <Search className="h-5 w-5" />
             </Link>
@@ -137,7 +137,7 @@ export function Header() {
               aria-label="Open navigation menu"
               aria-expanded={mobileOpen}
               aria-controls="mobile-navigation-drawer"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-surface text-text-primary hover:bg-surface-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text-primary hover:bg-surface-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -153,13 +153,15 @@ export function Header() {
           aria-label="Site navigation"
           className="fixed inset-0 z-[100] lg:hidden"
         >
+          {/* Backdrop with 180ms ease-out opacity */}
           <div
-            className="fixed inset-0 bg-surface/70 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-text-primary/40 backdrop-blur-xs transition-opacity duration-180 animate-in fade-in ease-out"
             onClick={() => setMobileOpen(false)}
             aria-hidden="true"
           />
 
-          <div className="fixed inset-y-0 right-0 flex w-full max-w-xs flex-col bg-surface p-6 shadow-2xl border-l border-border transition-transform animate-in slide-in-from-right duration-200">
+          {/* Drawer Panel with 260ms translateX & opacity */}
+          <div className="fixed inset-y-0 right-0 flex w-full max-w-xs flex-col bg-surface p-6 shadow-2xl border-l border-border transition-all duration-260 ease-[cubic-bezier(0.16,1,0.3,1)] animate-in slide-in-from-right-6 fade-in-95">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <ClaimRadarBrand size="sm" />
               <button
@@ -167,7 +169,7 @@ export function Header() {
                 type="button"
                 onClick={() => setMobileOpen(false)}
                 aria-label="Close navigation menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-text-secondary hover:bg-surface-strong hover:text-text-primary"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -175,16 +177,20 @@ export function Header() {
 
             <nav className="mt-6 flex-1 overflow-y-auto" aria-label="Mobile navigation links">
               <ul className="space-y-1.5">
-                {navLinks.map((link) => {
+                {navLinks.map((link, idx) => {
                   const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
                   return (
-                    <li key={link.href}>
+                    <li
+                      key={link.href}
+                      style={{ animationDelay: `${idx * 35}ms` }}
+                      className="animate-in slide-in-from-right-2 fade-in duration-200 fill-mode-both"
+                    >
                       <Link
                         href={link.href}
                         aria-current={active ? 'page' : undefined}
                         onClick={() => setMobileOpen(false)}
                         className={cn(
-                          'flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-base font-semibold transition-colors',
+                          'flex min-h-[44px] items-center rounded-md px-4 py-2.5 text-base font-semibold transition-colors duration-140',
                           active
                             ? 'bg-trust-primary/10 text-trust-primary font-bold'
                             : 'text-text-primary hover:bg-surface-strong',
@@ -204,7 +210,7 @@ export function Header() {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   buttonVariants({ variant: 'default', size: 'lg' }),
-                  'w-full justify-center text-sm font-bold min-h-[44px]',
+                  'w-full justify-center text-sm font-bold min-h-[44px] rounded-md',
                 )}
               >
                 Explore all claims
@@ -214,7 +220,7 @@ export function Header() {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'w-full justify-center text-sm font-semibold min-h-[44px]',
+                  'w-full justify-center text-sm font-semibold min-h-[44px] rounded-md',
                 )}
               >
                 Sign in

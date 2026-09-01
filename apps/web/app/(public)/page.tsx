@@ -10,6 +10,7 @@ import { EditorialPrinciples } from '@/components/landing/editorial-principles';
 import { AccountCta } from '@/components/landing/account-cta';
 import { ClaimableCard, ClaimableRow } from '@/components/directory/claimable-card';
 import { DemoDataBanner, EmptyDirectoryNotice } from '@/components/repository-states';
+import { Reveal } from '@/components/motion/reveal';
 import { getPublishedClaimables } from '@/lib/claimables-repository';
 
 export const dynamic = 'force-dynamic';
@@ -102,25 +103,25 @@ export default async function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Dominant Left: Value Proposition & Signature Search */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
-              {/* Human Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.15]">
+              {/* Human Headline with 0ms entrance */}
+              <h1 className="enter-seq-0 text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.15]">
                 Find refunds and claims you may be entitled to.
               </h1>
 
-              {/* Concise Supporting Copy */}
-              <p className="mt-4 text-base sm:text-lg leading-relaxed text-text-secondary max-w-xl">
+              {/* Concise Supporting Copy with 70ms entrance */}
+              <p className="enter-seq-1 mt-4 text-base sm:text-lg leading-relaxed text-text-secondary max-w-xl">
                 Search official Indian notices from regulators and public authorities. We monitor
                 government gazettes, insolvency filings, and court orders for verified claim
                 opportunities.
               </p>
 
-              {/* Dominant Search Input Experience */}
-              <div className="mt-8 w-full max-w-2xl">
+              {/* Dominant Search Input Experience with 140ms entrance */}
+              <div className="enter-seq-2 mt-8 w-full max-w-2xl">
                 <InteractiveHeroSearch />
               </div>
 
-              {/* Understated Independence & Navigation Links */}
-              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-muted">
+              {/* Understated Independence & Navigation Links with 210ms entrance */}
+              <div className="enter-seq-3 mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-muted">
                 <span className="flex items-center gap-1.5 text-text-secondary font-medium">
                   <ShieldCheck className="h-4 w-4 text-trust-primary" />
                   Independent service
@@ -130,7 +131,7 @@ export default async function LandingPage() {
                 </span>
                 <Link
                   href="/claimables"
-                  className="text-trust-primary hover:underline font-semibold transition-colors"
+                  className="text-trust-primary hover:underline font-semibold transition-colors duration-140"
                 >
                   {items.length > 0
                     ? `Browse all verified notices (${items.length})`
@@ -141,16 +142,16 @@ export default async function LandingPage() {
                 </span>
                 <Link
                   href="/editorial-policy"
-                  className="text-text-muted hover:text-text-primary transition-colors"
+                  className="text-text-muted hover:text-text-primary transition-colors duration-140"
                 >
                   Editorial standards
                 </Link>
               </div>
             </div>
 
-            {/* Right: Restrained Official Source Ledger */}
-            <div className="lg:col-span-5 w-full">
-              <div className="rounded-md border border-border bg-surface p-5 shadow-xs">
+            {/* Right: Restrained Official Source Ledger with 260ms entrance */}
+            <div className="enter-seq-4 lg:col-span-5 w-full">
+              <div className="rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-140 hover:border-border/90">
                 <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
                   <div className="flex items-center gap-2">
                     <Landmark className="h-4 w-4 text-trust-primary" />
@@ -162,12 +163,13 @@ export default async function LandingPage() {
                 </div>
 
                 <div className="divide-y divide-border/60">
-                  {MONITORED_AUTHORITIES.map((auth) => (
+                  {MONITORED_AUTHORITIES.map((auth, idx) => (
                     <div
                       key={auth.code}
-                      className="flex items-center justify-between py-2.5 text-xs"
+                      className={`enter-seq-${5 + Math.min(idx, 2)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-140 hover:bg-surface-strong/70`}
                     >
-                      <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-trust-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-140 origin-center" />
+                      <div className="flex items-center gap-2 min-w-0 pr-2 transition-transform duration-140 group-hover:translate-x-1">
                         <span className="font-bold text-text-primary shrink-0">{auth.code}</span>
                         <span className="text-text-muted truncate hidden sm:inline">
                           {auth.name}
@@ -184,7 +186,7 @@ export default async function LandingPage() {
                   <span>Continuous statutory indexing</span>
                   <Link
                     href="/sources"
-                    className="font-semibold text-trust-primary hover:underline"
+                    className="font-semibold text-trust-primary hover:underline transition-colors duration-140"
                   >
                     All sources →
                   </Link>
@@ -205,7 +207,8 @@ export default async function LandingPage() {
       {/* ------------------------------------------------------------------ */}
       {/*  2. VERIFIED OPPORTUNITIES (OR TRUTHFUL EDITORIAL EMPTY STATE)     */}
       {/* ------------------------------------------------------------------ */}
-      <section
+      <Reveal
+        as="section"
         className="mx-auto max-w-content px-4 py-14 sm:px-6 lg:px-8"
         aria-labelledby="latest-opps-heading"
       >
@@ -227,10 +230,10 @@ export default async function LandingPage() {
           </div>
           <Link
             href="/claimables"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover shrink-0"
+            className="group inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover shrink-0 transition-colors duration-140"
           >
             <span>{items.length > 0 ? `View directory (${items.length})` : 'View directory'}</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 transition-transform duration-140 group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -241,179 +244,134 @@ export default async function LandingPage() {
             ))}
           </div>
         ) : (
-          <EmptyDirectoryNotice
-            title="No notice has cleared publication review yet"
-            body="ClaimRadar actively monitors notices from official statutory and government authorities (SEBI, RBI, IBBI, TRAI, and PIB). We deliberately leave this directory empty rather than publish speculative or unverified claims."
-            showActions={true}
-          />
+          <EmptyDirectoryNotice />
         )}
-      </section>
+      </Reveal>
 
       {/* ------------------------------------------------------------------ */}
-      {/*  3. CLOSING SOON (IF ACTIVE TIME-SENSITIVE CLAIMS EXIST)           */}
+      {/*  3. CLOSING SOON STATUTORY DEADLINES                               */}
       {/* ------------------------------------------------------------------ */}
       {closingSoon.length > 0 && (
-        <section
-          className="border-t border-border bg-surface-strong/40 py-14"
-          aria-labelledby="closing-soon-heading"
-        >
+        <Reveal as="section" className="border-t border-border bg-surface-strong/30 py-14">
           <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end mb-8 border-b border-border pb-4">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-deadline">
-                  Time-Sensitive Windows
+                  Statutory Windows
                 </span>
-                <h2
-                  id="closing-soon-heading"
-                  className="mt-1 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight"
-                >
+                <h2 className="text-xl sm:text-2xl font-display font-bold text-text-primary tracking-tight">
                   Closing Soon
                 </h2>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Official claim submission windows with upcoming statutory deadlines.
-                </p>
               </div>
               <Link
                 href="/closing-soon"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-deadline hover:underline shrink-0"
+                className="group text-xs sm:text-sm font-semibold text-trust-primary hover:underline flex items-center gap-1"
               >
-                <span>All upcoming deadlines</span>
-                <ArrowRight className="h-4 w-4" />
+                <span>View all deadlines</span>
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-140 group-hover:translate-x-0.5" />
               </Link>
             </div>
-
-            <div className="space-y-3">
+            <div className="divide-y divide-border rounded-md border border-border bg-surface shadow-xs">
               {closingSoon.map((item) => (
                 <ClaimableRow key={item.id} claim={item} />
               ))}
             </div>
           </div>
-        </section>
+        </Reveal>
       )}
 
       {/* ------------------------------------------------------------------ */}
-      {/*  4. HOW WE VERIFY — Compact Pipeline Narrative + Scientific Radar  */}
+      {/*  4. METHODOLOGY & RADAR SECTION — Relocated Scientific Diagram     */}
       {/* ------------------------------------------------------------------ */}
-      <section
-        className="border-t border-border bg-surface-strong/30 py-16"
-        aria-labelledby="verification-pipeline-heading"
-      >
+      <Reveal as="section" className="border-t border-border bg-surface py-16 sm:py-20">
         <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-8">
-            <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Verification Methodology
-            </span>
-            <h2
-              id="verification-pipeline-heading"
-              className="mt-1 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight"
-            >
-              How ClaimRadar Verifies a Notice
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-text-secondary leading-relaxed">
-              Every listing traces back through four strict verification stages from official source
-              ingestion to direct portal submission.
-            </p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Left: 4-Stage Precision Pipeline Narrative */}
+            <div className="lg:col-span-6 flex flex-col items-start">
+              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
+                Verification Methodology
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-text-primary tracking-tight">
+                How ClaimRadar verifies an official notice.
+              </h2>
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary">
+                Every record in our public index undergoes strict human and cryptographic
+                verification against primary Indian regulatory endpoints.
+              </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7">
-              <EvidenceFlowDiagram />
+              <div className="mt-8 w-full">
+                <EvidenceFlowDiagram />
+              </div>
             </div>
-            <div className="lg:col-span-5 flex justify-center">
+
+            {/* Right: Relocated Scientific Radar Visual */}
+            <div className="lg:col-span-6 flex justify-center w-full">
               <EvidenceRadarVisual />
             </div>
           </div>
-
-          <div className="mt-8 flex items-center justify-between text-xs text-text-muted border-t border-border pt-4">
-            <span>Deterministic verification • Human editorial review</span>
-            <Link
-              href="/methodology"
-              className="font-bold text-trust-primary hover:underline flex items-center gap-1"
-            >
-              Read technical methodology <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* ------------------------------------------------------------------ */}
-      {/*  5. OFFICIAL SOURCES WE MONITOR — Refined Regulatory Ledger        */}
+      {/*  5. MONITORED AUTHORITIES NETWORK                                  */}
       {/* ------------------------------------------------------------------ */}
-      <section
-        className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8 border-t border-border"
-        aria-labelledby="source-network-heading"
-      >
-        <div className="max-w-3xl mb-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-            Statutory Ingestion
-          </span>
-          <h2
-            id="source-network-heading"
-            className="mt-1 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight"
-          >
-            Official Sources We Monitor
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-text-secondary leading-relaxed">
-            ClaimRadar continuously interfaces with authenticated statutory portals, insolvency
-            authorities, securities regulators, and central government bureaus across India.
-          </p>
-        </div>
-
-        <MonitoredSourcesNetwork />
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  6. WHY CLAIMRADAR IS CONSERVATIVE — Editorial Manifesto           */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8 border-t border-border">
-        <EditorialPrinciples />
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  7. WATCHLIST & ALERT SUBSCRIPTION                                 */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8 border-t border-border">
-        <AccountCta />
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  8. FAQ — Clean 2-Column Typographic Layout                        */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        className="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8 border-t border-border"
-        aria-labelledby="faq-heading"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-5">
+      <Reveal as="section" className="border-t border-border bg-background py-16">
+        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mb-8">
             <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Clear Answers
+              Authoritative Coverage
             </span>
-            <h2
-              id="faq-heading"
-              className="mt-1 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight"
-            >
-              Frequently Asked Questions
+            <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
+              Monitored Indian Regulatory Authorities
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-              Common questions regarding our independence, data sources, and how to verify
-              information directly.
+            <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              We track primary regulatory dispatches, gazette notifications, and tribunal orders
+              across union and state authorities.
             </p>
-            <div className="mt-6">
-              <Link
-                href="/faq"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:underline"
-              >
-                <span>View complete FAQ directory</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
           </div>
+          <MonitoredSourcesNetwork />
+        </div>
+      </Reveal>
 
-          <div className="lg:col-span-7">
+      {/* ------------------------------------------------------------------ */}
+      {/*  6. EDITORIAL MANIFESTO                                            */}
+      {/* ------------------------------------------------------------------ */}
+      <Reveal as="section" className="border-t border-border bg-surface py-16">
+        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+          <EditorialPrinciples />
+        </div>
+      </Reveal>
+
+      {/* ------------------------------------------------------------------ */}
+      {/*  7. WATCHLIST ALERT CTA                                            */}
+      {/* ------------------------------------------------------------------ */}
+      <Reveal as="section" className="border-t border-border bg-background py-16">
+        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+          <AccountCta />
+        </div>
+      </Reveal>
+
+      {/* ------------------------------------------------------------------ */}
+      {/*  8. FREQUENTLY ASKED QUESTIONS                                     */}
+      {/* ------------------------------------------------------------------ */}
+      <Reveal as="section" className="border-t border-border bg-surface py-16">
+        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <div className="text-center mb-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
+                Public FAQ
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
+                Frequently Asked Questions
+              </h2>
+              <p className="mt-2 text-sm text-text-secondary">
+                Clear facts on our public directory, independence, and verification standards.
+              </p>
+            </div>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
         </div>
-      </section>
+      </Reveal>
     </>
   );
 }

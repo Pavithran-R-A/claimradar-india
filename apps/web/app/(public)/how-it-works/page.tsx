@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
-import { Button } from '@claimradar/design-system';
+import { cn, buttonVariants } from '@claimradar/design-system';
 
 export default function HowItWorksPage() {
   return (
@@ -169,20 +169,24 @@ export default function HowItWorksPage() {
           Browse verified listings in our directory or create your free watchlist to receive alerts.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link href="/claimables">
-            <Button variant="signal" size="lg" className="rounded-md font-bold">
-              <span>Browse directory</span>
-              <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Button>
+          <Link
+            href="/claimables"
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'lg' }),
+              'rounded-md font-bold shadow-xs',
+            )}
+          >
+            <span>Browse directory</span>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
           </Link>
-          <Link href="/register">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-md border-white/20 bg-white/5 text-white hover:bg-white/10"
-            >
-              Create free alert account
-            </Button>
+          <Link
+            href="/register"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'lg' }),
+              'rounded-md shadow-xs',
+            )}
+          >
+            Create free alert account
           </Link>
         </div>
       </section>
