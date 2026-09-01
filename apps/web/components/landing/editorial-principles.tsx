@@ -1,59 +1,86 @@
 'use client';
 
 import * as React from 'react';
-import { Eye, Lock, FileCheck, XCircle } from 'lucide-react';
-
-const PRINCIPLES = [
-  {
-    icon: XCircle,
-    title: 'Zero Speculative Listings',
-    description:
-      'We reject unverified rumors, social media claims, and uncorroborated blog posts. Every listing must point directly to a verifiable official gazette or regulatory order.',
-  },
-  {
-    icon: FileCheck,
-    title: 'Strict Human Verification',
-    description:
-      'Zero auto-publishing algorithms. An editorial specialist reads every underlying official notice, confirms eligibility criteria, and verifies filing channels.',
-  },
-  {
-    icon: Lock,
-    title: 'Zero Intermediary Representation',
-    description:
-      'We never take a cut of your claim, charge commissions, or act as legal proxies. We point you directly to the official government filing portal.',
-  },
-  {
-    icon: Eye,
-    title: 'Transparent Provenance',
-    description:
-      'Every claim dossier lists the original regulator order number, publishing authority, date of gazette notification, and direct source link.',
-  },
-];
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export function EditorialPrinciples() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {PRINCIPLES.map((principle) => {
-        const Icon = principle.icon;
-        return (
-          <div
-            key={principle.title}
-            className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-6 shadow-card transition-all duration-150 hover:shadow-lift"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-trust-primary/10 text-trust-primary border border-trust-primary/20">
-              <Icon className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-text-primary tracking-tight">
-                {principle.title}
-              </h3>
-              <p className="mt-1.5 text-xs sm:text-sm text-text-secondary leading-relaxed">
-                {principle.description}
-              </p>
+    <div className="w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Manifesto Headline */}
+        <div className="lg:col-span-5">
+          <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
+            Our Standard
+          </span>
+          <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight leading-snug">
+            Why ClaimRadar Publishes Less, Not More.
+          </h2>
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-text-secondary">
+            Most claim portals flood consumers with speculative class actions and AI-hallucinated
+            estimates. ClaimRadar is built on strict investigative verification.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/editorial-policy"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:underline"
+            >
+              <span>Read our complete editorial policy</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Right Column: 3 Clear Pillars (Hairline dividers, no heavy card stacks) */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="border-b border-border pb-6">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">01</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  100% Grounded in Official Regulatory Documents
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  We never publish rumors, social media claims, or press speculation. Every
+                  opportunity is extracted directly from gazettes, court orders, or statutory
+                  regulatory circulars.
+                </p>
+              </div>
             </div>
           </div>
-        );
-      })}
+
+          <div className="border-b border-border pb-6">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">02</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  Strict Zero-Speculation Publication Gate
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  If an order does not establish a clear refund mechanism or claim filing window, we
+                  do not publish it. We would rather have an empty directory than mislead one
+                  citizen.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pb-2">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">03</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  Direct Official Action, No Legal Intermediation
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  We do not take cuts, manage escrow, or file claims on your behalf. We direct you
+                  straight to the authenticated government or company submission portal.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

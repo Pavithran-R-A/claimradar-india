@@ -2,15 +2,15 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ArrowRight, X, Sparkles } from 'lucide-react';
+import { Search, ArrowRight, X } from 'lucide-react';
 import { Button } from '@claimradar/design-system';
 
-const SEARCH_EXAMPLES = [
+const COMMON_LOOKUPS = [
   'PACL India',
   'Sahara refund',
   'SEBI recovery',
   'Fixed deposit claim',
-  'IBBI insolvency notice',
+  'IBBI insolvency',
 ];
 
 export function InteractiveHeroSearch() {
@@ -37,22 +37,22 @@ export function InteractiveHeroSearch() {
     e.preventDefault();
     const trimmed = query.trim();
     if (trimmed) {
-      router.push(`/claimables?q=${encodeURIComponent(trimmed)}`);
+      router.push(`/claimables?search=${encodeURIComponent(trimmed)}`);
     } else {
       router.push('/claimables');
     }
   };
 
-  const handleExampleClick = (example: string) => {
-    setQuery(example);
-    router.push(`/claimables?q=${encodeURIComponent(example)}`);
+  const handleLookup = (term: string) => {
+    setQuery(term);
+    router.push(`/claimables?search=${encodeURIComponent(term)}`);
   };
 
   return (
     <div className="w-full">
       <form
         onSubmit={handleSubmit}
-        className="relative flex w-full flex-col gap-2.5 sm:flex-row items-stretch"
+        className="relative flex w-full flex-col sm:flex-row items-stretch gap-2"
       >
         <div className="relative flex-1 group">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-brand-bright transition-colors">
@@ -68,20 +68,20 @@ export function InteractiveHeroSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search company, regulator, or notice (e.g. PACL, Sahara, SEBI)"
-            className="h-13 w-full rounded-xl border border-white/20 bg-ink-900/95 pl-11 pr-16 text-base text-white placeholder:text-slate-400 focus:border-brand-bright focus:outline-none focus:ring-2 focus:ring-brand-bright/40 transition-all shadow-lg"
+            className="h-12 w-full rounded-md border border-white/20 bg-ink-900/90 pl-11 pr-14 text-base text-white placeholder:text-slate-400 focus:border-brand-bright focus:outline-none focus:ring-2 focus:ring-brand-bright/30 transition-colors shadow-inner"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery('')}
-              className="absolute inset-y-0 right-3 my-auto flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:text-white hover:bg-white/10"
+              className="absolute inset-y-0 right-3 my-auto flex h-7 w-7 items-center justify-center rounded text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
             </button>
           ) : (
             <div className="pointer-events-none absolute inset-y-0 right-3.5 hidden sm:flex items-center">
-              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-xs font-mono text-slate-300">
+              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[11px] font-mono text-slate-300">
                 /
               </kbd>
             </div>
@@ -90,27 +90,25 @@ export function InteractiveHeroSearch() {
         <Button
           type="submit"
           variant="signal"
-          size="lg"
-          className="h-13 min-h-[52px] rounded-xl px-7 text-sm font-bold text-ink-950 sm:w-auto shadow-md hover:shadow-xl transition-all"
+          size="default"
+          className="h-12 px-6 rounded-md text-sm font-bold text-ink-950 sm:w-auto shadow-sm transition-all"
         >
           <span>Search notices</span>
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <ArrowRight className="ml-1.5 h-4 w-4" />
         </Button>
       </form>
 
-      <div className="mt-3.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-300">
-        <span className="text-slate-400 font-medium flex items-center gap-1">
-          <Sparkles className="h-3 w-3 text-brand-bright" />
-          Common lookups:
-        </span>
-        {SEARCH_EXAMPLES.map((example) => (
+      {/* Understated Common Lookups */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-400">
+        <span className="text-slate-500 font-medium">Common searches:</span>
+        {COMMON_LOOKUPS.map((term) => (
           <button
-            key={example}
+            key={term}
             type="button"
-            onClick={() => handleExampleClick(example)}
-            className="rounded-md bg-white/[0.06] border border-white/10 px-2 py-0.5 text-slate-200 font-medium transition-all hover:bg-brand-bright/20 hover:border-brand-bright/40 hover:text-brand-bright"
+            onClick={() => handleLookup(term)}
+            className="rounded border border-white/10 bg-white/[0.04] px-2 py-0.5 text-slate-300 font-medium transition-colors hover:border-brand-bright/40 hover:bg-brand-bright/10 hover:text-brand-bright"
           >
-            {example}
+            {term}
           </button>
         ))}
       </div>

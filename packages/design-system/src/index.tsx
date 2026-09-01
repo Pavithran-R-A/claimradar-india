@@ -131,7 +131,7 @@ export const buttonVariants = cva(
         xs: 'h-7 px-2.5 text-xs gap-1 rounded',
         sm: 'h-9 min-h-[36px] px-3.5 text-xs gap-1.5',
         default: 'h-11 min-h-[44px] px-5 py-2.5 gap-2',
-        lg: 'h-12 min-h-[48px] px-7 text-base gap-2.5 rounded-xl',
+        lg: 'h-12 min-h-[48px] px-7 text-base gap-2.5 rounded-md',
         icon: 'h-11 w-11 min-h-[44px] min-w-[44px] p-0',
       },
     },
@@ -209,7 +209,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-card border transition-all duration-150',
+          'rounded-md border transition-all duration-140',
           variant === 'default' && 'bg-surface border-border shadow-card',
           variant === 'elevated' && 'bg-surface border-border shadow-lift',
           variant === 'sunken' && 'bg-background-elevated border-border/60 shadow-none',
@@ -291,7 +291,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           type={type}
           className={cn(
-            'h-11 min-h-[44px] w-full rounded-lg border border-border bg-surface px-3.5 text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            'h-11 min-h-[44px] w-full rounded-md border border-border bg-surface px-3.5 text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
             isErr && 'border-danger focus:border-danger focus:ring-danger/20',
             className,
           )}
@@ -332,7 +332,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           id={selectId}
           ref={ref}
           className={cn(
-            'h-11 min-h-[44px] w-full appearance-none rounded-lg border border-border bg-surface px-3.5 text-base sm:text-sm text-text-primary focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            'h-11 min-h-[44px] w-full appearance-none rounded-md border border-border bg-surface px-3.5 text-base sm:text-sm text-text-primary focus:border-trust-primary focus:outline-none focus:ring-2 focus:ring-trust-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
             error && 'border-danger focus:border-danger focus:ring-danger/20',
             className,
           )}

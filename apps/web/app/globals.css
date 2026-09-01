@@ -3,44 +3,44 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   ClaimRadar design tokens — Civic Intelligence × Premium Financial Product
+   ClaimRadar design tokens — Editorial Intelligence × Precision Instrument
    --------------------------------------------------------------------------
-   `:root` carries the dark theme (authenticated app shell, admin).
+   `:root` carries the dark theme (authenticated app shell, admin, hero).
    `.theme-light` remaps semantic variables for the public consumer site.
    ========================================================================== */
 
 :root {
-  --c-background: 7 11 20; /* #070B14 */
-  --c-background-elevated: 11 17 32; /* #0B1120 */
-  --c-surface: 16 24 39; /* #101827 */
-  --c-surface-strong: 21 31 50; /* #151F32 */
-  --c-border: rgba(255, 255, 255, 0.09);
-  --c-text-primary: 247 248 251; /* #F7F8FB */
-  --c-text-secondary: 167 176 192; /* #A7B0C0 */
-  --c-text-muted: 119 129 151; /* #778197 */
-  --c-trust-primary: 115 135 255; /* #7387FF */
-  --c-trust-primary-hover: 135 152 255; /* #8798FF */
-  --c-success: 40 198 162; /* #28C6A2 */
-  --c-deadline: 244 163 64; /* #F4A340 */
-  --c-danger: 255 107 114; /* #FF6B72 */
-  --c-info: 93 183 255; /* #5DB7FF */
-  --c-verified-background: rgba(40, 198, 162, 0.12);
-  --c-deadline-background: rgba(244, 163, 64, 0.12);
+  --c-background: 6 11 20; /* #060B14 */
+  --c-background-elevated: 10 19 33; /* #0A1321 */
+  --c-surface: 14 24 40; /* #0E1828 */
+  --c-surface-strong: 19 33 54; /* #132136 */
+  --c-border: rgba(255, 255, 255, 0.08);
+  --c-text-primary: 248 250 252; /* #F8FAFC */
+  --c-text-secondary: 161 174 195; /* #A1AEC3 */
+  --c-text-muted: 100 116 139; /* #64748B */
+  --c-trust-primary: 45 212 191; /* #2DD4BF */
+  --c-trust-primary-hover: 94 234 212; /* #5EEAD4 */
+  --c-success: 52 211 153; /* #34D399 */
+  --c-deadline: 251 191 36; /* #FBBF24 */
+  --c-danger: 248 113 113; /* #F87171 */
+  --c-info: 96 165 250; /* #60A5FA */
+  --c-verified-background: rgba(52, 211, 153, 0.12);
+  --c-deadline-background: rgba(251, 191, 36, 0.12);
 }
 
 .theme-light {
   --c-background: 248 250 252; /* #F8FAFC crisp off-white */
   --c-background-elevated: 241 245 249; /* #F1F5F9 slate-100 */
-  --c-surface: 255 255 255; /* #FFFFFF crisp white */
+  --c-surface: 255 255 255; /* #FFFFFF clean paper */
   --c-surface-strong: 241 245 249; /* #F1F5F9 */
   --c-border: rgba(15, 23, 42, 0.08);
   --c-text-primary: 15 23 42; /* #0F172A slate-900 */
   --c-text-secondary: 51 65 85; /* #334155 slate-700 (9.2:1 contrast) */
-  --c-text-muted: 71 85 105; /* #475569 slate-600 (5.8:1 contrast) */
-  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (high-trust action) */
+  --c-text-muted: 100 116 139; /* #64748B slate-500 (5.4:1 contrast) */
+  --c-trust-primary: 15 118 110; /* #0F766E teal-700 (high-trust editorial) */
   --c-trust-primary-hover: 17 94 89; /* #115E59 teal-800 */
   --c-success: 4 120 87; /* #047857 emerald-700 */
-  --c-deadline: 180 83 9; /* #B45309 amber-700 (time-sensitive) */
+  --c-deadline: 180 83 9; /* #B45309 amber-700 */
   --c-danger: 185 28 28; /* #B91C1C red-700 */
   --c-info: 29 78 216; /* #1D4ED8 blue-700 */
   --c-verified-background: rgba(4, 120, 87, 0.08);
@@ -52,12 +52,6 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 17px;
-  }
-}
-
 body {
   background-color: rgb(var(--c-background));
   color: rgb(var(--c-text-primary));
@@ -65,14 +59,19 @@ body {
   line-height: 1.6;
 }
 
-/* High-visibility focus indicators */
+/* High-contrast precision focus indicators */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid rgb(var(--c-trust-primary));
-  outline-offset: 3px;
+  outline-offset: 2px;
+}
+
+/* Editorial display typography */
+.font-display {
+  font-family: var(--font-newsreader), Georgia, serif;
 }
 
 /* ==========================================================================
-   Hero Backdrop — Precision coordinate grid + subtle ambient depth
+   Hero Backdrop — Precision coordinate grid + subtle dark depth
    ========================================================================== */
 
 .hero-backdrop {
@@ -82,8 +81,8 @@ body {
   pointer-events: none;
   background-color: #060b14;
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, #101d31 0%, transparent 80%),
-    radial-gradient(circle 600px at 80% 20%, rgba(45, 212, 191, 0.04), transparent 70%);
+    radial-gradient(ellipse 70% 40% at 50% 0%, #0d192b 0%, transparent 75%),
+    radial-gradient(circle 500px at 85% 15%, rgba(45, 212, 191, 0.03), transparent 70%);
 }
 
 .hero-backdrop::after {
@@ -91,38 +90,31 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, transparent 95%);
+    linear-gradient(rgba(148, 163, 184, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 90%);
 }
 
 /* ==========================================================================
-   Motion System Utilities (Restrained, Composited, GPU-Optimized)
+   Motion System (Restrained, Composited, GPU-Optimized)
+   --------------------------------------------------------------------------
+   Hover: 140ms ease
+   Small state: 180ms ease
+   Drawer/Modal: 250ms cubic-bezier(0.16, 1, 0.3, 1)
+   Page entrance: 380ms cubic-bezier(0.16, 1, 0.3, 1)
+   Ambient: 14s linear
    ========================================================================== */
 
 .anim-rise {
-  animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: rise 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .anim-fade {
-  animation: fade 0.4s ease-out both;
+  animation: fade 0.25s ease-out both;
 }
 
-.anim-delay-1 {
-  animation-delay: 80ms;
-}
-.anim-delay-2 {
-  animation-delay: 160ms;
-}
-.anim-delay-3 {
-  animation-delay: 240ms;
-}
-.anim-delay-4 {
-  animation-delay: 320ms;
-}
-
-/* Radar Signature Animations */
+/* Radar Precision Animations */
 @keyframes radar-sweep {
   0% {
     transform: rotate(0deg);
@@ -132,44 +124,48 @@ body {
   }
 }
 
-@keyframes radar-pulse-ring {
+@keyframes radar-ring-pulse {
   0% {
-    transform: scale(0.9);
-    opacity: 0.8;
+    transform: scale(0.95);
+    opacity: 0.45;
   }
   50% {
-    opacity: 0.3;
+    opacity: 0.12;
   }
   100% {
-    transform: scale(1.35);
+    transform: scale(1.15);
     opacity: 0;
   }
 }
 
-@keyframes beacon-ping {
-  0% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  75%,
-  100% {
-    transform: scale(2.4);
+@keyframes detection-blip {
+  0%,
+  88% {
     opacity: 0;
+    transform: scale(1);
+  }
+  92% {
+    opacity: 0.7;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.22);
   }
 }
 
 .animate-radar-sweep {
-  animation: radar-sweep 8s linear infinite;
+  animation: radar-sweep 14s linear infinite;
   transform-origin: 260px 260px;
 }
 
 .animate-radar-ring-pulse {
-  animation: radar-pulse-ring 3.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  animation: radar-ring-pulse 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   transform-origin: center center;
 }
 
-.animate-beacon-ping {
-  animation: beacon-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+.animate-detection-blip {
+  animation: detection-blip 14s ease-out infinite;
   transform-origin: center center;
 }
 
@@ -180,32 +176,30 @@ body {
 .nav-link::after {
   content: '';
   position: absolute;
-  left: 0.75rem;
-  right: 0.75rem;
+  left: 0.6rem;
+  right: 0.6rem;
   bottom: 0.25rem;
   height: 2px;
   border-radius: 1px;
   background-color: rgb(var(--c-trust-primary));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1);
+  transition: transform 0.14s ease;
 }
 .nav-link:hover::after,
 .nav-link[aria-current='page']::after {
   transform: scaleX(1);
 }
 
-/* Card Hover Elevation */
-.card-hover-lift {
+/* Subtle Row Hover */
+.row-hover-subtle {
   transition:
-    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+    background-color 0.14s ease,
+    border-color 0.14s ease;
 }
-.card-hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -10px rgba(15, 23, 42, 0.12);
-  border-color: rgba(15, 118, 110, 0.35);
+.row-hover-subtle:hover {
+  background-color: rgb(var(--c-surface-strong) / 0.6);
+  border-color: rgb(var(--c-trust-primary) / 0.3);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -221,8 +215,7 @@ body {
   .anim-fade,
   .animate-radar-sweep,
   .animate-radar-ring-pulse,
-  .animate-beacon-ping,
-  .animate-beacon-pulse {
+  .animate-detection-blip {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
