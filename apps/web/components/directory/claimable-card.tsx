@@ -22,7 +22,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
   const isClosingSoon = claim.status === 'closing_soon';
 
   return (
-    <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-all duration-140 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
+    <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
       <div>
         {/* Top Badges: Status + Sector */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -35,7 +35,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
         </div>
 
         {/* 1. What is the opportunity? */}
-        <h3 className="text-base sm:text-lg font-bold leading-snug text-text-primary group-hover:text-trust-primary transition-colors duration-140">
+        <h3 className="text-base sm:text-lg font-bold leading-snug text-text-primary group-hover:text-trust-primary transition-colors duration-fast">
           <Link
             href={`/claimables/${claim.slug}`}
             className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -92,7 +92,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
             <ShieldCheck className="h-3.5 w-3.5 text-success" />
             Verified official source
           </span>
-          <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-140">
+          <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-fast">
             View dossier <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
@@ -107,7 +107,7 @@ export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
   const isClosingSoon = claim.status === 'closing_soon';
 
   return (
-    <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-all duration-140 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">
+    <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -119,7 +119,7 @@ export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
               </span>
             )}
           </div>
-          <h3 className="text-base font-bold text-text-primary group-hover:text-trust-primary transition-colors duration-140">
+          <h3 className="text-base font-bold text-text-primary group-hover:text-trust-primary transition-colors duration-fast">
             <Link
               href={`/claimables/${claim.slug}`}
               className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -146,7 +146,7 @@ export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
           ) : (
             <span className="text-text-muted">No deadline</span>
           )}
-          <span className="inline-flex items-center gap-1 font-bold text-trust-primary group-hover:translate-x-1 transition-transform duration-140">
+          <span className="inline-flex items-center gap-1 font-bold text-trust-primary group-hover:translate-x-1 transition-transform duration-fast">
             View <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>

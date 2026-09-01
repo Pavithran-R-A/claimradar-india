@@ -52,6 +52,25 @@ module.exports = {
           dark: '#171C23',
         },
       },
+      boxShadow: {
+        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      transitionTimingFunction: {
+        standard: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        out: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'in-out': 'cubic-bezier(0.65, 0, 0.35, 1)',
+      },
+      transitionDuration: {
+        instant: '100ms',
+        fast: '140ms',
+        ui: '180ms',
+        panel: '260ms',
+        enter: '380ms',
+        editorial: '520ms',
+      },
     },
   },
 };

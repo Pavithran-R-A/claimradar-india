@@ -34,7 +34,7 @@ export function ClaimRadarBrand({
         size={isSm ? 26 : isLg ? 36 : 30}
         variant={theme === 'dark' ? 'default' : theme === 'light' ? 'light' : 'default'}
         animated={false}
-        className="transition-transform duration-200 group-hover:scale-105"
+        className="transition-transform duration-ui group-hover:scale-105"
       />
       <div className="flex flex-col leading-none">
         <span

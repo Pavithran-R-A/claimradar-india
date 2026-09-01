@@ -80,7 +80,7 @@ export function MonitoredSourcesNetwork() {
             {SOURCES.map((source) => (
               <tr
                 key={source.code}
-                className="row-hover-subtle transition-colors duration-140 text-text-primary"
+                className="row-hover-subtle transition-colors duration-fast text-text-primary"
               >
                 <td className="py-3.5 px-4">
                   <div className="flex items-center gap-2">

@@ -47,11 +47,11 @@ export function InteractiveHeroSearch() {
     <div className="w-full">
       <form
         onSubmit={handleSubmit}
-        className="group relative flex w-full flex-col sm:flex-row items-stretch gap-2.5 rounded-lg border border-border bg-surface p-2 shadow-xs transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-border/90 hover:shadow-sm focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20 focus-within:shadow-sm focus-within:-translate-y-[1px]"
+        className="group relative flex w-full flex-col sm:flex-row items-stretch gap-2.5 rounded-lg border border-border bg-surface p-2 shadow-xs transition-all duration-ui ease-out hover:border-border/90 hover:shadow-sm focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20 focus-within:shadow-sm focus-within:-translate-y-[1px]"
       >
         <div className="relative flex-1 flex items-center min-w-0">
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 z-10 transition-colors duration-140"
+            className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 z-10 transition-colors duration-fast"
             style={{
               color: isFocused ? 'rgb(var(--c-trust-primary))' : 'rgb(var(--c-text-muted))',
             }}
@@ -80,7 +80,7 @@ export function InteractiveHeroSearch() {
                 setQuery('');
                 inputRef.current?.focus();
               }}
-              className="absolute inset-y-0 right-2 my-auto flex h-7 w-7 items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-strong transition-all duration-140 hover:scale-110 active:scale-95 animate-in fade-in zoom-in-95"
+              className="search-clear-enter absolute inset-y-0 right-2 my-auto flex h-7 w-7 items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-strong transition-all duration-fast hover:scale-110 active:scale-95"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -97,10 +97,10 @@ export function InteractiveHeroSearch() {
           type="submit"
           variant="default"
           size="default"
-          className="h-12 sm:h-14 px-7 rounded-md text-sm font-bold text-white sm:w-auto shadow-xs transition-all duration-140 shrink-0"
+          className="h-12 sm:h-14 px-7 rounded-md text-sm font-bold text-white sm:w-auto shadow-xs transition-all duration-fast shrink-0"
         >
           <span>Search notices</span>
-          <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-140 group-hover:translate-x-0.5" />
+          <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-0.5" />
         </Button>
       </form>
 
@@ -112,7 +112,7 @@ export function InteractiveHeroSearch() {
             <button
               type="button"
               onClick={() => handleLookup(term)}
-              className="text-text-secondary hover:text-trust-primary hover:underline transition-colors duration-140 cursor-pointer"
+              className="text-text-secondary hover:text-trust-primary hover:underline transition-colors duration-fast cursor-pointer"
             >
               {term}
             </button>

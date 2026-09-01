@@ -65,7 +65,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs select-none transition-colors duration-140',
+        'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs select-none transition-colors duration-fast',
         config.className,
         className,
       )}
@@ -86,7 +86,7 @@ export function MetaPill({
   className?: string;
 }) {
   const base =
-    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-all duration-140 hover:border-trust-primary hover:text-trust-primary';
+    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-all duration-fast hover:border-trust-primary hover:text-trust-primary';
 
   if (href) {
     return (

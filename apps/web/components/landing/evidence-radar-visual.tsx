@@ -112,7 +112,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
       aria-label="Monitored official sources diagram"
     >
       {/* Editorial Scientific Instrument Outer Frame */}
-      <div className="relative w-full max-w-[440px] aspect-square rounded-md border border-border bg-surface p-4 shadow-xs hover:border-border/90 transition-colors duration-180">
+      <div className="relative w-full max-w-[440px] aspect-square rounded-md border border-border bg-surface p-4 shadow-xs hover:border-border/90 transition-colors duration-ui">
         {/* Instrument Header with Mandatory Truth Integrity Microcopy */}
         <div className="flex items-center justify-between border-b border-border pb-2.5 mb-2.5 text-xs text-text-muted">
           <div className="flex items-center gap-1.5">
@@ -234,7 +234,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                 tabIndex={0}
                 aria-label={`View details for ${node.code}: ${node.name}`}
                 aria-expanded={isSelected}
-                className="cursor-pointer transition-all duration-140 group focus-visible:outline-none"
+                className="cursor-pointer transition-all duration-fast group focus-visible:outline-none"
                 onClick={() => setSelectedNode(isSelected ? null : node)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -251,7 +251,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   stroke="#214E80"
                   strokeWidth="2"
                   strokeDasharray="3 3"
-                  className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity duration-140"
+                  className="opacity-0 group-focus-visible:opacity-100 group-focus:opacity-100 transition-opacity duration-fast"
                 />
 
                 {/* Subtle staggered detection pulse */}
@@ -279,7 +279,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   fill={isSelected ? '#15171A' : '#214E80'}
                   stroke="#FFFFFF"
                   strokeWidth="1.5"
-                  className="transition-transform duration-140 group-hover:scale-125"
+                  className="transition-transform duration-fast group-hover:scale-125"
                 />
 
                 {/* Authority Code Text Tag */}
@@ -291,7 +291,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   fontSize="12"
                   fontWeight="bold"
                   fontFamily="sans-serif"
-                  className="transition-colors duration-140 group-hover:fill-text-primary group-focus-visible:fill-text-primary"
+                  className="transition-colors duration-fast group-hover:fill-text-primary group-focus-visible:fill-text-primary"
                 >
                   {node.code}
                 </text>
@@ -340,7 +340,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             <button
               type="button"
               onClick={() => setSelectedNode(null)}
-              className="rounded p-1 text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors duration-140"
+              className="rounded p-1 text-text-muted hover:text-text-primary hover:bg-surface-strong transition-colors duration-fast"
               aria-label="Close authority inspector"
             >
               <X className="h-4 w-4" />

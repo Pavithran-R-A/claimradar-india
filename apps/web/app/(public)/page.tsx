@@ -131,7 +131,7 @@ export default async function LandingPage() {
                 </span>
                 <Link
                   href="/claimables"
-                  className="text-trust-primary hover:underline font-semibold transition-colors duration-140"
+                  className="text-trust-primary hover:underline font-semibold transition-colors duration-fast"
                 >
                   {items.length > 0
                     ? `Browse all verified notices (${items.length})`
@@ -142,7 +142,7 @@ export default async function LandingPage() {
                 </span>
                 <Link
                   href="/editorial-policy"
-                  className="text-text-muted hover:text-text-primary transition-colors duration-140"
+                  className="text-text-muted hover:text-text-primary transition-colors duration-fast"
                 >
                   Editorial standards
                 </Link>
@@ -151,7 +151,7 @@ export default async function LandingPage() {
 
             {/* Right: Restrained Official Source Ledger with 260ms entrance */}
             <div className="enter-seq-4 lg:col-span-5 w-full">
-              <div className="rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-140 hover:border-border/90">
+              <div className="rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-fast hover:border-border/90">
                 <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
                   <div className="flex items-center gap-2">
                     <Landmark className="h-4 w-4 text-trust-primary" />
@@ -166,10 +166,10 @@ export default async function LandingPage() {
                   {MONITORED_AUTHORITIES.map((auth, idx) => (
                     <div
                       key={auth.code}
-                      className={`enter-seq-${5 + Math.min(idx, 2)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-140 hover:bg-surface-strong/70`}
+                      className={`enter-seq-${5 + Math.min(idx, 2)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-fast hover:bg-surface-strong/70`}
                     >
-                      <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-trust-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-140 origin-center" />
-                      <div className="flex items-center gap-2 min-w-0 pr-2 transition-transform duration-140 group-hover:translate-x-1">
+                      <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-trust-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-fast origin-center" />
+                      <div className="flex items-center gap-2 min-w-0 pr-2 transition-transform duration-fast group-hover:translate-x-1">
                         <span className="font-bold text-text-primary shrink-0">{auth.code}</span>
                         <span className="text-text-muted truncate hidden sm:inline">
                           {auth.name}
@@ -186,7 +186,7 @@ export default async function LandingPage() {
                   <span>Continuous statutory indexing</span>
                   <Link
                     href="/sources"
-                    className="font-semibold text-trust-primary hover:underline transition-colors duration-140"
+                    className="font-semibold text-trust-primary hover:underline transition-colors duration-fast"
                   >
                     All sources →
                   </Link>
@@ -230,10 +230,10 @@ export default async function LandingPage() {
           </div>
           <Link
             href="/claimables"
-            className="group inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover shrink-0 transition-colors duration-140"
+            className="group inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover shrink-0 transition-colors duration-fast"
           >
             <span>{items.length > 0 ? `View directory (${items.length})` : 'View directory'}</span>
-            <ArrowRight className="h-4 w-4 transition-transform duration-140 group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -268,7 +268,7 @@ export default async function LandingPage() {
                 className="group text-xs sm:text-sm font-semibold text-trust-primary hover:underline flex items-center gap-1"
               >
                 <span>View all deadlines</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-140 group-hover:translate-x-0.5" />
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-fast group-hover:translate-x-0.5" />
               </Link>
             </div>
             <div className="divide-y divide-border rounded-md border border-border bg-surface shadow-xs">

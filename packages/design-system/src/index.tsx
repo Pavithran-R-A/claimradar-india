@@ -76,7 +76,7 @@ export function BrandMark({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn(
-        'shrink-0 select-none transition-transform duration-140 hover:scale-[1.02]',
+        'shrink-0 select-none transition-transform duration-fast hover:scale-[1.02]',
         className,
       )}
       aria-hidden="true"
@@ -111,7 +111,7 @@ export function BrandMark({
 /* -------------------------------------------------------------------------- */
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-140 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.985] active:translate-y-0 [&_svg]:transition-transform [&_svg]:duration-140',
+  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-fast ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.985] active:translate-y-0 [&_svg]:transition-transform [&_svg]:duration-fast',
   {
     variants: {
       variant: {
@@ -211,7 +211,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-md border transition-all duration-140',
+          'rounded-md border transition-all duration-fast',
           variant === 'default' && 'bg-surface border-border shadow-card',
           variant === 'elevated' && 'bg-surface border-border shadow-lift',
           variant === 'sunken' && 'bg-background-elevated border-border/60 shadow-none',

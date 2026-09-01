@@ -18,11 +18,11 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
     <div className="mx-auto max-w-3xl divide-y divide-border">
       {items.map((item, i) => (
         <details key={i} className="group py-4 transition-colors">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-2 text-left text-base font-semibold text-text-primary hover:text-trust-primary transition-colors duration-140 [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-2 text-left text-base font-semibold text-text-primary hover:text-trust-primary transition-colors duration-fast [&::-webkit-details-marker]:hidden">
             <span>{item.question}</span>
             <ChevronDown
               aria-hidden
-              className="faq-chevron h-5 w-5 shrink-0 text-text-muted transition-transform duration-180 group-open:rotate-180 motion-reduce:transition-none"
+              className="faq-chevron h-5 w-5 shrink-0 text-text-muted transition-transform duration-ui group-open:rotate-180 motion-reduce:transition-none"
             />
           </summary>
           <div className="faq-content mt-2 text-sm leading-relaxed text-text-secondary">
