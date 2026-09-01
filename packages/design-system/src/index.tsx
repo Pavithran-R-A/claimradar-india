@@ -665,5 +665,122 @@ export function DecisionCallout({
 }
 
 /* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*  Proprietary Visual Primitives: EvidenceThread, SourceStamp, DeadlineTick  */
+/* -------------------------------------------------------------------------- */
+
+export interface EvidenceThreadProps extends React.HTMLAttributes<HTMLDivElement> {
+  activeStage?: 1 | 2 | 3 | 4;
+}
+
+export function EvidenceThread({ className, activeStage = 4, ...props }: EvidenceThreadProps) {
+  return (
+    <div
+      className={cn('relative flex items-center justify-between w-full select-none', className)}
+      aria-label="Evidence thread: source to verified official action"
+      {...props}
+    >
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-border pointer-events-none" />
+      <div
+        className="absolute left-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-trust-primary transition-all duration-ui pointer-events-none"
+        style={{ width: `${(activeStage / 4) * 100}%` }}
+      />
+      {[
+        { stage: 1, label: 'Source' },
+        { stage: 2, label: 'Evidence' },
+        { stage: 3, label: 'Verified' },
+        { stage: 4, label: 'Official Action' },
+      ].map((s) => (
+        <div
+          key={s.stage}
+          className="relative z-10 flex flex-col items-center gap-1 bg-surface px-1"
+        >
+          <div
+            className={cn(
+              'h-2.5 w-2.5 rounded-full border-2 transition-colors duration-fast',
+              s.stage <= activeStage
+                ? 'border-trust-primary bg-trust-primary'
+                : 'border-border bg-surface',
+            )}
+          />
+          <span
+            className={cn(
+              'text-[10px] sm:text-xs font-semibold uppercase tracking-wider',
+              s.stage <= activeStage ? 'text-trust-primary' : 'text-text-muted',
+            )}
+          >
+            {s.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export interface SourceStampProps extends React.HTMLAttributes<HTMLDivElement> {
+  authority: string;
+  status?: string;
+  date?: string;
+}
+
+export function SourceStamp({
+  authority,
+  status = 'SOURCE CHECKED',
+  date,
+  className,
+  ...props
+}: SourceStampProps) {
+  return (
+    <div
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded border border-border bg-surface-strong px-2 py-0.5 text-xs select-none shadow-xs',
+        className,
+      )}
+      {...props}
+    >
+      <span className="font-mono text-xs font-bold text-trust-primary">{authority}</span>
+      <span className="text-border" aria-hidden>
+        |
+      </span>
+      <span className="text-xs font-semibold text-text-primary tracking-wide">{status}</span>
+      {date && (
+        <>
+          <span className="text-border" aria-hidden>
+            |
+          </span>
+          <span className="text-xs text-text-muted">{date}</span>
+        </>
+      )}
+    </div>
+  );
+}
+
+export interface DeadlineTickProps extends React.HTMLAttributes<HTMLDivElement> {
+  daysRemaining?: number | string;
+  label?: string;
+}
+
+export function DeadlineTick({
+  daysRemaining,
+  label = 'CLOSING SOON',
+  className,
+  ...props
+}: DeadlineTickProps) {
+  return (
+    <div
+      className={cn(
+        'inline-flex items-center gap-1.5 border-l-2 border-deadline bg-deadline-background/50 pl-2 pr-2.5 py-0.5 text-xs font-semibold text-deadline select-none',
+        className,
+      )}
+      {...props}
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-deadline animate-pulse shrink-0" />
+      <span>{label}</span>
+      {daysRemaining && <span className="font-mono font-bold">({daysRemaining})</span>}
+    </div>
+  );
+}
+
 /*  End of Design System Exports                                               */
 /* -------------------------------------------------------------------------- */

@@ -1,41 +1,41 @@
 'use client';
 
 import * as React from 'react';
-import { Database, Cpu, CheckCircle2, Landmark } from 'lucide-react';
+import { Database, FileText, CheckCircle2, Landmark } from 'lucide-react';
 import { cn } from '@claimradar/design-system';
 
 const STAGES = [
   {
     step: '01',
-    title: 'Statutory ingestion',
+    title: 'We capture the original notice',
     icon: Database,
     description:
-      'Raw orders, circulars, and gazettes ingested directly from official SEBI, RBI, IBBI, TRAI, and PIB feeds.',
-    detail: 'Cryptographic SHA-256 deduplication & timestamping',
+      'We monitor official orders, circulars, and gazettes published by SEBI, RBI, IBBI, TRAI, and PIB.',
+    detail: 'Primary authority documents only',
   },
   {
     step: '02',
-    title: 'Deterministic extraction',
-    icon: Cpu,
+    title: 'We structure dates, eligibility, and relief',
+    icon: FileText,
     description:
-      'Statutory entities, relief clauses, submission deadlines, and claim forms parsed with zero speculation.',
-    detail: 'Deterministic schema parsing & validation',
+      'Key affected groups, compensation terms, required evidence, and statutory deadlines are organized clearly.',
+    detail: 'Zero speculation, exact stated terms',
   },
   {
     step: '03',
-    title: 'Editorial verification',
+    title: 'A human editor checks the source',
     icon: CheckCircle2,
     description:
-      'Senior editors independently verify source document links and official filing instructions before publication.',
-    detail: 'Mandatory human approval gate',
+      'Senior editors independently verify every listing against official source records before publication.',
+    detail: 'Human verification gate',
   },
   {
     step: '04',
-    title: 'Direct portal route',
+    title: 'You get the official place to act',
     icon: Landmark,
     description:
-      'Citizens are guided directly to authentic official portals to submit their claims for free without intermediaries.',
-    detail: 'Zero middleman fees, direct official access',
+      'Direct links to authentic government and regulatory portals to submit claims without intermediaries or fees.',
+    detail: 'Direct official access',
   },
 ];
 

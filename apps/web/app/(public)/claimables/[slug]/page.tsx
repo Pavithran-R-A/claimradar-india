@@ -15,6 +15,7 @@ import { ClaimableRow } from '@/components/directory/claimable-card';
 import { StatusBadge } from '@/components/directory/status-badge';
 import { DataUnavailableNotice, DemoDataBanner } from '@/components/repository-states';
 import { deadlinePhrase, formatIstDate, formatIstDateTime } from '@/lib/dates';
+import { EvidenceThread, SourceStamp, DeadlineTick } from '@claimradar/design-system';
 
 interface DetailPageProps {
   params: Promise<{ slug: string }>;
@@ -100,7 +101,7 @@ function BackLink() {
   return (
     <Link
       href="/claimables"
-      className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-trust-primary transition-colors"
+      className="inline-flex items-center gap-1 text-xs font-semibold text-text-muted hover:text-trust-primary transition-colors duration-fast"
     >
       <ChevronLeft aria-hidden className="h-4 w-4" />
       Back to claims directory
@@ -124,13 +125,18 @@ function ClaimableDossier({
   claim: PublishedClaimable;
   related: PublishedClaimable[];
 }) {
+  const isClosingSoon = claim.status === 'closing_soon';
+  const authorityCode = claim.companyName || 'REGULATOR';
+
   return (
     <article className="min-w-0">
       {/* Dossier Top Ledger Header */}
       <header className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={claim.status} />
+            <SourceStamp authority={authorityCode.slice(0, 16)} status="VERIFIED" />
+            {isClosingSoon && <DeadlineTick label="CLOSING SOON" />}
             <span className="font-mono text-xs text-text-muted">REF: {claim.slug}</span>
           </div>
           <span className="text-text-muted">
@@ -178,6 +184,14 @@ function ClaimableDossier({
           </span>
         </div>
       </header>
+
+      {/* Proprietary Evidence Thread Provenance Guide */}
+      <div className="mt-6 rounded-md border border-border bg-surface p-4 shadow-xs">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">
+          Verification Trail
+        </span>
+        <EvidenceThread activeStage={4} />
+      </div>
 
       {/* Freshness Advisory if present */}
       {claim.freshnessWarning && (
@@ -433,7 +447,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
       <div className="text-center">
         <Link
           href="/corrections"
-          className="text-xs text-text-muted hover:text-trust-primary hover:underline transition-colors"
+          className="text-xs text-text-muted hover:text-trust-primary hover:underline transition-colors duration-fast"
         >
           Found an error? Submit an editorial correction →
         </Link>
