@@ -63,11 +63,26 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Migration contract
+        run: pnpm verify:migrations
+
       - name: Build
         run: pnpm build
+
+      - name: Client bundle secret audit
+        run: node scripts/verify-client-bundle-secrets.mjs
 
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Test
         run: pnpm test
+
+      - name: Inventory acceptance
+        run: pnpm test:inventory-acceptance
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Browser smoke
+        run: pnpm test:browser-smoke
