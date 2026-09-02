@@ -1,5 +1,7 @@
 # Deployment Guide
 
+This guide matches the current repository contracts.
+
 ## Infrastructure
 
 | Component       | Platform                  | Tier       |
@@ -19,12 +21,12 @@ Declared in `.env.example` (keys only, no values):
 ```
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=        # server-only
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SECRET_KEY=              # server-only
 
 # App
-NEXT_PUBLIC_APP_URL=
-NEXT_PUBLIC_APP_NAME=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_SITE_NAME=
 
 # Razorpay
 RAZORPAY_KEY_ID=
@@ -53,7 +55,7 @@ pnpm dev
 
 - Connect GitHub repo; Vercel auto-detects Next.js.
 - Set environment variables in Vercel dashboard (production, preview, development).
-- `SUPABASE_SERVICE_ROLE_KEY` scoped to server functions only.
+- `SUPABASE_SECRET_KEY` scoped to server functions only.
 - Custom domain configured with DNS A/CNAME records.
 - ISR revalidation via Vercel's `revalidatePath` / `revalidateTag`.
 
@@ -69,13 +71,13 @@ pnpm dev
 
 - Dockerfile in `apps/crawler/Dockerfile`.
 - Deploy to Railway or Fly.io with cron trigger (daily at 06:00 IST).
-- Environment variables: `SUPABASE_SERVICE_ROLE_KEY`, `AI_PROVIDER_API_KEY`.
+- Environment variables: `SUPABASE_SECRET_KEY`, `AI_PROVIDER_API_KEY`.
 - Health-check endpoint at `/health`.
 
 ## GitHub Actions CI
 
 - Triggers on every PR and push to `main`.
-- Steps: `pnpm install` → `lint` → `typecheck` → `test:unit` → `test:e2e`.
+- Steps: `pnpm install` → `format` → `lint` → `build` → `typecheck` → `test`.
 - PR merges blocked until all checks pass.
 - Preview deployments via Vercel bot comments.
 

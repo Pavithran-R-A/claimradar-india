@@ -14,9 +14,11 @@ const EVIDENCE_JSON_PATH = path.resolve(REPO_ROOT, 'docs', 'checkpoints', 'soak-
 
 export const RUNTIME_SENSITIVE_PATHS = [
   'apps/crawler/src/**',
+  'apps/web/**',
   'packages/config/**',
   'packages/database/**',
   'packages/claim-schema/**',
+  'packages/design-system/**',
   'packages/source-registry/**',
   'supabase/migrations/**',
   'pnpm-lock.yaml',

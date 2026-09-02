@@ -263,7 +263,7 @@ if (!publishableKey) {
   record('RLS spot check (publishable denied on admin tables)', SKIP, 'publishable key not set');
 } else {
   // Admin/editorial tables must never be readable with the publishable key.
-  const adminTables = ['audit_log', 'ai_runs', 'crawl_errors'];
+  const adminTables = ['audit_logs', 'ai_runs', 'crawl_errors'];
   let leaked = [];
   let checked = 0;
   for (const table of adminTables) {
