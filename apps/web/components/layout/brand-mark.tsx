@@ -34,7 +34,7 @@ export function ClaimRadarBrand({
         size={isSm ? 26 : isLg ? 36 : 30}
         variant={theme === 'dark' ? 'default' : theme === 'light' ? 'light' : 'default'}
         animated={false}
-        className="transition-transform duration-200 group-hover:scale-105"
+        className="transition-transform duration-ui group-hover:scale-105"
       />
       <div className="flex flex-col leading-none">
         <span
@@ -48,8 +48,8 @@ export function ClaimRadarBrand({
         {showDescriptor && (
           <span
             className={cn(
-              'text-[10px] font-bold uppercase tracking-widest',
-              theme === 'dark' ? 'text-brand-bright' : 'text-trust-primary',
+              'text-xs font-bold uppercase tracking-widest',
+              theme === 'dark' ? 'text-trust-primary' : 'text-trust-primary',
             )}
           >
             India

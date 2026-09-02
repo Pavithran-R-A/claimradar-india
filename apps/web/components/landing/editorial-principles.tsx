@@ -2,61 +2,83 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
-
-const PRINCIPLES = [
-  {
-    title: '1. Official-Source Mandate',
-    body: 'Every listing requires an authentic official order or regulatory publication. We never publish speculative rumors or unverified social media claims.',
-  },
-  {
-    title: '2. Zero Automated Publishing',
-    body: 'Algorithms discover documents, but human editors verify claim terms, eligibility constraints, and direct portal links before any public publication.',
-  },
-  {
-    title: '3. Transparent Disclaimers & Independence',
-    body: 'We are an independent technology service. We never pretend to be a government body, we do not decide eligibility, and we never collect claim filing fees.',
-  },
-  {
-    title: '4. Rapid Correction & Update Policy',
-    body: 'If an official deadline changes, a portal updates, or an error is identified, our editorial desk updates or archives records immediately.',
-  },
-];
+import { ArrowRight } from 'lucide-react';
 
 export function EditorialPrinciples() {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 sm:p-10 shadow-sm">
+    <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Manifesto Headline */}
         <div className="lg:col-span-5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-trust-primary mb-2">
-            <ShieldCheck className="h-4 w-4" />
-            Editorial Rigor
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-text-primary leading-tight">
-            Why ClaimRadar publishes less, not more.
+          <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
+            Our Standard
+          </span>
+          <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight leading-snug">
+            Why ClaimRadar Publishes Less, Not More.
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-            In financial and legal notices, false signals cause real harm. We deliberately enforce
-            strict editorial filters so every record in our directory is genuine, grounded in an
-            official order, and actionable.
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-text-secondary">
+            Most claim portals flood consumers with speculative class actions and AI-hallucinated
+            estimates. ClaimRadar is built on strict investigative verification.
           </p>
           <div className="mt-6">
             <Link
               href="/editorial-policy"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-trust-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:underline"
             >
-              Read our full Editorial Policy <ArrowRight className="h-4 w-4" />
+              <span>Read our complete editorial policy</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {PRINCIPLES.map((p) => (
-            <div key={p.title} className="rounded-xl border border-border/80 bg-surface-strong p-4">
-              <h3 className="text-sm font-bold text-text-primary">{p.title}</h3>
-              <p className="mt-2 text-xs leading-relaxed text-text-secondary">{p.body}</p>
+        {/* Right Column: 3 Clear Pillars (Hairline dividers, no heavy card stacks) */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="border-b border-border pb-6">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">01</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  100% Grounded in Official Regulatory Documents
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  We never publish rumors, social media claims, or press speculation. Every
+                  opportunity is extracted directly from gazettes, court orders, or statutory
+                  regulatory circulars.
+                </p>
+              </div>
             </div>
-          ))}
+          </div>
+
+          <div className="border-b border-border pb-6">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">02</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  Strict Zero-Speculation Publication Gate
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  If an order does not establish a clear refund mechanism or claim filing window, we
+                  do not publish it. We would rather have an empty directory than mislead one
+                  citizen.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pb-2">
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-sm font-bold text-trust-primary">03</span>
+              <div>
+                <h3 className="text-base font-bold text-text-primary">
+                  Direct Official Action, No Legal Intermediation
+                </h3>
+                <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+                  We do not take cuts, manage escrow, or file claims on your behalf. We direct you
+                  straight to the authenticated government or company submission portal.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

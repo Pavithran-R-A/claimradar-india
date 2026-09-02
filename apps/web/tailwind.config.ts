@@ -5,17 +5,18 @@ import type { Config } from 'tailwindcss';
  *
  * Token architecture (documented in docs/design/design-system.md):
  * - Semantic colour tokens are defined as CSS custom properties in
- *   `app/globals.css`. The `:root` block carries the dark theme (used by the
- *   authenticated app shell), and the `.theme-light` block overrides the same
- *   variables for the public site, so every component written against tokens
- *   works in both themes without duplicated markup.
+ *   `app/globals.css`. The `:root` block carries the light-first theme, and
+ *   the `.theme-dark` block overrides variables for dark surfaces.
  * - Colours that must support Tailwind opacity modifiers use the
  *   `rgb(var(--c-*) / <alpha-value>)` form.
- * - Non-semantic "material" colours (deep-ink hero scale, bright accents for
- *   dark surfaces) are fixed hex values below.
  */
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', '../../packages/design-system/src/**/*.{ts,tsx}'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/design-system/src/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -45,14 +46,11 @@ const config: Config = {
           700: '#1A2A44',
           600: '#27395C',
         },
-        /* Bright accents for use on dark ink surfaces only. */
         'brand-bright': '#2DD4BF',
         'gold-bright': '#F4A340',
       },
       fontFamily: {
-        /* Single product typeface. */
         sans: ['var(--font-geist-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        /* Reserved for at most one marketing heading. */
         serif: ['var(--font-newsreader)', 'ui-serif', 'Georgia', 'serif'],
       },
       maxWidth: {
@@ -63,16 +61,20 @@ const config: Config = {
         field: '0.5rem',
       },
       boxShadow: {
+        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         card: '0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.07)',
         lift: '0 10px 28px -12px rgba(15, 23, 42, 0.22)',
         panel: '0 16px 48px -16px rgba(6, 11, 20, 0.35)',
+      },
+      backdropBlur: {
+        xs: '2px',
       },
       animation: {
         shimmer: 'shimmer 1.6s ease-in-out infinite',
         rise: 'rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both',
         fade: 'fade 0.45s ease-out both',
         aurora: 'aurora 26s ease-in-out infinite alternate',
-        'radar-sweep': 'radar-sweep 8s linear infinite',
+        'radar-sweep': 'radar-sweep 14s linear infinite',
         'radar-pulse': 'radar-pulse 3s cubic-bezier(0, 0, 0.2, 1) infinite',
         'beacon-pulse': 'beacon-pulse 2.5s ease-in-out infinite',
       },
@@ -109,10 +111,19 @@ const config: Config = {
         },
       },
       transitionTimingFunction: {
+        standard: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        out: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'in-out': 'cubic-bezier(0.65, 0, 0.35, 1)',
         lift: 'cubic-bezier(0, 0, 0.2, 1)',
       },
       transitionDuration: {
-        fast: '150ms',
+        instant: '100ms',
+        fast: '140ms',
+        ui: '180ms',
+        panel: '260ms',
+        enter: '380ms',
+        editorial: '520ms',
+        // Preserve legacy aliases for backwards compatibility
         base: '200ms',
         slow: '350ms',
       },

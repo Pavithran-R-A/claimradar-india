@@ -2,31 +2,33 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowRight, CalendarClock, ShieldCheck, Landmark, Users } from 'lucide-react';
+import { ArrowRight, CalendarClock, ShieldCheck } from 'lucide-react';
 import type { PublishedClaimable } from '@/lib/claimables-repository';
 import { formatIstDate } from '@/lib/dates';
 import { StatusBadge, MetaPill } from './status-badge';
-import { cn } from '@claimradar/design-system';
+import { SourceStamp, DeadlineTick, cn } from '@claimradar/design-system';
 
 /**
- * Atomic Directory Opportunity Card.
- * Strict visual hierarchy:
- * 1. What is the opportunity? (Title)
- * 2. Who might be affected? (Target group)
- * 3. What is the deadline? (Date / status)
- * 4. Who is the official source? (Regulator / Provenance)
- * 5. What should the user do next? (Action route)
+ * Editorial Intelligence Opportunity Card.
+ * Clean, high-density, and calm:
+ * 1. Status & Sector taxonomy
+ * 2. Title / Opportunity summary (with Link)
+ * 3. Affected group qualification
+ * 4. Official source / Authority attribution (SourceStamp)
+ * 5. Deadline (DeadlineTick when closing soon) & verified action route
  */
 export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
   const isClosingSoon = claim.status === 'closing_soon';
+  const authorityCode = claim.companyName || 'REGULATOR';
 
   return (
-    <article className="group relative flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-trust-primary/40 hover:shadow-md">
+    <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
       <div>
-        {/* Top Badges: Status + Sector */}
+        {/* Top Badges: Status + Sector + Deadline Tick if closing soon */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <StatusBadge status={claim.status} />
+          {isClosingSoon && <DeadlineTick label="CLOSING SOON" />}
           {claim.sector && (
             <MetaPill href={claim.sectorSlug ? `/sectors/${claim.sectorSlug}` : undefined}>
               {claim.sector}
@@ -35,7 +37,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
         </div>
 
         {/* 1. What is the opportunity? */}
-        <h3 className="text-lg font-bold leading-snug text-text-primary group-hover:text-trust-primary transition-colors">
+        <h3 className="text-base sm:text-lg font-bold leading-snug text-text-primary group-hover:text-trust-primary transition-colors duration-fast">
           <Link
             href={`/claimables/${claim.slug}`}
             className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -46,8 +48,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
 
         {/* 2. Who might be affected? */}
         {claim.affectedGroup && (
-          <div className="mt-2.5 flex items-start gap-1.5 text-xs text-text-secondary">
-            <Users className="h-4 w-4 shrink-0 text-text-muted mt-0.5" />
+          <div className="mt-2.5 text-xs text-text-secondary">
             <p className="line-clamp-2 leading-relaxed">
               <span className="font-semibold text-text-primary">Affected: </span>
               {claim.affectedGroup}
@@ -64,38 +65,35 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
       </div>
 
       {/* Footer Metadata & Provenance */}
-      <div className="mt-4 pt-3.5 border-t border-border flex flex-col gap-2">
+      <div className="mt-4 pt-3 border-t border-border flex flex-col gap-2.5">
         <div className="flex items-center justify-between text-xs">
-          {/* 4. Who is the official source? */}
-          <div className="flex items-center gap-1.5 font-medium text-text-secondary">
-            <Landmark className="h-3.5 w-3.5 text-trust-primary" />
-            <span>{claim.companyName || 'Official Regulator'}</span>
-          </div>
+          {/* Official Source Stamp */}
+          <SourceStamp authority={authorityCode.slice(0, 16)} status="VERIFIED" />
 
-          {/* 3. What is the deadline? */}
+          {/* Deadline */}
           {deadline && claim.deadlineDate ? (
             <span
               className={cn(
                 'inline-flex items-center gap-1 text-xs font-semibold',
-                isClosingSoon ? 'text-amber-800 dark:text-amber-400' : 'text-text-muted',
+                isClosingSoon ? 'text-deadline font-bold' : 'text-text-muted',
               )}
             >
               <CalendarClock className="h-3.5 w-3.5" />
               <time dateTime={claim.deadlineDate}>{deadline}</time>
             </span>
           ) : (
-            <span className="text-[11px] text-text-muted">No deadline</span>
+            <span className="text-xs text-text-muted">No statutory deadline</span>
           )}
         </div>
 
-        {/* 5. What next? */}
+        {/* Action Route */}
         <div className="flex items-center justify-between pt-1 text-xs font-bold text-trust-primary">
-          <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-            Verified official source
+          <span className="inline-flex items-center gap-1 text-xs text-text-muted font-normal">
+            <ShieldCheck className="h-3.5 w-3.5 text-success" />
+            Verified official notice
           </span>
-          <span className="inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-            View evidence <ArrowRight className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-fast">
+            View dossier <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
@@ -107,22 +105,23 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
 export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
   const isClosingSoon = claim.status === 'closing_soon';
+  const authorityCode = claim.companyName || 'REGULATOR';
 
   return (
-    <article className="group relative rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-150 hover:border-trust-primary/40 hover:bg-surface-strong/50">
+    <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
             <StatusBadge status={claim.status} />
-            <span className="text-xs font-medium text-text-secondary">{claim.companyName}</span>
+            <SourceStamp authority={authorityCode.slice(0, 16)} status="CHECKED" />
+            {isClosingSoon && <DeadlineTick label="CLOSING SOON" />}
             {claim.sector && (
-              <span className="rounded bg-surface-strong px-2 py-0.5 text-[11px] text-text-muted">
+              <span className="rounded bg-surface-strong px-2 py-0.5 text-xs text-text-muted border border-border">
                 {claim.sector}
               </span>
             )}
           </div>
-
-          <h3 className="text-base sm:text-lg font-bold text-text-primary group-hover:text-trust-primary transition-colors">
+          <h3 className="text-base font-bold text-text-primary group-hover:text-trust-primary transition-colors duration-fast">
             <Link
               href={`/claimables/${claim.slug}`}
               className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -130,32 +129,27 @@ export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
               {claim.title}
             </Link>
           </h3>
-
           {claim.affectedGroup && (
-            <p className="mt-1 line-clamp-1 text-xs text-text-secondary">
-              <span className="font-semibold text-text-primary">Affected: </span>
-              {claim.affectedGroup}
-            </p>
+            <p className="mt-1 line-clamp-1 text-xs text-text-secondary">{claim.affectedGroup}</p>
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between sm:flex-col sm:items-end gap-2 border-t border-border sm:border-t-0 pt-2 sm:pt-0">
+        <div className="flex items-center gap-4 shrink-0 sm:flex-col sm:items-end sm:gap-1 text-xs">
           {deadline && claim.deadlineDate ? (
             <span
               className={cn(
-                'inline-flex items-center gap-1.5 text-xs font-semibold',
-                isClosingSoon ? 'text-amber-800 dark:text-amber-400' : 'text-text-muted',
+                'inline-flex items-center gap-1 font-semibold',
+                isClosingSoon ? 'text-deadline font-bold' : 'text-text-muted',
               )}
             >
               <CalendarClock className="h-3.5 w-3.5" />
               <time dateTime={claim.deadlineDate}>{deadline}</time>
             </span>
           ) : (
-            <span className="text-xs text-text-muted">No deadline</span>
+            <span className="text-text-muted">No statutory deadline</span>
           )}
-
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-trust-primary group-hover:translate-x-1 transition-transform">
-            View evidence dossier <ArrowRight className="h-3.5 w-3.5" />
+          <span className="font-bold text-trust-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-fast">
+            View dossier <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>

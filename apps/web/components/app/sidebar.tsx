@@ -76,7 +76,7 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
           <BrandMark size={28} variant="default" animated={false} />
           <div className="leading-tight">
             <p className="text-sm font-extrabold text-text-primary">{siteName}</p>
-            <p className="text-[11px] font-medium text-text-muted">Personal Workspace</p>
+            <p className="text-xs font-medium text-text-muted">Personal Workspace</p>
           </div>
         </div>
         <nav aria-label="Product navigation" className="flex-1 space-y-1 overflow-y-auto p-3">

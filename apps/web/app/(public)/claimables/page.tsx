@@ -63,7 +63,7 @@ function sortClaimables(items: PublishedClaimable[], sort: string): PublishedCla
 export default async function ClaimablesPage({ searchParams }: ClaimablesPageProps) {
   const raw = await searchParams;
   const params: DirectoryParams = {
-    search: raw.search,
+    search: raw.search || (raw as Record<string, string | undefined>).q,
     status: raw.status,
     sector: raw.sector,
     sort: raw.sort,
@@ -83,8 +83,8 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       <header className="max-w-3xl">
-        <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
-          Claimables directory
+        <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-text-primary">
+          Claimables Directory
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-text-secondary sm:text-base">
           Published refund, compensation and claim opportunities verified against official sources.
@@ -98,7 +98,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
           {/* Desktop filter panel */}
           <aside className="hidden lg:block" aria-label="Directory filters">
-            <div className="sticky top-24 rounded-card border border-border bg-surface p-5 shadow-card">
+            <div className="sticky top-24 rounded-md border border-border bg-surface p-5">
               <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
               <div className="space-y-4">
                 <FilterFields idPrefix="desktop" params={params} sectors={sectors} />

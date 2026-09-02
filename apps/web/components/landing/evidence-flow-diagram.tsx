@@ -1,153 +1,121 @@
 'use client';
 
 import * as React from 'react';
-import {
-  Landmark,
-  Radio,
-  FileCheck2,
-  Cpu,
-  UserCheck,
-  ShieldCheck,
-  ExternalLink,
-} from 'lucide-react';
+import { Database, FileText, CheckCircle2, Landmark } from 'lucide-react';
 import { cn } from '@claimradar/design-system';
 
-const PIPELINE_STEPS = [
+const STAGES = [
   {
-    num: '01',
-    label: 'Official Notice',
+    step: '01',
+    title: 'We capture the original notice',
+    icon: Database,
+    description:
+      'We monitor official orders, circulars, and gazettes published by SEBI, RBI, IBBI, TRAI, and PIB.',
+    detail: 'Primary authority documents only',
+  },
+  {
+    step: '02',
+    title: 'We structure dates, eligibility, and relief',
+    icon: FileText,
+    description:
+      'Key affected groups, compensation terms, required evidence, and statutory deadlines are organized clearly.',
+    detail: 'Zero speculation, exact stated terms',
+  },
+  {
+    step: '03',
+    title: 'A human editor checks the source',
+    icon: CheckCircle2,
+    description:
+      'Senior editors independently verify every listing against official source records before publication.',
+    detail: 'Human verification gate',
+  },
+  {
+    step: '04',
+    title: 'You get the official place to act',
     icon: Landmark,
-    desc: 'Public notices from SEBI, RBI, IBBI, TRAI, and PIB.',
-    detail: 'Monitored across authenticated official public portals.',
-  },
-  {
-    num: '02',
-    label: 'Signal Detected',
-    icon: Radio,
-    desc: 'Automated discovery flags relevant refund and claim windows.',
-    detail: 'Ingested idempotently with hash-deduplicated canonical URLs.',
-  },
-  {
-    num: '03',
-    label: 'Document Checked',
-    icon: FileCheck2,
-    desc: 'Authentic PDF / order text retrieved from source domain.',
-    detail: 'Direct cryptographic integrity checking against source host.',
-  },
-  {
-    num: '04',
-    label: 'Evidence Structured',
-    icon: Cpu,
-    desc: 'Affected parties, deadline dates, and claims criteria parsed.',
-    detail: 'Structured into deterministic claimable candidate records.',
-  },
-  {
-    num: '05',
-    label: 'Human Review',
-    icon: UserCheck,
-    desc: 'Editorial team verifies facts against the official order.',
-    detail: 'Zero automated publication. Every listing requires human verification.',
-  },
-  {
-    num: '06',
-    label: 'Published with Source',
-    icon: ShieldCheck,
-    desc: 'Surfaced with direct provenance and official portal links.',
-    detail: 'Clear, plain-language guidance on eligibility and timeline.',
-  },
-  {
-    num: '07',
-    label: 'User Acts Directly',
-    icon: ExternalLink,
-    desc: 'You submit your claim directly on the official authority portal.',
-    detail: 'No intermediaries, no fees, no filing on your behalf.',
+    description:
+      'Direct links to authentic government and regulatory portals to submit claims without intermediaries or fees.',
+    detail: 'Direct official access',
   },
 ];
 
 export function EvidenceFlowDiagram() {
-  const [activeStep, setActiveStep] = React.useState<number>(4);
+  const [isInView, setIsInView] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      setIsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="w-full">
-      {/* Horizontal Continuous Rail for Desktop */}
-      <div className="hidden xl:grid xl:grid-cols-7 gap-3">
-        {PIPELINE_STEPS.map((step, idx) => {
-          const Icon = step.icon;
-          const isSelected = activeStep === idx;
-          const isFinal = idx === PIPELINE_STEPS.length - 1;
+    <div ref={containerRef} className="relative w-full">
+      {/* Vertical Editorial Timeline */}
+      <div className="relative pl-7 sm:pl-8 space-y-6 sm:space-y-7">
+        {/* Continuous Connecting Timeline Line */}
+        <div className="absolute left-[13px] sm:left-[15px] top-3 bottom-3 w-[2px] bg-border pointer-events-none">
+          {/* Progressive Draw Line in Deep Editorial Blue */}
+          <div
+            className={cn(
+              'w-full bg-trust-primary transition-all duration-1000 ease-out origin-top',
+              isInView ? 'h-full opacity-100' : 'h-0 opacity-0',
+            )}
+          />
+        </div>
 
+        {STAGES.map((stage, idx) => {
+          const Icon = stage.icon;
           return (
             <div
-              key={step.num}
-              onClick={() => setActiveStep(idx)}
-              className={cn(
-                'group relative flex flex-col justify-between rounded-xl border p-4 cursor-pointer transition-all duration-150',
-                isSelected
-                  ? 'border-trust-primary bg-surface shadow-md ring-1 ring-trust-primary/20'
-                  : 'border-border bg-surface hover:border-trust-primary/30 hover:bg-surface-strong',
-              )}
+              key={stage.step}
+              style={{
+                transitionDelay: isInView ? `${idx * 120}ms` : '0ms',
+                transform: isInView ? 'none' : 'translateY(8px)',
+                opacity: isInView ? 1 : 0,
+              }}
+              className="group relative flex items-start gap-4 transition-all duration-enter ease-out motion-reduce:!opacity-100 motion-reduce:!transform-none"
             >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-                    Step {step.num}
-                  </span>
-                  <div
-                    className={cn(
-                      'flex h-7 w-7 items-center justify-center rounded-md transition-colors',
-                      isSelected
-                        ? 'bg-trust-primary text-white'
-                        : 'bg-surface-strong text-text-secondary group-hover:text-trust-primary',
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </div>
-
-                <h3 className="text-sm font-bold text-text-primary leading-tight">{step.label}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-text-secondary">{step.desc}</p>
+              {/* Numbered Marker Anchor */}
+              <div className="absolute -left-7 sm:-left-8 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border-2 border-surface bg-surface-strong text-trust-primary shadow-xs transition-colors duration-fast group-hover:border-trust-primary group-hover:bg-trust-primary group-hover:text-white">
+                <span className="font-mono text-xs font-bold leading-none">{stage.step}</span>
               </div>
 
-              <div className="mt-3 pt-2.5 border-t border-border/60">
-                <span className="text-xs font-medium text-text-muted">
-                  {isFinal ? 'Official Portal' : 'ClaimRadar Rigor'}
+              {/* Content Block */}
+              <div className="flex-1 pt-0.5">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-base sm:text-lg font-bold text-text-primary tracking-tight group-hover:text-trust-primary transition-colors duration-fast">
+                    {stage.title}
+                  </h4>
+                  <Icon className="h-4 w-4 text-text-muted group-hover:text-trust-primary transition-colors duration-fast shrink-0" />
+                </div>
+                <p className="mt-1 text-sm sm:text-base leading-relaxed text-text-secondary">
+                  {stage.description}
+                </p>
+                <span className="mt-1.5 inline-block text-xs font-medium text-text-muted">
+                  {stage.detail}
                 </span>
               </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Responsive Grid for Tablets & Small Desktops (2-3 Cols) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:hidden gap-4">
-        {PIPELINE_STEPS.map((step, idx) => {
-          const Icon = step.icon;
-          const isSelected = activeStep === idx;
-
-          return (
-            <div
-              key={step.num}
-              onClick={() => setActiveStep(idx)}
-              className={cn(
-                'flex flex-col justify-between rounded-xl border p-5 cursor-pointer transition-all',
-                isSelected
-                  ? 'border-trust-primary bg-surface shadow-sm ring-1 ring-trust-primary/20'
-                  : 'border-border bg-surface hover:border-trust-primary/30',
-              )}
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-trust-primary">STEP {step.num}</span>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-strong text-trust-primary">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </div>
-                <h3 className="text-base font-bold text-text-primary">{step.label}</h3>
-                <p className="mt-2 text-xs text-text-secondary leading-relaxed">{step.desc}</p>
-              </div>
-              <p className="mt-3 text-xs text-text-muted border-t border-border pt-2">
-                {step.detail}
-              </p>
             </div>
           );
         })}

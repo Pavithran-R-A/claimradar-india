@@ -1,11 +1,18 @@
 /**
  * Shared Tailwind token preset for the ClaimRadar design system.
  *
- * Mirrors the semantic token architecture of apps/web/tailwind.config.ts
- * (documented in docs/design/design-system.md): semantic colours resolve to
- * CSS custom properties so the public site (.theme-light) and the app shell
- * (:root dark) share one component vocabulary. Consumers must define the
- * matching --c-* variables in their global stylesheet.
+ * Editorial Public-Benefit Finance token scheme:
+ * - Canvas: #F7F6F2
+ * - Surface: #FFFFFF
+ * - Primary Ink: #15171A
+ * - Secondary Text: #525A65
+ * - Muted Text: #707782
+ * - Border / Rule: #D9DAD6
+ * - Primary Action: #214E80 (Deep Editorial Blue)
+ * - Primary Action Hover: #173B62
+ * - Verified: #23705A
+ * - Deadline: #B45F06
+ * - Danger: #B42318
  */
 module.exports = {
   theme: {
@@ -27,15 +34,42 @@ module.exports = {
         info: 'rgb(var(--c-info) / <alpha-value>)',
         'verified-background': 'var(--c-verified-background)',
         'deadline-background': 'var(--c-deadline-background)',
-        ink: {
-          950: '#060B14',
-          900: '#0A1322',
-          800: '#101D31',
-          700: '#1A2A44',
-          600: '#27395C',
+        paper: {
+          canvas: '#F7F6F2',
+          surface: '#FFFFFF',
+          strong: '#F0EFEA',
+          border: '#D9DAD6',
         },
-        'brand-bright': '#2DD4BF',
-        'gold-bright': '#F4A340',
+        editorial: {
+          blue: '#214E80',
+          'blue-dark': '#173B62',
+          ink: '#15171A',
+          secondary: '#525A65',
+          muted: '#707782',
+          verified: '#23705A',
+          deadline: '#B45F06',
+          danger: '#B42318',
+          dark: '#171C23',
+        },
+      },
+      boxShadow: {
+        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      transitionTimingFunction: {
+        standard: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        out: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'in-out': 'cubic-bezier(0.65, 0, 0.35, 1)',
+      },
+      transitionDuration: {
+        instant: '100ms',
+        fast: '140ms',
+        ui: '180ms',
+        panel: '260ms',
+        enter: '380ms',
+        editorial: '520ms',
       },
     },
   },
