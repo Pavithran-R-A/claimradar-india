@@ -68,18 +68,18 @@ Preview and production remain unverified.
 
 ## Subsystem Status
 
-| Subsystem | Status | Evidence boundary |
-| --- | --- | --- |
-| Public UX | PASS locally | Preview blocked |
-| Customer app | PARTIAL | Authenticated runtime unverified |
-| Admin app | PARTIAL | Staff actions unverified |
-| API and server actions | PARTIAL | External runtime unverified |
-| Auth and security | IMPROVED | Database runtime unverified |
-| Crawler and data quality | PARTIAL | Static and fixture tests pass |
-| Database and migrations | PARTIAL | Apply state unverified |
-| CI and release checks | PARTIAL | Coverage and E2E workflow gaps remain |
-| Release evidence | BLOCKED | Existing soak evidence remains stale |
-| Deployment readiness | BLOCKED | Preview and DNS unavailable |
+| Subsystem                | Status       | Evidence boundary                     |
+| ------------------------ | ------------ | ------------------------------------- |
+| Public UX                | PASS locally | Preview blocked                       |
+| Customer app             | PARTIAL      | Authenticated runtime unverified      |
+| Admin app                | PARTIAL      | Staff actions unverified              |
+| API and server actions   | PARTIAL      | External runtime unverified           |
+| Auth and security        | IMPROVED     | Database runtime unverified           |
+| Crawler and data quality | PARTIAL      | Static and fixture tests pass         |
+| Database and migrations  | PARTIAL      | Apply state unverified                |
+| CI and release checks    | PARTIAL      | Coverage and E2E workflow gaps remain |
+| Release evidence         | BLOCKED      | Existing soak evidence remains stale  |
+| Deployment readiness     | BLOCKED      | Preview and DNS unavailable           |
 
 ## Soak State
 
