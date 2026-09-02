@@ -47,6 +47,31 @@ const context: CrawlContext = {
 };
 
 describe('IBBI PDF evidence integrity', () => {
+  it('leaves the publication date unknown when the listing omits it', async () => {
+    const adapter = Object.create(
+      new IbbiPublicAnnouncementAdapter(source),
+    ) as IbbiPublicAnnouncementAdapter;
+    adapter.createHttpClient = () =>
+      ({
+        fetch: async () => ({
+          body: Buffer.from(
+            '<table><tr><td>Public Announcement</td><td></td><td>31-12-2099</td><td>Example Debtor</td></tr></table>',
+          ),
+          contentHash: 'listing-hash',
+          contentType: 'text/html',
+          statusCode: 200,
+          etag: null,
+          lastModified: null,
+          durationMs: 1,
+          wasCached: false,
+        }),
+      }) as never;
+
+    const [document] = await adapter.discover(context);
+
+    expect(document?.publishedAt).toBeUndefined();
+  });
+
   it('uses extracted PDF text instead of row metadata', async () => {
     const adapter = Object.create(
       new IbbiPublicAnnouncementAdapter(source),

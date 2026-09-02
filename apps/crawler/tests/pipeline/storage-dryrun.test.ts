@@ -180,4 +180,26 @@ describe('Storage & Dry-Run Architecture Tests', () => {
     expect(summary).toHaveProperty('errorCount');
     expect(summary.errorCount).toBe(0);
   });
+
+  it('9. Dry-run cluster assignment preserves cross-source provenance', async () => {
+    const memoryWriter = new InMemoryDryRunWriter();
+    const firstCluster = await memoryWriter.assignSourceDocumentToCluster({
+      sourceDocumentId: 'doc-sebi',
+      sourceId: 'sebi-rss',
+      canonicalUrl: 'https://sebi.gov.in/order/1',
+      contentHash: 'shared-hash',
+      title: 'SEBI order',
+    });
+    const secondCluster = await memoryWriter.assignSourceDocumentToCluster({
+      sourceDocumentId: 'doc-pib',
+      sourceId: 'pib-rss',
+      canonicalUrl: 'https://pib.gov.in/release/1',
+      contentHash: 'shared-hash',
+      title: 'PIB mirror',
+    });
+
+    expect(secondCluster).toBe(firstCluster);
+    expect(memoryWriter.contentClusters.size).toBe(1);
+    expect(memoryWriter.contentClusterMembers.size).toBe(2);
+  });
 });

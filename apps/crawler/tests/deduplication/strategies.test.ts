@@ -6,8 +6,33 @@ import {
   matchByTitleDate,
   normalizeUrl,
 } from '../../src/deduplication/strategies.js';
+import { checkDuplicate } from '../../src/deduplication/index.js';
 
 describe('Deduplication Strategies', () => {
+  it('keeps identical hashes from different sources as provenance matches', () => {
+    const result = checkDuplicate(
+      {
+        url: 'https://pib.gov.in/release/1',
+        contentHash: 'shared-hash',
+        sourceId: 'pib-rss',
+      },
+      [
+        {
+          id: 'doc-sebi-1',
+          source_id: 'sebi-rss',
+          canonical_url: 'https://sebi.gov.in/order/1',
+          content_hash: 'shared-hash',
+          source_identifier: null,
+          title: null,
+          published_at: null,
+        },
+      ],
+    );
+
+    expect(result.isDuplicate).toBe(true);
+    expect(result.crossSourceMatch).toBe(true);
+  });
+
   describe('URL Match with Normalization', () => {
     it('should match URLs with trailing slash difference', () => {
       const result = matchByUrl('https://example.com/news', [

@@ -21,6 +21,23 @@ export interface IbbiRowMetadata {
   pdfUrl?: string;
 }
 
+function parseIbbiDate(value: string): string | undefined {
+  const match = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(value.trim());
+  if (!match) return undefined;
+  const day = Number(match[1]);
+  const month = Number(match[2]);
+  const year = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return undefined;
+  }
+  return parsed.toISOString();
+}
+
 export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
   public readonly sourceKey: string;
   protected readonly source: SourceDefinition;
@@ -70,12 +87,11 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
         const docUrl = pdfUrl || `https://ibbi.gov.in/public-announcement#row-${i}`;
         const title = `${announcementType}: ${corporateDebtor} (Claims Deadline: ${claimDeadline})`;
 
+        const publishedAt = parseIbbiDate(announcementDate);
         documents.push({
           url: docUrl,
           title,
-          publishedAt: announcementDate
-            ? new Date(announcementDate.split('-').reverse().join('-')).toISOString()
-            : new Date().toISOString(),
+          ...(publishedAt !== undefined ? { publishedAt } : {}),
           metadata: {
             announcementType,
             announcementDate,
@@ -94,7 +110,6 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
       documents.push({
         url: 'https://ibbi.gov.in/public-announcement',
         title: 'IBBI Corporate Insolvency Creditor Claims Public Announcements Portal',
-        publishedAt: new Date().toISOString(),
       });
     }
 

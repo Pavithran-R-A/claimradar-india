@@ -104,6 +104,23 @@ function toSourceDefinition(source: Source): SourceDefinition {
   };
 }
 
+function resolvePublishedAt(
+  discovered: { publishedAt?: string },
+  fetchedMetadata: Record<string, unknown>,
+): string | undefined {
+  if (discovered.publishedAt?.trim()) return discovered.publishedAt;
+  const metadataDate = fetchedMetadata['publishedAt'];
+  if (typeof metadataDate === 'string' && metadataDate.trim()) return metadataDate;
+  const dates = fetchedMetadata['dates'];
+  if (Array.isArray(dates)) {
+    const firstDate = dates.find(
+      (date): date is string => typeof date === 'string' && date.trim().length > 0,
+    );
+    if (firstDate) return firstDate;
+  }
+  return undefined;
+}
+
 /** Run promises with bounded concurrency. */
 async function runWithConcurrency<T>(
   items: T[],
@@ -188,6 +205,7 @@ async function processSource(params: {
         const fetched = await adapter.fetchDocument(doc, context);
         stats.fetched++;
         summary.documentsFetched++;
+        const publishedAt = resolvePublishedAt(doc, fetched.metadata);
 
         // 304 Not Modified
         if (fetched.metadata['wasCached'] === true && fetched.content.length === 0) {
@@ -203,10 +221,12 @@ async function processSource(params: {
           sourceId: source.id,
           ...(doc.sourceIdentifier !== undefined ? { sourceIdentifier: doc.sourceIdentifier } : {}),
           ...(doc.title !== undefined ? { title: doc.title } : {}),
-          ...(doc.publishedAt !== undefined ? { publishedAt: doc.publishedAt } : {}),
+          ...(publishedAt !== undefined ? { publishedAt } : {}),
         };
         const dedupResult = checkDuplicate(dedupInput, existingDocs);
-        if (dedupResult.isDuplicate) {
+        const isCrossSourceProvenanceMatch =
+          dedupResult.isDuplicate && dedupResult.crossSourceMatch;
+        if (dedupResult.isDuplicate && !isCrossSourceProvenanceMatch) {
           stats.duplicates++;
           summary.documentsDuplicate++;
           logger.debug('dedup', `Duplicate skipped: ${doc.url}`, {
@@ -225,7 +245,7 @@ async function processSource(params: {
           canonical_url: doc.url,
           source_identifier: doc.sourceIdentifier ?? null,
           title: doc.title ?? null,
-          published_at: doc.publishedAt ?? null,
+          published_at: publishedAt ?? null,
           content_hash: fetched.contentHash,
           etag: fetched.etag,
           last_modified: fetched.lastModified,
@@ -242,6 +262,16 @@ async function processSource(params: {
           stats.duplicates++;
           summary.documentsDuplicate++;
           continue;
+        }
+
+        if (db.assignSourceDocumentToCluster) {
+          await db.assignSourceDocumentToCluster({
+            sourceDocumentId: sourceDocId,
+            sourceId: source.id,
+            canonicalUrl: doc.url,
+            contentHash: fetched.contentHash,
+            ...(doc.title !== undefined ? { title: doc.title } : {}),
+          });
         }
 
         // Keyword scoring
