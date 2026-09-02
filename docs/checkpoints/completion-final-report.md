@@ -42,6 +42,11 @@ Implemented and documented the expanded completion scope.
 - `pnpm format:check`: **FAIL** — 458-file repository baseline
 - Supabase runtime migration check: **UNVERIFIED** — local tooling unavailable
 
+Verification commands emitted an engine warning.
+The shell selected Node `v26.7.0`.
+The repository requires Node `>=24 <25`.
+Bundled Node `v24.19.0` was available.
+
 ## Browser Verification
 
 Local production browser checks passed.
