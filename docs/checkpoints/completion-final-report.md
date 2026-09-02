@@ -2,15 +2,48 @@
 
 Date: 2026-09-02
 
-## Branch Evidence
+## Verification Snapshot
 
-- Branch: `codex/claimradar-completion`
-- Completion head before report commit: `7856e87`
-- Baseline main: `fc14de90783587013e692a70281ea88b8c3920f5`
-- Frontend source: `d3f3e9cb338c1b0d98a2f5e3696b8081c33c07b3`
-- Main modified: `NO`
-- Pull request merged: `NO`
-- Active soak disturbed: `NO`
+HEAD = `59a119c796f1aad2adaa2bdc3116e15c39ded40f` (verified candidate)
+NODE_VERSION = `v24.19.0`
+
+FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
+LINT = `LOCAL_PASS` and `REMOTE_CI_PASS`
+TYPECHECK = `LOCAL_PASS` and `REMOTE_CI_PASS`
+TESTS = `LOCAL_PASS` and `REMOTE_CI_PASS` — 67 files, 536 tests
+INVENTORY_ACCEPTANCE = `LOCAL_PASS` and `REMOTE_CI_PASS` — 47 files, 336 tests
+BUILD = `LOCAL_PASS` and `REMOTE_CI_PASS` — 44 static pages
+SECRET_SCAN = `LOCAL_PASS` and `REMOTE_CI_PASS` — zero client matches
+
+PR = `#2` — ClaimRadar completion and production-readiness hardening
+PR_DRAFT = `YES`
+
+CI_RUN = `33656367559` (run 127)
+CI_EXACT_HEAD = `59a119c796f1aad2adaa2bdc3116e15c39ded40f`
+CI_RESULT = `REMOTE_CI_PASS`
+
+VERCEL_DEPLOYMENT = `dpl_FypQSdrHMz1Cj8uNRdyrJEJndTp2`
+VERCEL_STATE = `READY`
+PREVIEW_URL = https://claimradar-staging-h24lkk6jv-pavithrans-projects-cae184b1.vercel.app
+PREVIEW_BROWSER_QA = `EXTERNAL_BLOCKER` — Browser attachment timed out. Vercel fetches redirect to SSO. Local and CI browser smoke passed.
+
+SUPABASE_RUNTIME = `EXTERNAL_BLOCKER` — read-only preflight skipped. No authorized staging credentials exist in this workspace.
+CUSTOMER_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authorized staging customer account exists.
+ADMIN_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authorized staging staff account exists.
+API_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authenticated staging runtime is available.
+CRAWLER_PRE_SOAK = `EXTERNAL_BLOCKER` — staging database credentials are unavailable. Local fixture coverage passed.
+
+SECURITY_HIGH = `NO_KNOWN_FINDINGS` — scoped review and tests passed
+SECURITY_MEDIUM = `NO_KNOWN_FINDINGS` — scoped review and tests passed
+KNOWN_INTERNAL_DEFECTS = `NONE` found by local and exact-head CI gates
+
+RUNTIME_SENSITIVE_CHANGED = `YES`
+NEW_FINAL_SOAK_REQUIRED = `YES`
+
+CUSTOM_DOMAIN_STATUS = `EXTERNAL_CONFIG_PENDING` — DNS remains deployment work
+
+MAIN_MODIFIED = `NO`
+PRODUCTION_MERGED = `NO`
 
 ## Completion Scope
 
@@ -28,72 +61,23 @@ Implemented and documented the expanded completion scope.
 - IBBI PDF evidence and OCR signaling.
 - Registry-aligned source seed records.
 - Release preflight and runtime integrity guards.
+- Repository-wide formatting enforcement.
+- CI browser smoke across two viewports.
 - Completion plan, ledger, and runbook updates.
 
-## Verification Results
+## Branch Evidence
 
-- `pnpm lint`: **PASS**
-- `pnpm typecheck`: **PASS**
-- `pnpm test`: **PASS** — 67 files, 536 tests
-- `pnpm test:inventory-acceptance`: **PASS** — 47 files, 336 tests
-- `pnpm --filter @claimradar/web build`: **PASS** — 44 static pages
-- Client bundle secret audit: **PASS** — zero matches
-- Changed-file Prettier checks: **PASS**
-- `pnpm format:check`: **FAIL** — 458-file repository baseline
-- Supabase runtime migration check: **UNVERIFIED** — local tooling unavailable
-
-Verification commands emitted an engine warning.
-The shell selected Node `v26.7.0`.
-The repository requires Node `>=24 <25`.
-Bundled Node `v24.19.0` was available.
-
-## Browser Verification
-
-Local production browser checks passed.
-
-- Desktop homepage rendered correctly.
-- Mobile layout rendered without overflow.
-- Mobile menu exposed accessible controls.
-- Search navigated to filtered directory results.
-- Public routes rendered successfully.
-- `/app` redirected to sign-in.
-- `/app/matches` redirected to sign-in.
-- `/admin` redirected to sign-in.
-
-Preview and production remain unverified.
-
-- Preview access returned unavailable responses.
-- GitHub pull-request access returned unavailable responses.
-- `claimradar.in` DNS lookup failed.
-
-## Subsystem Status
-
-| Subsystem                | Status       | Evidence boundary                     |
-| ------------------------ | ------------ | ------------------------------------- |
-| Public UX                | PASS locally | Preview blocked                       |
-| Customer app             | PARTIAL      | Authenticated runtime unverified      |
-| Admin app                | PARTIAL      | Staff actions unverified              |
-| API and server actions   | PARTIAL      | External runtime unverified           |
-| Auth and security        | IMPROVED     | Database runtime unverified           |
-| Crawler and data quality | PARTIAL      | Static and fixture tests pass         |
-| Database and migrations  | PARTIAL      | Apply state unverified                |
-| CI and release checks    | PARTIAL      | Coverage and E2E workflow gaps remain |
-| Release evidence         | BLOCKED      | Existing soak evidence remains stale  |
-| Deployment readiness     | BLOCKED      | Preview and DNS unavailable           |
-
-## Soak State
-
-- Runtime-sensitive changed: `YES`
-- Current soak covers future changes: `NO`
-- New final soak required: `YES`
-- Existing soak evidence regenerated: `NO`
-
-The report preserves stale evidence honestly.
+- Branch: `codex/claimradar-completion`
+- Baseline main: `fc14de90783587013e692a70281ea88b8c3920f5`
+- Frontend source: `d3f3e9cb338c1b0d98a2f5e3696b8081c33c07b3`
+- Vercel commit author: `Pavithran-R-A <pavithranraar@gmail.com>`
+- Active soak disturbed: `NO`
 
 ## Release Decision
 
-**NO-GO for production release.**
+**NO-GO for autonomous production release.**
 
-The completion branch is ready for review.
-Production promotion still needs Preview access.
-It also needs database verification and soak rerun.
+All local and exact-head CI gates pass.
+Preview is ready, but browser access remains blocked.
+Staging database and authenticated runtime evidence remain unavailable.
+The new final soak must run after those gates.
