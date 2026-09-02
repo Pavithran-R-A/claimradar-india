@@ -6,6 +6,9 @@ import { SOURCES } from '../components/landing/monitored-sources-network';
 const landingPath = path.resolve(__dirname, '../app/(public)/page.tsx');
 const editorialPath = path.resolve(__dirname, '../components/landing/editorial-principles.tsx');
 const sourcesPath = path.resolve(__dirname, '../components/landing/monitored-sources-network.tsx');
+const sourcePagePath = path.resolve(__dirname, '../app/(public)/sources/page.tsx');
+const howItWorksPath = path.resolve(__dirname, '../app/(public)/how-it-works/page.tsx');
+const methodologyPath = path.resolve(__dirname, '../app/(public)/methodology/page.tsx');
 
 const read = (filePath: string) => fs.readFileSync(filePath, 'utf8');
 
@@ -102,5 +105,16 @@ describe('truthful public copy contracts', () => {
     ]) {
       expect(editorial + sources).not.toContain(unsupportedClaim);
     }
+  });
+
+  it('keeps supporting pages aligned with the configured source scope', () => {
+    const supportingCopy = [sourcePagePath, howItWorksPath, methodologyPath]
+      .map(read)
+      .join(' ')
+      .replace(/\s+/g, ' ');
+
+    expect(supportingCopy).toContain('configured public source');
+    expect(supportingCopy).not.toContain('authenticated public channels');
+    expect(supportingCopy).not.toContain('courts, and gazette releases daily');
   });
 });

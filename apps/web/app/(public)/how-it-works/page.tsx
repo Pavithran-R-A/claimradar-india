@@ -117,7 +117,7 @@ export default function HowItWorksPage() {
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">✓</span>
-              <span>Monitors official Indian regulators, courts, and gazette releases daily.</span>
+              <span>Monitors configured official source families on a scheduled basis.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">✓</span>

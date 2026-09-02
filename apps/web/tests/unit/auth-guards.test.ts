@@ -178,7 +178,9 @@ describe('requireRoles', () => {
   it('denies signed-out users', async () => {
     setSignedOut();
     setProfile('admin');
-    await expect(requireRoles(['admin'])).rejects.toMatchObject({ destination: '/' });
+    await expect(requireRoles(['admin'])).rejects.toMatchObject({
+      destination: '/login?next=%2Fadmin',
+    });
   });
 
   it('denies when the profile row is missing', async () => {

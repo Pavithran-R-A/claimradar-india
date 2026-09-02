@@ -31,9 +31,9 @@ export default function MethodologyPage() {
             </h2>
             <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
               We ingest public notifications using deterministic crawler workers that target
-              authenticated regulatory domains. Each crawled document is hashed (SHA-256) and paired
-              with its canonical HTTP source URL and server timestamp. This ensures every extracted
-              datum has an auditable origin trail.
+              configured public source families. Each crawled document is hashed (SHA-256) and
+              paired with its canonical HTTP source URL and server timestamp. This ensures every
+              extracted datum has an auditable origin trail.
             </p>
           </section>
 
