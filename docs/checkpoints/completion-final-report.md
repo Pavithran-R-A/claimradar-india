@@ -4,7 +4,7 @@ Date: 2026-09-02
 
 ## Verification Snapshot
 
-HEAD = `59a119c796f1aad2adaa2bdc3116e15c39ded40f` (verified candidate)
+HEAD = `75254ac089f45de7414ad8192e6b527a05b2dd4c` (verified candidate before this report alignment commit)
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -18,13 +18,13 @@ SECRET_SCAN = `LOCAL_PASS` and `REMOTE_CI_PASS` — zero client matches
 PR = `#2` — ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33656367559` (run 127)
-CI_EXACT_HEAD = `59a119c796f1aad2adaa2bdc3116e15c39ded40f`
+CI_RUN = `33657055557` (run 128)
+CI_EXACT_HEAD = `75254ac089f45de7414ad8192e6b527a05b2dd4c`
 CI_RESULT = `REMOTE_CI_PASS`
 
-VERCEL_DEPLOYMENT = `dpl_FypQSdrHMz1Cj8uNRdyrJEJndTp2`
+VERCEL_DEPLOYMENT = `dpl_Abqce1Vb14Qto5FPtViygdLjskYu`
 VERCEL_STATE = `READY`
-PREVIEW_URL = https://claimradar-staging-h24lkk6jv-pavithrans-projects-cae184b1.vercel.app
+PREVIEW_URL = https://claimradar-staging-2hzxuuamh-pavithrans-projects-cae184b1.vercel.app
 PREVIEW_BROWSER_QA = `EXTERNAL_BLOCKER` — Browser attachment timed out. Vercel fetches redirect to SSO. Local and CI browser smoke passed.
 
 SUPABASE_RUNTIME = `EXTERNAL_BLOCKER` — read-only preflight skipped. No authorized staging credentials exist in this workspace.
