@@ -65,10 +65,10 @@ describe('RBI live fixture regression', () => {
       expect(Number.isNaN(new Date(documents[0]!.publishedAt!).getTime())).toBe(false);
     });
 
-    it('should fall back to the raw string for the malformed-date item', () => {
+    it('should leave malformed dates unknown', () => {
       const malformed = documents[4]!;
       expect(malformed.title).toContain('malformed date');
-      expect(malformed.publishedAt).toBe('date not available');
+      expect(malformed.publishedAt).toBeUndefined();
     });
   });
 
