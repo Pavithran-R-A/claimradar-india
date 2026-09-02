@@ -12,6 +12,7 @@ import { ClaimableCard, ClaimableRow } from '@/components/directory/claimable-ca
 import { DemoDataBanner, EmptyDirectoryNotice } from '@/components/repository-states';
 import { Reveal } from '@/components/motion/reveal';
 import { getPublishedClaimables } from '@/lib/claimables-repository';
+import { publicSourceFamilies } from '@claimradar/source-registry';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +34,7 @@ const FAQ_ITEMS = [
   {
     question: 'What is ClaimRadar India?',
     answer:
-      'ClaimRadar is an independent public information service that monitors official Indian statutory sources (such as SEBI, RBI, IBBI, TRAI, and PIB press releases) for public refund, compensation, and claims notices. We explain who may be affected and direct users to official portals. We do not file claims on your behalf.',
+      'ClaimRadar is an independent public information service that monitors official Indian source families (including SEBI, RBI, IBBI, TRAI, and PIB press releases) for public refund, compensation, and claims notices. We explain who may be affected and direct users to official portals. We do not file claims on your behalf.',
   },
   {
     question: 'Is ClaimRadar a government portal or legal representative?',
@@ -48,7 +49,7 @@ const FAQ_ITEMS = [
   {
     question: 'How does ClaimRadar discover and verify opportunities?',
     answer:
-      'We continuously monitor statutory regulators (SEBI, RBI), insolvency authorities (IBBI), telecom regulation (TRAI), and government press releases (PIB). Every extracted candidate undergoes strict human editorial verification before publication — zero automated or speculative placeholder listings.',
+      'Our public source registry covers SEBI, RBI, IBBI, TRAI, and PIB. We organize notices from those source families and link each published record to its underlying official source for review.',
   },
   {
     question: 'How do I submit a correction or update for a listing?',
@@ -57,25 +58,11 @@ const FAQ_ITEMS = [
   },
 ];
 
-const MONITORED_AUTHORITIES = [
-  {
-    code: 'SEBI',
-    name: 'Securities and Exchange Board of India',
-    domain: 'Securities & Investor Refunds',
-  },
-  { code: 'RBI', name: 'Reserve Bank of India', domain: 'Banking & Unclaimed Deposits' },
-  {
-    code: 'IBBI',
-    name: 'Insolvency and Bankruptcy Board of India',
-    domain: 'Corporate Insolvency Claims',
-  },
-  {
-    code: 'TRAI',
-    name: 'Telecom Regulatory Authority of India',
-    domain: 'Consumer Directives & Refunds',
-  },
-  { code: 'PIB', name: 'Press Information Bureau', domain: 'Union Government Gazettes' },
-];
+const MONITORED_AUTHORITIES = publicSourceFamilies.map((source) => ({
+  code: source.shortName,
+  name: source.name,
+  domain: source.category,
+}));
 
 export default async function LandingPage() {
   const [claimables] = await Promise.all([getPublishedClaimables({ limit: 200 })]);
@@ -110,9 +97,9 @@ export default async function LandingPage() {
 
               {/* Concise Supporting Copy with 70ms entrance */}
               <p className="enter-seq-1 mt-4 text-base sm:text-lg leading-relaxed text-text-secondary max-w-xl">
-                Search official Indian notices from regulators and public authorities. We monitor
-                government gazettes, insolvency filings, and court orders for verified claim
-                opportunities.
+                Search notices from SEBI, RBI, IBBI, TRAI, and PIB. We organize public refund,
+                compensation, and creditor-claim information with links to the underlying official
+                record.
               </p>
 
               {/* Dominant Search Input Experience with 140ms entrance */}
@@ -183,7 +170,7 @@ export default async function LandingPage() {
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
-                  <span>Continuous statutory indexing</span>
+                  <span>Configured public source families</span>
                   <Link
                     href="/sources"
                     className="font-semibold text-trust-primary hover:underline transition-colors duration-fast"
@@ -224,8 +211,7 @@ export default async function LandingPage() {
               Latest Verified Opportunities
             </h2>
             <p className="mt-1 text-sm text-text-secondary">
-              Extracted from official regulatory orders, public notifications, and government
-              gazettes.
+              Organized from official records in our configured public source families.
             </p>
           </div>
           <Link
@@ -295,8 +281,8 @@ export default async function LandingPage() {
                 How ClaimRadar verifies an official notice.
               </h2>
               <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-2xl">
-                Every record in our public index undergoes strict human and cryptographic
-                verification against primary Indian regulatory endpoints before publication.
+                Published records link to an official source and are reviewed against that source
+                before publication.
               </p>
 
               <div className="mt-8 w-full">
@@ -322,11 +308,11 @@ export default async function LandingPage() {
               Authoritative Coverage
             </span>
             <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
-              Monitored Indian Regulatory Authorities
+              Configured Indian Public Source Families
             </h2>
             <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-              We track primary regulatory dispatches, gazette notifications, and tribunal orders
-              across union and state authorities.
+              Coverage follows the public source registry: securities, banking, insolvency, telecom,
+              and Union government notices.
             </p>
           </div>
           <MonitoredSourcesNetwork />

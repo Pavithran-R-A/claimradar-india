@@ -17,8 +17,8 @@ export function EditorialPrinciples() {
             Why ClaimRadar Publishes Less, Not More.
           </h2>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-text-secondary">
-            Most claim portals flood consumers with speculative class actions and AI-hallucinated
-            estimates. ClaimRadar is built on strict investigative verification.
+            Public financial notices can be difficult to find and interpret. ClaimRadar organizes
+            the record around clear eligibility, evidence, and next steps.
           </p>
           <div className="mt-6">
             <Link
@@ -38,12 +38,11 @@ export function EditorialPrinciples() {
               <span className="font-mono text-sm font-bold text-trust-primary">01</span>
               <div>
                 <h3 className="text-base font-bold text-text-primary">
-                  100% Grounded in Official Regulatory Documents
+                  Grounded in Configured Official Source Records
                 </h3>
                 <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-                  We never publish rumors, social media claims, or press speculation. Every
-                  opportunity is extracted directly from gazettes, court orders, or statutory
-                  regulatory circulars.
+                  We do not publish rumors, social media claims, or press speculation. Each public
+                  notice is tied to a record from our configured official source families.
                 </p>
               </div>
             </div>
@@ -57,9 +56,9 @@ export function EditorialPrinciples() {
                   Strict Zero-Speculation Publication Gate
                 </h3>
                 <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-                  If an order does not establish a clear refund mechanism or claim filing window, we
-                  do not publish it. We would rather have an empty directory than mislead one
-                  citizen.
+                  If a source record does not state a clear public action, eligibility, or deadline,
+                  we do not present it as a claim opportunity. A smaller directory is better than
+                  misleading one citizen.
                 </p>
               </div>
             </div>
@@ -74,7 +73,7 @@ export function EditorialPrinciples() {
                 </h3>
                 <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                   We do not take cuts, manage escrow, or file claims on your behalf. We direct you
-                  straight to the authenticated government or company submission portal.
+                  to the official route named in the source record.
                 </p>
               </div>
             </div>

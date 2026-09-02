@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ShieldCheck, ExternalLink } from 'lucide-react';
+import { publicSourceFamilies } from '@claimradar/source-registry';
 
 interface AuthoritySource {
   code: string;
@@ -13,53 +14,15 @@ interface AuthoritySource {
   officialPortal: string;
 }
 
-const SOURCES: AuthoritySource[] = [
-  {
-    code: 'SEBI',
-    name: 'Securities and Exchange Board of India',
-    domain: 'Securities & Capital Markets',
-    statutoryRole: 'Investor compensation, recovery proceedings & disgorgement funds',
-    frequency: 'Continuous (Daily RSS & Orders)',
-    noticeTypes: 'Public Notices, Recovery Certificates, Disgorgement Schemes',
-    officialPortal: 'https://www.sebi.gov.in',
-  },
-  {
-    code: 'RBI',
-    name: 'Reserve Bank of India',
-    domain: 'Banking & Financial System',
-    statutoryRole: 'Depositor education, unclaimed deposits & ombudsman directives',
-    frequency: 'Continuous (Circulars & Notifications)',
-    noticeTypes: 'Banking Ombudsman Orders, Inactive Account Schemes',
-    officialPortal: 'https://www.rbi.org.in',
-  },
-  {
-    code: 'IBBI',
-    name: 'Insolvency & Bankruptcy Board of India',
-    domain: 'Corporate Insolvency & Liquidation',
-    statutoryRole: 'Public liquidation notices, insolvency claim forms (B/C/D) & timelines',
-    frequency: 'Continuous (Gazette Feeds & Announcements)',
-    noticeTypes: 'Form A, Form B, Form C Creditor Submissions',
-    officialPortal: 'https://ibbi.gov.in',
-  },
-  {
-    code: 'TRAI',
-    name: 'Telecom Regulatory Authority of India',
-    domain: 'Telecommunications & Consumer Protection',
-    statutoryRole: 'Telecom consumer compensation directives & tariff overcharge refunds',
-    frequency: 'Continuous (Press Releases & Gazettes)',
-    noticeTypes: 'Tariff Directives, Financial Penalty Distributions',
-    officialPortal: 'https://www.trai.gov.in',
-  },
-  {
-    code: 'PIB',
-    name: 'Press Information Bureau',
-    domain: 'Union Ministries & Government of India',
-    statutoryRole: 'Central ministry compensation packages, tribunal settlements & gazettes',
-    frequency: 'Continuous (Ministry Press Feeds)',
-    noticeTypes: 'Cabinet Decisions, Ministry Relief Notifications',
-    officialPortal: 'https://pib.gov.in',
-  },
-];
+export const SOURCES: AuthoritySource[] = publicSourceFamilies.map((source) => ({
+  code: source.shortName,
+  name: source.name,
+  domain: source.domain,
+  statutoryRole: source.description,
+  frequency: 'Configured public source',
+  noticeTypes: source.scope,
+  officialPortal: `https://${source.domain}`,
+}));
 
 export function MonitoredSourcesNetwork() {
   return (
@@ -160,7 +123,7 @@ export function MonitoredSourcesNetwork() {
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-text-muted px-1">
         <span className="flex items-center gap-1.5 font-medium">
           <ShieldCheck className="h-4 w-4 text-trust-primary shrink-0" />
-          Every ingested notice is cryptographically hashed and verified before editorial review.
+          Each notice links to its official source for review.
         </span>
         <span className="font-mono text-[11px] text-text-secondary">
           INDEXED FROM OFFICIAL SOURCES
