@@ -20,10 +20,6 @@ const viewports = [
   { name: 'mobile', width: 390, height: 844 },
 ];
 
-function commandName() {
-  return process.platform === 'win32' ? 'npx.cmd' : 'npx';
-}
-
 async function waitForServer(url) {
   const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
@@ -38,7 +34,7 @@ async function waitForServer(url) {
   throw new Error(`server did not respond: ${url}`);
 }
 
-const server = spawn(commandName(), ['next', 'start', '-p', '3000'], {
+const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3000'], {
   cwd: 'apps/web',
   stdio: 'ignore',
   env: { ...process.env, NODE_ENV: 'production' },

@@ -66,6 +66,9 @@ jobs:
       - name: Migration contract
         run: pnpm verify:migrations
 
+      - name: Release integrity
+        run: pnpm exec vitest run apps/web/tests/release-runtime-integrity.test.ts
+
       - name: Build
         run: pnpm build
 
