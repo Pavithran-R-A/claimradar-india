@@ -19,7 +19,7 @@ export function validateUrl(url: string): SsrfValidationResult {
     return { safe: false, reason: `Disallowed protocol: ${protocol}` };
   }
 
-  const hostname = parsed.hostname;
+  const hostname = parsed.hostname.replace(/^\[|\]$/g, '');
   if (!hostname) {
     return { safe: false, reason: 'Missing hostname' };
   }
