@@ -127,6 +127,8 @@ export const LEGAL_SAFETY = {
     'cci.gov.in',
     'irdai.gov.in',
     'caipc.gov.in',
+    'ibbi.gov.in',
+    'trai.gov.in',
   ],
 } as const;
 

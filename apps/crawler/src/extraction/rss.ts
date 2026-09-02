@@ -21,18 +21,16 @@ export function parseRssItem(item: RssItem): DiscoveredDocument {
   // Handle date variations: dc:date vs pubDate
   const publishedAt = item['dc:date'] ?? item.pubDate;
 
-  // Handle description variations across RSS 2.0 / Atom 1.0 / Dublin Core:
-  // Order of preference: contentSnippet -> content:encoded -> content -> summary -> description
-  const rawDesc =
-    item.contentSnippet ??
+  // Prefer full fields for source text; snippets remain excerpts.
+  const rawFullText =
     item['content:encoded'] ??
     item.content ??
     item.summary ??
     item.description ??
+    item.contentSnippet ??
     '';
-
-  const textDesc = extractTextFromValue(rawDesc);
-  const description = stripHtml(textDesc);
+  const sourceText = stripHtml(extractTextFromValue(rawFullText));
+  const excerpt = truncate(sourceText, 500);
 
   // Use guid or id as source identifier
   const sourceIdentifier = item.guid ?? item.id;
@@ -41,7 +39,13 @@ export function parseRssItem(item: RssItem): DiscoveredDocument {
   if (title) result.title = title;
   if (publishedAt) result.publishedAt = normalizeDate(publishedAt);
   if (sourceIdentifier) result.sourceIdentifier = sourceIdentifier;
-  if (description) result.description = truncate(description, 500);
+  if (excerpt) {
+    result.description = excerpt;
+    result.metadata = {
+      sourceText,
+      rssExcerpt: excerpt,
+    };
+  }
 
   return result;
 }

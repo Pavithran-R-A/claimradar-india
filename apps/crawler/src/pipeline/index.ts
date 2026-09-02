@@ -63,6 +63,25 @@ export interface PipelineOptions {
 // ---------------------------------------------------------------------------
 
 /** Map a DB Source row to the SourceDefinition shape expected by adapters. */
+const LEGACY_ADAPTER_ALIASES: Readonly<Record<string, string>> = {
+  pib_rss_demo: 'rss-pib',
+  pib_rss: 'rss-pib',
+  'pib-rss': 'rss-pib',
+  sebi_rss_demo: 'rss-sebi',
+  sebi_rss: 'rss-sebi',
+  'sebi-rss': 'rss-sebi',
+  rbi_rss_demo: 'rss-rbi',
+  rbi_rss: 'rss-rbi',
+  'rbi-rss': 'rss-rbi',
+  generic_rss: 'rss-generic',
+  'generic-rss': 'rss-generic',
+};
+
+export function normalizeAdapterType(adapterName: string): string {
+  const normalized = adapterName.trim().toLowerCase();
+  return LEGACY_ADAPTER_ALIASES[normalized] ?? adapterName;
+}
+
 function toSourceDefinition(source: Source): SourceDefinition {
   const meta = source.metadata ?? {};
   const feedUrl = typeof meta['feedUrl'] === 'string' ? meta['feedUrl'] : undefined;
@@ -76,7 +95,7 @@ function toSourceDefinition(source: Source): SourceDefinition {
     name: source.name,
     domain: source.domain,
     sourceType: source.source_type as SourceDefinition['sourceType'],
-    adapterType: source.adapter_name,
+    adapterType: normalizeAdapterType(source.adapter_name),
     baseUrl: source.base_url ?? '',
     trustLevel: source.trust_level,
     rateLimit: { requestsPerMinute: source.rate_limit_per_minute },
@@ -137,6 +156,7 @@ async function processSource(params: {
     candidates: 0,
     errors: 0,
   };
+  let firstDocumentError: string | null = null;
 
   try {
     const sourceDef = toSourceDefinition(source);
@@ -170,7 +190,7 @@ async function processSource(params: {
         summary.documentsFetched++;
 
         // 304 Not Modified
-        if (fetched.contentHash && fetched.content.length === 0) {
+        if (fetched.metadata['wasCached'] === true && fetched.content.length === 0) {
           stats.unchanged++;
           summary.documentsUnchanged++;
           continue;
@@ -509,6 +529,7 @@ async function processSource(params: {
         }
         summary.errorCount++;
         stats.errors++;
+        firstDocumentError ??= errMsg;
         logger.error('document', `Document processing failed: ${doc.url}`, {
           sourceId: source.id,
           error: errMsg,
@@ -525,25 +546,59 @@ async function processSource(params: {
       }
     }
 
-    // Update per-source stats
-    if (crawlRunSourceId && !options.dryRun) {
-      await db.updateCrawlRunSource(crawlRunSourceId, {
-        status: 'completed',
-        documents_found: stats.discovered,
-        completed_at: new Date().toISOString(),
+    // Per-document failures make the source incomplete.
+    if (stats.errors > 0) {
+      summary.sourcesFailed++;
+      const errorMessage = firstDocumentError ?? 'Document processing failed';
+      const category = classifyError(errorMessage);
+      if (crawlRunSourceId && !options.dryRun) {
+        await db.updateCrawlRunSource(crawlRunSourceId, {
+          status: 'failed',
+          documents_found: stats.discovered,
+          error_message: errorMessage,
+          completed_at: new Date().toISOString(),
+        });
+      }
+      summary.perSource.push({
+        sourceId: source.id,
+        sourceName: source.name,
+        status: 'failed',
+        ...stats,
+      });
+      alertSink.emit({
+        alertType: 'crawl-source-failure',
+        severity: 'warning',
+        message: `Source ${source.name} had document failures`,
+        category,
+        sourceId: source.id,
+        runId,
+      });
+      logger.warn('source', `Source completed with document failures: ${source.name}`, {
+        sourceId: source.id,
+        error: errorMessage,
+        errorCode: category,
+        ...stats,
+      });
+    } else {
+      if (crawlRunSourceId && !options.dryRun) {
+        await db.updateCrawlRunSource(crawlRunSourceId, {
+          status: 'completed',
+          documents_found: stats.discovered,
+          completed_at: new Date().toISOString(),
+        });
+      }
+      summary.sourcesSucceeded++;
+      summary.perSource.push({
+        sourceId: source.id,
+        sourceName: source.name,
+        status: 'succeeded',
+        ...stats,
+      });
+      logger.info('source', `Source completed: ${source.name}`, {
+        sourceId: source.id,
+        ...stats,
       });
     }
-    summary.sourcesSucceeded++;
-    summary.perSource.push({
-      sourceId: source.id,
-      sourceName: source.name,
-      status: 'succeeded',
-      ...stats,
-    });
-    logger.info('source', `Source completed: ${source.name}`, {
-      sourceId: source.id,
-      ...stats,
-    });
   } catch (sourceError) {
     summary.sourcesFailed++;
     summary.errorCount++;
@@ -748,10 +803,11 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   // Apply source filter (id, adapter_name, or name substring)
   if (options.sourceFilter) {
     const filter = options.sourceFilter.toLowerCase();
+    const normalizedFilter = normalizeAdapterType(filter);
     sources = sources.filter(
       (s) =>
         s.id === options.sourceFilter ||
-        s.adapter_name.toLowerCase() === filter ||
+        normalizeAdapterType(s.adapter_name) === normalizedFilter ||
         s.name.toLowerCase().includes(filter),
     );
   }
