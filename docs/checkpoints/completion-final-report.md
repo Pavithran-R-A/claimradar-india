@@ -5,7 +5,7 @@ Date: 2026-09-02
 ## Branch Evidence
 
 - Branch: `codex/claimradar-completion`
-- Completion head: `7856e87`
+- Completion head before report commit: `7856e87`
 - Baseline main: `fc14de90783587013e692a70281ea88b8c3920f5`
 - Frontend source: `d3f3e9cb338c1b0d98a2f5e3696b8081c33c07b3`
 - Main modified: `NO`
