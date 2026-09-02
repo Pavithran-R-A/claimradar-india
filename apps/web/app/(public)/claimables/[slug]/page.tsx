@@ -126,7 +126,7 @@ function ClaimableDossier({
   related: PublishedClaimable[];
 }) {
   const isClosingSoon = claim.status === 'closing_soon';
-  const authorityCode = claim.companyName || 'REGULATOR';
+  const authorityCode = claim.authority || 'Issuing authority';
 
   return (
     <article className="min-w-0">

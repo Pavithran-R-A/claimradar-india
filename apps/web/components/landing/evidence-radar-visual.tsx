@@ -56,7 +56,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     textAnchor: 'end',
     description:
       'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
-    monitoringType: 'Public Announcements & Gazette Feeds',
+    monitoringType: 'Public Announcements & Creditor Notices',
     delaySec: 10.5,
   },
   {
@@ -70,7 +70,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     textAnchor: 'start',
     description:
       'Consumer compensation directives, telecom provider penalty distributions, and refunds.',
-    monitoringType: 'Regulatory Directives & Gazettes',
+    monitoringType: 'Regulatory Directives & Public Notices',
     delaySec: 12.0,
   },
   {
@@ -82,8 +82,7 @@ const MONITORED_NODES: AuthorityNode[] = [
     labelX: 260,
     labelY: 58,
     textAnchor: 'middle',
-    description:
-      'Official union ministry compensation announcements, tribunal settlements, and gazettes.',
+    description: 'Official union ministry compensation announcements and public releases.',
     monitoringType: 'Official Government Press Dispatches',
     delaySec: 0.5,
   },

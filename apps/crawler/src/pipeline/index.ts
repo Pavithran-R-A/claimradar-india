@@ -82,8 +82,14 @@ export function normalizeAdapterType(adapterName: string): string {
   return LEGACY_ADAPTER_ALIASES[normalized] ?? adapterName;
 }
 
+function getSourceRegistryId(source: Source): string | undefined {
+  const registryId = source.metadata?.['registryId'];
+  return typeof registryId === 'string' && registryId.trim() ? registryId : undefined;
+}
+
 function toSourceDefinition(source: Source): SourceDefinition {
   const meta = source.metadata ?? {};
+  const registryId = getSourceRegistryId(source);
   const feedUrl = typeof meta['feedUrl'] === 'string' ? meta['feedUrl'] : undefined;
   const config =
     typeof meta['config'] === 'object' && meta['config'] !== null
@@ -91,7 +97,7 @@ function toSourceDefinition(source: Source): SourceDefinition {
       : undefined;
 
   return {
-    id: source.id,
+    id: registryId ?? source.id,
     name: source.name,
     domain: source.domain,
     sourceType: source.source_type as SourceDefinition['sourceType'],
@@ -550,7 +556,8 @@ async function processSource(params: {
       } catch (docError) {
         const errMsg = docError instanceof Error ? docError.message : 'unknown';
         const isExpectedLimitation =
-          source.id === 'pib-rss' && (errMsg.includes('HTTP 403') || errMsg.includes('403'));
+          getSourceRegistryId(source) === 'pib-rss' &&
+          (errMsg.includes('HTTP 403') || errMsg.includes('403'));
 
         if (isExpectedLimitation) {
           summary.expectedLimitationCount++;
@@ -837,6 +844,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
     sources = sources.filter(
       (s) =>
         s.id === options.sourceFilter ||
+        getSourceRegistryId(s) === options.sourceFilter ||
         normalizeAdapterType(s.adapter_name) === normalizedFilter ||
         s.name.toLowerCase().includes(filter),
     );

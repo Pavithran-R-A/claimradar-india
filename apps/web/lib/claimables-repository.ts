@@ -32,6 +32,7 @@ export interface PublishedClaimable {
   id: string;
   slug: string;
   title: string;
+  authority: string;
   companyName: string;
   companySlug: string;
   sector: string;
@@ -264,6 +265,7 @@ export function mapClaimableRow(row: ClaimableRow, now: Date = new Date()): Publ
     id: row.id,
     slug: row.slug,
     title: row.public_title,
+    authority: row.authority ?? 'Issuing authority',
     companyName: company?.display_name ?? 'Unknown entity',
     companySlug: company?.slug ?? '',
     sector: sector?.name ?? 'Unspecified sector',

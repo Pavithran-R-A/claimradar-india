@@ -41,10 +41,9 @@ describe('SEBI live fixture regression', () => {
   });
 
   describe('date handling', () => {
-    it("should fall back to the raw string for SEBI's non-RFC-822 pubDate (no crash)", () => {
-      // '24 Jul, 2026 +0530' is rejected by Date parsing; normalizeDate keeps the raw value.
-      expect(documents[0]!.publishedAt).toBe('24 Jul, 2026 +0530');
-      expect(documents[3]!.publishedAt).toBe('22 Jul, 2026 +0530');
+    it("should normalize SEBI's non-RFC-822 pubDate safely", () => {
+      expect(documents[0]!.publishedAt).toBe('2026-07-23T18:30:00.000Z');
+      expect(documents[3]!.publishedAt).toBe('2026-07-21T18:30:00.000Z');
     });
 
     it('should leave publishedAt undefined for the empty-pubDate item', () => {

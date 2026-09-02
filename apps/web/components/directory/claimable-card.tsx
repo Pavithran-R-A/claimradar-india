@@ -20,7 +20,7 @@ import { SourceStamp, DeadlineTick, cn } from '@claimradar/design-system';
 export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
   const isClosingSoon = claim.status === 'closing_soon';
-  const authorityCode = claim.companyName || 'REGULATOR';
+  const authorityCode = claim.authority || 'Issuing authority';
 
   return (
     <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
@@ -105,7 +105,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
 export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
   const deadline = formatIstDate(claim.deadlineDate);
   const isClosingSoon = claim.status === 'closing_soon';
-  const authorityCode = claim.companyName || 'REGULATOR';
+  const authorityCode = claim.authority || 'Issuing authority';
 
   return (
     <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">

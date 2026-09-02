@@ -10,7 +10,7 @@ const STAGES = [
     title: 'We capture the original notice',
     icon: Database,
     description:
-      'We monitor official orders, circulars, and gazettes published by SEBI, RBI, IBBI, TRAI, and PIB.',
+      'We monitor official orders, circulars, and public releases from SEBI, RBI, IBBI, TRAI, and PIB.',
     detail: 'Primary authority documents only',
   },
   {
@@ -34,7 +34,7 @@ const STAGES = [
     title: 'You get the official place to act',
     icon: Landmark,
     description:
-      'Direct links to authentic government and regulatory portals to submit claims without intermediaries or fees.',
+      'Direct links to authentic authority portals to submit claims without intermediaries or fees.',
     detail: 'Direct official access',
   },
 ];
