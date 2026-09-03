@@ -4,7 +4,7 @@ Date: 2026-09-03
 
 ## Verification Snapshot
 
-HEAD = `1a3f8a1c5074128156040cd83913fda6fcfeae86`
+HEAD = `e93f2d8dace75d9ac7f332c668adc38856c2e71f` (verified candidate before this report alignment commit)
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -19,8 +19,8 @@ LOCAL_BROWSER_SMOKE = `LOCAL_PASS` — 10 routes across desktop and mobile
 PR = `#2` — ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33716901929` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33716901929))
-CI_EXACT_HEAD = `1a3f8a1c5074128156040cd83913fda6fcfeae86`
+CI_RUN = `33717485368` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33717485368))
+CI_EXACT_HEAD = `e93f2d8dace75d9ac7f332c668adc38856c2e71f`
 CI_RESULT = `REMOTE_CI_PASS`
 
 VERCEL_DEPLOYMENT = `claimradar-staging-git-code-e59144-pavithrans-projects-cae184b1.vercel.app`
