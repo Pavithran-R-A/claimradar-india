@@ -1,10 +1,10 @@
 # ClaimRadar India Completion Report
 
-Date: 2026-09-02
+Date: 2026-09-03
 
 ## Verification Snapshot
 
-HEAD = `75254ac089f45de7414ad8192e6b527a05b2dd4c` (verified candidate before this report alignment commit)
+HEAD = `1a3f8a1c5074128156040cd83913fda6fcfeae86`
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -14,20 +14,21 @@ TESTS = `LOCAL_PASS` and `REMOTE_CI_PASS` — 67 files, 536 tests
 INVENTORY_ACCEPTANCE = `LOCAL_PASS` and `REMOTE_CI_PASS` — 47 files, 336 tests
 BUILD = `LOCAL_PASS` and `REMOTE_CI_PASS` — 44 static pages
 SECRET_SCAN = `LOCAL_PASS` and `REMOTE_CI_PASS` — zero client matches
+LOCAL_BROWSER_SMOKE = `LOCAL_PASS` — 10 routes across desktop and mobile
 
 PR = `#2` — ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33657055557` (run 128)
-CI_EXACT_HEAD = `75254ac089f45de7414ad8192e6b527a05b2dd4c`
+CI_RUN = `33716901929` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33716901929))
+CI_EXACT_HEAD = `1a3f8a1c5074128156040cd83913fda6fcfeae86`
 CI_RESULT = `REMOTE_CI_PASS`
 
-VERCEL_DEPLOYMENT = `dpl_Abqce1Vb14Qto5FPtViygdLjskYu`
+VERCEL_DEPLOYMENT = `claimradar-staging-git-code-e59144-pavithrans-projects-cae184b1.vercel.app`
 VERCEL_STATE = `READY`
-PREVIEW_URL = https://claimradar-staging-2hzxuuamh-pavithrans-projects-cae184b1.vercel.app
-PREVIEW_BROWSER_QA = `EXTERNAL_BLOCKER` — Browser attachment timed out. Vercel fetches redirect to SSO. Local and CI browser smoke passed.
+PREVIEW_URL = https://claimradar-staging-git-code-e59144-pavithrans-projects-cae184b1.vercel.app
+PREVIEW_BROWSER_QA = `EXTERNAL_BLOCKER` — exact Preview redirects to Vercel login SSO. Local and CI browser smoke passed.
 
-SUPABASE_RUNTIME = `EXTERNAL_BLOCKER` — read-only preflight skipped. No authorized staging credentials exist in this workspace.
+SUPABASE_RUNTIME = `EXTERNAL_BLOCKER` — read-only preflight reports `SKIP_CREDENTIALS`. No authorized staging credentials exist in this workspace or GitHub staging environment.
 CUSTOMER_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authorized staging customer account exists.
 ADMIN_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authorized staging staff account exists.
 API_RUNTIME = `EXTERNAL_BLOCKER` — Preview SSO blocks access. No authenticated staging runtime is available.
@@ -73,11 +74,15 @@ Implemented and documented the expanded completion scope.
 - Vercel commit author: `Pavithran-R-A <pavithranraar@gmail.com>`
 - Active soak disturbed: `NO`
 
+## CI Coverage
+
+The exact-head CI workflow covers format, lint, typecheck, unit/integration tests, inventory acceptance, production build, client bundle secret scanning, migration validation, browser smoke, and release integrity.
+
 ## Release Decision
 
 **NO-GO for autonomous production release.**
 
-All local and exact-head CI gates pass.
-Preview is ready, but browser access remains blocked.
+All local and exact-head CI gates pass under Node 24.
+Vercel reports the exact Preview ready, but browser access remains blocked by SSO.
 Staging database and authenticated runtime evidence remain unavailable.
 The new final soak must run after those gates.
