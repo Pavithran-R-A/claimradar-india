@@ -24,6 +24,7 @@ export const RUNTIME_SENSITIVE_PATHS = [
   'pnpm-lock.yaml',
   'package.json',
   'pnpm-workspace.yaml',
+  '.github/workflows/daily-crawl.yml',
   '.github/workflows/staging-soak.yml',
 ];
 

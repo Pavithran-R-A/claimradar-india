@@ -7,6 +7,7 @@ describe('release runtime integrity coverage', () => {
   it('treats frontend runtime surfaces as soak-sensitive', () => {
     expect(RUNTIME_SENSITIVE_PATHS).toContain('apps/web/**');
     expect(RUNTIME_SENSITIVE_PATHS).toContain('packages/design-system/**');
+    expect(RUNTIME_SENSITIVE_PATHS).toContain('.github/workflows/daily-crawl.yml');
   });
 
   it('declares browser security boundaries in the Next.js headers', () => {
