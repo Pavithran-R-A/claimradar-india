@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { envBoolean, envAppEnv, crawlerEnvSchema as configCrawlerSchema } from '@claimradar/config';
 import { crawlerEnvSchema } from '../../src/env.js';
 import { z } from 'zod';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 describe('Phase 1 & 2: Environment Boolean Parser & Regression Tests', () => {
   const schema = z.object({
@@ -127,6 +129,15 @@ describe('Phase 1 & 2: Environment Boolean Parser & Regression Tests', () => {
       expect(parsedConfig.ENABLE_BILLING).toEqual(parsedCrawler.ENABLE_BILLING);
       expect(parsedConfig.NOTIFY_CUSTOMERS_ENABLED).toEqual(parsedCrawler.NOTIFY_CUSTOMERS_ENABLED);
       expect(parsedConfig.LIVE_ADAPTERS_ENABLED).toEqual(parsedCrawler.LIVE_ADAPTERS_ENABLED);
+    });
+
+    it('normalizes the boolean dispatch input before the shell comparison', () => {
+      const workflow = readFileSync(
+        path.resolve(__dirname, '../../../..', '.github/workflows/daily-crawl.yml'),
+        'utf8',
+      );
+
+      expect(workflow).toContain("DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}");
     });
   });
 });

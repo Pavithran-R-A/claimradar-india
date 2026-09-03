@@ -109,7 +109,7 @@ jobs:
           NOTIFY_CUSTOMERS_ENABLED: 'false'
           # Machine-readable summary for the artifact + sanitized job summary.
           CRAWLER_SUMMARY_FILE: ${{ github.workspace }}/crawl-summary.json
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
           SOURCE_FILTER: ${{ inputs.source }}
         run: |
           DRY_FLAG=""
