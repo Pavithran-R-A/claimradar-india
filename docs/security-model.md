@@ -21,10 +21,14 @@
 
 ## Content Security Policy
 
-- `default-src 'self'`; `script-src 'self' 'nonce-<random>'`; `style-src 'self' 'unsafe-inline'` (Tailwind requirement).
+- Strict target: `default-src 'self'`; `script-src 'self' 'nonce-<random>'`.
+- Styles allow `'unsafe-inline'` for Tailwind rendering.
 - `img-src 'self' data: https:`; `font-src 'self'`.
 - `frame-ancestors 'none'`; `base-uri 'self'`; `form-action 'self'`.
 - Strict `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`.
+- The static Next.js fallback uses `script-src 'unsafe-inline'`.
+- This preserves static rendering; strict nonces require dynamic rendering.
+- Treat nonce migration as a production hardening follow-up.
 
 ## SSRF Prevention
 
