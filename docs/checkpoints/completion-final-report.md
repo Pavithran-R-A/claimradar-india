@@ -4,7 +4,7 @@ Date: 2026-09-04
 
 ## Verification Snapshot
 
-HEAD = `692acc8889047a3ca1a0e90d1018e5fab8730411`
+HEAD = `5e027700d60b1c06f9cbda285f7b009a6c32b228`
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -21,20 +21,20 @@ STAGING_PREFLIGHT = `LOCAL_PASS_WITH_SKIPS` - four guards pass; seven credential
 PR = `#2` - ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33836451786` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33836451786))
-CI_EXACT_HEAD = `692acc8889047a3ca1a0e90d1018e5fab8730411`
+CI_RUN = `33837672749` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33837672749))
+CI_EXACT_HEAD = `5e027700d60b1c06f9cbda285f7b009a6c32b228`
 CI_RESULT = `REMOTE_CI_PASS`
 
-VERCEL_DEPLOYMENT = `claimradar-staging-j4c529d3q-pavithrans-projects-cae184b1.vercel.app`
+VERCEL_DEPLOYMENT = `claimradar-staging-89g2ahha7-pavithrans-projects-cae184b1.vercel.app`
 VERCEL_STATE = `READY`
-PREVIEW_URL = `https://claimradar-staging-j4c529d3q-pavithrans-projects-cae184b1.vercel.app`
+PREVIEW_URL = `https://claimradar-staging-89g2ahha7-pavithrans-projects-cae184b1.vercel.app`
 PREVIEW_BROWSER_QA = `PASS_WITH_LIMITATION` - share-authorized interactive Preview passed.
 
 SUPABASE_RUNTIME = `PASS_WITH_LIMITATION` - read-only connector evidence passed.
 CUSTOMER_RUNTIME = `UNVERIFIED` - entry page passed; disposable account flow remains untested.
 ADMIN_RUNTIME = `PASS_WITH_LIMITATION` - unauthenticated boundary passed; staff session untested.
 API_RUNTIME = `UNVERIFIED` - credentialed API calls remain untested.
-CRAWLER_PRE_SOAK = `IN_PROGRESS` - guarded staging run `33836845034` is active.
+CRAWLER_PRE_SOAK = `BLOCKED_TARGET_MISMATCH` - run `33837926250` failed closed.
 
 SECURITY_HIGH = `NO_KNOWN_FINDINGS` - scoped review and tests passed
 SECURITY_MEDIUM = `DOCUMENTED_STATIC_CSP_LIMITATION` - inline scripts remain required for static rendering
@@ -44,6 +44,7 @@ ACCESSIBILITY_REVIEW = `UNVERIFIED` - deployed keyboard and WCAG audit needs acc
 PERFORMANCE_REVIEW = `UNVERIFIED` - deployed browser profile needs access
 RUNTIME_SENSITIVE_CHANGED = `YES`
 NEW_FINAL_SOAK_REQUIRED = `YES`
+WRONG_TARGET_SOAK_REJECTED = `33836845034` - passed against another project.
 
 CUSTOM_DOMAIN_STATUS = `EXTERNAL_CONFIG_PENDING` - DNS remains separate deployment work
 MAIN_MODIFIED = `NO`
@@ -89,4 +90,5 @@ The exact-head workflow covers format, lint, typecheck, tests, inventory accepta
 
 All controllable local and exact-head CI gates pass under Node 24.
 Vercel reports the exact Preview ready, and interactive public routes pass.
-Staging crawl evidence remains pending. Production stays untouched.
+Correct-target staging crawl evidence remains pending.
+Production stays untouched.
