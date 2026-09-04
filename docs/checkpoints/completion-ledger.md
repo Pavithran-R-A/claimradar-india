@@ -14,25 +14,25 @@ Updated: 2026-09-04
 
 ## Current gate ledger
 
-| Gate                  | Status                 | Evidence or blocker                                                   |
-| --------------------- | ---------------------- | --------------------------------------------------------------------- |
-| Code quality          | `PASS`                 | Format, lint, typecheck, tests, inventory, and build pass locally.    |
-| CI                    | `PASS`                 | Exact-head run `33836451786` passed.                                  |
-| Preview deployment    | `PASS`                 | Exact deployment reports `READY`.                                     |
-| Public browser QA     | `PASS_WITH_LIMITATION` | Share-authorized Preview routes and search passed.                     |
-| Supabase/database     | `PASS_WITH_LIMITATION` | Read-only connector checks passed; local Docker stack unavailable.    |
-| Authentication        | `UNVERIFIED`           | Entry pages and admin redirect pass; credentialed sign-in untested.  |
+| Gate                  | Status                 | Evidence or blocker                                                 |
+| --------------------- | ---------------------- | ------------------------------------------------------------------- |
+| Code quality          | `PASS`                 | Format, lint, typecheck, tests, inventory, and build pass locally.  |
+| CI                    | `PASS`                 | Exact-head run `33836451786` passed.                                |
+| Preview deployment    | `PASS`                 | Exact deployment reports `READY`.                                   |
+| Public browser QA     | `PASS_WITH_LIMITATION` | Share-authorized Preview routes and search passed.                  |
+| Supabase/database     | `PASS_WITH_LIMITATION` | Read-only connector checks passed; local Docker stack unavailable.  |
+| Authentication        | `UNVERIFIED`           | Entry pages and admin redirect pass; credentialed sign-in untested. |
 | Customer workspace    | `UNVERIFIED`           | Registration page passes; disposable account flow untested.         |
-| Admin workspace       | `PASS_WITH_LIMITATION` | Unauthenticated boundary passes; staff session untested.             |
-| API runtime           | `UNVERIFIED`           | Credentialed API calls remain untested.                               |
-| Crawler adapters      | `PENDING`              | Guarded staging crawl is running.                                    |
-| Security              | `PASS_WITH_LIMITATION` | CSP is active; static rendering retains `unsafe-inline` scripts.      |
-| Accessibility         | `UNVERIFIED`           | Route rendering passed; full deployed WCAG audit remains pending.    |
-| Performance           | `UNVERIFIED`           | Build passed; deployed profile remains pending.                       |
-| Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.          |
-| Pre-soak              | `IN_PROGRESS`          | Controlled staging soak run `33836845034` is active.                  |
-| Final soak            | `PENDING_TIME`         | Requires merged baseline and genuine 48-72 hour observation.          |
-| Production deployment | `UNVERIFIED`           | Intentionally not merged or deployed.                                 |
+| Admin workspace       | `PASS_WITH_LIMITATION` | Unauthenticated boundary passes; staff session untested.            |
+| API runtime           | `UNVERIFIED`           | Credentialed API calls remain untested.                             |
+| Crawler adapters      | `PENDING`              | Guarded staging crawl is running.                                   |
+| Security              | `PASS_WITH_LIMITATION` | CSP is active; static rendering retains `unsafe-inline` scripts.    |
+| Accessibility         | `UNVERIFIED`           | Route rendering passed; full deployed WCAG audit remains pending.   |
+| Performance           | `UNVERIFIED`           | Build passed; deployed profile remains pending.                     |
+| Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.        |
+| Pre-soak              | `IN_PROGRESS`          | Controlled staging soak run `33836845034` is active.                |
+| Final soak            | `PENDING_TIME`         | Requires merged baseline and genuine 48-72 hour observation.        |
+| Production deployment | `UNVERIFIED`           | Intentionally not merged or deployed.                               |
 
 ## Fresh local evidence
 
