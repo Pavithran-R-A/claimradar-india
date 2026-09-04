@@ -650,6 +650,18 @@ async function main() {
         `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
       );
 
+      const expectedProjectRef = process.env.EXPECTED_STAGING_SUPABASE_PROJECT_REF?.trim();
+      if (environment === 'staging' && expectedProjectRef) {
+        const expectedUrl = `https://${expectedProjectRef}.supabase.co`;
+        if (env.SUPABASE_URL !== expectedUrl) {
+          console.error(
+            `\nPREFLIGHT REFUSED: Supabase URL does not match expected staging project ${expectedProjectRef}.`,
+          );
+          process.exit(1);
+        }
+        console.log(`Staging Project Target:   PASS (${expectedProjectRef})`);
+      }
+
       // Compliance Identity
       console.log(`Crawler Identity (UA):    ${env.CRAWLER_USER_AGENT}`);
 
