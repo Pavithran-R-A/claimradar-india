@@ -14,25 +14,25 @@ Updated: 2026-09-04
 
 ## Current gate ledger
 
-| Gate                  | Status                 | Evidence or blocker                                                 |
-| --------------------- | ---------------------- | ------------------------------------------------------------------- |
-| Code quality          | `PASS`                 | Format, lint, typecheck, tests, inventory, and build pass locally.  |
-| CI                    | `PASS`                 | Exact-head run `33838263155` passed.                                |
-| Preview deployment    | `PASS`                 | Exact-head deployment reports `READY`.                              |
-| Public browser QA     | `PASS_WITH_LIMITATION` | Share-authorized Preview routes and search passed.                  |
-| Supabase/database     | `PASS_WITH_LIMITATION` | Read-only connector checks passed; local Docker stack unavailable.  |
-| Authentication        | `BLOCKED_EXTERNAL`     | Auth signup rate limit blocked disposable identity creation.        |
-| Customer workspace    | `UNVERIFIED`           | Credentialed session remains unavailable.                           |
+| Gate                  | Status                 | Evidence or blocker                                                |
+| --------------------- | ---------------------- | ------------------------------------------------------------------ |
+| Code quality          | `PASS`                 | Format, lint, typecheck, tests, inventory, and build pass locally. |
+| CI                    | `PASS`                 | Exact-head run `33838263155` passed.                               |
+| Preview deployment    | `PASS`                 | Exact-head deployment reports `READY`.                             |
+| Public browser QA     | `PASS_WITH_LIMITATION` | Share-authorized Preview routes and search passed.                 |
+| Supabase/database     | `PASS_WITH_LIMITATION` | Read-only connector checks passed; local Docker stack unavailable. |
+| Authentication        | `BLOCKED_EXTERNAL`     | Auth signup rate limit blocked disposable identity creation.       |
+| Customer workspace    | `UNVERIFIED`           | Credentialed session remains unavailable.                          |
 | Admin workspace       | `UNVERIFIED`           | Unauthenticated boundary passes; staff session unavailable.        |
-| API runtime           | `UNVERIFIED`           | Credentialed API calls remain untested.                             |
-| Crawler adapters      | `PASS`                 | Correct-target run `33840659144` passed all invariants.             |
-| Security              | `PASS_WITH_LIMITATION` | CSP is active; static rendering retains `unsafe-inline` scripts.    |
-| Accessibility         | `PASS_WITH_LIMITATION` | Preview keyboard and route checks passed; full WCAG audit pending.  |
-| Performance           | `UNVERIFIED`           | Build passed; deployed profile remains pending.                     |
-| Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.        |
-| Pre-soak              | `PASS`                 | Run `33840659144`; DB corroborated crawl `b24296a6-...`.            |
-| Final soak            | `PENDING_TIME`         | Requires merged baseline and genuine 48-72 hour observation.        |
-| Production deployment | `UNVERIFIED`           | Intentionally not merged or deployed.                               |
+| API runtime           | `UNVERIFIED`           | Credentialed API calls remain untested.                            |
+| Crawler adapters      | `PASS`                 | Correct-target run `33840659144` passed all invariants.            |
+| Security              | `PASS_WITH_LIMITATION` | CSP is active; static rendering retains `unsafe-inline` scripts.   |
+| Accessibility         | `PASS_WITH_LIMITATION` | Preview keyboard and route checks passed; full WCAG audit pending. |
+| Performance           | `UNVERIFIED`           | Build passed; deployed profile remains pending.                    |
+| Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.       |
+| Pre-soak              | `PASS`                 | Run `33840659144`; DB corroborated crawl `b24296a6-...`.           |
+| Final soak            | `PENDING_TIME`         | Requires merged baseline and genuine 48-72 hour observation.       |
+| Production deployment | `UNVERIFIED`           | Intentionally not merged or deployed.                              |
 
 ## Fresh local evidence
 
