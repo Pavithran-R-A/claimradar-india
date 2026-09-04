@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { envBoolean, envAppEnv, crawlerEnvSchema as configCrawlerSchema } from '@claimradar/config';
-import { crawlerEnvSchema } from '../../src/env.js';
+import { crawlerEnvSchema, loadCrawlerEnv } from '../../src/env.js';
 import { z } from 'zod';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -138,6 +138,32 @@ describe('Phase 1 & 2: Environment Boolean Parser & Regression Tests', () => {
       );
 
       expect(workflow).toContain("DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}");
+    });
+  });
+
+  describe('Credential-free preflight', () => {
+    it('uses safe placeholders when preflight has no credentials', () => {
+      const originalUrl = process.env.SUPABASE_URL;
+      const originalSecret = process.env.SUPABASE_SECRET_KEY;
+      const originalServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      delete process.env.SUPABASE_URL;
+      delete process.env.SUPABASE_SECRET_KEY;
+      delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      try {
+        const parsed = loadCrawlerEnv({ allowMissingCredentials: true });
+
+        expect(parsed.SUPABASE_URL).toBe('https://dryrun.local');
+        expect(parsed.SUPABASE_SECRET_KEY).toBe('dummy-dryrun-secret-key');
+      } finally {
+        if (originalUrl === undefined) delete process.env.SUPABASE_URL;
+        else process.env.SUPABASE_URL = originalUrl;
+        if (originalSecret === undefined) delete process.env.SUPABASE_SECRET_KEY;
+        else process.env.SUPABASE_SECRET_KEY = originalSecret;
+        if (originalServiceRole === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+        else process.env.SUPABASE_SERVICE_ROLE_KEY = originalServiceRole;
+      }
     });
   });
 });

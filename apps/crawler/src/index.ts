@@ -617,7 +617,7 @@ async function main() {
 
       let env;
       try {
-        env = loadCrawlerEnv();
+        env = loadCrawlerEnv({ allowMissingCredentials: true });
       } catch (err) {
         console.error('\n❌ PREFLIGHT FAILED: Environment validation error', err);
         process.exit(1);

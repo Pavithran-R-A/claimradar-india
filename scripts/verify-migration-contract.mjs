@@ -6,7 +6,7 @@ const migrations = readdirSync(migrationsDir)
   .filter((file) => file.endsWith('.sql'))
   .sort();
 
-const expectedVersions = Array.from({ length: 16 }, (_, index) =>
+const expectedVersions = Array.from({ length: 17 }, (_, index) =>
   String(index + 1).padStart(3, '0'),
 );
 const actualVersions = migrations.map((file) => file.slice(0, 3));
@@ -34,6 +34,11 @@ const requiredContracts = [
     '016_security_profile_update_hardening.sql',
     /grant\s+update\s+\(display_name\)/i,
     'profile update hardening',
+  ],
+  [
+    '017_notification_delivery_log_rls_hardening.sql',
+    /notification_delivery_log_service_role_access/i,
+    'delivery-log RLS hardening',
   ],
 ];
 

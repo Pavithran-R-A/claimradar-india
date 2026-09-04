@@ -16,6 +16,8 @@
     "crawler:crawl-status": "pnpm --filter @claimradar/crawler dev -- crawl-status",
     "crawler:preflight": "pnpm --filter @claimradar/crawler dev -- preflight",
     "preflight:staging": "node scripts/staging-preflight.mjs",
+    "bootstrap:staging-sources": "pnpm --filter @claimradar/shared-types build && pnpm --filter @claimradar/source-registry build && node scripts/staging-source-bootstrap.mjs",
+    "test:staging-bootstrap": "node --test scripts/staging-source-bootstrap.test.mjs",
     "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
     "test:browser-smoke": "node scripts/ci-browser-smoke.mjs",
     "verify:migrations": "node scripts/verify-migration-contract.mjs",

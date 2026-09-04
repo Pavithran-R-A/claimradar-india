@@ -51,7 +51,10 @@ function readEnvFile(filePath: string): Record<string, string> {
   return res;
 }
 
-export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
+export function loadCrawlerEnv(options?: {
+  dryRun?: boolean;
+  allowMissingCredentials?: boolean;
+}): CrawlerEnv {
   const rootDir = process.cwd();
   const candidates = [rootDir, path.resolve(rootDir, '..'), path.resolve(rootDir, '../..')];
   let localEnv: Record<string, string> = {};
@@ -70,14 +73,15 @@ export function loadCrawlerEnv(options?: { dryRun?: boolean }): CrawlerEnv {
 
   const env = { ...stagingEnv, ...localEnv, ...process.env };
   const isDryRun = options?.dryRun ?? process.argv.includes('--dry-run');
+  const allowMissingCredentials = options?.allowMissingCredentials ?? false;
 
-  if (isDryRun) {
+  if (isDryRun || allowMissingCredentials) {
     env.SUPABASE_URL = env.SUPABASE_URL || 'https://dryrun.local';
   }
   const resolvedKey =
     env.SUPABASE_SECRET_KEY ||
     env.SUPABASE_SERVICE_ROLE_KEY ||
-    (isDryRun ? 'dummy-dryrun-secret-key' : undefined);
+    (isDryRun || allowMissingCredentials ? 'dummy-dryrun-secret-key' : undefined);
 
   env.SUPABASE_SECRET_KEY = resolvedKey;
   return crawlerEnvSchema.parse(env);
