@@ -4,7 +4,7 @@ Date: 2026-09-04
 
 ## Verification Snapshot
 
-HEAD = `5e027700d60b1c06f9cbda285f7b009a6c32b228`
+HEAD = `3a02277807c77322ebdab6d4e597defde90a80bb`
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -21,27 +21,33 @@ STAGING_PREFLIGHT = `LOCAL_PASS_WITH_SKIPS` - four guards pass; seven credential
 PR = `#2` - ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33837672749` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33837672749))
-CI_EXACT_HEAD = `5e027700d60b1c06f9cbda285f7b009a6c32b228`
+CI_RUN = `33838263155` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33838263155))
+CI_EXACT_HEAD = `3a02277807c77322ebdab6d4e597defde90a80bb`
 CI_RESULT = `REMOTE_CI_PASS`
 
-VERCEL_DEPLOYMENT = `claimradar-staging-89g2ahha7-pavithrans-projects-cae184b1.vercel.app`
+VERCEL_DEPLOYMENT = `claimradar-staging-f23y60nj7-pavithrans-projects-cae184b1.vercel.app`
 VERCEL_STATE = `READY`
-PREVIEW_URL = `https://claimradar-staging-89g2ahha7-pavithrans-projects-cae184b1.vercel.app`
-PREVIEW_BROWSER_QA = `PASS_WITH_LIMITATION` - share-authorized interactive Preview passed.
+PREVIEW_URL = `https://claimradar-staging-f23y60nj7-pavithrans-projects-cae184b1.vercel.app`
+PREVIEW_BROWSER_QA = `PASS_WITH_LIMITATION` - exact deployment routes passed.
 
-SUPABASE_RUNTIME = `PASS_WITH_LIMITATION` - read-only connector evidence passed.
-CUSTOMER_RUNTIME = `UNVERIFIED` - entry page passed; disposable account flow remains untested.
-ADMIN_RUNTIME = `PASS_WITH_LIMITATION` - unauthenticated boundary passed; staff session untested.
-API_RUNTIME = `UNVERIFIED` - credentialed API calls remain untested.
-CRAWLER_PRE_SOAK = `BLOCKED_TARGET_MISMATCH` - run `33837926250` failed closed.
+SUPABASE_TARGET = `PASS` - project ref `upvsfqufkywlpibbwrse` verified.
+SUPABASE_RUNTIME = `PASS` - target crawl data corroborated read-only.
+SUPABASE_SECURITY = `PASS` - Security Advisor returned zero lints.
+SUPABASE_PERFORMANCE = `PASS_WITH_LIMITATION` - expected INFO/WARN notices remain.
+CUSTOMER_RUNTIME = `UNVERIFIED` - Auth signup rate limit blocked testing.
+ADMIN_RUNTIME = `UNVERIFIED` - no trusted staff session available.
+API_RUNTIME = `UNVERIFIED` - credentialed API calls remain unavailable.
+NOTIFICATIONS = `UNVERIFIED` - no disposable user session available.
+CRAWLER_PRE_SOAK = `PASS` - run `33840659144` passed all invariants.
+BASELINE_CRAWL_RUN = `b24296a6-f586-4575-95cb-e763346e589e`
+CRAWL_DB_CORROBORATION = `PASS` - 7 sources, 126 found, 123 stored, 21 candidates, zero errors.
 
 SECURITY_HIGH = `NO_KNOWN_FINDINGS` - scoped review and tests passed
 SECURITY_MEDIUM = `DOCUMENTED_STATIC_CSP_LIMITATION` - inline scripts remain required for static rendering
 KNOWN_INTERNAL_DEFECTS = `NONE` found by local and exact-head CI gates
 
-ACCESSIBILITY_REVIEW = `UNVERIFIED` - deployed keyboard and WCAG audit needs access
-PERFORMANCE_REVIEW = `UNVERIFIED` - deployed browser profile needs access
+ACCESSIBILITY_REVIEW = `PASS_WITH_LIMITATION` - route and keyboard checks passed.
+PERFORMANCE_REVIEW = `PASS_WITH_LIMITATION` - local smoke and runtime health passed.
 RUNTIME_SENSITIVE_CHANGED = `YES`
 NEW_FINAL_SOAK_REQUIRED = `YES`
 WRONG_TARGET_SOAK_REJECTED = `33836845034` - passed against another project.
