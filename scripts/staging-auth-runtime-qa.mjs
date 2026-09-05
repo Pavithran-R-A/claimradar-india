@@ -1,7 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 
 export const EXPECTED_PROJECT_REF = 'upvsfqufkywlpibbwrse';
+
+const requireFromWeb = createRequire(new URL('../apps/web/package.json', import.meta.url));
 
 export function buildRuntimeGuards(env) {
   return {
@@ -94,7 +97,7 @@ async function runRuntimeQa(env = process.env) {
   const secretKey = env.SUPABASE_SECRET_KEY ?? env.SUPABASE_SERVICE_ROLE_KEY;
   expect(Boolean(secretKey), 'guards', 'missing_server_key');
 
-  const { createClient } = await import('@supabase/supabase-js');
+  const { createClient } = requireFromWeb('@supabase/supabase-js');
   const runId = String(env.GITHUB_RUN_ID ?? Date.now()).replace(/[^a-zA-Z0-9-]/g, '-');
   const nonce = randomBytes(6).toString('hex');
   const adminDb = makeClient(createClient, url, secretKey);
