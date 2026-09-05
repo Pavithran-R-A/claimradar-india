@@ -117,12 +117,14 @@ async function runRuntimeQa(env = process.env) {
     stages: {},
     cleanup: { attempted: false, deletedUsers: 0, residualProfiles: 'unknown' },
   };
+  let currentStage = 'initialization';
 
   const pass = (stage, details = {}) => {
     summary.stages[stage] = { status: 'passed', ...details };
   };
 
   try {
+    currentStage = 'AUTH_RUNTIME_CREATE';
     for (const identity of identities) {
       const created = await expectCall(`create_${identity.label}`, () =>
         adminDb.auth.admin.createUser({
@@ -139,6 +141,7 @@ async function runRuntimeQa(env = process.env) {
     }
     pass('AUTH_RUNTIME_CREATE', { usersCreated: createdIds.length, emailConfirmed: true });
 
+    currentStage = 'AUTH_RUNTIME_PROFILES';
     const profileResult = await expectCall('profile_trigger', () =>
       adminDb.from('profiles').select('id,role').in('id', createdIds),
     );
@@ -151,6 +154,7 @@ async function runRuntimeQa(env = process.env) {
     );
     pass('AUTH_RUNTIME_PROFILES', { profilesCreated: profiles.length, defaultRole: 'user' });
 
+    currentStage = 'AUTH_RUNTIME_ADMIN_PROMOTION';
     const adminIdentity = identities[2];
     await expectCall('trusted_admin_promotion', () =>
       adminDb.from('profiles').update({ role: 'admin' }).eq('id', adminIdentity.id),
@@ -161,12 +165,14 @@ async function runRuntimeQa(env = process.env) {
     expect(promoted.data?.role === 'admin', 'trusted_admin_promotion', 'promotion_not_applied');
     pass('AUTH_RUNTIME_ADMIN_PROMOTION', { path: 'service_role_profile_update' });
 
+    currentStage = 'AUTH_RUNTIME_SIGN_IN';
     const signedIn = [];
     for (const identity of identities) {
       signedIn.push(await signIn(createClient, url, secretKey, identity));
     }
     pass('AUTH_RUNTIME_SIGN_IN', { sessions: signedIn.length });
 
+    currentStage = 'CUSTOMER_RUNTIME';
     const [userA, userB, testAdmin] = signedIn;
     const userAClient = makeClient(
       createClient,
@@ -226,6 +232,7 @@ async function runRuntimeQa(env = process.env) {
     expect(privateOnboarding.length === 0, 'customer_onboarding', 'cross_user_row_visible');
     pass('CUSTOMER_RUNTIME', { ownDataVisible: true, crossUserDataHidden: true });
 
+    currentStage = 'SECURITY_ROLE_ESCALATION';
     const selfPromote = await userAClient
       .from('profiles')
       .update({ role: 'admin' })
@@ -242,6 +249,7 @@ async function runRuntimeQa(env = process.env) {
     expect(userARole.data?.role === 'user', 'role_escalation', 'user_role_changed');
     pass('SECURITY_ROLE_ESCALATION', { selfPromotionBlocked: true });
 
+    currentStage = 'ADMIN_RUNTIME';
     const adminSources = await expectCall('admin_surface_sources', () =>
       adminClient.from('sources').select('id').limit(1),
     );
@@ -273,6 +281,7 @@ async function runRuntimeQa(env = process.env) {
     });
     pass('API_RUNTIME', { credentialedAuthAndRls: true });
 
+    currentStage = 'NOTIFICATION_RUNTIME';
     const notificationRows = [];
     for (const identity of [userA, userB]) {
       const notification = await expectCall(`notification_insert_${identity.label}`, () =>
@@ -354,8 +363,8 @@ async function runRuntimeQa(env = process.env) {
     const message = String(error?.message ?? 'runtime_failed');
     const separator = message.indexOf(':');
     summary.failure = {
-      stage: separator > 0 ? message.slice(0, separator) : 'unknown',
-      code: separator > 0 ? message.slice(separator + 1, separator + 40) : 'runtime_failed',
+      stage: currentStage,
+      code: separator > 0 ? message.slice(separator + 1, separator + 40) : 'runtime_exception',
     };
   } finally {
     summary.cleanup.attempted = true;
