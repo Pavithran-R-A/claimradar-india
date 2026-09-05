@@ -1,16 +1,16 @@
 # ClaimRadar India Completion Report
 
-Date: 2026-09-04
+Date: 2026-09-05
 
 ## Verification Snapshot
 
-HEAD = `3a02277807c77322ebdab6d4e597defde90a80bb`
+HEAD = `e376f9341f534b4d70956c440d175d1b026b3991`
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
 LINT = `LOCAL_PASS` and `REMOTE_CI_PASS`
 TYPECHECK = `LOCAL_PASS` and `REMOTE_CI_PASS`
-TESTS = `LOCAL_PASS` and `REMOTE_CI_PASS` - 67 files, 538 tests
+TESTS = `LOCAL_PASS` and `REMOTE_CI_PASS` - 67 files, 539 tests
 INVENTORY_ACCEPTANCE = `LOCAL_PASS` and `REMOTE_CI_PASS` - 47 files, 338 tests
 BUILD = `LOCAL_PASS` and `REMOTE_CI_PASS` - 44 static pages
 SECRET_SCAN = `LOCAL_PASS` and `REMOTE_CI_PASS` - zero client matches
@@ -21,8 +21,8 @@ STAGING_PREFLIGHT = `LOCAL_PASS_WITH_SKIPS` - four guards pass; seven credential
 PR = `#2` - ClaimRadar completion and production-readiness hardening
 PR_DRAFT = `YES`
 
-CI_RUN = `33838263155` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33838263155))
-CI_EXACT_HEAD = `3a02277807c77322ebdab6d4e597defde90a80bb`
+CI_RUN = `33968827983` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33968827983))
+CI_EXACT_HEAD = `e376f9341f534b4d70956c440d175d1b026b3991`
 CI_RESULT = `REMOTE_CI_PASS`
 
 VERCEL_DEPLOYMENT = `claimradar-staging-f23y60nj7-pavithrans-projects-cae184b1.vercel.app`
@@ -34,10 +34,11 @@ SUPABASE_TARGET = `PASS` - project ref `upvsfqufkywlpibbwrse` verified.
 SUPABASE_RUNTIME = `PASS` - target crawl data corroborated read-only.
 SUPABASE_SECURITY = `PASS` - Security Advisor returned zero lints.
 SUPABASE_PERFORMANCE = `PASS_WITH_LIMITATION` - expected INFO/WARN notices remain.
-CUSTOMER_RUNTIME = `UNVERIFIED` - Auth signup rate limit blocked testing.
-ADMIN_RUNTIME = `UNVERIFIED` - no trusted staff session available.
-API_RUNTIME = `UNVERIFIED` - credentialed API calls remain unavailable.
-NOTIFICATIONS = `UNVERIFIED` - no disposable user session available.
+CUSTOMER_RUNTIME = `PASS` - user-scoped onboarding and isolation passed.
+ADMIN_RUNTIME = `PASS` - admin surfaces passed; normal users were blocked.
+API_RUNTIME = `PASS` - credentialed Auth and PostgREST checks passed.
+NOTIFICATIONS = `PASS` - ownership, read state, dedup, and ledger privacy passed.
+AUTH_RUNTIME = `PASS` - run `33968830120` created, confirmed, signed in, and cleaned up three users.
 CRAWLER_PRE_SOAK = `PASS` - run `33840659144` passed all invariants.
 BASELINE_CRAWL_RUN = `b24296a6-f586-4575-95cb-e763346e589e`
 CRAWL_DB_CORROBORATION = `PASS` - 7 sources, 126 found, 123 stored, 21 candidates, zero errors.
@@ -48,7 +49,7 @@ KNOWN_INTERNAL_DEFECTS = `NONE` found by local and exact-head CI gates
 
 ACCESSIBILITY_REVIEW = `PASS_WITH_LIMITATION` - route and keyboard checks passed.
 PERFORMANCE_REVIEW = `PASS_WITH_LIMITATION` - local smoke and runtime health passed.
-RUNTIME_SENSITIVE_CHANGED = `YES`
+RUNTIME_SENSITIVE_CHANGED = `YES` - onboarding profile completion uses trusted server-side update.
 NEW_FINAL_SOAK_REQUIRED = `YES`
 WRONG_TARGET_SOAK_REJECTED = `33836845034` - passed against another project.
 
@@ -90,11 +91,13 @@ Implemented and documented the expanded completion scope.
 
 The exact-head workflow covers format, lint, typecheck, tests, inventory acceptance, production build, client bundle secret scanning, migration validation, browser smoke, and release integrity.
 
+The staging auth-only mode creates confirmed disposable users through the Auth Admin API. It verifies roles, sessions, RLS isolation, admin access, notification deduplication, and cleanup. Credentials remain in memory and never enter logs or artifacts.
+
 ## Release Decision
 
 **NO-GO for autonomous production release.**
 
-All controllable local and exact-head CI gates pass under Node 24.
+All controllable local, exact-head CI, and credentialed staging runtime gates pass.
 Vercel reports the exact Preview ready, and interactive public routes pass.
-Correct-target staging crawl evidence remains pending.
+Correct-target staging crawl evidence passed before runtime-only changes.
 Production stays untouched.
