@@ -10,6 +10,11 @@ on:
         required: false
         default: false
         type: boolean
+      auth_runtime_only:
+        description: 'Run disposable authenticated runtime QA only'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: staging-soak
@@ -20,6 +25,7 @@ permissions:
 
 jobs:
   soak:
+    if: inputs.auth_runtime_only != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: staging
@@ -202,3 +208,57 @@ jobs:
           name: staging-soak-summary
           path: ${{ github.workspace }}/soak-crawl-summary.json
           if-no-files-found: error
+
+  auth-runtime:
+    if: github.event_name == 'workflow_dispatch' && inputs.auth_runtime_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run credentialed staging auth QA
+        working-directory: apps/web
+        env:
+          APP_ENV: staging
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: upvsfqufkywlpibbwrse
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          RUNTIME_QA_SUMMARY_FILE: ${{ github.workspace }}/staging-auth-runtime-summary.json
+        run: node ../../scripts/staging-auth-runtime-qa.mjs
+
+      - name: Publish sanitized summary
+        if: always()
+        shell: bash
+        run: |
+          if [ ! -s staging-auth-runtime-summary.json ]; then
+            echo '## Staging Auth Runtime QA' >> "$GITHUB_STEP_SUMMARY"
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo 'No sanitized summary was produced.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          node -e "const s=require('./staging-auth-runtime-summary.json'); console.log('## Staging Auth Runtime QA'); console.log(''); console.log('| Stage | Status |'); console.log('| --- | --- |'); for (const [k,v] of Object.entries(s.stages||{})) console.log('| '+k+' | '+v.status+' |'); console.log(''); console.log('Cleanup deleted users: '+s.cleanup.deletedUsers); console.log('Residual profiles: '+s.cleanup.residualProfiles);" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload sanitized summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-auth-runtime-summary
+          path: staging-auth-runtime-summary.json
+          if-no-files-found: warn
