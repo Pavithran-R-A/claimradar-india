@@ -5,6 +5,7 @@ import {
   buildDisposableEmail,
   buildRuntimeGuards,
   generateRuntimePassword,
+  selectRuntimeClientKey,
   sanitizeRuntimeSummary,
 } from './staging-auth-runtime-qa.mjs';
 
@@ -43,4 +44,9 @@ test('sanitized summaries omit credentials and tokens', () => {
     email: 'claimradar-test@example.com',
   });
   assert.deepEqual(summary, { status: 'passed' });
+});
+
+test('empty optional publishable keys fall back safely', () => {
+  assert.equal(selectRuntimeClientKey('', 'server-key'), 'server-key');
+  assert.equal(selectRuntimeClientKey('public-key', 'server-key'), 'public-key');
 });

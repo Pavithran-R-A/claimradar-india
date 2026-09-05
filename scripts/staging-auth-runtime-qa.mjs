@@ -25,6 +25,10 @@ export function generateRuntimePassword() {
   return `Cr!${random}9a`;
 }
 
+export function selectRuntimeClientKey(publishableKey, serverKey) {
+  return publishableKey || serverKey;
+}
+
 export function sanitizeRuntimeSummary(summary) {
   const safe = {};
   for (const [key, value] of Object.entries(summary ?? {})) {
@@ -177,19 +181,19 @@ async function runRuntimeQa(env = process.env) {
     const userAClient = makeClient(
       createClient,
       url,
-      env.SUPABASE_PUBLISHABLE_KEY ?? secretKey,
+      selectRuntimeClientKey(env.SUPABASE_PUBLISHABLE_KEY, secretKey),
       userA.session.access_token,
     );
     const userBClient = makeClient(
       createClient,
       url,
-      env.SUPABASE_PUBLISHABLE_KEY ?? secretKey,
+      selectRuntimeClientKey(env.SUPABASE_PUBLISHABLE_KEY, secretKey),
       userB.session.access_token,
     );
     const adminClient = makeClient(
       createClient,
       url,
-      env.SUPABASE_PUBLISHABLE_KEY ?? secretKey,
+      selectRuntimeClientKey(env.SUPABASE_PUBLISHABLE_KEY, secretKey),
       testAdmin.session.access_token,
     );
 
