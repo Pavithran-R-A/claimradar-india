@@ -47,17 +47,21 @@ async function runLocalDatabaseIngestionTest() {
   const testBatch = [
     {
       source_id: sourceId,
+      url: 'https://sebi.gov.in/notices/2026/local-test-doc-101.pdf',
       canonical_url: 'https://sebi.gov.in/notices/2026/local-test-doc-101.pdf',
       content_hash: 'sha256-local-fixture-hash-101-sebi-test',
       title: '[LOCAL_TEST] SEBI Investor Disgorgement Order 101',
       raw_text: 'SEBI hereby orders disgorgement of Rs 50,00,000 for market manipulation.',
+      http_status: 200,
     },
     {
       source_id: sourceId,
+      url: 'https://rbi.org.in/press/2026/local-test-doc-202.pdf',
       canonical_url: 'https://rbi.org.in/press/2026/local-test-doc-202.pdf',
       content_hash: 'sha256-local-fixture-hash-202-rbi-test',
       title: '[LOCAL_TEST] RBI Consumer Penalty Notice 202',
       raw_text: 'RBI imposes monetary penalty on payment aggregator for non-compliance.',
+      http_status: 200,
     },
   ];
 
