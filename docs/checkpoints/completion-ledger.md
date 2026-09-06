@@ -1,15 +1,17 @@
 # ClaimRadar India Completion Ledger
 
-Updated: 2026-09-05
+Updated: 2026-09-06
 
 ## Current baseline
 
-- Branch: `codex/claimradar-completion`.
-- HEAD: `e376f9341f534b4d70956c440d175d1b026b3991`.
-- Base `origin/main`: `fc14de90783587013e692a70281ea88b8c3920f5`.
+- Branch: `main`.
+- Runtime freeze: `f7a77ee0349078a0dfbe8649d77683feb89e6470`.
+- Main after merge: `f7a77ee0349078a0dfbe8649d77683feb89e6470`.
+- Source head: `4a2fa8230b1418e8a109de3d543bbc2562ff158f`.
+- Main pre-merge: `fc14de90783587013e692a70281ea88b8c3920f5`.
 - Original dirty checkout: preserved and untouched.
 - Main: not modified.
-- PR: `#2`, still draft.
+- PR: `#2`, merged with merge commit.
 - Node: `v24.19.0`.
 
 ## Current gate ledger
@@ -32,8 +34,8 @@ Updated: 2026-09-05
 | Performance           | `PASS_WITH_LIMITATION` | Build and runtime smoke passed; load profile remains pending.      |
 | Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.       |
 | Pre-soak              | `PASS`                 | Run `33840659144`; DB corroborated crawl `b24296a6-...`.           |
-| Final soak            | `PENDING_TIME`         | Requires merged baseline and genuine 48-72 hour observation.       |
-| Production deployment | `UNVERIFIED`           | Intentionally not merged or deployed.                              |
+| Final soak            | `PENDING_TIME`         | Scheduled clock starts at first genuine cron execution.            |
+| Production deployment | `NO-GO`                | Main merged; production deployment remains untouched.              |
 
 ## Fresh local evidence
 
@@ -61,10 +63,17 @@ Updated: 2026-09-05
 - Auth runtime run `33968830120`: all credentialed stages passed.
 - Auth cleanup: three users deleted; zero residual rows verified.
 - Onboarding completion now uses trusted server-side profile update.
+- Merge commit `f7a77ee0349078a0dfbe8649d77683feb89e6470` recorded.
+- Baseline GHA run `34038342122` passed from frozen main.
+- Baseline crawl `afc0ddfd-e65c-4b03-aaa8-be8537a5fc94` passed.
+- Baseline DB corroboration: 7 run sources, 126 found, zero errors.
+- Baseline DB source documents: 204 total across 7 sources.
+- Baseline publication events: zero in crawl window.
+- Runtime freeze is unchanged by these docs.
 
 ## Release decision
 
 `NO-GO` for autonomous production release.
 
 Production remains untouched. Runtime gates now pass.
-Merge still requires explicit human approval.
+Final readiness remains pending genuine soak time.

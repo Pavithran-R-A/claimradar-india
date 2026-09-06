@@ -1,10 +1,10 @@
 # ClaimRadar India Completion Report
 
-Date: 2026-09-05
+Date: 2026-09-06
 
 ## Verification Snapshot
 
-HEAD = `e376f9341f534b4d70956c440d175d1b026b3991`
+RUNTIME_FREEZE_HEAD = `f7a77ee0349078a0dfbe8649d77683feb89e6470`
 NODE_VERSION = `v24.19.0`
 
 FORMAT = `LOCAL_PASS` and `REMOTE_CI_PASS`
@@ -19,10 +19,17 @@ LOCAL_BROWSER_SMOKE = `LOCAL_PASS` - 10 routes across two viewports
 STAGING_PREFLIGHT = `LOCAL_PASS_WITH_SKIPS` - four guards pass; seven credential checks skipped
 
 PR = `#2` - ClaimRadar completion and production-readiness hardening
-PR_DRAFT = `YES`
+PR_DRAFT = `NO`
+PR_STATE = `MERGED`
+SOURCE_HEAD = `4a2fa8230b1418e8a109de3d543bbc2562ff158f`
+MAIN_PRE_MERGE_SHA = `fc14de90783587013e692a70281ea88b8c3920f5`
+MERGE_SHA = `f7a77ee0349078a0dfbe8649d77683feb89e6470`
+MERGE_PARENTS = `fc14de90783587013e692a70281ea88b8c3920f5`, `4a2fa8230b1418e8a109de3d543bbc2562ff158f`
+MERGE_TIMESTAMP_UTC = `2026-09-06T14:09:30Z`
+MERGE_TIMESTAMP_IST = `2026-09-06T19:39:30+05:30`
 
-CI_RUN = `33968827983` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33968827983))
-CI_EXACT_HEAD = `e376f9341f534b4d70956c440d175d1b026b3991`
+CI_RUN = `33969160473` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/33969160473))
+CI_EXACT_HEAD = `4a2fa8230b1418e8a109de3d543bbc2562ff158f`
 CI_RESULT = `REMOTE_CI_PASS`
 
 VERCEL_DEPLOYMENT = `claimradar-staging-f23y60nj7-pavithrans-projects-cae184b1.vercel.app`
@@ -40,8 +47,11 @@ API_RUNTIME = `PASS` - credentialed Auth and PostgREST checks passed.
 NOTIFICATIONS = `PASS` - ownership, read state, dedup, and ledger privacy passed.
 AUTH_RUNTIME = `PASS` - run `33968830120` created, confirmed, signed in, and cleaned up three users.
 CRAWLER_PRE_SOAK = `PASS` - run `33840659144` passed all invariants.
-BASELINE_CRAWL_RUN = `b24296a6-f586-4575-95cb-e763346e589e`
 CRAWL_DB_CORROBORATION = `PASS` - 7 sources, 126 found, 123 stored, 21 candidates, zero errors.
+BASELINE_GHA_RUN = `34038342122` ([GitHub Actions run](https://github.com/Pavithran-R-A/claimradar-india/actions/runs/34038342122))
+BASELINE_CRAWL_RUN = `afc0ddfd-e65c-4b03-aaa8-be8537a5fc94`
+BASELINE_RESULT = `PASS` - frozen main, 7 sources, 126 found, zero errors, zero publications.
+BASELINE_SOURCE_DOCUMENTS = `PASS` - 204 total documents across 7 expected sources.
 
 SECURITY_HIGH = `NO_KNOWN_FINDINGS` - scoped review and tests passed
 SECURITY_MEDIUM = `DOCUMENTED_STATIC_CSP_LIMITATION` - inline scripts remain required for static rendering
@@ -51,11 +61,19 @@ ACCESSIBILITY_REVIEW = `PASS_WITH_LIMITATION` - route and keyboard checks passed
 PERFORMANCE_REVIEW = `PASS_WITH_LIMITATION` - local smoke and runtime health passed.
 RUNTIME_SENSITIVE_CHANGED = `YES` - onboarding profile completion uses trusted server-side update.
 NEW_FINAL_SOAK_REQUIRED = `YES`
+SOAK_START_UTC = `PENDING_FIRST_GENUINE_SCHEDULED_RUN`
+SOAK_START_IST = `PENDING_FIRST_GENUINE_SCHEDULED_RUN`
+SCHEDULE_CRON = `17 */6 * * *`
+NEXT_SCHEDULED_SLOT_UTC = `2026-09-06T23:17:00Z`
+NEXT_SCHEDULED_SLOT_IST = `2026-09-07T04:47:00+05:30`
 WRONG_TARGET_SOAK_REJECTED = `33836845034` - passed against another project.
 
 CUSTOM_DOMAIN_STATUS = `EXTERNAL_CONFIG_PENDING` - DNS remains separate deployment work
-MAIN_MODIFIED = `NO`
-PRODUCTION_MERGED = `NO`
+MAIN_MODIFIED = `YES` - merge commit applied; runtime freeze remains unchanged.
+PRODUCTION_MERGED = `YES` - repository main only; production deployment untouched.
+MAIN_CLEAN = `YES`
+RUNTIME_FROZEN = `YES`
+PRODUCTION_READY_NOW = `NO - PENDING FINAL SOAK`
 
 ## Completion Scope
 
@@ -99,5 +117,5 @@ The staging auth-only mode creates confirmed disposable users through the Auth A
 
 All controllable local, exact-head CI, and credentialed staging runtime gates pass.
 Vercel reports the exact Preview ready, and interactive public routes pass.
-Correct-target staging crawl evidence passed before runtime-only changes.
+Correct-target staging crawl evidence passed from frozen main.
 Production stays untouched.
