@@ -37,6 +37,19 @@ export const HISTORICAL_CRON_RULES = [
   },
 ];
 
+function isRuntimeSensitivePath(filePath) {
+  if (filePath === 'apps/web/tests' || filePath.startsWith('apps/web/tests/')) {
+    return false;
+  }
+
+  return RUNTIME_SENSITIVE_PATHS.some((pattern) => {
+    if (pattern.endsWith('/**')) {
+      return filePath.startsWith(pattern.slice(0, -3));
+    }
+    return filePath === pattern;
+  });
+}
+
 /**
  * @param {string} cron
  * @param {number|null} [intervalHours]
@@ -179,20 +192,21 @@ export function validateBaselineConfig(config) {
 
 export function checkRuntimeIntegrity(baselineHead, targetHead = 'HEAD', cwd = REPO_ROOT) {
   try {
-    // Test-only soak accounting changes must not invalidate runtime freeze.
-    const sensitivePathsArg = RUNTIME_SENSITIVE_PATHS.join(' ') + ' :(exclude)apps/web/tests/**';
-    const diffOut = execSync(
-      'git diff --name-only ' + baselineHead + '..' + targetHead + ' -- ' + sensitivePathsArg,
-      { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
-    ).trim();
+    const diffOut = execSync('git diff --name-only ' + baselineHead + '..' + targetHead, {
+      cwd,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
 
-    if (diffOut.length === 0) {
-      return { runtimeBehaviorChanged: false, changedFiles: [] };
-    }
     const changedFiles = diffOut
       .split('\n')
       .map((f) => f.trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter(isRuntimeSensitivePath);
+
+    if (changedFiles.length === 0) {
+      return { runtimeBehaviorChanged: false, changedFiles: [] };
+    }
     return { runtimeBehaviorChanged: changedFiles.length > 0, changedFiles };
   } catch (err) {
     return { runtimeBehaviorChanged: true, changedFiles: ['GIT_DIFF_ERROR: ' + err.message] };
