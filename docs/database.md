@@ -4,67 +4,77 @@
 
 ### Core
 
-| Table             | Purpose                                                 |
-| ----------------- | ------------------------------------------------------- |
-| `claims`          | Master claim records; status, score, sector, company FK |
-| `claim_revisions` | Immutable history of every field change                 |
-| `companies`       | Company profiles (CIN, name, sector FK)                 |
-| `sectors`         | Sector taxonomy (banking, insurance, telecom …)         |
-| `source_traces`   | Provenance: which source URL produced which claim row   |
+| Table            | Purpose                                           |
+| ---------------- | ------------------------------------------------- |
+| `claimables`     | Published refund, compensation, and claim records |
+| `claim_versions` | Immutable history of claim field changes          |
+| `companies`      | Company profiles (CIN, name, sector FK)           |
+| `sectors`        | Sector taxonomy (banking, insurance, telecom …)   |
+| `claim_sources`  | Claim-to-source document relationships            |
+| `claim_evidence` | Evidence excerpts and provenance for claim fields |
 
 ### Ingestion
 
-| Table            | Purpose                                                   |
-| ---------------- | --------------------------------------------------------- |
-| `ingestion_runs` | Crawler run log (started_at, finished_at, status, errors) |
-| `raw_documents`  | Raw HTML / PDF blob before parsing                        |
-| `parse_results`  | Zod-validated output per document                         |
-| `ai_extractions` | LLM output + confidence scores per field                  |
+| Table                 | Purpose                                   |
+| --------------------- | ----------------------------------------- |
+| `crawl_runs`          | Crawler run log and summary statistics    |
+| `crawl_run_sources`   | Per-source crawl status and counts        |
+| `crawl_errors`        | Classified crawl and document failures    |
+| `candidate_documents` | Discovered documents before publication   |
+| `ai_runs`             | Extraction attempts and provider metadata |
+| `validation_results`  | Candidate validation outcomes             |
 
 ### User
 
-| Table               | Purpose                                                            |
-| ------------------- | ------------------------------------------------------------------ |
-| `profiles`          | Extended user profile (display name, preferences)                  |
-| `watchlists`        | User ↔ claim / company follow relationships                        |
-| `alert_preferences` | Notification channel, lead time, digest settings                   |
-| `user_roles`        | Role assignments (user, researcher, editor, legal_reviewer, admin) |
+| Table                      | Purpose                                           |
+| -------------------------- | ------------------------------------------------- |
+| `profiles`                 | Extended user profile (display name, preferences) |
+| `user_company_watchlists`  | User-to-company follow relationships              |
+| `user_sector_watchlists`   | User-to-sector follow relationships               |
+| `claim_matches`            | User-to-claim matching results                    |
+| `claim_trackers`           | User tracking state for claims                    |
+| `notification_preferences` | Notification channel and frequency settings       |
+| `notifications`            | User notification records                         |
 
 ### Billing
 
-| Table           | Purpose                                      |
-| --------------- | -------------------------------------------- |
-| `subscriptions` | Active plan per user (free, pro, enterprise) |
-| `payments`      | Razorpay payment records, webhook events     |
-| `invoices`      | Generated invoice metadata                   |
+| Table               | Purpose                                      |
+| ------------------- | -------------------------------------------- |
+| `subscriptions`     | Active plan per user (free, pro, enterprise) |
+| `payment_customers` | Provider customer mapping                    |
+| `payment_events`    | Payment provider events                      |
+| `webhook_events`    | Idempotent inbound webhook records           |
+| `entitlements`      | User plan entitlements                       |
 
 ### Editorial
 
-| Table               | Purpose                                       |
-| ------------------- | --------------------------------------------- |
-| `editorial_reviews` | Editor / legal-reviewer sign-off records      |
-| `publication_queue` | Claims awaiting human review                  |
-| `corrections`       | Correction log with original + revised values |
-| `audit_log`         | Append-only privileged operation log          |
+| Table                 | Purpose                              |
+| --------------------- | ------------------------------------ |
+| `review_assignments`  | Editor review assignments            |
+| `legal_reviews`       | Legal review decisions               |
+| `correction_requests` | Correction submissions               |
+| `takedown_requests`   | Takedown submissions                 |
+| `editorial_notes`     | Internal editorial notes             |
+| `audit_logs`          | Append-only privileged operation log |
 
 ## RLS Strategy
 
-- **Public read**: `claims`, `companies`, `sectors` where `status` is published.
-- **User-scoped**: `profiles`, `watchlists`, `alert_preferences` — `auth.uid() = user_id`.
-- **Editor role**: `editorial_reviews`, `publication_queue` — checked via `user_roles`.
-- **Admin only**: `audit_log`, `user_roles`, `subscriptions` (write).
-- **Service-role**: crawler writes to `ingestion_*` and `raw_documents`; never exposed to client.
+- **Public read**: published `claimables`, `companies`, `sectors`, and safe sources.
+- **User-scoped**: profile, watchlists, matches, trackers, and notifications.
+- **Staff role**: editorial, source, candidate, and publication operations.
+- **Admin only**: `audit_logs`, user administration, and billing controls.
+- **Service-role**: crawler writes to ingestion tables; never exposed to clients.
 
 ## Indexing Approach
 
-- `claims`: composite index on `(status, sector_id, updated_at DESC)`.
-- `claims`: GIN index on `search_vector` (tsvector) for full-text search.
-- `watchlists`: unique constraint `(user_id, claim_id)` with covering index.
-- `source_traces`: index on `(source_url_hash, ingested_at DESC)` for dedup.
-- Partial indexes on `publication_queue` where `status = 'pending_review'`.
+- `claimables`: indexes cover publication status, deadlines, and search fields.
+- `content_clusters`: indexes support provenance-aware deduplication.
+- User join tables enforce unique ownership relationships.
+- Ingestion tables index source, run, and document identifiers.
+- Editorial tables index review and publication state.
 
 ## Migrations
 
-- All schema changes via Drizzle / Kysely migration files.
-- Never hand-edit `schema.sql`; migrations are sequential and reversible.
+- All schema changes use ordered SQL migration files.
+- Never hand-edit generated types as schema authority.
 - Each migration is reviewed in PR before merge.

@@ -10,6 +10,7 @@ import type {
 import { parseRssItem } from '../../extraction/rss.js';
 import { extractHtmlContent } from '../../extraction/html.js';
 import { HttpClient } from '../../http/client.js';
+import { sha256 } from '../../http/hash.js';
 
 export class BaseRssAdapter implements SourceAdapter {
   public readonly sourceKey: string;
@@ -46,6 +47,8 @@ export class BaseRssAdapter implements SourceAdapter {
       const rssItem: Parameters<typeof parseRssItem>[0] = { link: item.link };
       if (item.title !== undefined) rssItem.title = item.title;
       if (item.pubDate !== undefined) rssItem.pubDate = item.pubDate;
+      if ((item as Record<string, unknown>)['dc:date'] !== undefined)
+        rssItem['dc:date'] = (item as Record<string, unknown>)['dc:date'] as string;
       if (item.guid !== undefined) rssItem.guid = item.guid;
       if (item.id !== undefined) rssItem.id = item.id;
       if (item.contentSnippet !== undefined) rssItem.contentSnippet = item.contentSnippet;
@@ -83,16 +86,28 @@ export class BaseRssAdapter implements SourceAdapter {
 
     const html = result.body.toString('utf-8');
     const extracted = extractHtmlContent(html, document.url);
+    const sourceText =
+      typeof document.metadata?.['sourceText'] === 'string'
+        ? document.metadata['sourceText']
+        : typeof document.metadata?.['rssFullText'] === 'string'
+          ? document.metadata['rssFullText']
+          : undefined;
+    const contentParts = [sourceText, extracted.text].filter((part): part is string =>
+      Boolean(part && part.trim()),
+    );
+    const content = contentParts.join('\n\n');
 
     return {
       url: document.url,
-      content: extracted.text,
+      content,
       contentType: result.contentType ?? 'text/html',
-      contentHash: result.contentHash,
+      contentHash: sourceText ? sha256(content) : result.contentHash,
       etag: result.etag,
       lastModified: result.lastModified,
       fetchedAt: new Date(),
       metadata: {
+        ...document.metadata,
+        wasCached: result.wasCached,
         title: extracted.title ?? document.title,
         publishedAt: document.publishedAt,
         dates: extracted.dates,

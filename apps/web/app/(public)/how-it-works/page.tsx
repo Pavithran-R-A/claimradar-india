@@ -4,18 +4,18 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
-import { Button } from '@claimradar/design-system';
+import { cn, buttonVariants } from '@claimradar/design-system';
 
 export default function HowItWorksPage() {
   return (
     <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
       {/* Header */}
       <header className="max-w-3xl mb-12">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
+        <div className="inline-flex items-center gap-1.5 rounded border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
           <ShieldCheck className="h-4 w-4" />
           Consumer Guide
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-text-primary tracking-tight">
           How ClaimRadar Works
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
@@ -26,9 +26,9 @@ export default function HowItWorksPage() {
 
       {/* Step by Step Walkthrough */}
       <section className="space-y-6 mb-16">
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+        <div className="rounded-md border border-border bg-surface p-6 sm:p-8 shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-trust-primary text-white font-bold text-base">
               01
             </span>
             <div>
@@ -44,9 +44,9 @@ export default function HowItWorksPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+        <div className="rounded-md border border-border bg-surface p-6 sm:p-8 shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-trust-primary text-white font-bold text-base">
               02
             </span>
             <div>
@@ -63,9 +63,9 @@ export default function HowItWorksPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+        <div className="rounded-md border border-border bg-surface p-6 sm:p-8 shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-trust-primary text-white font-bold text-base">
               03
             </span>
             <div>
@@ -79,9 +79,9 @@ export default function HowItWorksPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+        <div className="rounded-md border border-border bg-surface p-6 sm:p-8 shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-trust-primary text-white font-bold text-base">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-trust-primary text-white font-bold text-base">
               04
             </span>
             <div>
@@ -100,7 +100,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Visual Pipeline Section */}
-      <section className="mb-16 rounded-2xl border border-border bg-surface-strong/40 p-6 sm:p-10">
+      <section className="mb-16 rounded-md border border-border bg-surface-strong/40 p-6 sm:p-10">
         <h2 className="text-2xl font-extrabold text-text-primary mb-6">
           The 7-Stage Evidence Pipeline
         </h2>
@@ -109,7 +109,7 @@ export default function HowItWorksPage() {
 
       {/* What ClaimRadar Does and Does NOT Do */}
       <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
+        <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
           <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold mb-4">
             <CheckCircle2 className="h-5 w-5" />
             <h2 className="text-lg">What ClaimRadar Does</h2>
@@ -117,7 +117,7 @@ export default function HowItWorksPage() {
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">✓</span>
-              <span>Monitors official Indian regulators, courts, and gazette releases daily.</span>
+              <span>Monitors configured official source families on a scheduled basis.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">✓</span>
@@ -134,7 +134,7 @@ export default function HowItWorksPage() {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-6 sm:p-8">
+        <div className="rounded-md border border-rose-500/20 bg-rose-500/5 p-6 sm:p-8">
           <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold mb-4">
             <XCircle className="h-5 w-5" />
             <h2 className="text-lg">What ClaimRadar Does NOT Do</h2>
@@ -161,7 +161,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="rounded-2xl border border-border bg-ink-950 p-8 sm:p-12 text-white text-center">
+      <section className="rounded-md border border-border bg-surface p-8 sm:p-12 text-white text-center">
         <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
           Explore Active Opportunities Now
         </h2>
@@ -169,20 +169,24 @@ export default function HowItWorksPage() {
           Browse verified listings in our directory or create your free watchlist to receive alerts.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link href="/claimables">
-            <Button variant="signal" size="lg" className="rounded-xl font-bold">
-              <span>Browse directory</span>
-              <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Button>
+          <Link
+            href="/claimables"
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'lg' }),
+              'rounded-md font-bold shadow-xs',
+            )}
+          >
+            <span>Browse directory</span>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
           </Link>
-          <Link href="/register">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-xl border-white/20 bg-white/5 text-white hover:bg-white/10"
-            >
-              Create free alert account
-            </Button>
+          <Link
+            href="/register"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'lg' }),
+              'rounded-md shadow-xs',
+            )}
+          >
+            Create free alert account
           </Link>
         </div>
       </section>

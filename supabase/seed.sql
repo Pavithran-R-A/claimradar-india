@@ -57,36 +57,72 @@ INSERT INTO companies (id, legal_name, display_name, slug, aliases, sector_id, o
 ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
--- Sources (Demo)
+-- Sources (configured registry records; claim rows remain demo-only)
 -- =============================================================================
 
-INSERT INTO sources (id, name, domain, base_url, source_type, adapter_name, trust_level, fetch_frequency_hours) VALUES
+INSERT INTO sources (id, name, domain, base_url, source_type, adapter_name, trust_level, fetch_frequency_hours, metadata) VALUES
   ('c0000000-0000-0000-0000-000000000001',
-   'PIB RSS Demo',
-   'demo.pib.example.com',
-   'https://demo.pib.example.com/rss',
+   'Press Information Bureau RSS',
+   'pib.gov.in',
+   'https://www.pib.gov.in',
    'rss',
-   'pib_rss_demo',
+   'rss-pib',
    'official',
-   6),
+   6, '{"registryId":"pib-rss","feedUrl":"https://www.pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3&reg=3"}'::jsonb),
 
   ('c0000000-0000-0000-0000-000000000002',
-   'SEBI RSS Demo',
-   'demo.sebi.example.com',
-   'https://demo.sebi.example.com/rss/orders',
+   'SEBI RSS Feed',
+   'sebi.gov.in',
+   'https://www.sebi.gov.in',
    'rss',
-   'sebi_rss_demo',
+   'rss-sebi',
    'official',
-   12),
+   12, '{"registryId":"sebi-rss","feedUrl":"https://www.sebi.gov.in/sebirss.xml"}'::jsonb),
 
   ('c0000000-0000-0000-0000-000000000003',
-   'Consumer Affairs Demo',
-   'demo.consumeraffairs.example.com',
-   'https://demo.consumeraffairs.example.com/notices',
-   'html_listing',
-   'consumer_affairs_demo',
+   'Reserve Bank of India RSS',
+   'rbi.org.in',
+   'https://www.rbi.org.in',
+   'rss',
+   'rss-rbi',
    'official',
-   24)
+   12, '{"registryId":"rbi-rss","feedUrl":"https://www.rbi.org.in/pressreleases_rss.xml"}'::jsonb),
+
+  ('c0000000-0000-0000-0000-000000000004',
+   'RBI Consumer Protection & Ombudsman Notifications',
+   'rbi.org.in',
+   'https://www.rbi.org.in',
+   'rss',
+   'rss-rbi',
+   'official',
+   12, '{"registryId":"rbi-notifications-rss","feedUrl":"https://www.rbi.org.in/notifications_rss.xml"}'::jsonb),
+
+  ('c0000000-0000-0000-0000-000000000005',
+   'IBBI Corporate Insolvency Creditor Claims Notices',
+   'ibbi.gov.in',
+   'https://ibbi.gov.in',
+   'html_listing',
+   'ibbi-public-announcement',
+   'official',
+   24, '{"registryId":"ibbi-public-announcements"}'::jsonb),
+
+  ('c0000000-0000-0000-0000-000000000006',
+   'SEBI Public Notices & Investor Refund Orders',
+   'sebi.gov.in',
+   'https://www.sebi.gov.in',
+   'html_listing',
+   'sebi-public-notices',
+   'official',
+   24, '{"registryId":"sebi-public-notices"}'::jsonb),
+
+  ('c0000000-0000-0000-0000-000000000007',
+   'TRAI Telecom Tariff Refund & Overcharge Directives',
+   'trai.gov.in',
+   'https://www.trai.gov.in',
+   'rss',
+   'rss-generic',
+   'official',
+   24, '{"registryId":"trai-press-releases","feedUrl":"https://www.trai.gov.in/rss.xml"}'::jsonb)
 ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================

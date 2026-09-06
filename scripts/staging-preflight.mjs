@@ -20,6 +20,7 @@
  *   STAGING_SUPABASE_SECRET_KEY     | SUPABASE_SECRET_KEY
  *   STAGING_SUPABASE_DATABASE_URL   | DATABASE_URL
  *   STAGING_SUPABASE_PROJECT_REF    | SUPABASE_PROJECT_REF
+ *   EXPECTED_STAGING_SUPABASE_PROJECT_REF (optional exact-target guard)
  *   SUPABASE_ACCESS_TOKEN (required for migration-list parity via the CLI)
  */
 
@@ -27,6 +28,7 @@ import { spawnSync } from 'node:child_process';
 import { readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertStagingTarget } from './staging-source-bootstrap.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -126,6 +128,7 @@ const publishableKey = pickEnv(
   'SUPABASE_PUBLISHABLE_KEY',
 );
 const projectRef = pickEnv('STAGING_SUPABASE_PROJECT_REF', 'SUPABASE_PROJECT_REF');
+const expectedProjectRef = pickEnv('EXPECTED_STAGING_SUPABASE_PROJECT_REF');
 const accessToken = pickEnv('SUPABASE_ACCESS_TOKEN');
 
 if (!supabaseUrl) {
@@ -154,6 +157,20 @@ if (!supabaseUrl) {
   record('RLS spot check (publishable denied on admin tables)', SKIP, 'no staging credentials');
   record('RLS spot check (secret role can read ingestion tables)', SKIP, 'no staging credentials');
   finish(0);
+}
+
+if (expectedProjectRef) {
+  try {
+    assertStagingTarget(supabaseUrl.value, expectedProjectRef.value);
+    record('Staging project target', PASS, expectedProjectRef.value);
+  } catch (error) {
+    record(
+      'Staging project target',
+      FAIL,
+      error instanceof Error ? error.message : 'configured URL does not match expected project',
+    );
+    finish(1);
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -263,7 +280,7 @@ if (!publishableKey) {
   record('RLS spot check (publishable denied on admin tables)', SKIP, 'publishable key not set');
 } else {
   // Admin/editorial tables must never be readable with the publishable key.
-  const adminTables = ['audit_log', 'ai_runs', 'crawl_errors'];
+  const adminTables = ['audit_logs', 'ai_runs', 'crawl_errors'];
   let leaked = [];
   let checked = 0;
   for (const table of adminTables) {

@@ -9,11 +9,11 @@ export default function MethodologyPage() {
     <div className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
       {/* Header */}
       <header className="max-w-3xl mb-12">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
+        <div className="inline-flex items-center gap-1.5 rounded border border-trust-primary/20 bg-trust-primary/10 px-3.5 py-1 text-xs font-bold text-trust-primary mb-3">
           <Scale className="h-4 w-4" />
           Technical Standards
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-primary tracking-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-text-primary tracking-tight">
           Verification Methodology
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
@@ -31,9 +31,9 @@ export default function MethodologyPage() {
             </h2>
             <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
               We ingest public notifications using deterministic crawler workers that target
-              authenticated regulatory domains. Each crawled document is hashed (SHA-256) and paired
-              with its canonical HTTP source URL and server timestamp. This ensures every extracted
-              datum has an auditable origin trail.
+              configured public source families. Each crawled document is hashed (SHA-256) and
+              paired with its canonical HTTP source URL and server timestamp. This ensures every
+              extracted datum has an auditable origin trail.
             </p>
           </section>
 
@@ -106,7 +106,7 @@ export default function MethodologyPage() {
 
         {/* Right Rail: Principles Card */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+          <div className="rounded-md border border-border bg-surface p-6 shadow-sm">
             <h3 className="text-base font-bold text-text-primary mb-3">Editorial Tenets</h3>
             <div className="space-y-3 text-xs leading-relaxed text-text-secondary">
               <div className="rounded-lg border border-border/80 bg-surface-strong p-3">

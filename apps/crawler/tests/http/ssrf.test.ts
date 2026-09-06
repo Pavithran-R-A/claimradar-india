@@ -27,11 +27,13 @@ describe('SSRF Protection', () => {
       expect(result.reason).toContain('Private IP blocked');
     });
 
-    it('should handle IPv6 loopback ::1 via direct IP check', () => {
-      // Note: URL parsing keeps brackets around IPv6 (e.g. [::1]),
-      // which isIP() returns 0 for. The code's direct IP check only fires
-      // when isIP(hostname) returns non-zero. Bracketed IPv6 in URLs
-      // bypasses the direct IP check. Test isPrivateIp directly instead.
+    it('should block bracketed IPv6 loopback ::1', () => {
+      const result = validateUrl('http://[::1]/admin');
+      expect(result.safe).toBe(false);
+      expect(result.reason).toContain('Private IP blocked');
+    });
+
+    it('should identify IPv6 loopback directly', () => {
       expect(isPrivateIp('::1')).toBe(true);
     });
 

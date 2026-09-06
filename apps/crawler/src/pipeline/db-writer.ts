@@ -32,6 +32,14 @@ export interface SourceDocumentDedupItem {
   published_at: string | null;
 }
 
+export interface ContentClusterAssignment {
+  sourceDocumentId: string;
+  sourceId: string;
+  canonicalUrl: string;
+  contentHash: string;
+  title?: string;
+}
+
 export interface IDatabaseWriter {
   createCrawlRun(status: string, runId?: string): Promise<string>;
   updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void>;
@@ -52,6 +60,7 @@ export interface IDatabaseWriter {
   insertSourceHealthEvent(event: Omit<SourceHealthEvent, 'id' | 'checked_at'>): Promise<string>;
   getEnabledSources(): Promise<Source[]>;
   getSourceDocumentsForDedup(sourceId: string): Promise<SourceDocumentDedupItem[]>;
+  assignSourceDocumentToCluster?(assignment: ContentClusterAssignment): Promise<string>;
   getDeferredCandidates(): Promise<CandidateDocument[]>;
 }
 
@@ -205,6 +214,60 @@ export class DatabaseWriter implements IDatabaseWriter {
     return data ?? [];
   }
 
+  async assignSourceDocumentToCluster(assignment: ContentClusterAssignment): Promise<string> {
+    const clusterPayload = {
+      canonical_hash: assignment.contentHash,
+      cluster_title: assignment.title ?? null,
+      canonical_url: assignment.canonicalUrl,
+    };
+    const { data: existing, error: lookupError } = await this.db
+      .from('content_clusters')
+      .select('id')
+      .eq('canonical_hash', assignment.contentHash)
+      .maybeSingle();
+    if (lookupError) {
+      throw new Error(`Failed to find content cluster: ${lookupError.message}`);
+    }
+
+    let clusterId = existing?.id as string | undefined;
+    if (!clusterId) {
+      const { data, error } = await this.db
+        .from('content_clusters')
+        .insert(clusterPayload)
+        .select('id')
+        .single();
+      if (error && error.code !== '23505') {
+        throw new Error(`Failed to create content cluster: ${error.message}`);
+      }
+      clusterId = data?.id as string | undefined;
+      if (!clusterId) {
+        const { data: retry, error: retryError } = await this.db
+          .from('content_clusters')
+          .select('id')
+          .eq('canonical_hash', assignment.contentHash)
+          .single();
+        if (retryError || !retry?.id) {
+          throw new Error(
+            `Failed to resolve content cluster: ${retryError?.message ?? 'missing id'}`,
+          );
+        }
+        clusterId = retry.id as string;
+      }
+    }
+
+    const { error: memberError } = await this.db.from('content_cluster_members').upsert(
+      {
+        cluster_id: clusterId,
+        source_document_id: assignment.sourceDocumentId,
+      },
+      { onConflict: 'cluster_id,source_document_id', ignoreDuplicates: true },
+    );
+    if (memberError) {
+      throw new Error(`Failed to assign content cluster member: ${memberError.message}`);
+    }
+    return clusterId;
+  }
+
   async getDeferredCandidates(): Promise<CandidateDocument[]> {
     const { data, error } = await this.db
       .from('candidate_documents')
@@ -225,6 +288,8 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   public validationResults: Array<Record<string, unknown>> = [];
   public publicationEvents: Array<Record<string, unknown>> = [];
   public sourceHealthEvents: Array<Record<string, unknown>> = [];
+  public contentClusters: Map<string, { id: string; canonical_hash: string }> = new Map();
+  public contentClusterMembers: Set<string> = new Set();
 
   constructor(private initialSources?: SourceDefinition[]) {}
 
@@ -352,6 +417,21 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
 
   async getSourceDocumentsForDedup(_sourceId: string): Promise<SourceDocumentDedupItem[]> {
     return Array.from(this.sourceDocuments.values());
+  }
+
+  async assignSourceDocumentToCluster(assignment: ContentClusterAssignment): Promise<string> {
+    const existing = Array.from(this.contentClusters.values()).find(
+      (cluster) => cluster.canonical_hash === assignment.contentHash,
+    );
+    const cluster = existing ?? {
+      id: crypto.randomUUID(),
+      canonical_hash: assignment.contentHash,
+    };
+    if (!existing) {
+      this.contentClusters.set(cluster.id, cluster);
+    }
+    this.contentClusterMembers.add(`${cluster.id}:${assignment.sourceDocumentId}`);
+    return cluster.id;
   }
 
   async getDeferredCandidates(): Promise<CandidateDocument[]> {

@@ -81,7 +81,7 @@ export function MobileFilterDrawer({
           {/* Scrim */}
           <div
             aria-hidden
-            className="absolute inset-0 bg-ink-950/60"
+            className="absolute inset-0 bg-surface/60"
             onClick={() => setOpen(false)}
           />
           {/* Sheet */}

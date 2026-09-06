@@ -84,6 +84,16 @@ describe('Atom and RSS description extraction unit tests', () => {
     expect(doc.description).not.toContain('[object Object]');
   });
 
+  it('should leave malformed RSS dates unknown', () => {
+    const doc = parseRssItem({
+      title: 'Malformed date',
+      link: 'https://example.gov.in/malformed-date',
+      pubDate: 'not-a-real-date',
+    });
+
+    expect(doc.publishedAt).toBeUndefined();
+  });
+
   it('should perform safe text normalization and whitespace collapse', () => {
     const item = {
       title: 'Whitespace Test',

@@ -73,7 +73,6 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
             documents.push({
               url: fullUrl,
               title: text,
-              publishedAt: new Date().toISOString(),
               metadata: {
                 sourceListingUrl: listingUrl,
               },
@@ -127,7 +126,11 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
       fetchedAt: new Date(),
       metadata: {
         title: extracted.title ?? document.title,
-        publishedAt: document.publishedAt,
+        ...(document.publishedAt !== undefined
+          ? { publishedAt: document.publishedAt }
+          : extracted.dates[0]
+            ? { publishedAt: extracted.dates[0] }
+            : {}),
         dates: extracted.dates,
         pdfLinks: extracted.pdfLinks,
       },

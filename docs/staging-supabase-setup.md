@@ -13,21 +13,21 @@ keys or service-role secrets to Git.** In GitHub Actions they belong in the
 `staging` **environment** (Settings → Environments → staging), not at
 repository level, so only jobs declaring `environment: staging` can read them.
 
-| Variable                       | Value / Shape                                                            | Where it is used                                                                                                                                 |
-| :----------------------------- | :----------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `STAGING_SUPABASE_PROJECT_REF` | 20-char project ref, e.g. `abcdefghijklmnopqrst`                         | Derives URL and DATABASE_URL; stored as a GitHub variable; consumed by `scripts/staging-preflight.mjs` migration parity check                    |
-| `SUPABASE_URL`                 | `https://<STAGING_SUPABASE_PROJECT_REF>.supabase.co`                     | Crawler, web app server env (`apps/web/env.ts`), preflight. Web browser client consumes the same value as `NEXT_PUBLIC_SUPABASE_URL`             |
-| `SUPABASE_ANON_KEY`            | JWT (`eyJ...`) from Project Settings → API, `anon` `public` role         | Web app browser-side (RLS enforced) — consumed under the name `NEXT_PUBLIC_SUPABASE_ANON_KEY` (`apps/web/env.ts`, `packages/database/client.ts`) |
-| `SUPABASE_SERVICE_ROLE_KEY`    | JWT (`eyJ...`) from Project Settings → API, `service_role` role          | Crawler admin client + web server-only code — never ships to the browser, never under a `NEXT_PUBLIC_` name                                      |
-| `DATABASE_URL`                 | `postgresql://postgres:<db-password>@db.<ref>.supabase.co:5432/postgres` | Supabase CLI migrations (`db push`), psql for backup/restore                                                                                     |
+| Variable                       | Value / Shape                                                            | Where it is used                                                                                                                     |
+| :----------------------------- | :----------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `STAGING_SUPABASE_PROJECT_REF` | 20-char project ref, e.g. `abcdefghijklmnopqrst`                         | Derives URL and DATABASE_URL; stored as a GitHub variable; consumed by `scripts/staging-preflight.mjs` migration parity check        |
+| `SUPABASE_URL`                 | `https://<STAGING_SUPABASE_PROJECT_REF>.supabase.co`                     | Crawler, web app server env (`apps/web/env.ts`), preflight. Web browser client consumes the same value as `NEXT_PUBLIC_SUPABASE_URL` |
+| `SUPABASE_PUBLISHABLE_KEY`     | Publishable key from Project Settings → API                              | Web app browser-side (RLS enforced) — consumed as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`                                             |
+| `SUPABASE_SECRET_KEY`          | Secret server key from Project Settings → API                            | Crawler admin client + web server-only code — never ships to the browser                                                             |
+| `DATABASE_URL`                 | `postgresql://postgres:<db-password>@db.<ref>.supabase.co:5432/postgres` | Supabase CLI migrations (`db push`), psql for backup/restore                                                                         |
 
 GitHub Actions mapping (workflow secret names on the left):
 
 - `SUPABASE_URL` ← staging Supabase project URL
-- `SUPABASE_SERVICE_ROLE_KEY` ← staging service-role JWT
-- `SUPABASE_ANON_KEY` ← staging anon JWT. The crawler workflows do not use it;
+- `SUPABASE_SECRET_KEY` ← staging server secret
+- `SUPABASE_PUBLISHABLE_KEY` ← staging publishable key. The crawler workflows do not use it;
   it is required by Vercel Preview deployments of the web app, where it must
-  be set as `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see
+  be set as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (see
   `docs/deployment-readiness.md` → Vercel Preview deployment).
 
 > Legacy note: `STAGING_SUPABASE_PROJECT_REF` / `STAGING_SUPABASE_URL` /
@@ -44,8 +44,8 @@ GitHub Actions mapping (workflow secret names on the left):
 # Supabase Staging API & Storage Configuration
 STAGING_SUPABASE_PROJECT_REF="<staging-project-ref>"
 SUPABASE_URL="https://<staging-project-ref>.supabase.co"
-SUPABASE_ANON_KEY="eyJhbGciOi..."
-SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOi..."
+SUPABASE_PUBLISHABLE_KEY="sb_publishable_..."
+SUPABASE_SECRET_KEY="sb_secret_..."
 DATABASE_URL="postgresql://postgres:<db-password>@db.<staging-project-ref>.supabase.co:5432/postgres"
 
 # Application Environment & Policy Guards (staging invariants — never change)
@@ -60,7 +60,7 @@ NOTIFY_CUSTOMERS_ENABLED="false"
 NEXT_PUBLIC_SITE_URL="https://<vercel-preview-or-staging-domain>"
 NEXT_PUBLIC_SITE_NAME="ClaimRadar India"
 NEXT_PUBLIC_SUPABASE_URL="https://<staging-project-ref>.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOi..."
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="sb_publishable_..."
 
 # Email — console provider only; real mail is production-only (see docs/deployment-readiness.md → SMTP)
 EMAIL_PROVIDER="console"
@@ -141,7 +141,7 @@ The preflight command:
 2. **REFUSES and exits non-zero** if `ENABLE_BILLING` is `true`.
 3. Prints the crawler identity (User-Agent) for compliance review.
 4. Reports `SKIP_CREDENTIALS (Not set)` and exits `0` when `SUPABASE_URL` or
-   `SUPABASE_SERVICE_ROLE_KEY` is absent — local runs without staging
+   `SUPABASE_SECRET_KEY` is absent — local runs without staging
    credentials skip live ingestion honestly instead of failing.
 5. Reports `PASS` for each credential present when they are set.
 
@@ -159,7 +159,7 @@ vocabulary `PASS` / `FAIL` / `SKIP_CREDENTIALS` / `NOT_EXECUTED`:
    applied versions on the linked project (via Supabase CLI; requires
    `STAGING_SUPABASE_PROJECT_REF` + `SUPABASE_ACCESS_TOKEN`).
 4. **RLS spot checks** — anon key must be denied on admin tables
-   (`audit_log`, `ai_runs`, `crawl_errors`); service role must read
+   (`audit_logs`, `ai_runs`, `crawl_errors`); server secret must read
    `crawl_runs`.
 
 Without credentials every remote check reports `SKIP_CREDENTIALS` and the

@@ -21,27 +21,32 @@ export function parseRssItem(item: RssItem): DiscoveredDocument {
   // Handle date variations: dc:date vs pubDate
   const publishedAt = item['dc:date'] ?? item.pubDate;
 
-  // Handle description variations across RSS 2.0 / Atom 1.0 / Dublin Core:
-  // Order of preference: contentSnippet -> content:encoded -> content -> summary -> description
-  const rawDesc =
-    item.contentSnippet ??
+  // Prefer full fields for source text; snippets remain excerpts.
+  const rawFullText =
     item['content:encoded'] ??
     item.content ??
     item.summary ??
     item.description ??
+    item.contentSnippet ??
     '';
-
-  const textDesc = extractTextFromValue(rawDesc);
-  const description = stripHtml(textDesc);
+  const sourceText = stripHtml(extractTextFromValue(rawFullText));
+  const excerpt = truncate(sourceText, 500);
 
   // Use guid or id as source identifier
   const sourceIdentifier = item.guid ?? item.id;
 
   const result: DiscoveredDocument = { url };
   if (title) result.title = title;
-  if (publishedAt) result.publishedAt = normalizeDate(publishedAt);
+  const normalizedPublishedAt = publishedAt ? normalizeDate(publishedAt) : undefined;
+  if (normalizedPublishedAt) result.publishedAt = normalizedPublishedAt;
   if (sourceIdentifier) result.sourceIdentifier = sourceIdentifier;
-  if (description) result.description = truncate(description, 500);
+  if (excerpt) {
+    result.description = excerpt;
+    result.metadata = {
+      sourceText,
+      rssExcerpt: excerpt,
+    };
+  }
 
   return result;
 }
@@ -77,16 +82,49 @@ function decodeHtmlEntities(str: string): string {
     .replace(/&nbsp;/g, ' ');
 }
 
-function normalizeDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr);
-    if (!Number.isNaN(d.getTime())) {
-      return d.toISOString();
-    }
-  } catch {
-    // Fall through
+function normalizeDate(dateStr: string): string | undefined {
+  const trimmed = dateStr.trim();
+  if (!trimmed) return undefined;
+
+  const direct = new Date(trimmed);
+  if (!Number.isNaN(direct.getTime())) return direct.toISOString();
+
+  const match = /^(\d{1,2})\s+([A-Za-z]{3,9}),?\s+(\d{4})(?:\s+([+-])(\d{2})(\d{2}))?$/.exec(
+    trimmed,
+  );
+  if (!match) return undefined;
+
+  const monthIndex = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ].indexOf(match[2]!.slice(0, 3).toLowerCase());
+  const day = Number(match[1]);
+  const year = Number(match[3]);
+  if (monthIndex < 0 || day < 1 || day > 31) return undefined;
+
+  const offsetMinutes = match[4]
+    ? (Number(match[5]) * 60 + Number(match[6])) * (match[4] === '+' ? 1 : -1)
+    : 0;
+  const calendarDate = new Date(Date.UTC(year, monthIndex, day));
+  if (
+    calendarDate.getUTCFullYear() !== year ||
+    calendarDate.getUTCMonth() !== monthIndex ||
+    calendarDate.getUTCDate() !== day
+  ) {
+    return undefined;
   }
-  return dateStr;
+  const parsed = new Date(calendarDate.getTime() - offsetMinutes * 60_000);
+  return parsed.toISOString();
 }
 
 function truncate(text: string, maxLength: number): string {

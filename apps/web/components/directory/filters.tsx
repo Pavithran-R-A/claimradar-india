@@ -64,7 +64,7 @@ export function FilterFields({
             name="search"
             defaultValue={params.search ?? ''}
             placeholder="Company, title or sector…"
-            className={`${fieldClass} pl-9`}
+            className={`${fieldClass} pl-10`}
           />
         </div>
       </div>

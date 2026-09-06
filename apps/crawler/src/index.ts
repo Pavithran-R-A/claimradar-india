@@ -617,7 +617,7 @@ async function main() {
 
       let env;
       try {
-        env = loadCrawlerEnv();
+        env = loadCrawlerEnv({ allowMissingCredentials: true });
       } catch (err) {
         console.error('\n❌ PREFLIGHT FAILED: Environment validation error', err);
         process.exit(1);
@@ -649,6 +649,18 @@ async function main() {
       console.log(
         `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
       );
+
+      const expectedProjectRef = process.env.EXPECTED_STAGING_SUPABASE_PROJECT_REF?.trim();
+      if (environment === 'staging' && expectedProjectRef) {
+        const expectedUrl = `https://${expectedProjectRef}.supabase.co`;
+        if (env.SUPABASE_URL !== expectedUrl) {
+          console.error(
+            `\nPREFLIGHT REFUSED: Supabase URL does not match expected staging project ${expectedProjectRef}.`,
+          );
+          process.exit(1);
+        }
+        console.log(`Staging Project Target:   PASS (${expectedProjectRef})`);
+      }
 
       // Compliance Identity
       console.log(`Crawler Identity (UA):    ${env.CRAWLER_USER_AGENT}`);

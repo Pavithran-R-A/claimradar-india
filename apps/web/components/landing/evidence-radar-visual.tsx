@@ -1,127 +1,384 @@
 'use client';
 
 import * as React from 'react';
-import { Landmark, FileText, CheckCircle2, ShieldAlert, ExternalLink } from 'lucide-react';
+import { ShieldCheck, X } from 'lucide-react';
 import { cn } from '@claimradar/design-system';
 
-const MONITORED_AUTHORITIES = [
-  { code: 'SEBI', name: 'Securities and Exchange Board of India' },
-  { code: 'RBI', name: 'Reserve Bank of India' },
-  { code: 'IBBI', name: 'Insolvency & Bankruptcy Board of India' },
-  { code: 'TRAI', name: 'Telecom Regulatory Authority of India' },
-  { code: 'PIB', name: 'Press Information Bureau' },
-];
+interface AuthorityNode {
+  code: string;
+  name: string;
+  domain: string;
+  cx: number;
+  cy: number;
+  labelX: number;
+  labelY: number;
+  textAnchor: 'start' | 'end' | 'middle';
+  description: string;
+  monitoringType: string;
+  delaySec: number;
+}
 
-const VERIFICATION_STEPS = [
+const MONITORED_NODES: AuthorityNode[] = [
   {
-    step: '1',
-    title: 'Official notice detected',
+    code: 'SEBI',
+    name: 'Securities and Exchange Board of India',
+    domain: 'Investor Recovery & Refunds',
+    cx: 390,
+    cy: 155,
+    labelX: 405,
+    labelY: 150,
+    textAnchor: 'start',
+    description: 'Disgorgement accounts, recovery proceedings, and investor compensation funds.',
+    monitoringType: 'Official Orders & Public Notices',
+    delaySec: 3.5,
+  },
+  {
+    code: 'RBI',
+    name: 'Reserve Bank of India',
+    domain: 'Depositor Education & Awareness',
+    cx: 130,
+    cy: 155,
+    labelX: 115,
+    labelY: 150,
+    textAnchor: 'end',
+    description: 'Unclaimed deposits, banking ombudsman schemes, and depositor relief circulars.',
+    monitoringType: 'Official Circulars & Press Releases',
+    delaySec: 7.0,
+  },
+  {
+    code: 'IBBI',
+    name: 'Insolvency & Bankruptcy Board of India',
+    domain: 'Corporate Insolvency Claims',
+    cx: 145,
+    cy: 375,
+    labelX: 130,
+    labelY: 390,
+    textAnchor: 'end',
     description:
-      'Captured from official RSS feeds, public notice boards, or official press releases.',
-    icon: Landmark,
+      'Corporate insolvency claim windows, creditor forms B/C/D, and liquidation notices.',
+    monitoringType: 'Public Announcements & Creditor Notices',
+    delaySec: 10.5,
   },
   {
-    step: '2',
-    title: 'Source document verified',
+    code: 'TRAI',
+    name: 'Telecom Regulatory Authority of India',
+    domain: 'Consumer Tariffs & Refunds',
+    cx: 375,
+    cy: 375,
+    labelX: 390,
+    labelY: 390,
+    textAnchor: 'start',
     description:
-      'Original gazette notification, regulatory order, or circular validated at the source.',
-    icon: FileText,
+      'Consumer compensation directives, telecom provider penalty distributions, and refunds.',
+    monitoringType: 'Regulatory Directives & Public Notices',
+    delaySec: 12.0,
   },
   {
-    step: '3',
-    title: 'Eligibility & timeline structured',
-    description:
-      'Claim categories, cutoff dates, required documents, and recovery limits clearly formatted.',
-    icon: CheckCircle2,
-  },
-  {
-    step: '4',
-    title: 'Human editorial review',
-    description: 'Fact-checked by our editorial desk before any public listing is created.',
-    icon: ShieldAlert,
-  },
-  {
-    step: '5',
-    title: 'Direct official action link',
-    description: 'We point you directly to the official filing portal or designated authority.',
-    icon: ExternalLink,
+    code: 'PIB',
+    name: 'Press Information Bureau',
+    domain: 'Union Ministry Notices',
+    cx: 260,
+    cy: 75,
+    labelX: 260,
+    labelY: 58,
+    textAnchor: 'middle',
+    description: 'Official union ministry compensation announcements and public releases.',
+    monitoringType: 'Official Government Press Dispatches',
+    delaySec: 0.5,
   },
 ];
 
 export function EvidenceRadarVisual({ className }: { className?: string }) {
+  const [selectedNode, setSelectedNode] = React.useState<AuthorityNode | null>(null);
+
+  // Close drawer on Escape key
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape' && selectedNode) {
+        setSelectedNode(null);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedNode]);
+
   return (
     <div
-      className={cn(
-        'relative mx-auto flex w-full max-w-[480px] flex-col rounded-xl border border-white/15 bg-ink-950 p-5 sm:p-6 text-white shadow-xl lg:max-w-[500px]',
-        className,
-      )}
-      aria-label="How ClaimRadar Verifies Public Notices"
+      className={cn('relative w-full max-w-[400px] mx-auto select-none', className)}
+      aria-label="Monitored official sources diagram"
     >
-      {/* Editorial Header */}
-      <div className="border-b border-white/10 pb-4">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-bright">
-            SOURCE VERIFICATION
-          </span>
-          <span className="text-xs text-slate-400">Official Source Standards</span>
+      {/* Editorial Scientific Instrument Outer Frame (Natural sizing, NOT aspect-square) */}
+      <div className="relative w-full rounded-md border border-border bg-surface p-4 sm:p-5 shadow-xs hover:border-border/90 transition-colors duration-ui">
+        {/* Instrument Header with Mandatory Truth Integrity Microcopy */}
+        <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3 text-xs text-text-muted">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-trust-primary" />
+            <span className="font-bold text-text-primary tracking-wide">SOURCE VERIFICATION</span>
+          </div>
+          <span className="text-text-secondary text-xs">Monitored official sources</span>
         </div>
-        <h2 className="mt-1.5 text-base sm:text-lg font-bold text-white tracking-tight font-serif">
-          Every listing is checked against the source.
-        </h2>
-      </div>
 
-      {/* Monitored Official Sources Row */}
-      <div className="my-4 rounded-lg border border-white/10 bg-white/5 p-3">
-        <div className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-          Monitored official sources
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {MONITORED_AUTHORITIES.map((auth) => (
-            <span
-              key={auth.code}
-              className="inline-flex items-center rounded bg-ink-900 border border-white/15 px-2 py-0.5 text-xs font-mono font-bold text-slate-200"
-              title={auth.name}
+        {/* Dedicated Square Radar Canvas Container */}
+        <div className="relative aspect-square w-full">
+          <svg
+            viewBox="0 0 520 520"
+            className="w-full h-full"
+            role="img"
+            aria-label="Radar diagram monitoring SEBI, RBI, IBBI, TRAI, and PIB"
+          >
+            <defs>
+              {/* Rotating conic sweep trail gradient in deep editorial blue */}
+              <radialGradient id="editorialSweepGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#214E80" stopOpacity="0.12" />
+                <stop offset="70%" stopColor="#214E80" stopOpacity="0.03" />
+                <stop offset="100%" stopColor="#214E80" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+
+            {/* Subtle Canvas Background Circle */}
+            <circle
+              cx="260"
+              cy="260"
+              r="230"
+              fill="rgba(33, 78, 128, 0.015)"
+              stroke="#D9DAD6"
+              strokeWidth="1"
+            />
+
+            {/* Coordinate Range Grid Rings — ALL EXPLICITLY fill="none" */}
+            <circle
+              cx="260"
+              cy="260"
+              r="230"
+              fill="none"
+              stroke="#214E80"
+              strokeWidth="1"
+              strokeOpacity="0.2"
+              strokeDasharray="3 6"
+            />
+
+            {/* Range Ring 3 */}
+            <circle cx="260" cy="260" r="175" fill="none" stroke="#D9DAD6" strokeWidth="1" />
+            <circle
+              cx="260"
+              cy="260"
+              r="175"
+              fill="none"
+              stroke="#214E80"
+              strokeWidth="1"
+              strokeOpacity="0.2"
+              strokeDasharray="2 4"
+            />
+
+            {/* Range Ring 2 */}
+            <circle cx="260" cy="260" r="115" fill="none" stroke="#D9DAD6" strokeWidth="1" />
+            <circle
+              cx="260"
+              cy="260"
+              r="115"
+              fill="none"
+              stroke="#214E80"
+              strokeWidth="1"
+              strokeOpacity="0.25"
+              strokeDasharray="2 3"
+            />
+
+            {/* Range Ring 1 */}
+            <circle
+              cx="260"
+              cy="260"
+              r="55"
+              fill="none"
+              stroke="#214E80"
+              strokeWidth="1"
+              strokeOpacity="0.3"
+              strokeDasharray="2 2"
+            />
+
+            {/* Crosshair Axes */}
+            <line
+              x1="260"
+              y1="30"
+              x2="260"
+              y2="490"
+              stroke="#D9DAD6"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+            <line
+              x1="30"
+              y1="260"
+              x2="490"
+              y2="260"
+              stroke="#D9DAD6"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+
+            {/* Continuous Rotating 14s Radar Beam (Transform-only, composited) */}
+            <g
+              className="animate-radar-sweep motion-reduce:!animate-none"
+              style={{ transformOrigin: '260px 260px' }}
             >
-              {auth.code}
-            </span>
-          ))}
-        </div>
-      </div>
+              {/* Subtle Conic Sector Trail */}
+              <path
+                d="M260 260 L490 260 A230 230 0 0 0 422 98 Z"
+                fill="url(#editorialSweepGradient)"
+              />
+              {/* Leading Hairline Scan Vector */}
+              <line
+                x1="260"
+                y1="260"
+                x2="490"
+                y2="260"
+                stroke="#214E80"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </g>
 
-      {/* Vertical Verification Steps */}
-      <div className="space-y-3.5">
-        {VERIFICATION_STEPS.map((stepItem, idx) => {
-          return (
-            <div key={stepItem.step} className="relative flex items-start gap-3">
-              {/* Connector line between steps */}
-              {idx < VERIFICATION_STEPS.length - 1 && (
-                <div
-                  aria-hidden="true"
-                  className="absolute left-3.5 top-7 bottom-[-14px] w-px bg-white/10"
-                />
-              )}
-              <div className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-ink-900 text-xs font-bold font-mono text-brand-bright">
-                {stepItem.step}
+            {/* Central Precision Receiver Core */}
+            <circle cx="260" cy="260" r="10" fill="#FFFFFF" stroke="#214E80" strokeWidth="1.5" />
+            <circle cx="260" cy="260" r="3.5" fill="#214E80" />
+
+            {/* Monitored Authority Nodes */}
+            {MONITORED_NODES.map((node) => {
+              const isSelected = selectedNode?.code === node.code;
+              return (
+                <g
+                  key={node.code}
+                  className="cursor-pointer group/node"
+                  onClick={() => setSelectedNode(node)}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={isSelected}
+                  aria-label={`${node.code}: ${node.name}. Click to inspect monitoring details.`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedNode(node);
+                    }
+                  }}
+                >
+                  {/* Outer Focus / Selection Indicator — fill="none" */}
+                  <circle
+                    cx={node.cx}
+                    cy={node.cy}
+                    r={isSelected ? 16 : 14}
+                    fill="none"
+                    stroke="#214E80"
+                    strokeWidth={isSelected ? 2 : 1}
+                    strokeDasharray="3 3"
+                    className={cn(
+                      'transition-all duration-fast group-focus-visible:opacity-100',
+                      isSelected
+                        ? 'opacity-100 scale-105'
+                        : 'opacity-40 group-hover/node:opacity-80',
+                    )}
+                  />
+
+                  {/* Periodic Radar Blip Animation (Transforms only) — fill="none" */}
+                  <circle
+                    cx={node.cx}
+                    cy={node.cy}
+                    r="12"
+                    fill="none"
+                    stroke="#214E80"
+                    strokeWidth="1"
+                    className="animate-detection-blip motion-reduce:!animate-none pointer-events-none"
+                    style={{
+                      animationDelay: `${node.delaySec}s`,
+                      transformOrigin: `${node.cx}px ${node.cy}px`,
+                    }}
+                  />
+
+                  {/* Solid Interactive Core */}
+                  <circle
+                    cx={node.cx}
+                    cy={node.cy}
+                    r={isSelected ? 6 : 4.5}
+                    fill={isSelected ? '#214E80' : '#15171A'}
+                    className="transition-all duration-fast group-hover/node:fill-trust-primary"
+                  />
+
+                  {/* Restrained Typography Label */}
+                  <text
+                    x={node.labelX}
+                    y={node.labelY}
+                    textAnchor={node.textAnchor}
+                    className={cn(
+                      'font-mono text-xs font-bold tracking-tight transition-all duration-fast select-none pointer-events-none',
+                      isSelected
+                        ? 'fill-trust-primary font-extrabold'
+                        : 'fill-text-primary group-hover/node:fill-trust-primary',
+                    )}
+                  >
+                    {node.code}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Accessible In-Place Inspector Drawer */}
+          {selectedNode && (
+            <div
+              role="region"
+              aria-live="polite"
+              aria-label={`${selectedNode.code} monitoring details`}
+              className="drawer-panel-enter absolute inset-x-2 bottom-2 rounded-md border border-border bg-surface/98 p-3.5 shadow-md backdrop-blur-sm z-20"
+            >
+              <div className="flex items-start justify-between gap-2 border-b border-border/80 pb-2">
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-xs font-bold text-trust-primary">
+                      {selectedNode.code}
+                    </span>
+                    <span className="text-xs text-text-muted">·</span>
+                    <span className="text-xs font-semibold text-text-primary">
+                      {selectedNode.domain}
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-medium text-text-secondary mt-0.5">
+                    {selectedNode.name}
+                  </h4>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedNode(null)}
+                  className="rounded p-1 text-text-muted hover:bg-surface-strong hover:text-text-primary transition-colors duration-fast"
+                  aria-label="Close authority inspector"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               </div>
-              <div className="flex-1 pt-0.5">
-                <div className="text-xs sm:text-sm font-semibold text-white">{stepItem.title}</div>
-                <div className="mt-0.5 text-xs text-slate-300 leading-relaxed">
-                  {stepItem.description}
+
+              <div className="mt-2 text-xs text-text-secondary leading-relaxed space-y-1">
+                <p>{selectedNode.description}</p>
+                <div className="flex items-center justify-between text-xs text-text-muted pt-1.5 border-t border-border/60">
+                  <span>{selectedNode.monitoringType}</span>
+                  <span className="text-trust-primary font-medium">INDEXED</span>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Grounded Guarantee Footer */}
-      <div className="mt-5 border-t border-white/10 pt-3.5 text-center text-xs text-slate-300">
-        <div>
-          ClaimRadar does not file claims or collect official filing fees. You act on the official
-          portal.
+          )}
         </div>
-        <div className="mt-1 text-xs text-slate-400">
-          This shows our verification process. It is not a live activity feed.
+
+        {/* Footer Mandatory Truth Integrity Microcopy */}
+        <div className="mt-3 pt-2.5 border-t border-border space-y-1.5 text-xs text-text-muted">
+          <div className="flex items-center justify-between font-medium">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-trust-primary shrink-0" />
+              <span className="text-text-primary">
+                Every listing is checked against the source.
+              </span>
+            </div>
+            <span className="text-text-secondary">5 Sources</span>
+          </div>
+          <p className="text-xs text-text-muted leading-relaxed">
+            This shows our verification process. It is not a live activity feed. ClaimRadar does not
+            file claims or collect official filing fees. You act on the official portal.
+          </p>
         </div>
       </div>
     </div>

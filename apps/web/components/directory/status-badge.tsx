@@ -18,44 +18,37 @@ const STATUS_CONFIGS: Record<string, StatusConfig> = {
   open: {
     label: 'Open for claims',
     icon: CheckCircle2,
-    className:
-      'border-emerald-700/20 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-500/30',
+    className: 'border-success/30 bg-verified-background text-success font-semibold',
   },
   closing_soon: {
     label: 'Closing soon',
     icon: Clock,
-    className:
-      'border-amber-700/30 bg-amber-50 text-amber-900 font-bold dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-500/40',
+    className: 'border-deadline/40 bg-deadline-background text-deadline font-bold',
   },
   closing_today: {
     label: 'Closing today',
     icon: AlertTriangle,
-    className:
-      'border-amber-700/40 bg-amber-100 text-amber-950 font-bold dark:bg-amber-900/60 dark:text-amber-200 dark:border-amber-500/50 animate-pulse',
+    className: 'border-danger/40 bg-danger/10 text-danger font-bold animate-pulse',
   },
   under_review: {
     label: 'Under review',
     icon: Eye,
-    className:
-      'border-cyan-700/20 bg-cyan-50 text-cyan-900 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-500/30',
+    className: 'border-trust-primary/30 bg-trust-primary/10 text-trust-primary font-semibold',
   },
   expired: {
     label: 'Filing window closed',
     icon: XCircle,
-    className:
-      'border-rose-700/20 bg-rose-50 text-rose-900 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-500/30',
+    className: 'border-danger/30 bg-danger/10 text-danger font-semibold',
   },
   closed: {
     label: 'Closed',
     icon: XCircle,
-    className:
-      'border-slate-300 bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    className: 'border-border bg-surface-strong text-text-muted',
   },
   no_deadline: {
     label: 'No deadline recorded',
     icon: HelpCircle,
-    className:
-      'border-slate-300 bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800',
+    className: 'border-border bg-surface-strong text-text-secondary',
   },
 };
 
@@ -72,7 +65,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold tracking-wide select-none',
+        'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs select-none transition-colors duration-fast',
         config.className,
         className,
       )}
@@ -93,17 +86,15 @@ export function MetaPill({
   className?: string;
 }) {
   const base =
-    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-colors';
+    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-all duration-fast hover:border-trust-primary hover:text-trust-primary';
 
   if (href) {
     return (
-      <Link
-        href={href}
-        className={cn(base, 'hover:border-trust-primary hover:text-trust-primary', className)}
-      >
+      <Link href={href} className={cn(base, className)}>
         {children}
       </Link>
     );
   }
+
   return <span className={cn(base, className)}>{children}</span>;
 }

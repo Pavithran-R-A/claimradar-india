@@ -8,6 +8,7 @@ import type {
   SourceHealthResult,
 } from '../types.js';
 import { extractHtmlContent } from '../../extraction/html.js';
+import { extractPdfText } from '../../extraction/pdf.js';
 import { HttpClient } from '../../http/client.js';
 
 export interface IbbiRowMetadata {
@@ -18,6 +19,23 @@ export interface IbbiRowMetadata {
   applicant: string;
   insolvencyProfessional: string;
   pdfUrl?: string;
+}
+
+function parseIbbiDate(value: string): string | undefined {
+  const match = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/.exec(value.trim());
+  if (!match) return undefined;
+  const day = Number(match[1]);
+  const month = Number(match[2]);
+  const year = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return undefined;
+  }
+  return parsed.toISOString();
 }
 
 export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
@@ -69,12 +87,11 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
         const docUrl = pdfUrl || `https://ibbi.gov.in/public-announcement#row-${i}`;
         const title = `${announcementType}: ${corporateDebtor} (Claims Deadline: ${claimDeadline})`;
 
+        const publishedAt = parseIbbiDate(announcementDate);
         documents.push({
           url: docUrl,
           title,
-          publishedAt: announcementDate
-            ? new Date(announcementDate.split('-').reverse().join('-')).toISOString()
-            : new Date().toISOString(),
+          ...(publishedAt !== undefined ? { publishedAt } : {}),
           metadata: {
             announcementType,
             announcementDate,
@@ -93,7 +110,6 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
       documents.push({
         url: 'https://ibbi.gov.in/public-announcement',
         title: 'IBBI Corporate Insolvency Creditor Claims Public Announcements Portal',
-        publishedAt: new Date().toISOString(),
       });
     }
 
@@ -123,36 +139,51 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
 
     const isPdf =
       document.url.toLowerCase().endsWith('.pdf') || result.contentType?.includes('pdf');
-    let textContent = '';
+    let content: string;
+    let pdfMetadata: Record<string, unknown> = {};
 
     if (isPdf) {
-      textContent =
-        `IBBI Public Announcement Document for ${document.metadata?.['corporateDebtor'] ?? document.title}. ` +
-        `Announcement Type: ${document.metadata?.['announcementType'] ?? 'Insolvency Claims'}. ` +
-        `Corporate Debtor: ${document.metadata?.['corporateDebtor'] ?? ''}. ` +
-        `Applicant: ${document.metadata?.['applicant'] ?? ''}. ` +
-        `Insolvency Professional: ${document.metadata?.['insolvencyProfessional'] ?? ''}. ` +
-        `Date of Announcement: ${document.metadata?.['announcementDate'] ?? ''}. ` +
-        `Last Date for Submission of Claims: ${document.metadata?.['claimDeadline'] ?? ''}. ` +
-        `Notice inviting proof of claim from all creditors and claimants.`;
+      const extractedPdf = await extractPdfText(result.body);
+      const extractedText = extractedPdf.pages
+        .map((page) => page.text)
+        .filter((page) => page.length > 0)
+        .join('\n\n')
+        .trim();
+      content = extractedText;
+      const hasExtractedText = extractedText.length > 0;
+      pdfMetadata = {
+        pageCount: extractedPdf.pageCount,
+        warnings: extractedPdf.warnings.filter(
+          (warning) => !(hasExtractedText && warning.startsWith('PDF appears to be scanned')),
+        ),
+        ...extractedPdf.metadata,
+        ...(!hasExtractedText && extractedPdf.isScanned
+          ? {
+              ocr_required: true,
+              ocr_reason: 'Insufficient text extracted — likely a scanned document',
+            }
+          : {}),
+      };
     } else {
       const html = result.body.toString('utf-8');
       const extracted = extractHtmlContent(html, document.url);
-      textContent = extracted.text || document.title || 'IBBI Announcement';
+      content = extracted.text;
     }
 
     return {
       url: document.url,
-      content: textContent,
+      content,
       contentType: result.contentType ?? (isPdf ? 'application/pdf' : 'text/html'),
       contentHash: result.contentHash,
       etag: result.etag,
       lastModified: result.lastModified,
       fetchedAt: new Date(),
       metadata: {
+        ...document.metadata,
+        wasCached: result.wasCached,
         title: document.title,
         publishedAt: document.publishedAt,
-        ...document.metadata,
+        ...pdfMetadata,
       },
     };
   }

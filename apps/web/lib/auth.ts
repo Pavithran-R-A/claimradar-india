@@ -84,6 +84,10 @@ export async function requireAuth(): Promise<User> {
  * enforcement of the admin role matrix.
  */
 export async function requireRoles(roles: readonly StaffRole[]): Promise<Profile> {
+  const user = await getUser();
+  if (!user) {
+    redirect('/login?next=%2Fadmin');
+  }
   const profile = await getUserProfile();
   if (!profile || !isStaffRole(profile.role) || !roles.includes(profile.role)) {
     redirect('/');

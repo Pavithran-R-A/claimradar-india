@@ -78,6 +78,7 @@ jobs:
         run: pnpm crawler:preflight -- --environment=staging
         env:
           APP_ENV: 'staging'
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
@@ -109,7 +110,7 @@ jobs:
           NOTIFY_CUSTOMERS_ENABLED: 'false'
           # Machine-readable summary for the artifact + sanitized job summary.
           CRAWLER_SUMMARY_FILE: ${{ github.workspace }}/crawl-summary.json
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
           SOURCE_FILTER: ${{ inputs.source }}
         run: |
           DRY_FLAG=""

@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { getAdminDb } from '@/lib/admin-db';
 import { runMatchingForUser } from '@/lib/matching-runner';
 import { onboardingSchema } from '@/lib/schemas';
 
@@ -77,7 +78,9 @@ export async function completeOnboarding(formData: FormData): Promise<Onboarding
     details: { source: 'onboarding_flow' },
   });
 
-  const { error: profileError } = await supabase
+  // Hardened profile RLS intentionally blocks authenticated role-state writes.
+  // This server-side completion write uses the trusted admin path instead.
+  const { error: profileError } = await getAdminDb()
     .from('profiles')
     .update({ onboarding_completed: true })
     .eq('id', user.id);

@@ -1,79 +1,133 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
-import {
-  ArrowRight,
-  ShieldCheck,
-  Landmark,
-  Scale,
-  Building2,
-  Newspaper,
-  Radio,
-} from 'lucide-react';
+import { ShieldCheck, ExternalLink } from 'lucide-react';
 import { publicSourceFamilies } from '@claimradar/source-registry';
 
-const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  sebi: Scale,
-  rbi: Landmark,
-  ibbi: Building2,
-  pib: Newspaper,
-  trai: Radio,
-};
+interface AuthoritySource {
+  code: string;
+  name: string;
+  domain: string;
+  statutoryRole: string;
+  frequency: string;
+  noticeTypes: string;
+  officialPortal: string;
+}
+
+export const SOURCES: AuthoritySource[] = publicSourceFamilies.map((source) => ({
+  code: source.shortName,
+  name: source.name,
+  domain: source.domain,
+  statutoryRole: source.description,
+  frequency: 'Configured public source',
+  noticeTypes: source.scope,
+  officialPortal: `https://${source.domain}`,
+}));
 
 export function MonitoredSourcesNetwork() {
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {publicSourceFamilies.map((family) => {
-          const Icon = CATEGORY_ICONS[family.id] || Landmark;
-          return (
-            <div
-              key={family.id}
-              className="flex flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm transition-all duration-150 hover:border-trust-primary/30"
-            >
-              <div>
-                <div className="flex items-center gap-2.5 mb-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-trust-primary/10 text-trust-primary">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-text-primary">{family.shortName}</h3>
-                    <span className="text-xs text-text-muted">{family.domain}</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-text-secondary leading-relaxed mb-3">
-                  {family.description}
-                </p>
-
-                <div className="rounded-md border border-border/70 bg-surface-strong px-2.5 py-1.5 text-xs text-text-muted">
-                  <span className="font-semibold text-text-primary">Coverage: </span>
-                  {family.scope}
-                </div>
-              </div>
-
-              <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-xs">
-                <span className="text-text-muted font-medium">Official source portal</span>
-                <span className="text-trust-primary font-semibold">
-                  {family.activeSourceIds.length} official{' '}
-                  {family.activeSourceIds.length === 1 ? 'source' : 'sources'} monitored
+      {/* 1. Mobile Responsive View (Zero horizontal scroll on small screens) */}
+      <div className="sm:hidden space-y-3">
+        {SOURCES.map((source) => (
+          <div
+            key={source.code}
+            className="rounded-md border border-border bg-surface p-4 shadow-xs"
+          >
+            <div className="flex items-center justify-between border-b border-border/80 pb-2.5 mb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-surface-strong border border-border text-trust-primary">
+                  {source.code}
                 </span>
+                <span className="font-bold text-sm text-text-primary">{source.name}</span>
               </div>
+              <a
+                href={source.officialPortal}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-trust-primary hover:underline shrink-0"
+                aria-label={`Visit official ${source.code} portal`}
+              >
+                <span>Portal</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
-          );
-        })}
+            <div className="text-xs text-text-secondary space-y-1">
+              <div>
+                <span className="font-semibold text-text-primary">Domain:</span> {source.domain}
+              </div>
+              <div className="text-text-muted">{source.statutoryRole}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div className="mt-8 text-center">
-        <Link
-          href="/sources"
-          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-5 py-2.5 text-xs font-semibold text-text-primary hover:border-trust-primary hover:text-trust-primary transition-colors"
-        >
-          <ShieldCheck className="h-4 w-4 text-trust-primary" />
-          <span>View all monitored official sources and verification protocols</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+      {/* 2. Tablet & Desktop Institutional Ledger Table */}
+      <div className="hidden sm:block overflow-hidden rounded-md border border-border bg-surface shadow-xs">
+        <table className="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr className="border-b border-border bg-surface-strong/60 text-xs font-semibold text-text-muted">
+              <th className="py-3 px-4">Authority</th>
+              <th className="py-3 px-4">Statutory Domain</th>
+              <th className="py-3 px-4 hidden md:table-cell">Monitored Notice Types</th>
+              <th className="py-3 px-4 hidden lg:table-cell">Ingestion Cadence</th>
+              <th className="py-3 px-4 text-right">Portal</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {SOURCES.map((source) => (
+              <tr
+                key={source.code}
+                className="hover:bg-surface-strong/50 transition-colors duration-fast text-text-primary"
+              >
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-surface-strong border border-border text-trust-primary">
+                      {source.code}
+                    </span>
+                    <span className="font-semibold text-sm">{source.name}</span>
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 text-xs text-text-secondary">
+                  <span className="block font-medium">{source.domain}</span>
+                  <span className="text-text-muted text-xs mt-0.5 block">
+                    {source.statutoryRole}
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 text-xs text-text-muted hidden md:table-cell">
+                  {source.noticeTypes}
+                </td>
+                <td className="py-3.5 px-4 text-xs text-text-muted hidden lg:table-cell font-mono">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {source.frequency}
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 text-right">
+                  <a
+                    href={source.officialPortal}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-text-muted hover:text-trust-primary transition-colors duration-fast"
+                  >
+                    <span>Visit</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-text-muted px-1">
+        <span className="flex items-center gap-1.5 font-medium">
+          <ShieldCheck className="h-4 w-4 text-trust-primary shrink-0" />
+          Each notice links to its official source for review.
+        </span>
+        <span className="font-mono text-[11px] text-text-secondary">
+          INDEXED FROM OFFICIAL SOURCES
+        </span>
       </div>
     </div>
   );

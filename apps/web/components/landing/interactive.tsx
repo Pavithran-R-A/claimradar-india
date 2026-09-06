@@ -17,15 +17,17 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
   return (
     <div className="mx-auto max-w-3xl divide-y divide-border">
       {items.map((item, i) => (
-        <details key={i} className="group py-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-2 text-left text-base font-medium text-text-primary [&::-webkit-details-marker]:hidden">
-            {item.question}
+        <details key={i} className="group py-4 transition-colors">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-2 text-left text-base font-semibold text-text-primary hover:text-trust-primary transition-colors duration-fast [&::-webkit-details-marker]:hidden">
+            <span>{item.question}</span>
             <ChevronDown
               aria-hidden
-              className="h-5 w-5 shrink-0 text-text-muted transition-transform duration-base group-open:rotate-180 motion-reduce:transition-none"
+              className="faq-chevron h-5 w-5 shrink-0 text-text-muted transition-transform duration-ui group-open:rotate-180 motion-reduce:transition-none"
             />
           </summary>
-          <div className="mt-2 text-sm leading-relaxed text-text-secondary">{item.answer}</div>
+          <div className="faq-content mt-2 text-sm leading-relaxed text-text-secondary">
+            {item.answer}
+          </div>
         </details>
       ))}
     </div>
@@ -116,7 +118,7 @@ function DemoClaimCard({
         </div>
         <span
           className={cn(
-            'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold',
+            'shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold',
             status === 'Verified' && 'bg-verified-background text-success',
             status === 'Under Review' && 'bg-info/10 text-info',
             status === 'Open' && 'bg-trust-primary/10 text-trust-primary',
@@ -125,7 +127,7 @@ function DemoClaimCard({
           {status}
         </span>
       </div>
-      <div className="mt-2 flex items-center gap-3 text-[11px] text-text-muted">
+      <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
         <span className={cn(urgent && 'text-deadline font-medium')}>⏱ {deadline}</span>
         <span className="inline-flex items-center gap-1">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />

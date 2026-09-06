@@ -8,7 +8,7 @@
 | `researcher`     | All `user` permissions + read/write on `claims`, `source_traces`, `raw_documents`.                        |
 | `editor`         | All `researcher` permissions + publish/unpublish claims, manage `publication_queue`, write `corrections`. |
 | `legal_reviewer` | All `editor` permissions + sign-off on `verified_claimable` claims.                                       |
-| `admin`          | Full access including `user_roles`, `audit_log`, `subscriptions`, schema migrations. MFA required.        |
+| `admin`          | Full access including `audit_logs`, subscriptions, and schema operations. MFA required.                   |
 
 ## RLS Policies
 
@@ -16,15 +16,19 @@
 - **`claims` (public read)**: `SELECT WHERE status IN ('official_update', 'potential_claimable', 'refund_ordered', ...)` for anonymous. Authenticated users get the same plus their own watchlist annotations.
 - **`claims` (write)**: `researcher` and above via `user_roles` check.
 - **`editorial_reviews`**: write only for `editor` / `legal_reviewer` / `admin`.
-- **`audit_log`**: append-only for `admin`; read for `admin`; no access for other roles.
+- **`audit_logs`**: append-only for `admin`; read for staff; no anonymous access.
 - **`ingestion_*` tables**: service-role only (crawler); no RLS — bypassed by service-role key which never reaches the client.
 
 ## Content Security Policy
 
-- `default-src 'self'`; `script-src 'self' 'nonce-<random>'`; `style-src 'self' 'unsafe-inline'` (Tailwind requirement).
+- Strict target: `default-src 'self'`; `script-src 'self' 'nonce-<random>'`.
+- Styles allow `'unsafe-inline'` for Tailwind rendering.
 - `img-src 'self' data: https:`; `font-src 'self'`.
 - `frame-ancestors 'none'`; `base-uri 'self'`; `form-action 'self'`.
 - Strict `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`.
+- The static Next.js fallback uses `script-src 'unsafe-inline'`.
+- This preserves static rendering; strict nonces require dynamic rendering.
+- Treat nonce migration as a production hardening follow-up.
 
 ## SSRF Prevention
 
@@ -35,7 +39,7 @@
 
 ## Audit Logging
 
-Every privileged operation writes to `audit_log`:
+Every privileged operation writes to `audit_logs`:
 
 - Role changes, claim publish/unpublish, status transitions for `verified_claimable`.
 - Schema migrations, environment variable changes, webhook configuration changes.
@@ -43,6 +47,6 @@ Every privileged operation writes to `audit_log`:
 
 ## Key Management
 
-- Service-role keys rotated quarterly; rotation logged in `audit_log`.
+- Service-role keys rotated quarterly; rotation logged in `audit_logs`.
 - Webhook signing keys per integration; inbound webhooks signature-verified before processing.
 - No secrets in source control; `.env.example` committed with keys only.

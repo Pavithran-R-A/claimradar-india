@@ -3,6 +3,7 @@ apps/crawler/tests/fixtures/live/
 
 # Build output and dependencies
 node_modules/
+work/
 dist/
 .next/
 pnpm-lock.yaml
