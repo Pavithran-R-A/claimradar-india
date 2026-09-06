@@ -71,6 +71,18 @@ Updated: 2026-09-06
 - Baseline publication events: zero in crawl window.
 - Runtime freeze is unchanged by these docs.
 
+## Soak slot accounting correction
+
+- Cron: `17 */6 * * *` expands to `00:17`, `06:17`, `12:17`, and `18:17` UTC.
+- First scheduled slot after merge `2026-09-06T14:09:30Z`: `2026-09-06T18:17:00Z`.
+- First scheduled slot in IST: `2026-09-06T23:47:00+05:30`.
+- Next four slots: `2026-09-07T00:17:00Z`, `2026-09-07T06:17:00Z`, `2026-09-07T12:17:00Z`, `2026-09-07T18:17:00Z`.
+- Manual `workflow_dispatch` runs remain excluded.
+- Baseline run `34038342122` remains baseline-only.
+- Runtime freeze remains `f7a77ee0349078a0dfbe8649d77683feb89e6470`.
+- Runtime-sensitive diff remains empty; crawler, application, workflow, and migration code is unchanged.
+- Soak clock does not restart for this correction.
+
 ## Release decision
 
 `NO-GO` for autonomous production release.

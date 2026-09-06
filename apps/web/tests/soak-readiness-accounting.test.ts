@@ -4,6 +4,7 @@ import {
   parseAndValidateCron,
   validateSoakExecution,
   deriveFirstNominalPostBaselineSlot,
+  generateNominalCronSlots,
   generateHistoricalScheduledSlots,
   evaluateScheduleSlotAccounting,
   evaluateSoakProvenance,
@@ -250,6 +251,45 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     const validation = validateBaselineConfig(mockBaselineConfig);
     expect(validation.isValid).toBe(true);
     expect(validation.derivedFirstSlot?.toISOString()).toBe('2026-08-30T12:17:00.000Z');
+  });
+
+  it('12a. POSIX */6 expands from midnight at 00:17, 06:17, 12:17, and 18:17 UTC', () => {
+    expect(parseAndValidateCron('17 */6 * * *', 6).targetHours).toEqual([0, 6, 12, 18]);
+  });
+
+  it('12b. frozen merge timestamp derives the first and next four nominal slots exactly', () => {
+    const slots = generateNominalCronSlots('2026-09-06T14:09:30Z', '17 */6 * * *', 6, 5);
+
+    expect(slots.map((slot) => slot.toISOString())).toEqual([
+      '2026-09-06T18:17:00.000Z',
+      '2026-09-07T00:17:00.000Z',
+      '2026-09-07T06:17:00.000Z',
+      '2026-09-07T12:17:00.000Z',
+      '2026-09-07T18:17:00.000Z',
+    ]);
+  });
+
+  it('12c. the baseline workflow_dispatch remains baseline-only, never a scheduled slot run', () => {
+    const baselineRun = createMockSoakSample({
+      workflowRun: {
+        id: mockBaselineConfig.finalSoakBaselineGhaRun,
+        workflow: 'staging-soak.yml',
+        event: 'workflow_dispatch',
+        conclusion: 'success',
+        headSha: mockBaselineConfig.finalSoakBaselineHead,
+        startedAt: mockBaselineConfig.finalSoakStartUtc,
+      },
+    });
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [baselineRun],
+      config: mockBaselineConfig,
+      currentTime: new Date('2026-08-30T18:00:00Z'),
+    });
+
+    expect(metrics.observedGhaSoakRunsCount).toBe(1);
+    expect(metrics.validScheduleRunsCount).toBe(0);
+    expect(metrics.manualGhaRunsCount).toBe(0);
   });
 
   it('13. delayed run inside grace window satisfies nominal slot (Rule 2)', () => {

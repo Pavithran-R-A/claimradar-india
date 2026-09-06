@@ -44,8 +44,13 @@ Updated: 2026-09-06
 - SOAK_START_UTC: pending first genuine scheduled execution
 - SOAK_START_IST: pending first genuine scheduled execution
 - SCHEDULE_CRON: `17 */6 * * *`
-- NEXT_SCHEDULED_SLOT_UTC: `2026-09-06T23:17:00Z`
-- NEXT_SCHEDULED_SLOT_IST: `2026-09-07T04:47:00+05:30`
+- FIRST_SCHEDULED_SLOT_UTC: `2026-09-06T18:17:00Z`
+- FIRST_SCHEDULED_SLOT_IST: `2026-09-06T23:47:00+05:30`
+- NEXT_4_SCHEDULED_SLOTS_UTC: `2026-09-07T00:17:00Z`, `2026-09-07T06:17:00Z`, `2026-09-07T12:17:00Z`, `2026-09-07T18:17:00Z`
+- SLOT_ACCOUNTING_STATE: corrected; POSIX hour expansion starts at 00:17 UTC
+- BASELINE_ACCOUNTING: workflow_dispatch baseline remains baseline-only
+- SOAK_RESTART_REQUIRED: `NO` - accounting-only correction; runtime freeze preserved
+- RUNTIME_SENSITIVE_DIFF: `EMPTY` - accounting helper, tests, and checkpoint docs only
 - SOAK_STATE: scheduled; manual runs excluded from qualification
 
 ## Next action
@@ -60,6 +65,7 @@ Track scheduled runs through the 72-hour window.
 - Added exact staging-target workflow guards.
 - Merged PR #2 with evidence-sensitive history preserved.
 - Added frozen-main baseline evidence and soak monitor.
+- Corrected POSIX cron slot accounting before the first scheduled run.
 
 ## External blockers
 

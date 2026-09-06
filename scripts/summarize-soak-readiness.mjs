@@ -214,18 +214,26 @@ export function calculateElapsedSoakHours(baselineStartUtc, currentTime) {
 }
 
 /**
+ * Generate nominal slots strictly after a UTC baseline timestamp.
+ * POSIX star-slash-six starts at hour zero, then repeats every six hours.
  * @param {string|Date} baselineStartUtc
  * @param {string} [cron]
  * @param {number|null} [intervalHours]
- * @returns {Date}
+ * @param {number} [count]
+ * @returns {Date[]}
  */
-export function deriveFirstNominalPostBaselineSlot(
+export function generateNominalCronSlots(
   baselineStartUtc,
   cron = '17 */6 * * *',
   intervalHours = null,
+  count = 1,
 ) {
   if (!baselineStartUtc) {
     throw new Error('MALFORMED_BASELINE_START_UTC: baseline timestamp is required');
+  }
+
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error('INVALID_NOMINAL_SLOT_COUNT: ' + count);
   }
 
   const baselineDate = new Date(baselineStartUtc);
@@ -242,17 +250,34 @@ export function deriveFirstNominalPostBaselineSlot(
   const startYear = baselineDate.getUTCFullYear();
   const startMonth = baselineDate.getUTCMonth();
   const startDate = baselineDate.getUTCDate();
+  const slots = [];
+  const daysToSearch = Math.max(3, Math.ceil(count / targetHours.length) + 1);
 
-  for (let d = 0; d < 3; d++) {
+  for (let d = 0; d < daysToSearch; d++) {
     for (const h of targetHours) {
       const slotTimeMs = Date.UTC(startYear, startMonth, startDate + d, h, targetMinute, 0, 0);
       if (slotTimeMs > baselineDate.getTime()) {
-        return new Date(slotTimeMs);
+        slots.push(new Date(slotTimeMs));
+        if (slots.length === count) return slots;
       }
     }
   }
 
   throw new Error('FAILED_TO_DERIVE_FIRST_NOMINAL_SLOT');
+}
+
+/**
+ * @param {string|Date} baselineStartUtc
+ * @param {string} [cron]
+ * @param {number|null} [intervalHours]
+ * @returns {Date}
+ */
+export function deriveFirstNominalPostBaselineSlot(
+  baselineStartUtc,
+  cron = '17 */6 * * *',
+  intervalHours = null,
+) {
+  return generateNominalCronSlots(baselineStartUtc, cron, intervalHours, 1)[0];
 }
 
 // Generates all nominal cron slots strictly after baselineStartUtc up to currentTime.
