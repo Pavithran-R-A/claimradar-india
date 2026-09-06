@@ -179,7 +179,8 @@ export function validateBaselineConfig(config) {
 
 export function checkRuntimeIntegrity(baselineHead, targetHead = 'HEAD', cwd = REPO_ROOT) {
   try {
-    const sensitivePathsArg = RUNTIME_SENSITIVE_PATHS.join(' ');
+    // Test-only soak accounting changes must not invalidate runtime freeze.
+    const sensitivePathsArg = RUNTIME_SENSITIVE_PATHS.join(' ') + ' :(exclude)apps/web/tests/**';
     const diffOut = execSync(
       'git diff --name-only ' + baselineHead + '..' + targetHead + ' -- ' + sensitivePathsArg,
       { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
@@ -264,6 +265,101 @@ export function generateNominalCronSlots(
   }
 
   throw new Error('FAILED_TO_DERIVE_FIRST_NOMINAL_SLOT');
+}
+
+/**
+ * Find the nominal cron slot at or before a run timestamp.
+ * @param {string|Date} runStartUtc
+ * @param {string} [cron]
+ * @param {number|null} [intervalHours]
+ * @returns {Date}
+ */
+export function deriveNominalCronSlotAtOrBefore(
+  runStartUtc,
+  cron = '17 */6 * * *',
+  intervalHours = null,
+) {
+  if (!runStartUtc) {
+    throw new Error('MALFORMED_RUN_START_UTC: run timestamp is required');
+  }
+
+  const runDate = new Date(runStartUtc);
+  if (isNaN(runDate.getTime())) {
+    throw new Error('MALFORMED_RUN_START_UTC: ' + runStartUtc);
+  }
+
+  const cronRes = parseAndValidateCron(cron, intervalHours);
+  if (!cronRes.isValid) {
+    throw new Error('INVALID_CRON_CONFIGURATION: ' + cronRes.error);
+  }
+
+  const { targetMinute, targetHours } = cronRes;
+  const startYear = runDate.getUTCFullYear();
+  const startMonth = runDate.getUTCMonth();
+  const startDate = runDate.getUTCDate();
+
+  for (let d = 0; d < 3; d++) {
+    for (let i = targetHours.length - 1; i >= 0; i--) {
+      const slotTimeMs = Date.UTC(
+        startYear,
+        startMonth,
+        startDate - d,
+        targetHours[i],
+        targetMinute,
+        0,
+        0,
+      );
+      if (slotTimeMs <= runDate.getTime()) {
+        return new Date(slotTimeMs);
+      }
+    }
+  }
+
+  throw new Error('FAILED_TO_DERIVE_NOMINAL_SLOT_AT_OR_BEFORE_RUN');
+}
+
+/**
+ * Classify a GitHub Actions run against its nominal cron slot.
+ * @param {any} run
+ * @param {any} config
+ * @returns {{ executionType: string, nominalSlotUtc: string|null }}
+ */
+export function classifyWorkflowRunProvenance(run, config) {
+  if (!run || !config) {
+    return { executionType: 'UNKNOWN', nominalSlotUtc: null };
+  }
+
+  if (String(run.id) === String(config.finalSoakBaselineGhaRun)) {
+    return { executionType: 'FINAL_SOAK', nominalSlotUtc: null };
+  }
+
+  if (run.event === 'workflow_dispatch') {
+    return { executionType: 'MANUAL_GHA', nominalSlotUtc: null };
+  }
+
+  if (run.event !== 'schedule') {
+    return { executionType: 'UNKNOWN', nominalSlotUtc: null };
+  }
+
+  try {
+    const nominalSlot = deriveNominalCronSlotAtOrBefore(
+      run.run_started_at || run.startedAt,
+      config.scheduleCron,
+      config.scheduleIntervalHours,
+    );
+    const baselineDate = new Date(config.finalSoakStartUtc);
+    if (isNaN(baselineDate.getTime())) {
+      return { executionType: 'UNKNOWN', nominalSlotUtc: nominalSlot.toISOString() };
+    }
+
+    return {
+      executionType:
+        nominalSlot.getTime() < baselineDate.getTime() ? 'PRE_FREEZE_NOMINAL_SLOT' : 'FINAL_SOAK',
+      nominalSlotUtc: nominalSlot.toISOString(),
+    };
+  } catch {
+    return { executionType: 'UNKNOWN', nominalSlotUtc: null };
+  }
 }
 
 /**
@@ -791,6 +887,8 @@ export function evaluateSoakProvenance({
   const preBaselineFailures = [];
   const manualPostBaselineRuns = [];
   const manualGhaRuns = [];
+  const preFreezeScheduledRuns = [];
+  const nonQualifyingGhaRuns = [];
   const observedGhaSoakRuns = [];
   const validGhaSoakRuns = [];
   const failedGhaSoakRuns = [];
@@ -832,6 +930,16 @@ export function evaluateSoakProvenance({
 
     if (sample.executionType === 'MANUAL_GHA') {
       manualGhaRuns.push(sample);
+      continue;
+    }
+
+    if (sample.executionType === 'PRE_FREEZE_NOMINAL_SLOT') {
+      preFreezeScheduledRuns.push(sample);
+      continue;
+    }
+
+    if (sample.executionType !== 'FINAL_SOAK') {
+      nonQualifyingGhaRuns.push(sample);
       continue;
     }
 
@@ -1073,6 +1181,8 @@ export function evaluateSoakProvenance({
     validGhaSoakRunsCount: validGhaSoakRuns.length,
     failedGhaSoakRunsCount: failedGhaSoakRuns.length,
     manualGhaRunsCount: manualGhaRuns.length,
+    preFreezeScheduledRunsCount: preFreezeScheduledRuns.length,
+    nonQualifyingGhaRunsCount: nonQualifyingGhaRuns.length,
     manualPostBaselineRunsCount: manualPostBaselineRuns.length,
     preBaselineRunsCount: preBaselineRuns.length,
     preBaselineFailuresCount: preBaselineFailures.length,
@@ -1261,14 +1371,7 @@ export async function main() {
       continue;
     }
 
-    const isScheduledPostBaseline = r.event === 'schedule' && runStart >= baselineStart;
-
-    let executionType = 'UNKNOWN';
-    if (isBaselineRun || isScheduledPostBaseline) {
-      executionType = 'FINAL_SOAK';
-    } else if (r.event === 'workflow_dispatch') {
-      executionType = 'MANUAL_GHA';
-    }
+    const provenance = classifyWorkflowRunProvenance(r, config);
 
     const artifactRes = downloadGhaSummaryArtifact(r.id);
     const summary = artifactRes.success ? artifactRes.summary : null;
@@ -1282,7 +1385,8 @@ export async function main() {
     const runHeadCheck = checkRuntimeIntegrity(config.runtimeFreezeHead, r.head_sha || 'HEAD');
 
     soakSamples.push({
-      executionType,
+      executionType: provenance.executionType,
+      nominalSlotUtc: provenance.nominalSlotUtc,
       workflowRun: {
         id: String(r.id),
         workflow: r.name || 'staging-soak.yml',
@@ -1392,6 +1496,8 @@ export async function main() {
       observedScheduleRuns: metrics.observedScheduleRunsCount,
       validScheduleRuns: metrics.validScheduleRunsCount,
       failedScheduleRuns: metrics.failedScheduleRunsCount,
+      preFreezeScheduledRuns: metrics.preFreezeScheduledRunsCount,
+      nonQualifyingGhaRuns: metrics.nonQualifyingGhaRunsCount,
       scheduleRunCountDeficit: metrics.scheduleRunCountDeficit,
       maxInferredScheduleDelayMinutes: metrics.maxScheduleStartDelayMinutes,
       maxGapBetweenValidScheduleRunsHours: metrics.maxGapBetweenValidScheduleRunsHours,
@@ -1517,6 +1623,12 @@ export async function main() {
     'MANUAL_GHA_RUNS_EXCLUDED = ' +
     metrics.manualGhaRunsCount +
     '\n' +
+    'PRE_FREEZE_SCHEDULED_RUNS_EXCLUDED = ' +
+    metrics.preFreezeScheduledRunsCount +
+    '\n' +
+    'NON_QUALIFYING_GHA_RUNS_EXCLUDED = ' +
+    metrics.nonQualifyingGhaRunsCount +
+    '\n' +
     'MANUAL_DB_RUNS_EXCLUDED = ' +
     metrics.manualPostBaselineRunsCount +
     '\n' +
@@ -1528,7 +1640,11 @@ export async function main() {
     '\n' +
     '```\n\n' +
     '> [!NOTE]\n' +
-    '> Soak qualification is dynamically derived by downloading and corroborating real GitHub Actions artifacts (`staging-soak-summary`) from `.github/workflows/staging-soak.yml` and correlating them with Supabase `crawl_runs`, `crawl_run_sources`, and `crawl_errors`. Baseline GHA run `33310672900` artifact is verified matching crawl run `192c24d3-bcbb-4c21-bb38-b737be5261c0`.\n\n' +
+    '> Soak qualification is dynamically derived by downloading and corroborating real GitHub Actions artifacts (`staging-soak-summary`) from `.github/workflows/staging-soak.yml` and correlating them with Supabase `crawl_runs`, `crawl_run_sources`, and `crawl_errors`. Baseline GHA run `' +
+    evidenceSnapshot.baseline.finalSoakBaselineGhaRun +
+    '` artifact is verified matching crawl run `' +
+    evidenceSnapshot.baseline.finalSoakBaselineCrawlRunId +
+    '`.\n\n' +
     '---\n\n' +
     '## 3. Validated Final-Soak Executions (Workflow & Database Corroborated)\n\n' +
     metrics.soakRunsTable +

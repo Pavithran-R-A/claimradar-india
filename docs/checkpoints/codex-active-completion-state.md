@@ -47,7 +47,10 @@ Updated: 2026-09-06
 - FIRST_SCHEDULED_SLOT_UTC: `2026-09-06T18:17:00Z`
 - FIRST_SCHEDULED_SLOT_IST: `2026-09-06T23:47:00+05:30`
 - NEXT_4_SCHEDULED_SLOTS_UTC: `2026-09-07T00:17:00Z`, `2026-09-07T06:17:00Z`, `2026-09-07T12:17:00Z`, `2026-09-07T18:17:00Z`
-- SLOT_ACCOUNTING_STATE: corrected; POSIX hour expansion starts at 00:17 UTC
+- SCHEDULED_RUN_34042559516: `PRE_FREEZE_NOMINAL_SLOT`, started `2026-09-06T15:31:11Z`
+- SCHEDULED_RUN_34042559516_NOMINAL_SLOT: `2026-09-06T12:17:00Z`
+- SCHEDULED_RUN_34042559516_QUALIFICATION: `EXCLUDED_FROM_FINAL_SOAK_QUALIFICATION`
+- SLOT_ACCOUNTING_STATE: delayed pre-freeze scheduled run excluded
 - BASELINE_ACCOUNTING: workflow_dispatch baseline remains baseline-only
 - SOAK_RESTART_REQUIRED: `NO` - accounting-only correction; runtime freeze preserved
 - RUNTIME_SENSITIVE_DIFF: `EMPTY` - accounting helper, tests, and checkpoint docs only
@@ -66,6 +69,7 @@ Track scheduled runs through the 72-hour window.
 - Merged PR #2 with evidence-sensitive history preserved.
 - Added frozen-main baseline evidence and soak monitor.
 - Corrected POSIX cron slot accounting before the first scheduled run.
+- Classified delayed run `34042559516` against nominal slot `12:17Z`.
 
 ## External blockers
 

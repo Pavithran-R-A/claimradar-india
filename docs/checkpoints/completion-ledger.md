@@ -82,6 +82,11 @@ Updated: 2026-09-06
 - Runtime freeze remains `f7a77ee0349078a0dfbe8649d77683feb89e6470`.
 - Runtime-sensitive diff remains empty; crawler, application, workflow, and migration code is unchanged.
 - Soak clock does not restart for this correction.
+- Scheduled run `34042559516` started at `2026-09-06T15:31:11Z`.
+- It maps to nominal slot `2026-09-06T12:17:00Z`.
+- It is `PRE_FREEZE_NOMINAL_SLOT` and excluded.
+- First qualifying slot remains `2026-09-06T18:17:00Z`.
+- `SOAK_START_UTC` remains pending that qualifying run.
 
 ## Release decision
 

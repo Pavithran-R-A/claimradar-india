@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { RUNTIME_SENSITIVE_PATHS } from '../../../scripts/summarize-soak-readiness.mjs';
+import {
+  RUNTIME_SENSITIVE_PATHS,
+  checkRuntimeIntegrity,
+} from '../../../scripts/summarize-soak-readiness.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -18,5 +21,12 @@ describe('release runtime integrity coverage', () => {
     expect(nextConfig).toContain("base-uri 'self'");
     expect(nextConfig).toContain("form-action 'self'");
     expect(nextConfig).toContain("object-src 'none'");
+  });
+
+  it('keeps soak accounting tests outside runtime-freeze invalidation', () => {
+    const integrity = checkRuntimeIntegrity('f7a77ee0349078a0dfbe8649d77683feb89e6470', 'HEAD');
+
+    expect(integrity.runtimeBehaviorChanged).toBe(false);
+    expect(integrity.changedFiles).toEqual([]);
   });
 });

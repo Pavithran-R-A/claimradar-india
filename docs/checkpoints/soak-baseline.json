@@ -1,10 +1,10 @@
 {
-  "runtimeFreezeHead": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
-  "finalSoakBaselineGhaRun": "33414698684",
-  "finalSoakBaselineHead": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
-  "finalSoakBaselineCrawlRunId": "fce1e5b4-65a3-4e76-a469-6ffc2b7d76e0",
-  "finalSoakStartUtc": "2026-08-31T16:32:47Z",
-  "firstPostBaselineScheduledSlot": "2026-08-31T18:17:00.000Z",
+  "runtimeFreezeHead": "f7a77ee0349078a0dfbe8649d77683feb89e6470",
+  "finalSoakBaselineGhaRun": "34038342122",
+  "finalSoakBaselineHead": "f7a77ee0349078a0dfbe8649d77683feb89e6470",
+  "finalSoakBaselineCrawlRunId": "afc0ddfd-e65c-4b03-aaa8-be8537a5fc94",
+  "finalSoakStartUtc": "2026-09-06T14:09:30Z",
+  "firstPostBaselineScheduledSlot": "2026-09-06T18:17:00.000Z",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
   "thresholdHours48": 48,
@@ -20,6 +20,13 @@
       "baselineCrawlRunId": "192c24d3-bcbb-4c21-bb38-b737be5261c0",
       "baselineStartUtc": "2026-08-30T12:08:03Z",
       "invalidationReason": "PIB fetch failure could be masked as successful empty discovery and staging soak used the WAF-blocked User-Agent."
+    },
+    {
+      "baselineGhaRun": "33414698684",
+      "baselineHead": "3d0b4a555ed2fcc7d511f730a316611c52b2a008",
+      "baselineCrawlRunId": "fce1e5b4-65a3-4e76-a469-6ffc2b7d76e0",
+      "baselineStartUtc": "2026-08-31T16:32:47Z",
+      "invalidationReason": "Superseded by the frozen main merge candidate and baseline run 34038342122."
     }
   ]
 }

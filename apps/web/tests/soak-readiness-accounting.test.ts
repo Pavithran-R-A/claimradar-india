@@ -5,6 +5,8 @@ import {
   validateSoakExecution,
   deriveFirstNominalPostBaselineSlot,
   generateNominalCronSlots,
+  deriveNominalCronSlotAtOrBefore,
+  classifyWorkflowRunProvenance,
   generateHistoricalScheduledSlots,
   evaluateScheduleSlotAccounting,
   evaluateSoakProvenance,
@@ -290,6 +292,61 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     expect(metrics.observedGhaSoakRunsCount).toBe(1);
     expect(metrics.validScheduleRunsCount).toBe(0);
     expect(metrics.manualGhaRunsCount).toBe(0);
+  });
+
+  it('12d. delayed scheduled execution maps to its pre-freeze nominal slot', () => {
+    const delayedRun = {
+      id: '34042559516',
+      event: 'schedule',
+      run_started_at: '2026-09-06T15:31:11Z',
+    };
+    const config = {
+      finalSoakBaselineGhaRun: '34038342122',
+      finalSoakStartUtc: '2026-09-06T14:09:30Z',
+      scheduleCron: '17 */6 * * *',
+      scheduleIntervalHours: 6,
+    };
+
+    expect(
+      deriveNominalCronSlotAtOrBefore(
+        delayedRun.run_started_at,
+        config.scheduleCron,
+        config.scheduleIntervalHours,
+      ).toISOString(),
+    ).toBe('2026-09-06T12:17:00.000Z');
+    expect(classifyWorkflowRunProvenance(delayedRun, config)).toEqual({
+      executionType: 'PRE_FREEZE_NOMINAL_SLOT',
+      nominalSlotUtc: '2026-09-06T12:17:00.000Z',
+    });
+  });
+
+  it('12e. pre-freeze nominal-slot executions never enter final soak counts', () => {
+    const preFreezeRun = createMockSoakSample({
+      executionType: 'PRE_FREEZE_NOMINAL_SLOT',
+      workflowRun: {
+        id: '34042559516',
+        workflow: 'staging-soak.yml',
+        event: 'schedule',
+        conclusion: 'success',
+        startedAt: '2026-09-06T15:31:11Z',
+      },
+    });
+    const config = {
+      ...mockBaselineConfig,
+      finalSoakBaselineGhaRun: '34038342122',
+      finalSoakStartUtc: '2026-09-06T14:09:30Z',
+      firstPostBaselineScheduledSlot: '2026-09-06T18:17:00.000Z',
+    };
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [preFreezeRun],
+      config,
+      currentTime: new Date('2026-09-06T18:00:00Z'),
+    });
+
+    expect(metrics.preFreezeScheduledRunsCount).toBe(1);
+    expect(metrics.observedScheduleRunsCount).toBe(0);
+    expect(metrics.validScheduleRunsCount).toBe(0);
   });
 
   it('13. delayed run inside grace window satisfies nominal slot (Rule 2)', () => {
