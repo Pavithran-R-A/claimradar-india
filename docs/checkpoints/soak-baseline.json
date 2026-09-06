@@ -28,5 +28,14 @@
       "baselineStartUtc": "2026-08-31T16:32:47Z",
       "invalidationReason": "Superseded by the frozen main merge candidate and baseline run 34038342122."
     }
+  ],
+  "excludedScheduledRuns": [
+    {
+      "ghaRun": "34042559516",
+      "startedAtUtc": "2026-09-06T15:31:11Z",
+      "nominalSlotUtc": "2026-09-06T12:17:00Z",
+      "classification": "PRE_FREEZE_NOMINAL_SLOT",
+      "reason": "Delayed execution belongs to the 12:17 UTC slot, before the 14:09:30Z runtime freeze."
+    }
   ]
 }
