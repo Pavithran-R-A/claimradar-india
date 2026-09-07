@@ -5,6 +5,8 @@
   "finalSoakBaselineCrawlRunId": "afc0ddfd-e65c-4b03-aaa8-be8537a5fc94",
   "finalSoakStartUtc": "2026-09-06T14:09:30Z",
   "firstPostBaselineScheduledSlot": "2026-09-06T18:17:00.000Z",
+  "soakStartUtc": "2026-09-06T18:17:00.000Z",
+  "soakStartGhaRun": "34058094014",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
   "thresholdHours48": 48,

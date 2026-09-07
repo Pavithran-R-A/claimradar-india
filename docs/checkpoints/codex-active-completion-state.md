@@ -1,19 +1,19 @@
 # ClaimRadar India Active Completion State
 
-Updated: 2026-09-06
+Updated: 2026-09-07
 
 ## Repository
 
-- CURRENT_HEAD: `f7a77ee0349078a0dfbe8649d77683feb89e6470`
-- CURRENT_MAIN: `f7a77ee0349078a0dfbe8649d77683feb89e6470`
-- CURRENT_PHASE: final scheduled soak pending first slot
+- CURRENT_HEAD: `e278ce8f580fabfa6e0258c582712ab2068b672f`
+- CURRENT_MAIN: `e278ce8f580fabfa6e0258c582712ab2068b672f`
+- CURRENT_PHASE: final scheduled soak in progress
 - BRANCH: `main`
 - PR: `#2`, merged
 - ORIGINAL_USER_CHECKOUT_TOUCHED: `NO`
 
 ## Evidence
 
-- LAST_COMPLETED_GATE: frozen main baseline crawl
+- LAST_COMPLETED_GATE: second qualifying scheduled soak crawl
 - SOURCE_HEAD: `4a2fa8230b1418e8a109de3d543bbc2562ff158f`
 - MAIN_PRE_MERGE_SHA: `fc14de90783587013e692a70281ea88b8c3920f5`
 - MERGE_SHA: `f7a77ee0349078a0dfbe8649d77683feb89e6470`
@@ -41,8 +41,16 @@ Updated: 2026-09-06
 - AUTH_RUNTIME_RUN: `33968830120`, all stages passed, three users deleted
 - CLEANUP_STATE: zero disposable profiles, onboarding rows, notifications, or delivery rows
 - RUNTIME_FREEZE_HEAD: `f7a77ee0349078a0dfbe8649d77683feb89e6470`
-- SOAK_START_UTC: pending first genuine scheduled execution
-- SOAK_START_IST: pending first genuine scheduled execution
+- SOAK_START_UTC: `2026-09-06T18:17:00Z`
+- SOAK_START_IST: `2026-09-06T23:47:00+05:30`
+- SOAK_START_RUN: `34058094014`
+- SOAK_START_CRAWL_RUN: `539dfcc6-8f4d-41c8-bb83-1092d2dd53d2`
+- QUALIFYING_SCHEDULED_RUN_1: `34058094014`, slot `2026-09-06T18:17:00Z`, crawl `539dfcc6-8f4d-41c8-bb83-1092d2dd53d2`, PASS
+- QUALIFYING_SCHEDULED_RUN_2: `34084538536`, slot `2026-09-07T00:17:00Z`, crawl `4ea1eaab-f549-4174-982c-a96bde06d296`, PASS
+- QUALIFYING_RUN_INVARIANTS: both runs 7/7 sources, 126 documents, zero errors, zero unexpected errors, zero publications
+- SOAK_ELAPSED_AT_LAST_CHECK_UTC: `2026-09-07T05:48:12Z` (`11.5h`)
+- SOAK_48H: `PENDING_TIME_SOAK` - first qualifying slot plus 2 valid scheduled runs
+- SOAK_72H: `PENDING_TIME_SOAK` - first qualifying slot plus 2 valid scheduled runs
 - SCHEDULE_CRON: `17 */6 * * *`
 - FIRST_SCHEDULED_SLOT_UTC: `2026-09-06T18:17:00Z`
 - FIRST_SCHEDULED_SLOT_IST: `2026-09-06T23:47:00+05:30`
@@ -50,15 +58,16 @@ Updated: 2026-09-06
 - SCHEDULED_RUN_34042559516: `PRE_FREEZE_NOMINAL_SLOT`, started `2026-09-06T15:31:11Z`
 - SCHEDULED_RUN_34042559516_NOMINAL_SLOT: `2026-09-06T12:17:00Z`
 - SCHEDULED_RUN_34042559516_QUALIFICATION: `EXCLUDED_FROM_FINAL_SOAK_QUALIFICATION`
+- SCHEDULED_RUN_34042559516_PERMANENT_ACCOUNTING: excluded from all final soak counts
 - SLOT_ACCOUNTING_STATE: delayed pre-freeze scheduled run excluded
 - BASELINE_ACCOUNTING: workflow_dispatch baseline remains baseline-only
 - SOAK_RESTART_REQUIRED: `NO` - accounting-only correction; runtime freeze preserved
 - RUNTIME_SENSITIVE_DIFF: `EMPTY` - accounting helper, tests, and checkpoint docs only
-- SOAK_STATE: scheduled; manual runs excluded from qualification
+- SOAK_STATE: active; manual runs excluded from qualification
 
 ## Next action
 
-Track scheduled runs through the 72-hour window.
+Track genuine scheduled runs through the 72-hour window.
 
 ## Resolved internal defects
 
@@ -70,6 +79,8 @@ Track scheduled runs through the 72-hour window.
 - Added frozen-main baseline evidence and soak monitor.
 - Corrected POSIX cron slot accounting before the first scheduled run.
 - Classified delayed run `34042559516` against nominal slot `12:17Z`.
+- Started qualification at run `34058094014` nominal slot `18:17Z`.
+- Corrected elapsed-soak origin to first qualifying slot.
 
 ## External blockers
 

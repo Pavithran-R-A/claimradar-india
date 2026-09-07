@@ -882,13 +882,6 @@ export function evaluateSoakProvenance({
   const isBaselineValid =
     configValidation.isValid && !isNaN(baselineDate.getTime()) && baselineDate <= currentDate;
 
-  const elapsedMs = isBaselineValid
-    ? Math.max(0, currentDate.getTime() - baselineDate.getTime())
-    : 0;
-  const elapsedSoakHours = isBaselineValid
-    ? calculateElapsedSoakHours(config.finalSoakStartUtc, currentDate)
-    : 0;
-
   // Nominal Schedule Slot Generation
   const { firstPostBaselineSlot, passedSlots, nextSlot } = generateScheduledSlots(
     config,
@@ -1039,6 +1032,22 @@ export function evaluateSoakProvenance({
       ')'
     : 'NONE';
 
+  const configuredSoakStart = config.soakStartUtc ? new Date(config.soakStartUtc) : null;
+  const firstQualifyingRun = validScheduleRuns[0] || null;
+  const derivedSoakStart =
+    configuredSoakStart && !isNaN(configuredSoakStart.getTime())
+      ? configuredSoakStart
+      : firstQualifyingRun && firstQualifyingRun.nominalSlotUtc
+        ? new Date(firstQualifyingRun.nominalSlotUtc)
+        : null;
+  const soakStartUtc = derivedSoakStart ? derivedSoakStart.toISOString() : null;
+  const elapsedMs =
+    isBaselineValid && derivedSoakStart
+      ? Math.max(0, currentDate.getTime() - derivedSoakStart.getTime())
+      : 0;
+  const elapsedSoakHours =
+    isBaselineValid && derivedSoakStart ? calculateElapsedSoakHours(soakStartUtc, currentDate) : 0;
+
   const minScheduled48 = config.minScheduledRunsFor48h || 7;
   const minScheduled72 = config.minScheduledRunsFor72h || 11;
   const ms48 = (config.thresholdHours48 || 48) * 3600 * 1000;
@@ -1173,6 +1182,7 @@ export function evaluateSoakProvenance({
     isBaselineValid,
     githubEvidenceStatus,
     runtimeBehaviorChanged,
+    soakStartUtc,
     elapsedSoakHours,
     derivedFirstNominalSlot: firstPostBaselineSlot
       ? firstPostBaselineSlot.toISOString()
@@ -1503,6 +1513,7 @@ export async function main() {
     },
     soakQualification: {
       elapsedSoakHours: metrics.elapsedSoakHours,
+      soakStartUtc: metrics.soakStartUtc,
       expectedScheduleSlots: metrics.expectedScheduleSlots,
       satisfiedScheduleSlots: metrics.satisfiedScheduleSlotsCount,
       pendingGraceSlots: metrics.pendingGraceSlotsCount,

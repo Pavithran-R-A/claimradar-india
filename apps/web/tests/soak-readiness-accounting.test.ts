@@ -349,6 +349,34 @@ describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification
     expect(metrics.validScheduleRunsCount).toBe(0);
   });
 
+  it('12f. soak elapsed time starts at the first qualifying nominal slot', () => {
+    const firstQualifyingRun = createMockSoakSample({
+      nominalSlotUtc: '2026-09-06T18:17:00.000Z',
+      workflowRun: {
+        id: '34058094014',
+        workflow: 'staging-soak.yml',
+        event: 'schedule',
+        conclusion: 'success',
+        startedAt: '2026-09-06T20:28:23Z',
+      },
+    });
+    const config = {
+      ...mockBaselineConfig,
+      finalSoakBaselineGhaRun: '34038342122',
+      finalSoakStartUtc: '2026-09-06T14:09:30Z',
+      firstPostBaselineScheduledSlot: '2026-09-06T18:17:00.000Z',
+    };
+
+    const metrics = evaluateSoakProvenance({
+      soakSamples: [firstQualifyingRun],
+      config,
+      currentTime: new Date('2026-09-07T18:17:00Z'),
+    });
+
+    expect(metrics.soakStartUtc).toBe('2026-09-06T18:17:00.000Z');
+    expect(metrics.elapsedSoakHours).toBe(24);
+  });
+
   it('13. delayed run inside grace window satisfies nominal slot (Rule 2)', () => {
     const slots = [new Date('2026-08-30T12:17:00Z')];
     const runs = [{ workflowRun: { id: '33323325684', startedAt: '2026-08-30T16:45:02Z' } }];
