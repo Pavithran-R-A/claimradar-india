@@ -23,10 +23,10 @@ describe('release runtime integrity coverage', () => {
     expect(nextConfig).toContain("object-src 'none'");
   });
 
-  it('keeps soak accounting tests outside runtime-freeze invalidation', () => {
+  it('detects the intentional runtime repair against the old freeze', () => {
     const integrity = checkRuntimeIntegrity('f7a77ee0349078a0dfbe8649d77683feb89e6470', 'HEAD');
 
-    expect(integrity.runtimeBehaviorChanged).toBe(false);
-    expect(integrity.changedFiles).toEqual([]);
+    expect(integrity.runtimeBehaviorChanged).toBe(true);
+    expect(integrity.changedFiles).toContain('apps/crawler/src/pipeline/db-writer.ts');
   });
 });

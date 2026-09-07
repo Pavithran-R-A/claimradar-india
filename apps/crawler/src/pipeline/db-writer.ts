@@ -22,6 +22,57 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
 
+function sanitizePostgresText(value: string): string {
+  let sanitized = '';
+  for (let index = 0; index < value.length; index += 1) {
+    const codeUnit = value.charCodeAt(index);
+    if (codeUnit === 0) continue;
+
+    if (codeUnit >= 0xd800 && codeUnit <= 0xdbff) {
+      const nextCodeUnit = value.charCodeAt(index + 1);
+      if (nextCodeUnit >= 0xdc00 && nextCodeUnit <= 0xdfff) {
+        sanitized += (value[index] ?? '') + (value[index + 1] ?? '');
+        index += 1;
+      } else {
+        sanitized += '\ufffd';
+      }
+      continue;
+    }
+
+    if (codeUnit >= 0xdc00 && codeUnit <= 0xdfff) {
+      sanitized += '\ufffd';
+      continue;
+    }
+
+    sanitized += value[index] ?? '';
+  }
+  return sanitized;
+}
+
+function sanitizePostgresJson(value: unknown): unknown {
+  if (typeof value === 'string') return sanitizePostgresText(value);
+  if (Array.isArray(value)) return value.map((item) => sanitizePostgresJson(item));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, sanitizePostgresJson(item)]),
+    );
+  }
+  return value;
+}
+
+function sanitizeSourceDocument<T extends Record<string, unknown>>(doc: T): T {
+  return Object.fromEntries(
+    Object.entries(doc).map(([key, value]) => [
+      key,
+      key === 'metadata'
+        ? sanitizePostgresJson(value)
+        : typeof value === 'string'
+          ? sanitizePostgresText(value)
+          : value,
+    ]),
+  ) as T;
+}
+
 export interface SourceDocumentDedupItem {
   id: string;
   source_id: string | null;
@@ -132,10 +183,11 @@ export class DatabaseWriter implements IDatabaseWriter {
     doc: Omit<SourceDocument, 'id' | 'created_at' | 'retrieved_at'>,
   ): Promise<string | null> {
     const id = crypto.randomUUID();
+    const sanitizedDoc = sanitizeSourceDocument(doc);
     const { data, error } = await this.db
       .from('source_documents')
       .upsert(
-        { ...doc, id, retrieved_at: new Date().toISOString() },
+        { ...sanitizedDoc, id, retrieved_at: new Date().toISOString() },
         { onConflict: 'source_id,content_hash', ignoreDuplicates: true },
       )
       .select('id')
