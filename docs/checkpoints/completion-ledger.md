@@ -34,7 +34,7 @@ Updated: 2026-09-07
 | Performance           | `PASS_WITH_LIMITATION` | Build and runtime smoke passed; load profile remains pending.      |
 | Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.       |
 | Pre-soak              | `PASS`                 | Run `33840659144`; DB corroborated crawl `b24296a6-...`.           |
-| Final soak            | `PENDING_TIME`         | Prior soak invalidated; new first slot is `2026-09-07T18:17:00Z`. |
+| Final soak            | `PENDING_TIME`         | Prior soak invalidated; new first slot is `2026-09-07T18:17:00Z`.  |
 | Production deployment | `NO-GO`                | Main merged; production deployment remains untouched.              |
 
 ## Fresh local evidence
