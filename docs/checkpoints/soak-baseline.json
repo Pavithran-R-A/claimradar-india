@@ -1,12 +1,10 @@
 {
-  "runtimeFreezeHead": "f7a77ee0349078a0dfbe8649d77683feb89e6470",
-  "finalSoakBaselineGhaRun": "34038342122",
-  "finalSoakBaselineHead": "f7a77ee0349078a0dfbe8649d77683feb89e6470",
-  "finalSoakBaselineCrawlRunId": "afc0ddfd-e65c-4b03-aaa8-be8537a5fc94",
-  "finalSoakStartUtc": "2026-09-06T14:09:30Z",
-  "firstPostBaselineScheduledSlot": "2026-09-06T18:17:00.000Z",
-  "soakStartUtc": "2026-09-06T18:17:00.000Z",
-  "soakStartGhaRun": "34058094014",
+  "runtimeFreezeHead": "6f22c5ef4119000318218f136f5416987a451877",
+  "finalSoakBaselineGhaRun": "34138764303",
+  "finalSoakBaselineHead": "6f22c5ef4119000318218f136f5416987a451877",
+  "finalSoakBaselineCrawlRunId": "0fe7626a-3332-403d-b3d4-d66db3ddefb9",
+  "finalSoakStartUtc": "2026-09-07T15:31:12Z",
+  "firstPostBaselineScheduledSlot": "2026-09-07T18:17:00.000Z",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
   "thresholdHours48": 48,
@@ -38,6 +36,27 @@
       "nominalSlotUtc": "2026-09-06T12:17:00Z",
       "classification": "PRE_FREEZE_NOMINAL_SLOT",
       "reason": "Delayed execution belongs to the 12:17 UTC slot, before the 14:09:30Z runtime freeze."
+    }
+  ],
+  "invalidatedSoakRuns": [
+    {
+      "ghaRun": "34058094014",
+      "nominalSlotUtc": "2026-09-06T18:17:00Z",
+      "classification": "INVALIDATED_RUNTIME_SOAK",
+      "reason": "Superseded after scheduled run 34123292686 exposed an IBBI PDF NUL persistence defect."
+    },
+    {
+      "ghaRun": "34084538536",
+      "nominalSlotUtc": "2026-09-07T00:17:00Z",
+      "classification": "INVALIDATED_RUNTIME_SOAK",
+      "reason": "Superseded after scheduled run 34123292686 exposed an IBBI PDF NUL persistence defect."
+    },
+    {
+      "ghaRun": "34123292686",
+      "nominalSlotUtc": "2026-09-07T12:17:00Z",
+      "classification": "FAILED_RUNTIME_SOAK",
+      "crawlRunId": "8aee683a-73d1-43d5-85a3-5266f9614c80",
+      "reason": "IBBI PDF raw_text contained U+0000 and failed PostgreSQL persistence."
     }
   ]
 }
