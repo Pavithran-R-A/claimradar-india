@@ -6,17 +6,16 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
   const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
   const fileContent = fs.readFileSync(radarPath, 'utf8');
 
-  it('ensures all interactive authority nodes have semantic button roles and keyboard tab index', () => {
-    expect(fileContent).toContain('role="button"');
-    expect(fileContent).toContain('tabIndex={0}');
-    expect(fileContent).toContain('aria-label=');
-    expect(fileContent).toContain('aria-expanded=');
+  it('ensures source details have semantic keyboard controls', () => {
+    expect(fileContent).toContain('<button');
+    expect(fileContent).toContain('aria-pressed=');
+    expect(fileContent).toContain('aria-label="Monitored official sources"');
+    expect(fileContent).toContain('aria-hidden="true"');
   });
 
-  it('ensures keyboard activation via Enter and Space keys', () => {
-    expect(fileContent).toContain("e.key === 'Enter'");
-    expect(fileContent).toContain("e.key === ' '");
-    expect(fileContent).toContain('e.preventDefault()');
+  it('keeps the visual SVG separate from keyboard controls', () => {
+    expect(fileContent).not.toContain('role="button"');
+    expect(fileContent).not.toContain('tabIndex={0}');
   });
 
   it('ensures visible focus indication on nodes', () => {
