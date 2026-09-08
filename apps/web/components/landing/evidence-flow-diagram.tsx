@@ -104,9 +104,9 @@ export function EvidenceFlowDiagram() {
               {/* Content Block */}
               <div className="flex-1 pt-0.5">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-base sm:text-lg font-bold text-text-primary tracking-tight group-hover:text-trust-primary transition-colors duration-fast">
+                  <h3 className="text-base sm:text-lg font-bold text-text-primary tracking-tight group-hover:text-trust-primary transition-colors duration-fast">
                     {stage.title}
-                  </h4>
+                  </h3>
                   <Icon className="h-4 w-4 text-text-muted group-hover:text-trust-primary transition-colors duration-fast shrink-0" />
                 </div>
                 <p className="mt-1 text-sm sm:text-base leading-relaxed text-text-secondary">

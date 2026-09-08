@@ -17,7 +17,7 @@
   --c-border: #d9dad6; /* 1px hairline rule */
   --c-text-primary: 21 23 26; /* #15171A primary ink */
   --c-text-secondary: 82 90 101; /* #525A65 secondary text (8.8:1 contrast) */
-  --c-text-muted: 112 119 130; /* #707782 muted text (4.9:1 contrast) */
+  --c-text-muted: 93 101 112; /* #5D6570 muted text (5.4:1 contrast) */
   --c-trust-primary: 33 78 128; /* #214E80 deep editorial blue */
   --c-trust-primary-hover: 23 59 98; /* #173B62 */
   --c-success: 35 112 90; /* #23705A verified subdued forest */
@@ -48,7 +48,7 @@
   --c-border: #d9dad6;
   --c-text-primary: 21 23 26;
   --c-text-secondary: 82 90 101;
-  --c-text-muted: 112 119 130;
+  --c-text-muted: 93 101 112;
   --c-trust-primary: 33 78 128;
   --c-trust-primary-hover: 23 59 98;
   --c-success: 35 112 90;

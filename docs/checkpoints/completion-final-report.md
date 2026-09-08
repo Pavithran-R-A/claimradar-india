@@ -198,3 +198,29 @@ Vercel reports the exact Preview ready, and interactive public routes pass.
 Correct-target repaired staging baseline passed from frozen main.
 The new final soak remains pending genuine scheduled executions.
 Production stays untouched.
+
+## Current final-100 completion pass
+
+UPDATED_UTC = `2026-09-08`
+FINAL_BRANCH = `codex/claimradar-final-100`
+FINAL_BASE = `32fb580e86c9d490cb0428f291c667f7d5538061`
+FINAL_CANDIDATE_STATUS = `IN_PROGRESS`
+ROUTE_INVENTORY = `PASS` - 69 pages, one API source, seven server actions
+ACCESSIBILITY_SOURCE_FIXES = `IMPLEMENTED`
+CSP_NONCE_REPAIR = `IMPLEMENTED`
+LINT = `PASS`
+TYPECHECK = `PASS`
+CRAWLER_INVENTORY_ACCEPTANCE = `PASS` - 48 files, 344 tests
+AUTH_RUNTIME_CONTRACT = `PASS` - five tests
+MIGRATION_CONTRACT = `PASS` - 17 ordered migrations
+FULL_TESTS = `PARTIAL` - 553 passed; five checks require production CSS
+BUILD = `BLOCKED_LOCAL_ENVIRONMENT` - zero free bytes on C drive
+CLIENT_BUNDLE_SECRET_SCAN = `PENDING_FINAL_BUILD`
+GLOBAL_FORMAT = `LEGACY_BASELINE_WARNINGS`; scoped candidate files pass
+RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
+HISTORICAL_RUNTIME_FREEZE = `6f22c5ef4119000318218f136f5416987a451877`
+PRODUCTION_READY_NOW = `NO`
+
+No release claim is made from this intermediate state. The final candidate
+needs remote exact-head build, browser evidence, security evidence, and a new
+post-merge staging baseline before soak qualification can begin.

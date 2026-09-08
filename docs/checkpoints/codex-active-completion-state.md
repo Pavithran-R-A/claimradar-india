@@ -128,3 +128,31 @@ freeze, baseline, and soak clock.
 ## External blockers
 
 - New final soak requires real elapsed time.
+
+## Final 100 completion candidate
+
+Updated: 2026-09-08
+
+- FINAL_BRANCH: `codex/claimradar-final-100`.
+- FINAL_BASE: `origin/main` at `32fb580e86c9d490cb0428f291c667f7d5538061`.
+- FINAL_CANDIDATE_STATUS: `IN_PROGRESS`.
+- ROUTE_INVENTORY: `69` page routes, `1` API source, `7` server-action sources.
+- ROUTE_MATRIX: `docs/checkpoints/final-route-state-matrix.md`.
+- INVENTORY_GENERATOR: `scripts/generate-final-route-state-inventory.mjs`.
+- ACCESSIBILITY_SOURCE_FIXES: `IMPLEMENTED; focused contract tests pass`.
+- CSP_SOURCE_FIX: `IMPLEMENTED; nonce middleware replaces static script unsafe-inline`.
+- LINT: `PASS`.
+- TYPECHECK: `PASS`.
+- CRAWLER_INVENTORY_ACCEPTANCE: `PASS; 48 files, 344 tests`.
+- AUTH_RUNTIME_CONTRACT: `PASS; 5 tests`.
+- MIGRATION_CONTRACT: `PASS; 17 ordered migrations`.
+- FULL_TEST: `PARTIAL; 553 passed, 5 build-artifact checks blocked`.
+- BUILD: `BLOCKED_BY_LOCAL_DISK; C drive reached zero free bytes`.
+- CLIENT_BUNDLE_SCAN: `BLOCKED_BY_MISSING_FINAL_BUILD_OUTPUT`.
+- GLOBAL_FORMAT: `LEGACY_BASELINE_WARNINGS; scoped candidate files pass`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_CANDIDATE_MERGE`.
+- HISTORICAL_FREEZE: `6f22c5ef4119000318218f136f5416987a451877`.
+- PRODUCTION_READY_NOW: `NO`.
+
+This section is authoritative for this candidate. Earlier entries describe
+historical repaired-main evidence and the invalidated accessibility-era soak.
