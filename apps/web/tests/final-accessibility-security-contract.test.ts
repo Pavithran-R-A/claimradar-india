@@ -54,6 +54,13 @@ describe('Final accessibility and security contracts', () => {
     expect(page).not.toContain('text-text-secondary/70');
   });
 
+  it('provides a rendered public 404 state', () => {
+    const notFound = read('app', '(public)', 'not-found.tsx');
+    expect(notFound).toContain('Page not found');
+    expect(notFound).toContain('Back to Home');
+    expect(notFound).toContain('min-h-[60vh]');
+  });
+
   it('uses request nonces without script unsafe-inline', () => {
     const nextConfig = fs.readFileSync(path.resolve(__dirname, '../next.config.ts'), 'utf8');
     const middleware = fs.readFileSync(path.resolve(__dirname, '../middleware.ts'), 'utf8');
