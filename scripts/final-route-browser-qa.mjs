@@ -115,7 +115,9 @@ try {
             targets: violation.nodes.map((node) => node.target).slice(0, 10),
           })),
           console_error_count: consoleErrors.length,
+          console_errors: consoleErrors.slice(0, 3),
           page_error_count: pageErrors.length,
+          page_errors: pageErrors.slice(0, 3),
         };
         result.checks.push(check);
         if (!protectedRoute && (response?.status() ?? 599) >= 500)
