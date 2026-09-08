@@ -110,6 +110,17 @@ EXTERNAL_ACTIONS = `SMTP; backup/PITR; Vercel production controls; alerts; CSP o
 The final scheduled soak continues unchanged. The accessibility findings are
 runtime defects, not documentation defects. Repair work must wait for a
 deliberate soak-reset decision.
+
+## Latest scheduled evidence
+
+QUALIFYING_SCHEDULED_RUN_4 = `34252651891`
+QUALIFYING_RUN_4_NOMINAL_SLOT_UTC = `2026-09-08T12:17:00Z`
+QUALIFYING_RUN_4_CRAWL_RUN = `cdef4024-628e-4275-846e-af21efe84eca`
+QUALIFYING_RUN_4_HEAD = `32fb580e86c9d490cb0428f291c667f7d5538061`
+QUALIFYING_RUN_4_RESULT = `PASS`
+QUALIFYING_RUN_4_INVARIANTS = `7/7 sources; 126 fetched; zero unexpected errors; zero publications`
+QUALIFYING_RUN_4_ARTIFACT = `staging-soak-summary; retained; sanitized`
+QUALIFYING_RUN_COUNT = `4`
 BASELINE_ACCOUNTING = `BASELINE_ONLY`
 SOAK_RESTART_REQUIRED = `YES - RUNTIME_DEFECT_REPAIR`
 RUNTIME_FREEZE_HEAD = `6f22c5ef4119000318218f136f5416987a451877`

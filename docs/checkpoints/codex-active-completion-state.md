@@ -56,6 +56,11 @@ Updated: 2026-09-07
 - QUALIFYING_RUN_2_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications
 - QUALIFYING_SCHEDULED_RUN_3: `34220598983`, slot `2026-09-08T06:17:00Z`, crawl `196a1bd8-e33b-4bad-b689-d10a8a4b5e40`, PASS
 - QUALIFYING_RUN_3_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications
+- QUALIFYING_SCHEDULED_RUN_4: `34252651891`, slot `2026-09-08T12:17:00Z`, crawl `cdef4024-628e-4275-846e-af21efe84eca`, PASS
+- QUALIFYING_RUN_4_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications; 1 candidate queued, no publication
+- QUALIFYING_RUN_4_HEAD: `32fb580e86c9d490cb0428f291c667f7d5538061` (documentation-only descendant of freeze)
+- QUALIFYING_RUN_4_DELAYED_START_UTC: `2026-09-08T16:42:03Z`
+- QUALIFYING_RUN_COUNT: `4`
 - SOAK_ELAPSED_AT_2026-09-08T16:37:54Z: `22.3h`
 - SOAK_48H: `PENDING_TIME_SOAK` - three valid scheduled runs
 - SOAK_72H: `PENDING_TIME_SOAK` - three valid scheduled runs

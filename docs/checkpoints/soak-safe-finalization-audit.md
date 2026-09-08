@@ -139,8 +139,11 @@ baseline-only. The baseline is GHA `34138764303`, crawl
 `0fe7626a-3332-403d-b3d4-d66db3ddefb9`.
 
 The first qualifying slot is `2026-09-07T18:17:00Z`. Recorded qualifying runs
-are `34163605422`, `34188114057`, and `34220598983`. Each passed seven-source,
-zero-error, zero-publication invariants. The earlier failed run
+are `34163605422`, `34188114057`, `34220598983`, and `34252651891`. Each
+passed seven-source, zero-error, zero-publication invariants. Run
+`34252651891` was delayed until 16:42 UTC and belongs to the 12:17 UTC slot.
+It used main SHA `32fb580e86c9d490cb0428f291c667f7d5538061`, which differs from
+the freeze only through documentation commits. The earlier failed run
 `34123292686` and prior runs `34058094014`, `34084538536` remain excluded.
 
 No documentation-only commit changes runtime qualification. A frontend,

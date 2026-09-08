@@ -75,6 +75,7 @@ Updated: 2026-09-07
 - Baseline DB source documents: exact IBBI PDF persisted, 25 IBBI documents present.
 - Baseline publication events: zero; candidates and AI budget remain zero.
 - New runtime freeze: `6f22c5ef4119000318218f136f5416987a451877`.
+- Qualifying scheduled run `34252651891`: slot `2026-09-08T12:17:00Z`, crawl `cdef4024-628e-4275-846e-af21efe84eca`, seven sources, 126 fetched, zero unexpected errors, zero publications.
 
 ## Soak-safe finalization audit
 
