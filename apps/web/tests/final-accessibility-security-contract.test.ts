@@ -55,10 +55,13 @@ describe('Final accessibility and security contracts', () => {
   });
 
   it('provides a rendered public 404 state', () => {
-    const notFound = read('app', '(public)', 'not-found.tsx');
+    const notFound = read('components', 'public-not-found.tsx');
     expect(notFound).toContain('Page not found');
     expect(notFound).toContain('Back to Home');
     expect(notFound).toContain('min-h-[60vh]');
+    expect(read('app', '(public)', 'guides', '[slug]', 'not-found.tsx')).toContain(
+      'PublicNotFound',
+    );
   });
 
   it('uses request nonces without script unsafe-inline', () => {
