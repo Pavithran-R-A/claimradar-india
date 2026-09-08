@@ -74,6 +74,7 @@ try {
           waitUntil: 'domcontentloaded',
           timeout: 20_000,
         });
+        if (response?.status() === 404) await page.waitForTimeout(300);
         await page.keyboard.press('Tab');
         const state = await page.evaluate(() => {
           const active = document.activeElement;
