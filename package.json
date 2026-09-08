@@ -22,6 +22,7 @@
     "test:route-inventory": "node scripts/generate-final-route-state-inventory.mjs && node --test scripts/final-route-state-inventory.test.mjs",
     "test:inventory-acceptance": "pnpm --filter @claimradar/crawler test -- --run acceptance",
     "test:browser-smoke": "node scripts/ci-browser-smoke.mjs",
+    "test:final-browser-qa": "node scripts/final-route-browser-qa.mjs",
     "verify:migrations": "node scripts/verify-migration-contract.mjs",
     "test:phase-4b-offline": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test:phase-4b-acceptance": "node scripts/phase-4b-acceptance-runner.mjs",
