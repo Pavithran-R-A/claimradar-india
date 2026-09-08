@@ -163,22 +163,22 @@ The repaired runtime requires a new genuine soak.
 
 Updated: 2026-09-08
 
-| Gate                | Current status  | Evidence or blocker                                       |
-| ------------------- | --------------- | --------------------------------------------------------- |
-| Final branch        | `IN_PROGRESS`   | `codex/claimradar-final-100` from `origin/main` `32fb580` |
-| Route inventory     | `PASS`          | 69 pages, 1 API source, 7 server-action sources           |
-| Accessibility fixes | `SOURCE_PASS`   | Focused six-test contract passes                          |
-| CSP repair          | `SOURCE_PASS`   | Nonce middleware removes static script `unsafe-inline`    |
-| Lint                | `PASS`          | Final candidate source lint passes                        |
-| Typecheck           | `PASS`          | Web typecheck passes after workspace package builds       |
-| Crawler acceptance  | `PASS`          | 48 files, 344 tests                                       |
-| Auth contract       | `PASS`          | Five sanitized runtime-contract tests pass                |
-| Migration contract  | `PASS`          | 17 ordered migrations                                     |
-| Full tests          | `BLOCKED`       | Five checks require `.next` production CSS output         |
-| Production build    | `BLOCKED`       | Local C drive reached zero free bytes                     |
-| Client secret scan  | `PENDING_BUILD` | Final `.next/static` does not exist locally               |
-| Runtime freeze      | `PENDING`       | New freeze follows final merge and baseline               |
-| Route browser QA    | `PENDING_CI_RERUN` | 69 routes across desktop, tablet, and mobile           |
+| Gate                | Current status     | Evidence or blocker                                       |
+| ------------------- | ------------------ | --------------------------------------------------------- |
+| Final branch        | `IN_PROGRESS`      | `codex/claimradar-final-100` from `origin/main` `32fb580` |
+| Route inventory     | `PASS`             | 69 pages, 1 API source, 7 server-action sources           |
+| Accessibility fixes | `SOURCE_PASS`      | Focused six-test contract passes                          |
+| CSP repair          | `SOURCE_PASS`      | Nonce middleware removes static script `unsafe-inline`    |
+| Lint                | `PASS`             | Final candidate source lint passes                        |
+| Typecheck           | `PASS`             | Web typecheck passes after workspace package builds       |
+| Crawler acceptance  | `PASS`             | 48 files, 344 tests                                       |
+| Auth contract       | `PASS`             | Five sanitized runtime-contract tests pass                |
+| Migration contract  | `PASS`             | 17 ordered migrations                                     |
+| Full tests          | `BLOCKED`          | Five checks require `.next` production CSS output         |
+| Production build    | `BLOCKED`          | Local C drive reached zero free bytes                     |
+| Client secret scan  | `PENDING_BUILD`    | Final `.next/static` does not exist locally               |
+| Runtime freeze      | `PENDING`          | New freeze follows final merge and baseline               |
+| Route browser QA    | `PENDING_CI_RERUN` | 69 routes across desktop, tablet, and mobile              |
 
 The historical freeze remains evidence only. Frontend and CSP changes are
 runtime-sensitive. A new freeze is required after final candidate merge.
