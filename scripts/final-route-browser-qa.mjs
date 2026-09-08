@@ -21,6 +21,12 @@ const dynamicValues = {
 };
 const protectedSurfaces = new Set(['admin', 'customer', 'onboarding']);
 const protectedRouteQaEnabled = process.env.FINAL_ROUTE_QA_PROTECTED === 'true';
+const expectedNotFoundRoutes = new Set([
+  '/glossary/<term>',
+  '/guides/<slug>',
+  '/questions/<slug>',
+  '/updates/<slug>',
+]);
 
 const routePath = (route) =>
   route.replace(/<([^>]+)>/g, (_, name) => dynamicValues[name] ?? 'test-value');
@@ -88,6 +94,15 @@ try {
         });
         const protectedRoute = protectedSurfaces.has(entry.surface);
         const runProtectedChecks = protectedRouteQaEnabled || !protectedRoute;
+        const expectedNotFound =
+          expectedNotFoundRoutes.has(entry.route) && response?.status() === 404;
+        const unexpectedConsoleErrors = consoleErrors.filter(
+          (message) =>
+            !(
+              expectedNotFound &&
+              message.includes('Failed to load resource: the server responded with a status of 404')
+            ),
+        );
         const axe = runProtectedChecks
           ? await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
           : { violations: [] };
@@ -106,6 +121,7 @@ try {
               : 'PUBLIC_OR_AUTH_ROUTE'
             : 'AUTHENTICATED_RUNTIME_REQUIRED',
           protected_route_skipped: protectedRoute && !runProtectedChecks,
+          expected_not_found: expectedNotFound,
           axe_violations: axe.violations.map((violation) => ({
             id: violation.id,
             impact: violation.impact,
@@ -114,7 +130,8 @@ try {
             nodes: violation.nodes.length,
             targets: violation.nodes.map((node) => node.target).slice(0, 10),
           })),
-          console_error_count: consoleErrors.length,
+          console_error_count: unexpectedConsoleErrors.length,
+          expected_console_error_count: consoleErrors.length - unexpectedConsoleErrors.length,
           console_errors: consoleErrors.slice(0, 3),
           page_error_count: pageErrors.length,
           page_errors: pageErrors.slice(0, 3),
@@ -130,7 +147,7 @@ try {
           result.failures.push(`${viewport.name} ${entry.route}: invisible focus`);
         if (axe.violations.length)
           result.failures.push(`${viewport.name} ${entry.route}: axe violations`);
-        if (runProtectedChecks && consoleErrors.length)
+        if (runProtectedChecks && unexpectedConsoleErrors.length)
           result.failures.push(`${viewport.name} ${entry.route}: console errors`);
         if (runProtectedChecks && pageErrors.length)
           result.failures.push(`${viewport.name} ${entry.route}: page errors`);
