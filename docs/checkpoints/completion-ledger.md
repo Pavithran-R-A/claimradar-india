@@ -34,7 +34,7 @@ Updated: 2026-09-07
 | Performance           | `PASS_WITH_LIMITATION` | Build and runtime smoke passed; load profile remains pending.      |
 | Release integrity     | `PASS`                 | Migration contract, secret scan, and CI release checks pass.       |
 | Pre-soak              | `PASS`                 | Run `33840659144`; DB corroborated crawl `b24296a6-...`.           |
-| Final soak            | `PENDING_TIME`         | Prior soak invalidated; new first slot is `2026-09-07T18:17:00Z`.  |
+| Final soak            | `PENDING_TIME`         | Run `34163605422` passed; one valid run recorded.                  |
 | Production deployment | `NO-GO`                | Main merged; production deployment remains untouched.              |
 
 ## Fresh local evidence
@@ -107,8 +107,10 @@ Updated: 2026-09-07
 - It is `PRE_FREEZE_NOMINAL_SLOT` and excluded.
 - Old qualifying slots and runs are historical only.
 - New first qualifying slot is `2026-09-07T18:17:00Z`.
-- New `SOAK_START_UTC` remains pending until that scheduled run passes.
-- New `SOAK_START_IST` is `2026-09-07T23:47:00+05:30` after qualification.
+- New `SOAK_START_UTC` is `2026-09-07T18:17:00Z`.
+- New `SOAK_START_IST` is `2026-09-07T23:47:00+05:30`.
+- Run `34163605422` maps to `18:17Z`; crawl `2aa12fb7-e011-474b-a3b0-068f52d090bf` passed.
+- It passed 7/7 sources, 126 fetched, zero errors, and zero publications.
 - New 48-hour and 72-hour thresholds remain pending.
 - Manual runs remain excluded. Baseline remains baseline-only.
 - Delayed run `34042559516` remains permanently excluded from final qualification.

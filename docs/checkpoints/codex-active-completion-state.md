@@ -6,7 +6,7 @@ Updated: 2026-09-07
 
 - CURRENT_HEAD: `6f22c5ef4119000318218f136f5416987a451877`
 - CURRENT_MAIN: `6f22c5ef4119000318218f136f5416987a451877`
-- CURRENT_PHASE: new final scheduled soak pending first slot
+- CURRENT_PHASE: new final scheduled soak in progress
 - BRANCH: `main`
 - PR: `#2` completion merged; `#3` runtime repair merged
 - ORIGINAL_USER_CHECKOUT_TOUCHED: `NO`
@@ -41,16 +41,20 @@ Updated: 2026-09-07
 - CLEANUP_STATE: zero disposable profiles, onboarding rows, notifications, or delivery rows
 - RUNTIME_FREEZE_HEAD: `6f22c5ef4119000318218f136f5416987a451877`
 - RUNTIME_SENSITIVE_DIFF_AFTER_FREEZE: `EMPTY`
-- SOAK_START_UTC: `PENDING_FIRST_QUALIFYING_SCHEDULED_RUN`
-- SOAK_START_IST: `PENDING_FIRST_QUALIFYING_SCHEDULED_RUN`
-- SOAK_START_RUN: `PENDING_FIRST_QUALIFYING_SCHEDULED_RUN`
+- SOAK_START_UTC: `2026-09-07T18:17:00Z`
+- SOAK_START_IST: `2026-09-07T23:47:00+05:30`
+- SOAK_START_RUN: `34163605422`
+- SOAK_START_CRAWL_RUN: `2aa12fb7-e011-474b-a3b0-068f52d090bf`
 - OLD_SOAK_STATE: `INVALIDATED_AFTER_RUNTIME_DEFECT`
 - FAILED_SCHEDULED_RUN: `34123292686`, crawl `8aee683a-73d1-43d5-85a3-5266f9614c80`, IBBI U+0000 persistence failure
 - INVALIDATED_PRIOR_QUALIFYING_RUNS: `34058094014`, `34084538536`
 - NEW_FIRST_QUALIFYING_SLOT_UTC: `2026-09-07T18:17:00Z`
 - NEW_FIRST_QUALIFYING_SLOT_IST: `2026-09-07T23:47:00+05:30`
-- SOAK_48H: `PENDING_TIME_SOAK` - new soak has not started
-- SOAK_72H: `PENDING_TIME_SOAK` - new soak has not started
+- QUALIFYING_SCHEDULED_RUN_1: `34163605422`, slot `2026-09-07T18:17:00Z`, crawl `2aa12fb7-e011-474b-a3b0-068f52d090bf`, PASS
+- QUALIFYING_RUN_1_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications
+- SOAK_ELAPSED_AT_2026-09-08T04:36:23Z: `10.3h`
+- SOAK_48H: `PENDING_TIME_SOAK` - one valid scheduled run
+- SOAK_72H: `PENDING_TIME_SOAK` - one valid scheduled run
 - SCHEDULE_CRON: `17 */6 * * *`
 - FIRST_SCHEDULED_SLOT_UTC: `2026-09-07T18:17:00Z`
 - FIRST_SCHEDULED_SLOT_IST: `2026-09-07T23:47:00+05:30`
@@ -64,7 +68,7 @@ Updated: 2026-09-07
 - SOAK_RESTART_REQUIRED: `YES` - runtime defect invalidated prior soak
 - RUNTIME_SENSITIVE_DIFF: `REPAIR_REQUIRED` before new freeze; `EMPTY` after `6f22c5e`
 - BASELINE_ACCOUNTING: workflow_dispatch run `34138764303` remains baseline-only
-- SOAK_STATE: new soak pending; manual runs excluded from qualification
+- SOAK_STATE: active; manual runs excluded from qualification
 
 ## Next action
 
