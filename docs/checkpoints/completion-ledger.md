@@ -76,6 +76,36 @@ Updated: 2026-09-07
 - Baseline publication events: zero; candidates and AI budget remain zero.
 - New runtime freeze: `6f22c5ef4119000318218f136f5416987a451877`.
 
+## Soak-safe finalization audit
+
+Updated: 2026-09-08
+
+The separate branch `codex/claimradar-soak-safe-finalization` adds audit and
+runbook documentation only. Runtime-sensitive diff after the freeze remains
+empty.
+
+| Gate                   | Final audit status                              |
+| ---------------------- | ----------------------------------------------- |
+| Public browser QA      | `PASS_WITH_LIMITATION`                          |
+| Accessibility          | `MATERIAL_RUNTIME_FIX_REQUIRED`                 |
+| Performance            | `PASS_WITH_LIMITATION`                          |
+| Supabase database      | `PASS_WITH_LIMITATION`                          |
+| Supabase security      | `PASS_WITH_LIMITATION`                          |
+| Supabase performance   | `PASS_WITH_ACCEPTED_CAPACITY_LIMIT`             |
+| Auth and SMTP          | `EXTERNAL_CONFIGURATION_REQUIRED`               |
+| CSP security           | `ACCEPTED_TRADEOFF_REQUIRES_SECURITY_OWNER_ACK` |
+| Vercel readiness       | `PASS_WITH_LIMITATION`                          |
+| Backup and recovery    | `EXTERNAL_CONFIGURATION_REQUIRED`               |
+| Observability          | `PASS_WITH_LIMITATION`                          |
+| Incident response      | `PASS`                                          |
+| Rollback readiness     | `PASS_WITH_LIMITATION`                          |
+| Production runbook     | `PASS`                                          |
+| Post-deploy smoke plan | `PASS`                                          |
+
+Material accessibility defects remain deliberately visible. They require a
+runtime repair and deliberate soak restart. Documentation does not alter the
+current soak or its qualifying run records.
+
 ## Runtime defect and soak restart
 
 - Failed scheduled run: `34123292686`, started `2026-09-07T12:42:02Z`.

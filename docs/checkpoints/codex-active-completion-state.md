@@ -78,6 +78,31 @@ Updated: 2026-09-07
 
 Track genuine scheduled runs through the 72-hour window.
 
+## Soak-safe finalization audit
+
+Updated: 2026-09-08
+
+- Documentation branch: `codex/claimradar-soak-safe-finalization`.
+- Frozen runtime: `6f22c5ef4119000318218f136f5416987a451877`.
+- Runtime-sensitive diff after freeze: `EMPTY_AFTER_FREEZE`.
+- Public browser QA: `PASS_WITH_LIMITATION`.
+- Accessibility: `MATERIAL_RUNTIME_FIX_REQUIRED`.
+- Performance: `PASS_WITH_LIMITATION`.
+- Supabase database: `PASS_WITH_LIMITATION`.
+- Supabase Security Advisor: zero lints.
+- Supabase performance: accepted low-traffic findings.
+- Auth and SMTP: `EXTERNAL_CONFIGURATION_REQUIRED`.
+- CSP: security-owner acceptance required for `unsafe-inline`.
+- Vercel: READY staging; production controls remain external.
+- Backup and recovery: external plan or export action required.
+- Observability: existing evidence plus launch-alert actions required.
+- Incident, rollback, deployment, and smoke runbooks: complete.
+
+The WCAG audit found contrast, heading-order, accessible-name, and mobile
+target-size defects. These require runtime frontend repair. The active soak is
+not invalidated by this documentation-only branch. A repair requires a new
+freeze, baseline, and soak clock.
+
 ## Resolved internal defects
 
 - Added migration 017 for delivery-log hardening.
