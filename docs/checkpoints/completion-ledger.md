@@ -178,6 +178,7 @@ Updated: 2026-09-08
 | Production build    | `BLOCKED`       | Local C drive reached zero free bytes                     |
 | Client secret scan  | `PENDING_BUILD` | Final `.next/static` does not exist locally               |
 | Runtime freeze      | `PENDING`       | New freeze follows final merge and baseline               |
+| Route browser QA    | `PENDING_CI_RERUN` | 69 routes across desktop, tablet, and mobile           |
 
 The historical freeze remains evidence only. Frontend and CSP changes are
 runtime-sensitive. A new freeze is required after final candidate merge.

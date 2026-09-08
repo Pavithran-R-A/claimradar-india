@@ -97,7 +97,11 @@ const inventory = {
   error_boundaries: errorBoundaries,
   routes,
 };
-const formattedInventory = await prettier.format(JSON.stringify(inventory), { parser: 'json' });
+const prettierOptions = (await prettier.resolveConfig(output)) ?? {};
+const formattedInventory = await prettier.format(JSON.stringify(inventory), {
+  ...prettierOptions,
+  parser: 'json',
+});
 await fs.writeFile(output, formattedInventory, 'utf8');
 const matrixRows = routes
   .map((route) =>
@@ -132,7 +136,10 @@ const matrix = [
   'The JSON inventory is the machine-readable source.',
   '',
 ].join('\n');
-const formattedMatrix = await prettier.format(matrix, { parser: 'markdown' });
+const formattedMatrix = await prettier.format(matrix, {
+  ...prettierOptions,
+  parser: 'markdown',
+});
 await fs.writeFile(matrixOutput, formattedMatrix, 'utf8');
 console.log(`Generated ${routes.length} page routes.`);
 console.log(`Generated ${apiRouteSources.length} API route sources.`);

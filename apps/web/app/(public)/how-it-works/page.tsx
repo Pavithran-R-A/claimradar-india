@@ -161,7 +161,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="rounded-md border border-border bg-surface p-8 sm:p-12 text-white text-center">
+      <section className="rounded-md border border-border bg-ink-950 p-8 sm:p-12 text-white text-center">
         <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
           Explore Active Opportunities Now
         </h2>

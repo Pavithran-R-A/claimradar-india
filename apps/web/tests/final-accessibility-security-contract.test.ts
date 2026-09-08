@@ -35,6 +35,25 @@ describe('Final accessibility and security contracts', () => {
     expect(search).toContain('min-w-[24px]');
   });
 
+  it('keeps radar source controls outside the SVG image tree', () => {
+    const radar = read('components', 'landing', 'evidence-radar-visual.tsx');
+    expect(radar).toContain('aria-hidden="true"');
+    expect(radar).toContain('aria-label="Monitored official sources"');
+    expect(radar).not.toContain('role="button"');
+  });
+
+  it('keeps dark call-to-action text on dark contrast surfaces', () => {
+    const page = read('app', '(public)', 'how-it-works', 'page.tsx');
+    expect(page).toContain('bg-ink-950');
+    expect(page).not.toContain('bg-surface p-8 sm:p-12 text-white');
+  });
+
+  it('keeps verification helper text at readable contrast', () => {
+    const page = read('app', '(auth)', 'verify-email', 'page.tsx');
+    expect(page).toContain('text-text-secondary">');
+    expect(page).not.toContain('text-text-secondary/70');
+  });
+
   it('uses request nonces without script unsafe-inline', () => {
     const nextConfig = fs.readFileSync(path.resolve(__dirname, '../next.config.ts'), 'utf8');
     const middleware = fs.readFileSync(path.resolve(__dirname, '../middleware.ts'), 'utf8');

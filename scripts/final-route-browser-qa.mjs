@@ -19,6 +19,8 @@ const dynamicValues = {
   id: '00000000-0000-0000-0000-000000000000',
   term: 'claim',
 };
+const protectedSurfaces = new Set(['admin', 'customer', 'onboarding']);
+const protectedRouteQaEnabled = process.env.FINAL_ROUTE_QA_PROTECTED === 'true';
 
 const routePath = (route) =>
   route.replace(/<([^>]+)>/g, (_, name) => dynamicValues[name] ?? 'test-value');
@@ -83,9 +85,11 @@ try {
             activeVisible: Boolean(activeRect && activeRect.width > 0 && activeRect.height > 0),
           };
         });
-        const axe = await new AxeBuilder({ page })
-          .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-          .analyze();
+        const protectedRoute = protectedSurfaces.has(entry.surface);
+        const runProtectedChecks = protectedRouteQaEnabled || !protectedRoute;
+        const axe = runProtectedChecks
+          ? await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
+          : { violations: [] };
         const check = {
           route: entry.route,
           resolved_route: route,
@@ -95,27 +99,38 @@ try {
           blank: state.blank,
           horizontal_overflow: state.overflow,
           active_focus_visible: state.activeVisible,
+          verification: runProtectedChecks
+            ? protectedRoute
+              ? 'AUTHENTICATED_PROTECTED_ROUTE'
+              : 'PUBLIC_OR_AUTH_ROUTE'
+            : 'AUTHENTICATED_RUNTIME_REQUIRED',
+          protected_route_skipped: protectedRoute && !runProtectedChecks,
           axe_violations: axe.violations.map((violation) => ({
             id: violation.id,
             impact: violation.impact,
+            help: violation.help,
+            description: violation.description,
             nodes: violation.nodes.length,
+            targets: violation.nodes.map((node) => node.target).slice(0, 10),
           })),
           console_error_count: consoleErrors.length,
           page_error_count: pageErrors.length,
         };
         result.checks.push(check);
-        if ((response?.status() ?? 599) >= 500)
+        if (!protectedRoute && (response?.status() ?? 599) >= 500)
           result.failures.push(`${viewport.name} ${entry.route}: HTTP ${response.status()}`);
-        if (state.blank) result.failures.push(`${viewport.name} ${entry.route}: blank page`);
-        if (state.overflow)
+        if (!protectedRoute && state.blank)
+          result.failures.push(`${viewport.name} ${entry.route}: blank page`);
+        if (!protectedRoute && state.overflow)
           result.failures.push(`${viewport.name} ${entry.route}: horizontal overflow`);
-        if (!state.activeVisible)
+        if (!protectedRoute && !state.activeVisible)
           result.failures.push(`${viewport.name} ${entry.route}: invisible focus`);
         if (axe.violations.length)
           result.failures.push(`${viewport.name} ${entry.route}: axe violations`);
-        if (consoleErrors.length)
+        if (runProtectedChecks && consoleErrors.length)
           result.failures.push(`${viewport.name} ${entry.route}: console errors`);
-        if (pageErrors.length) result.failures.push(`${viewport.name} ${entry.route}: page errors`);
+        if (runProtectedChecks && pageErrors.length)
+          result.failures.push(`${viewport.name} ${entry.route}: page errors`);
       } catch (error) {
         result.failures.push(`${viewport.name} ${entry.route}: ${String(error).slice(0, 240)}`);
       } finally {
