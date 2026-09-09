@@ -216,3 +216,13 @@ authenticated browser run for complete protected-surface visual evidence.
 - Human action: approve final merge of PR #4.
 
 The local build remains disk-blocked only. Remote CI supplies build evidence.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `7547f34e2d10f52804b65f65befacb747a978cca`.
+- Exact-head CI: `PASS`, GHA run `34310073132`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
