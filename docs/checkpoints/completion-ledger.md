@@ -217,6 +217,16 @@ authenticated browser run for complete protected-surface visual evidence.
 
 ## Final candidate gate refresh, latest
 
+- Candidate head: `3aa6eef4fd0f2644a39eff4c0c987c567b1ddadd`.
+- Exact-head CI: `PASS`, GHA run `34312344579`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
 - Candidate head: `4e0ae8e12b092dc9f61f960e7ede867cc8e0404d`.
 - Exact-head CI: `PASS`, GHA run `34311888166`.
 - Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
