@@ -226,3 +226,13 @@ The local build remains disk-blocked only. Remote CI supplies build evidence.
 - Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
 - Runtime freeze: pending merge and fresh baseline.
 - Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `817fdf5d5f0465dd425c665ba4bc4763724ba8f1`.
+- Exact-head CI: `PASS`, GHA run `34311026621`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
