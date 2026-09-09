@@ -558,11 +558,13 @@ async function exerciseInteractions(browser, identities, result) {
         state: 'visible',
         timeout: 10_000,
       });
-      assert(
-        (await customerPage.locator('[role="status"]').count()) > 0,
-        'customer.settings-safe-update',
-        'status_missing',
-      );
+      const status = customerPage.locator('[role="status"]');
+      if ((await status.count()) === 0) {
+        const feedback = await customerPage.locator('[role="alert"]').allTextContents();
+        throw new Error(
+          `customer.settings.feedback_error:${feedback.join(' ').trim().slice(0, 160)}`,
+        );
+      }
     } else {
       throw new Error('settings_control_missing');
     }
