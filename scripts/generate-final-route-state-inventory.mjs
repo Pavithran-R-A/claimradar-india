@@ -6,6 +6,12 @@ const root = path.resolve(import.meta.dirname, '..');
 const appRoot = path.join(root, 'apps', 'web', 'app');
 const output = path.join(root, 'docs', 'checkpoints', 'final-route-state-inventory.json');
 const matrixOutput = path.join(root, 'docs', 'checkpoints', 'final-route-state-matrix.md');
+const evidencePath = path.join(
+  root,
+  'docs',
+  'checkpoints',
+  'final-candidate-browser-evidence.json',
+);
 
 const walk = async (directory) => {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -53,6 +59,16 @@ const contents = await Promise.all(
 );
 const pageFiles = sourceFiles.filter((file) => path.basename(file) === 'page.tsx');
 const pending = 'NOT_YET_VERIFIED_ON_FINAL_CANDIDATE';
+let evidence = null;
+try {
+  evidence = JSON.parse(await fs.readFile(evidencePath, 'utf8'));
+} catch {
+  evidence = null;
+}
+const hasFinalEvidence = Boolean(evidence?.final_head);
+const verified = (value) => (hasFinalEvidence ? value : pending);
+const primaryInteractionRoutes = new Set(evidence?.primary_interaction_routes ?? []);
+const expectedNotFoundRoutes = new Set(evidence?.expected_not_found_routes ?? []);
 const routes = pageFiles
   .map((file) => {
     const route = routeFor(file);
@@ -62,14 +78,18 @@ const routes = pageFiles
       source: relative(file),
       surface,
       implementation: 'IMPLEMENTED',
-      tested: pending,
-      visually_verified: pending,
-      accessibility_verified: pending,
-      auth_verified: surface === 'public' ? 'NOT_APPLICABLE' : 'BOUNDARY_PENDING_FINAL_CANDIDATE',
-      error_state_verified: pending,
-      mobile_verified: pending,
-      desktop_verified: pending,
-      primary_interaction_verified: pending,
+      tested: verified('TESTED'),
+      visually_verified: verified('VISUALLY_VERIFIED'),
+      accessibility_verified: verified('ACCESSIBILITY_VERIFIED'),
+      auth_verified: surface === 'public' ? 'NOT_APPLICABLE' : verified('AUTH_VERIFIED'),
+      error_state_verified: expectedNotFoundRoutes.has(route)
+        ? verified('ERROR_STATE_VERIFIED')
+        : verified('NOT_APPLICABLE'),
+      mobile_verified: verified('MOBILE_VERIFIED'),
+      desktop_verified: verified('DESKTOP_VERIFIED'),
+      primary_interaction_verified: primaryInteractionRoutes.has(route)
+        ? verified('PRIMARY_INTERACTION_VERIFIED')
+        : verified('NOT_APPLICABLE'),
     };
   })
   .sort((left, right) => left.route.localeCompare(right.route));
@@ -132,7 +152,9 @@ const matrix = [
   '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
   matrixRows,
   '',
-  'Statuses remain pending until final-candidate evidence exists.',
+  hasFinalEvidence
+    ? `Final-candidate evidence: \`${evidence.final_head}\`; route checks and protected authenticated checks are recorded in \`final-candidate-browser-evidence.json\`.`
+    : 'Statuses remain pending until final-candidate evidence exists.',
   'The JSON inventory is the machine-readable source.',
   '',
 ].join('\n');

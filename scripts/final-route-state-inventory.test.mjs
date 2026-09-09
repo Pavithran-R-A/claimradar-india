@@ -19,6 +19,19 @@ test('final route inventory is valid and complete', () => {
   assert.ok(inventory.error_boundaries.includes('apps/web/app/global-error.tsx'));
   assert.equal(inventory.routes[0].route, '/');
   assert.equal(inventory.routes.at(-1).route, '/verify-email');
+  assert.ok(inventory.routes.every(({ tested }) => tested === 'TESTED'));
+  assert.ok(
+    inventory.routes.every(({ visually_verified }) => visually_verified === 'VISUALLY_VERIFIED'),
+  );
+  assert.ok(
+    inventory.routes.every(
+      ({ accessibility_verified }) => accessibility_verified === 'ACCESSIBILITY_VERIFIED',
+    ),
+  );
+  assert.ok(inventory.routes.every(({ mobile_verified }) => mobile_verified === 'MOBILE_VERIFIED'));
+  assert.ok(
+    inventory.routes.every(({ desktop_verified }) => desktop_verified === 'DESKTOP_VERIFIED'),
+  );
   assert.equal(
     fs
       .readFileSync(matrixPath, 'utf8')

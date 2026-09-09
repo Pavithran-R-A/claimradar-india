@@ -190,6 +190,32 @@ Updated: 2026-09-09
 - RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
 - HUMAN_ACTION: approve final merge of PR #4.
 
+## Final candidate proof-completion refresh
+
+Updated: 2026-09-09
+
+- FINAL_HEAD: `d617fcd375d7d47041316d1c78dc8bcd9c829e34`.
+- PR #4 remains open and unmerged.
+- Exact-head CI: `PASS`, GHA run `34320452577`.
+- Public/auth route QA: `PASS`, 123 checks, zero failures.
+- Protected browser QA: `PASS`, GHA run `34320450223`.
+- Protected coverage: 28 routes across three viewports, 84 checks.
+- Protected Axe, console, page, and overflow failures: `0`.
+- Authenticated boundary checks: `1`, passed.
+- Primary interactions: `11/11` verified.
+- Disposable users: three created, confirmed, and deleted.
+- Residual profiles: none.
+- Manual browser accessibility categories: all pass.
+- Route matrix: 69 routes, zero pending or unknown fields.
+- Vercel exact-head state: `READY`.
+- Direct Vercel route QA: blocked by deployment protection.
+- RUNTIME_FREEZE_STATUS: `NOT_ESTABLISHED_UNTIL_MERGE`.
+- MERGE_STATUS: `NOT_PERFORMED`; explicit hold remains active.
+- PRODUCTION_READY_NOW: `NO`.
+
+Direct deployment crawling needs the protected bypass credential.
+That credential is unavailable in this workspace.
+
 ## Final candidate gate refresh, latest
 
 Updated: 2026-09-09
@@ -241,6 +267,32 @@ Updated: 2026-09-09
 - FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
 - RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
 - HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate proof-completion refresh, authoritative
+
+Updated: 2026-09-09
+
+- FINAL_HEAD: `d617fcd375d7d47041316d1c78dc8bcd9c829e34`.
+- PR #4 remains open and unmerged.
+- Exact-head CI: `PASS`, GHA run `34320452577`.
+- Public/auth route QA: `PASS`, 123 checks, zero failures.
+- Protected browser QA: `PASS`, GHA run `34320450223`.
+- Protected coverage: 28 routes across three viewports, 84 checks.
+- Protected Axe, console, page, and overflow failures: `0`.
+- Authenticated boundary checks: `1`, passed.
+- Primary interactions: `11/11` verified.
+- Disposable users: three created, confirmed, and deleted.
+- Residual profiles: none.
+- Manual browser accessibility categories: all pass.
+- Route matrix: 69 routes, zero pending or unknown fields.
+- Vercel exact-head state: `READY`.
+- Direct Vercel route QA: blocked by deployment protection.
+- RUNTIME_FREEZE_STATUS: `NOT_ESTABLISHED_UNTIL_MERGE`.
+- MERGE_STATUS: `NOT_PERFORMED`; explicit hold remains active.
+- PRODUCTION_READY_NOW: `NO`.
+
+Direct deployment crawling needs the protected bypass credential.
+That credential is unavailable in this workspace.
 
 Local build limitations remain environmental only. The C drive is full.
 Remote Node 24 gates provide the release build evidence.

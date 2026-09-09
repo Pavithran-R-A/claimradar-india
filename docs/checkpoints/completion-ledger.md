@@ -266,3 +266,26 @@ The local build remains disk-blocked only. Remote CI supplies build evidence.
 - Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
 - Runtime freeze: pending merge and fresh baseline.
 - Human action: approve final merge of PR #4.
+
+## Final candidate proof-completion refresh, authoritative
+
+Updated: `2026-09-09`.
+
+| Gate                     | Status     | Evidence                                         |
+| ------------------------ | ---------- | ------------------------------------------------ |
+| Candidate head           | `VERIFIED` | `d617fcd375d7d47041316d1c78dc8bcd9c829e34`       |
+| Exact-head CI            | `PASS`     | GHA `34320452577`                                |
+| Public/auth route QA     | `PASS`     | 123 checks, zero failures                        |
+| Protected route QA       | `PASS`     | GHA `34320450223`, 84 checks                     |
+| Protected Axe            | `PASS`     | Zero violations                                  |
+| Protected runtime errors | `PASS`     | Zero console, page, and overflow failures        |
+| Protected interactions   | `PASS`     | 11 of 11 verified                                |
+| Disposable-user cleanup  | `PASS`     | Three deleted, no residual profiles              |
+| Route state matrix       | `PASS`     | 69 routes, zero pending or unknown fields        |
+| Vercel deployment        | `READY`    | Exact candidate deployment check                 |
+| Vercel direct route QA   | `BLOCKED`  | Deployment protection requires bypass credential |
+| Merge                    | `HELD`     | User explicitly said do not merge yet            |
+
+Manual browser categories passed through DOM, keyboard, focus, reflow,
+reduced-motion, form, naming, and target-size checks. Direct assistive
+technology testing remains outside this workspace.
