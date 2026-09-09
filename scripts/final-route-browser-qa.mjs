@@ -129,6 +129,10 @@ try {
             description: violation.description,
             nodes: violation.nodes.length,
             targets: violation.nodes.map((node) => node.target).slice(0, 10),
+            failure_summaries: violation.nodes
+              .map((node) => node.failureSummary)
+              .filter(Boolean)
+              .slice(0, 10),
           })),
           console_error_count: unexpectedConsoleErrors.length,
           expected_console_error_count: consoleErrors.length - unexpectedConsoleErrors.length,
