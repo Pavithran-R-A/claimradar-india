@@ -41,7 +41,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   unreadNotifications = count ?? 0;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen min-w-0 overflow-x-clip bg-background">
       <AppSidebar siteName={brandConfig.siteName} unreadNotifications={unreadNotifications} />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between border-b border-border bg-background-elevated px-4 sm:px-6">

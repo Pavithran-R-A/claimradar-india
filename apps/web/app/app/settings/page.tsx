@@ -52,7 +52,7 @@ export default async function SettingsPage() {
             <p className="text-sm text-text-muted">
               Contact details are used only for the channels you enable. Review everything we hold
               about you in the{' '}
-              <Link href="/app/privacy" className="text-trust-primary hover:underline">
+              <Link href="/app/privacy" className="text-trust-primary underline hover:no-underline">
                 privacy center
               </Link>
               .
@@ -62,7 +62,7 @@ export default async function SettingsPage() {
             <h2 className="mb-2 text-base font-semibold text-text-primary">Matching answers</h2>
             <p className="text-sm text-text-muted">
               Your companies, sectors and purchase period power match accuracy. Update them in{' '}
-              <Link href="/onboarding" className="text-trust-primary hover:underline">
+              <Link href="/onboarding" className="text-trust-primary underline hover:no-underline">
                 setup
               </Link>{' '}
               whenever your situation changes.

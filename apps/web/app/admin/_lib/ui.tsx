@@ -135,7 +135,7 @@ export function FilterChips({
           <a
             key={opt.value || 'all'}
             href={hrefFor(opt.value)}
-            aria-pressed={active}
+            aria-current={active ? 'page' : undefined}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               active
                 ? 'border-trust-primary bg-trust-primary text-white'

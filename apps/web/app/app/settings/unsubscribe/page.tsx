@@ -32,7 +32,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
         <p className="mt-1 text-sm text-text-secondary">
           Stop email notifications while keeping your in-app inbox active. You can re-enable email
           at any time in{' '}
-          <Link href="/app/settings" className="text-trust-primary hover:underline">
+          <Link href="/app/settings" className="text-trust-primary underline hover:no-underline">
             Settings
           </Link>
           .

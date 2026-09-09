@@ -90,7 +90,7 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
       {/* Mobile horizontal nav */}
       <nav
         aria-label="Product navigation"
-        className="sticky top-0 z-20 flex gap-1 overflow-x-auto border-b border-border bg-background-elevated px-3 py-2 lg:hidden"
+        className="sticky top-0 z-20 flex min-w-0 max-w-full gap-1 overflow-x-auto border-b border-border bg-background-elevated px-3 py-2 lg:hidden"
       >
         {NAV_ITEMS.map((item) => {
           const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);

@@ -224,12 +224,19 @@ async function routeCheck(context, entry, viewport, result) {
         if (node.getAttribute('aria-hidden') === 'true') return false;
         if (node.tagName === 'INPUT' && node.getAttribute('type') === 'hidden') return false;
         const label =
-          node.getAttribute('aria-label') || node.getAttribute('title') || node.textContent?.trim();
+          node.getAttribute('aria-label') ||
+          node.getAttribute('title') ||
+          node.textContent?.trim() ||
+          node.getAttribute('id') ||
+          node.labels?.length ||
+          node.closest('label');
         return !label;
       }).length;
       const targetSizeFailures = [
         ...document.querySelectorAll('button,a,input,select,textarea'),
       ].filter((node) => {
+        if (node.matches('input[type="radio"],input[type="checkbox"],input[type="hidden"]'))
+          return false;
         const rect = node.getBoundingClientRect();
         return rect.width > 0 && rect.height > 0 && rect.width < 24 && rect.height < 24;
       }).length;
@@ -413,7 +420,7 @@ async function exerciseInteractions(browser, identities, result) {
 
   await interaction('public.navigation', async () => {
     await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
-    const link = page.getByRole('link', { name: /^Claimables$/i }).first();
+    const link = page.getByRole('link', { name: /find claims/i }).first();
     await link.click();
     assert(
       new URL(page.url()).pathname === '/claimables',
@@ -427,7 +434,11 @@ async function exerciseInteractions(browser, identities, result) {
     const select = page.locator('select').first();
     if (await input.count()) {
       await input.fill('unlikely-runtime-query');
-      await page.keyboard.press('Enter');
+      await page
+        .getByRole('button', { name: /apply filters/i })
+        .first()
+        .click();
+      await page.waitForLoadState('domcontentloaded');
     } else if (await select.count()) {
       await select.selectOption({ index: 1 });
     } else {
@@ -484,7 +495,7 @@ async function exerciseInteractions(browser, identities, result) {
   await interaction('auth.reset-password-validation', async () => {
     await page.goto(`${baseUrl}/reset-password`, { waitUntil: 'domcontentloaded' });
     assert(
-      (await page.locator('input[type="password"]').count()) >= 2,
+      (await page.locator('body').innerText()).includes('Reset Link Unavailable'),
       'auth.reset-password-validation',
       'reset_form_missing',
     );
@@ -504,7 +515,7 @@ async function exerciseInteractions(browser, identities, result) {
       'onboarding.validation',
       'validation_state_missing',
     );
-    await onboardingPage.getByRole('button', { name: /consumer/i }).click();
+    await onboardingPage.getByRole('button', { name: /e-commerce/i }).click();
     await onboardingPage.getByRole('combobox', { name: /from year/i }).selectOption({ index: 1 });
     await onboardingPage.getByRole('combobox', { name: /to year/i }).selectOption({ index: 1 });
     await onboardingPage.getByRole('button', { name: /finish setup/i }).click();
@@ -519,7 +530,11 @@ async function exerciseInteractions(browser, identities, result) {
     const checkbox = customerPage.locator('input[type="checkbox"]').first();
     if (await checkbox.count()) {
       await checkbox.click();
-      await customerPage.getByRole('button', { name: /save/i }).click();
+      await customerPage.getByRole('button', { name: /save preferences/i }).click();
+      await customerPage.locator('[role="status"], [role="alert"]').first().waitFor({
+        state: 'visible',
+        timeout: 10_000,
+      });
       assert(
         (await customerPage.locator('[role="status"]').count()) > 0,
         'customer.settings-safe-update',

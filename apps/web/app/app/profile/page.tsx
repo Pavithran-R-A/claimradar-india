@@ -130,7 +130,7 @@ export default async function ProfilePage() {
           <p className="mt-5 border-t border-border pt-4 text-xs text-text-muted">
             These answers were captured during account setup and drive your deterministic matches.
             To correct them, use the correction request in the{' '}
-            <Link href="/app/privacy" className="text-trust-primary hover:underline">
+            <Link href="/app/privacy" className="text-trust-primary underline hover:no-underline">
               Privacy center
             </Link>
             , or withdraw consent there to stop matching entirely.

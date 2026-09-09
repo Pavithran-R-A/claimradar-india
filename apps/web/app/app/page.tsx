@@ -136,7 +136,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Latest matches</h2>
             <Link
               href="/app/matches"
-              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               View all
             </Link>
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Tracked claims</h2>
             <Link
               href="/app/tracker"
-              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               View all
             </Link>
@@ -217,7 +217,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Watchlist</h2>
             <Link
               href="/app/watchlist"
-              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               Manage
             </Link>
@@ -281,7 +281,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Notifications</h2>
             <Link
               href="/app/notifications"
-              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               View all
             </Link>
@@ -336,7 +336,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Your setup</h2>
             <Link
               href="/app/profile"
-              className="text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               Review profile
             </Link>
@@ -352,11 +352,17 @@ export default async function DashboardPage() {
               </p>
               <p className="mt-2 text-xs leading-relaxed text-text-muted">
                 Matching uses only the low-risk answers you gave. Manage them under{' '}
-                <Link href="/app/profile" className="text-trust-primary hover:underline">
+                <Link
+                  href="/app/profile"
+                  className="text-trust-primary underline hover:no-underline"
+                >
                   Profile
                 </Link>{' '}
                 or the{' '}
-                <Link href="/app/privacy" className="text-trust-primary hover:underline">
+                <Link
+                  href="/app/privacy"
+                  className="text-trust-primary underline hover:no-underline"
+                >
                   Privacy center
                 </Link>
                 .
@@ -371,7 +377,7 @@ export default async function DashboardPage() {
             <h2 className="text-base font-semibold text-text-primary">Recent source changes</h2>
             <Link
               href="/app/settings"
-              className="inline-flex items-center gap-1 text-sm text-trust-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="inline-flex items-center gap-1 text-sm text-trust-primary underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
             >
               <Settings className="h-3.5 w-3.5" aria-hidden />
               Notification settings
