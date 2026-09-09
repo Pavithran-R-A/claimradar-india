@@ -530,7 +530,12 @@ async function exerciseInteractions(browser, identities, result) {
     const checkbox = customerPage.locator('input[type="checkbox"]').first();
     if (await checkbox.count()) {
       await checkbox.check({ force: true });
-      await customerPage.getByRole('button', { name: /save preferences/i }).click();
+      const saveButton = customerPage.getByRole('button', {
+        name: 'Save preferences',
+        exact: true,
+      });
+      await saveButton.scrollIntoViewIfNeeded();
+      await saveButton.click();
       await customerPage.locator('[role="status"], [role="alert"]').first().waitFor({
         state: 'visible',
         timeout: 10_000,
