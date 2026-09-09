@@ -11,7 +11,7 @@
  * - Primary Action: #214E80 (Deep Editorial Blue)
  * - Primary Action Hover: #173B62
  * - Verified: #23705A
- * - Deadline: #B45F06
+ * - Deadline: #7A3E00
  * - Danger: #B42318
  */
 module.exports = {
@@ -47,7 +47,7 @@ module.exports = {
           secondary: '#525A65',
           muted: '#707782',
           verified: '#23705A',
-          deadline: '#B45F06',
+          deadline: '#7A3E00',
           danger: '#B42318',
           dark: '#171C23',
         },

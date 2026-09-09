@@ -21,7 +21,7 @@
   --c-trust-primary: 33 78 128; /* #214E80 deep editorial blue */
   --c-trust-primary-hover: 23 59 98; /* #173B62 */
   --c-success: 35 112 90; /* #23705A verified subdued forest */
-  --c-deadline: 180 95 6; /* #B45F06 deadline ochre */
+  --c-deadline: 122 62 0; /* #7A3E00 accessible deadline ochre */
   --c-danger: 180 35 24; /* #B42318 */
   --c-info: 33 78 128; /* #214E80 */
   --c-verified-background: rgba(35, 112, 90, 0.08);
@@ -52,7 +52,7 @@
   --c-trust-primary: 33 78 128;
   --c-trust-primary-hover: 23 59 98;
   --c-success: 35 112 90;
-  --c-deadline: 180 95 6;
+  --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
   --c-verified-background: rgba(35, 112, 90, 0.08);

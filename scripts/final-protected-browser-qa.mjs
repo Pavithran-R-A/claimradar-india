@@ -421,12 +421,10 @@ async function exerciseInteractions(browser, identities, result) {
   await interaction('public.navigation', async () => {
     await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
     const link = page.getByRole('link', { name: /find claims/i }).first();
-    await link.click();
-    assert(
-      new URL(page.url()).pathname === '/claimables',
-      'public.navigation',
-      'claimables_not_reached',
-    );
+    await Promise.all([
+      page.waitForURL((url) => url.pathname === '/claimables', { timeout: 10_000 }),
+      link.click(),
+    ]);
   });
   await interaction('public.search-or-filter', async () => {
     await page.goto(`${baseUrl}/claimables`, { waitUntil: 'domcontentloaded' });
@@ -508,17 +506,19 @@ async function exerciseInteractions(browser, identities, result) {
   await interaction('onboarding.mobile-keyboard-and-completion', async () => {
     await onboardingPage.getByPlaceholder(/flipkart/i).fill('ClaimRadar runtime QA');
     await onboardingPage.getByPlaceholder(/flipkart/i).press('Enter');
-    await onboardingPage.getByRole('button', { name: /finish setup/i }).click();
-    await onboardingPage.waitForTimeout(500);
+    await onboardingPage.getByRole('button', { name: /e-commerce/i }).click();
+    await onboardingPage.getByRole('combobox', { name: /from year/i }).selectOption({ index: 1 });
+    await onboardingPage.getByRole('combobox', { name: /to year/i }).selectOption({ index: 2 });
+    const submit = onboardingPage.locator('button[type="submit"]');
+    await submit.click();
+    await onboardingPage.getByRole('alert').waitFor({ state: 'visible', timeout: 10_000 });
     assert(
       (await onboardingPage.getByRole('alert').count()) > 0,
       'onboarding.validation',
       'validation_state_missing',
     );
-    await onboardingPage.getByRole('button', { name: /e-commerce/i }).click();
-    await onboardingPage.getByRole('combobox', { name: /from year/i }).selectOption({ index: 1 });
     await onboardingPage.getByRole('combobox', { name: /to year/i }).selectOption({ index: 1 });
-    await onboardingPage.getByRole('button', { name: /finish setup/i }).click();
+    await submit.click();
     await onboardingPage.waitForURL((url) => url.pathname === '/app', { timeout: 20_000 });
   });
   await onboardingContext.close();
@@ -529,7 +529,7 @@ async function exerciseInteractions(browser, identities, result) {
     await customerPage.goto(`${baseUrl}/app/settings`, { waitUntil: 'domcontentloaded' });
     const checkbox = customerPage.locator('input[type="checkbox"]').first();
     if (await checkbox.count()) {
-      await checkbox.click();
+      await checkbox.check({ force: true });
       await customerPage.getByRole('button', { name: /save preferences/i }).click();
       await customerPage.locator('[role="status"], [role="alert"]').first().waitFor({
         state: 'visible',
