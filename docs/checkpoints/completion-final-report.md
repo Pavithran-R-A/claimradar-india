@@ -368,3 +368,53 @@ PRODUCTION_READY_NOW = `NO`
 
 The exact Vercel check is ready. Direct route verification redirects to Vercel
 SSO. The protected bypass credential is unavailable here. Merge remains held.
+
+## Final merge and fresh baseline
+
+MERGE_STATUS = `MERGED`
+
+SOURCE_HEAD = `3c064681e4fd65aef4316f491a6050e631670e19`
+
+MAIN_PRE_MERGE_SHA = `32fb580e86c9d490cb0428f291c667f7d5538061`
+
+MERGE_SHA = `7f4834f23f48baeeb871afe3c0594fef9612b677`
+
+MERGE_PARENTS = `32fb580e86c9d490cb0428f291c667f7d5538061`, `3c064681e4fd65aef4316f491a6050e631670e19`
+
+MERGE_TIMESTAMP_UTC = `2026-09-09T07:56:21Z`
+
+RUNTIME_FREEZE_HEAD = `7f4834f23f48baeeb871afe3c0594fef9612b677`
+
+BASELINE_GHA_RUN = `34326475197`
+
+BASELINE_CRAWL_RUN = `8ff537e8-a961-429a-a801-5393aaead1df`
+
+BASELINE_RESULT = `PASS` - 7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, zero publications.
+
+BASELINE_DB_EVIDENCE = `PASS` - 7 crawl_run_sources completed, 0 crawl_errors, 13 source_documents retrieved in-window, 0 candidate documents, 0 publication events.
+
+BASELINE_GUARDS = `PASS` - staging, billing off, notifications off, auto-verify off, live adapters on.
+
+BASELINE_ARTIFACT = `staging-soak-summary` retained and sanitized.
+
+RUNTIME_SENSITIVE_DIFF_AFTER_FREEZE = `EMPTY`
+
+FIRST_QUALIFYING_SLOT_UTC = `2026-09-09T12:17:00Z`
+
+FIRST_QUALIFYING_SLOT_IST = `2026-09-09T17:47:00+05:30`
+
+NEXT_4_SLOTS_UTC = `2026-09-09T12:17:00Z`, `2026-09-09T18:17:00Z`, `2026-09-10T00:17:00Z`, `2026-09-10T06:17:00Z`
+
+SOAK_START_UTC = `PENDING_FIRST_QUALIFYING_SCHEDULED_RUN`
+
+SOAK_START_IST = `PENDING_FIRST_QUALIFYING_SCHEDULED_RUN`
+
+SCHEDULE_CRON = `17 */6 * * *`
+
+MANUAL_BASELINE_ACCOUNTING = `EXCLUDED_FROM_SOAK_QUALIFICATION`
+
+SOAK_48H = `PENDING_REAL_ELAPSED_TIME`
+
+SOAK_72H = `PENDING_REAL_ELAPSED_TIME`
+
+PRODUCTION_READY_NOW = `NO - PENDING FINAL SOAK`

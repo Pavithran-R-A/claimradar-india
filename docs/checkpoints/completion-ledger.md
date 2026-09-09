@@ -77,6 +77,36 @@ Updated: 2026-09-07
 - New runtime freeze: `6f22c5ef4119000318218f136f5416987a451877`.
 - Qualifying scheduled run `34252651891`: slot `2026-09-08T12:17:00Z`, crawl `cdef4024-628e-4275-846e-af21efe84eca`, seven sources, 126 fetched, zero unexpected errors, zero publications.
 
+## Final merge and baseline checkpoint
+
+Updated: 2026-09-09
+
+- PR #4 merged without squashing.
+- Source head: `3c064681e4fd65aef4316f491a6050e631670e19`.
+- Main pre-merge: `32fb580e86c9d490cb0428f291c667f7d5538061`.
+- Merge SHA: `7f4834f23f48baeeb871afe3c0594fef9612b677`.
+- Merge parents: `32fb580e86c9d490cb0428f291c667f7d5538061`, `3c064681e4fd65aef4316f491a6050e631670e19`.
+- Merge timestamp: `2026-09-09T07:56:21Z`.
+- `origin/main` equals the merge SHA.
+- Runtime freeze: `7f4834f23f48baeeb871afe3c0594fef9612b677`.
+- Runtime-sensitive diff after freeze: empty.
+- Manual baseline run `34326475197` is baseline-only.
+- Baseline crawl: `8ff537e8-a961-429a-a801-5393aaead1df`.
+- Baseline artifact: `staging-soak-summary`, retained and sanitized.
+- Baseline: 7/7 sources, 126 discovered, 126 fetched.
+- Baseline database: 7 completed source rows, 0 crawl errors.
+- Source documents: 13 retrieved during the crawl window.
+- Candidate documents: 0 for the crawl.
+- Publication events: 0 during the crawl window.
+- Automatic publications: 0; queued records: 0.
+- Safety guards: staging, billing off, notifications off, auto-verify off.
+- First qualifying slot: `2026-09-09T12:17:00Z`.
+- First qualifying slot IST: `2026-09-09T17:47:00+05:30`.
+- Soak clock starts only after that genuine scheduled run passes.
+- Manual dispatch runs remain excluded.
+- 48-hour and 72-hour gates require real elapsed time.
+- Production readiness: `NO - PENDING FINAL SOAK`.
+
 ## Soak-safe finalization audit
 
 Updated: 2026-09-08
