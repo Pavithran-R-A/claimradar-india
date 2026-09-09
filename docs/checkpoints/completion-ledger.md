@@ -182,3 +182,22 @@ Updated: 2026-09-08
 
 The historical freeze remains evidence only. Frontend and CSP changes are
 runtime-sensitive. A new freeze is required after final candidate merge.
+
+## Current final-candidate verification refresh
+
+Updated: 2026-09-08
+
+| Gate                       | Status                         | Evidence                                              |
+| -------------------------- | ------------------------------ | ----------------------------------------------------- |
+| Candidate head             | `READY_FOR_FINAL_MERGE_REVIEW` | `5e65153039c745a371f1b06f360ae6c86bfe0afa`            |
+| Exact-head CI              | `PASS`                         | GHA run `34276267445`                                 |
+| Vercel exact head          | `PASS`                         | PR deployment check                                   |
+| Final route browser QA     | `PASS`                         | 207 checks, zero failures, zero axe violations        |
+| Public/auth route coverage | `PASS`                         | 123 checks, desktop/tablet/mobile                     |
+| Protected browser coverage | `AUTH_REQUIRED`                | 84 entries; credentialed runtime QA passed separately |
+| Dynamic 404 coverage       | `PASS`                         | 12 expected rendered 404 checks                       |
+| Final runtime freeze       | `PENDING`                      | Establish after merge and baseline                    |
+
+Protected browser routes are not claimed as unauthenticated visual passes.
+They remain covered by credentialed staging runtime evidence and require an
+authenticated browser run for complete protected-surface visual evidence.

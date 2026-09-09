@@ -79,6 +79,22 @@ Updated: 2026-09-07
 - BASELINE_ACCOUNTING: workflow_dispatch run `34138764303` remains baseline-only
 - SOAK_STATE: active; manual runs excluded from qualification
 
+## Current final-candidate verification refresh
+
+Updated: 2026-09-08
+
+- CURRENT_HEAD: `5e65153039c745a371f1b06f360ae6c86bfe0afa`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`, GHA run `34276267445`.
+- FINAL_ROUTE_BROWSER_QA_EVIDENCE: 207 checks, zero failures, zero axe violations.
+- PUBLIC_AUTH_ROUTE_COVERAGE: 123 checks across three viewports.
+- PROTECTED_ROUTE_COVERAGE: 84 entries require authenticated browser credentials.
+- EXPECTED_NOT_FOUND_COVERAGE: 12 rendered dynamic 404 checks.
+- EXACT_HEAD_CI: `PASS`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- RUNTIME_SENSITIVE_DIFF: `PRESENT_BEFORE_FINAL_MERGE`; freeze pending.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- HUMAN_ACTION: approve final merge after reviewing PR #4.
+
 ## Next action
 
 Track genuine scheduled runs through the 72-hour window.

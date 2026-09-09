@@ -225,3 +225,21 @@ PRODUCTION_READY_NOW = `NO`
 No release claim is made from this intermediate state. The final candidate
 needs remote exact-head build, browser evidence, security evidence, and a new
 post-merge staging baseline before soak qualification can begin.
+
+## Current final-candidate verification refresh
+
+UPDATED_UTC = `2026-09-08`
+CURRENT_HEAD = `5e65153039c745a371f1b06f360ae6c86bfe0afa`
+EXACT_HEAD_CI = `PASS` - GHA run `34276267445`
+VERCEL_EXACT_HEAD = `PASS`
+FINAL_ROUTE_BROWSER_QA = `PASS` - 207 checks, zero failures, zero axe violations
+PUBLIC_AUTH_ROUTE_CHECKS = `123` across desktop, tablet, and mobile
+PROTECTED_ROUTE_ENTRIES = `84` - authenticated browser credentials required
+EXPECTED_DYNAMIC_404_CHECKS = `12` rendered and intentionally non-published
+FINAL_CANDIDATE_STATUS = `READY_FOR_FINAL_MERGE_REVIEW`
+FINAL_RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
+HUMAN_ACTION = `approve final merge`
+
+Protected browser routes are not represented as unauthenticated passes.
+Credentialed staging runtime QA separately passed customer/admin/API and
+notification boundaries. The final merge must establish a new freeze.
