@@ -15,6 +15,11 @@ on:
         required: false
         default: false
         type: boolean
+      protected_browser_qa:
+        description: 'Run disposable authenticated protected browser QA only'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: staging-soak
@@ -25,7 +30,7 @@ permissions:
 
 jobs:
   soak:
-    if: inputs.auth_runtime_only != true
+    if: inputs.auth_runtime_only != true && inputs.protected_browser_qa != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: staging
@@ -261,4 +266,78 @@ jobs:
         with:
           name: staging-auth-runtime-summary
           path: staging-auth-runtime-summary.json
+          if-no-files-found: warn
+
+  protected-browser-qa:
+    if: github.event_name == 'workflow_dispatch' && inputs.protected_browser_qa == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build exact candidate
+        env:
+          APP_ENV: staging
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_SITE_NAME: ClaimRadar India
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_ENABLE_BILLING: 'false'
+        run: pnpm build
+
+      - name: Start exact candidate
+        shell: bash
+        env:
+          APP_ENV: staging
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_SITE_NAME: ClaimRadar India
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_ENABLE_BILLING: 'false'
+        run: |
+          pnpm --filter @claimradar/web start -- -p 3000 > web-server.log 2>&1 &
+
+      - name: Run authenticated protected browser QA
+        env:
+          APP_ENV: staging
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: upvsfqufkywlpibbwrse
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BASE_URL: http://127.0.0.1:3000
+          FINAL_HEAD: ${{ github.sha }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PROTECTED_BROWSER_QA_SUMMARY_FILE: ${{ github.workspace }}/final-protected-browser-qa.json
+        run: node scripts/final-protected-browser-qa.mjs
+
+      - name: Upload sanitized protected browser QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-protected-browser-qa
+          path: |
+            final-protected-browser-qa.json
+            web-server.log
           if-no-files-found: warn
