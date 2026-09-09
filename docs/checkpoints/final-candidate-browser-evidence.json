@@ -1,7 +1,9 @@
 {
-  "final_head": "d617fcd375d7d47041316d1c78dc8bcd9c829e34",
+  "final_head": "17275fc8e25c865942321450d599bda44fe0c0c5",
+  "runtime_equivalent_to_protected_qa": true,
+  "protected_qa_runtime_head": "d617fcd375d7d47041316d1c78dc8bcd9c829e34",
   "public_auth": {
-    "gha_run": "34320452577",
+    "gha_run": "34321570779",
     "route_count": 41,
     "checks": 123,
     "failures": 0,
@@ -61,8 +63,8 @@
   ],
   "verdict": "PASS_WITH_VERCEL_PROTECTION_LIMITATION",
   "vercel": {
-    "deployment_sha": "d617fcd375d7d47041316d1c78dc8bcd9c829e34",
-    "deployment_url": "https://claimradar-staging-git-code-3e6bad-pavithrans-projects-cae184b1.vercel.app",
+    "deployment_sha": "17275fc8e25c865942321450d599bda44fe0c0c5",
+    "deployment_url": "https://claimradar-staging-82mxf3vz4-pavithrans-projects-cae184b1.vercel.app",
     "deployment_state": "READY",
     "direct_route_crawl": "BLOCKED_BY_VERCEL_DEPLOYMENT_PROTECTION"
   }

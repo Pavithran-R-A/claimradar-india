@@ -273,8 +273,8 @@ Updated: `2026-09-09`.
 
 | Gate                     | Status     | Evidence                                         |
 | ------------------------ | ---------- | ------------------------------------------------ |
-| Candidate head           | `VERIFIED` | `d617fcd375d7d47041316d1c78dc8bcd9c829e34`       |
-| Exact-head CI            | `PASS`     | GHA `34320452577`                                |
+| Candidate head           | `VERIFIED` | `17275fc8e25c865942321450d599bda44fe0c0c5`       |
+| Exact-head CI            | `PASS`     | GHA `34321570779`                                |
 | Public/auth route QA     | `PASS`     | 123 checks, zero failures                        |
 | Protected route QA       | `PASS`     | GHA `34320450223`, 84 checks                     |
 | Protected Axe            | `PASS`     | Zero violations                                  |
@@ -288,4 +288,5 @@ Updated: `2026-09-09`.
 
 Manual browser categories passed through DOM, keyboard, focus, reflow,
 reduced-motion, form, naming, and target-size checks. Direct assistive
-technology testing remains outside this workspace.
+technology testing remains outside this workspace. Protected QA ran at
+`d617fcd`; the runtime tree is unchanged at the final head.

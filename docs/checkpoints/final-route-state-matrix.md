@@ -76,5 +76,5 @@ Inventory count: **69 page routes**.
 | /updates/<slug>           | public     | apps/web/app/(public)/updates/[slug]/page.tsx      | TESTED | VISUALLY_VERIFIED | ACCESSIBILITY_VERIFIED | NOT_APPLICABLE | ERROR_STATE_VERIFIED | MOBILE_VERIFIED | DESKTOP_VERIFIED | NOT_APPLICABLE               |
 | /verify-email             | auth       | apps/web/app/(auth)/verify-email/page.tsx          | TESTED | VISUALLY_VERIFIED | ACCESSIBILITY_VERIFIED | AUTH_VERIFIED  | NOT_APPLICABLE       | MOBILE_VERIFIED | DESKTOP_VERIFIED | NOT_APPLICABLE               |
 
-Final-candidate evidence: `d617fcd375d7d47041316d1c78dc8bcd9c829e34`; route checks and protected authenticated checks are recorded in `final-candidate-browser-evidence.json`.
+Final-candidate evidence: `17275fc8e25c865942321450d599bda44fe0c0c5`; route checks and protected authenticated checks are recorded in `final-candidate-browser-evidence.json`.
 The JSON inventory is the machine-readable source.

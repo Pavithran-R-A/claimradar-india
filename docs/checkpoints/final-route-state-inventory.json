@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T06:57:26.988Z",
+  "generated_at": "2026-09-09T07:06:11.601Z",
   "generator": "scripts/generate-final-route-state-inventory.mjs",
   "page_route_count": 69,
   "api_route_sources": ["apps/web/app/(auth)/auth/callback/route.ts"],
