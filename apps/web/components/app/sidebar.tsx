@@ -51,13 +51,13 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
         href={item.href}
         aria-current={active ? 'page' : undefined}
         className={cn(
-          'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary',
+          'group flex items-center gap-3 rounded-md border-l-2 px-3 py-2 text-sm font-medium transition-[background-color,color,border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary',
           active
-            ? 'bg-trust-primary/10 text-trust-primary'
-            : 'text-text-secondary hover:bg-surface hover:text-text-primary',
+            ? 'border-trust-primary bg-trust-primary/10 text-trust-primary'
+            : 'border-transparent text-text-secondary hover:border-trust-primary/50 hover:bg-surface hover:text-text-primary',
         )}
       >
-        <Icon className="h-4 w-4 shrink-0" />
+        <Icon className="h-4 w-4 shrink-0 transition-transform duration-fast group-hover:translate-x-px" />
         <span className="flex-1">{item.label}</span>
         {item.href === '/app/notifications' && unreadNotifications > 0 && (
           <span className="rounded-full bg-deadline-background px-2 py-0.5 text-xs font-semibold text-deadline">
@@ -100,10 +100,10 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
               href={item.href}
               aria-current={active ? 'page' : undefined}
               className={cn(
-                'whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
+                'whitespace-nowrap rounded-md border border-transparent px-3 py-1.5 text-xs font-medium transition-[background-color,color,border-color]',
                 active
-                  ? 'bg-trust-primary/15 text-trust-primary'
-                  : 'text-text-secondary hover:bg-surface hover:text-text-primary',
+                  ? 'border-trust-primary/20 bg-trust-primary/15 text-trust-primary'
+                  : 'text-text-secondary hover:border-border hover:bg-surface hover:text-text-primary',
               )}
             >
               {item.label}

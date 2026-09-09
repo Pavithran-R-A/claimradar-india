@@ -85,30 +85,38 @@ export default async function LandingPage() {
       {/* ------------------------------------------------------------------ */}
       {/*  1. HERO — Light-First Editorial Search Hero & Source Ledger       */}
       {/* ------------------------------------------------------------------ */}
-      <section className="relative overflow-hidden bg-background pt-12 pb-16 sm:pt-16 sm:pb-20 border-b border-border">
+      <section
+        aria-labelledby="home-hero-heading"
+        className="relative overflow-hidden bg-background pt-12 pb-16 sm:pt-16 sm:pb-20 border-b border-border"
+      >
         <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Dominant Left: Value Proposition & Signature Search */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
+              <p className="enter-seq-0 editorial-kicker">Public records, made useful</p>
+
               {/* Human Headline with 0ms entrance */}
-              <h1 className="enter-seq-0 text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.15]">
+              <h1
+                id="home-hero-heading"
+                className="enter-seq-1 mt-5 max-w-2xl text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.12]"
+              >
                 Find refunds and claims you may be entitled to.
               </h1>
 
               {/* Concise Supporting Copy with 70ms entrance */}
-              <p className="enter-seq-1 mt-4 text-base sm:text-lg leading-relaxed text-text-secondary max-w-xl">
+              <p className="enter-seq-2 mt-4 reading-measure text-base sm:text-lg leading-relaxed text-text-secondary">
                 Search notices from SEBI, RBI, IBBI, TRAI, and PIB. We organize public refund,
                 compensation, and creditor-claim information with links to the underlying official
                 record.
               </p>
 
               {/* Dominant Search Input Experience with 140ms entrance */}
-              <div className="enter-seq-2 mt-8 w-full max-w-2xl">
+              <div className="enter-seq-3 mt-8 w-full max-w-2xl">
                 <InteractiveHeroSearch />
               </div>
 
               {/* Understated Independence & Navigation Links with 210ms entrance */}
-              <div className="enter-seq-3 mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-muted">
+              <div className="enter-seq-4 mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-muted">
                 <span className="flex items-center gap-1.5 text-text-secondary font-medium">
                   <ShieldCheck className="h-4 w-4 text-trust-primary" />
                   Independent service
@@ -134,11 +142,30 @@ export default async function LandingPage() {
                   Editorial standards
                 </Link>
               </div>
+
+              <div className="enter-seq-4 mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-xs text-text-secondary">
+                <span>
+                  <strong className="font-semibold text-text-primary">Official links</strong> for
+                  every published notice
+                </span>
+                <span>
+                  <strong className="font-semibold text-text-primary">Human review</strong> before
+                  publication
+                </span>
+                <span>
+                  <strong className="font-semibold text-text-primary">No filing fees</strong>{' '}
+                  through ClaimRadar
+                </span>
+              </div>
             </div>
 
             {/* Right: Restrained Official Source Ledger with 260ms entrance */}
-            <div className="enter-seq-4 lg:col-span-5 w-full">
-              <div className="rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-fast hover:border-border/90">
+            <div className="enter-seq-5 lg:col-span-5 w-full">
+              <div className="relative rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-fast hover:border-border-strong">
+                <div
+                  className="absolute left-0 top-5 bottom-5 w-0.5 bg-trust-primary"
+                  aria-hidden
+                />
                 <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
                   <div className="flex items-center gap-2">
                     <Landmark className="h-4 w-4 text-trust-primary" />
@@ -153,7 +180,7 @@ export default async function LandingPage() {
                   {MONITORED_AUTHORITIES.map((auth, idx) => (
                     <div
                       key={auth.code}
-                      className={`enter-seq-${5 + Math.min(idx, 2)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-fast hover:bg-surface-strong/70`}
+                      className={`enter-seq-${6 + Math.min(idx, 1)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-fast hover:bg-surface-strong/70`}
                     >
                       <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-trust-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-fast origin-center" />
                       <div className="flex items-center gap-2 min-w-0 pr-2 transition-transform duration-fast group-hover:translate-x-1">

@@ -55,8 +55,8 @@ export function EmptyDirectoryNotice({
   showActions?: boolean;
 }) {
   return (
-    <div className="rounded-md border border-border bg-surface p-6 sm:p-10 text-center max-w-2xl mx-auto">
-      <div className="inline-flex items-center gap-1.5 rounded border border-trust-primary/20 bg-trust-primary/10 px-2.5 py-1 text-xs font-bold text-trust-primary mb-3">
+    <section className="rounded-md border border-border bg-surface p-6 sm:p-10 text-center max-w-3xl mx-auto">
+      <div className="editorial-kicker justify-center before:hidden mb-3">
         <ShieldCheck className="h-3.5 w-3.5" />
         Publication status
       </div>
@@ -68,38 +68,28 @@ export function EmptyDirectoryNotice({
       </p>
 
       {/* Discreet 4-Stage Verification Summary */}
-      <div className="mt-6 pt-5 border-t border-border text-left">
+      <div className="mt-8 border-t border-border pt-6 text-left">
         <span className="text-xs font-bold uppercase tracking-wider text-text-secondary block mb-3 text-center sm:text-left">
           How a notice becomes a listing
         </span>
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
-          <div className="p-2.5 rounded border border-border bg-surface-strong/40">
-            <span className="font-mono text-xs font-bold text-trust-primary block">01</span>
-            <span className="font-semibold text-text-primary block text-xs">
-              Official notice found
-            </span>
-            <span className="text-xs text-text-secondary">
-              Crawled from SEBI, RBI, IBBI, TRAI, PIB
-            </span>
-          </div>
-          <div className="p-2.5 rounded border border-border bg-surface-strong/40">
-            <span className="font-mono text-xs font-bold text-trust-primary block">02</span>
-            <span className="font-semibold text-text-primary block text-xs">Source checked</span>
-            <span className="text-xs text-text-secondary">PDF & order verification</span>
-          </div>
-          <div className="p-2.5 rounded border border-border bg-surface-strong/40">
-            <span className="font-mono text-xs font-bold text-trust-primary block">03</span>
-            <span className="font-semibold text-text-primary block text-xs">Editorial review</span>
-            <span className="text-xs text-text-secondary">Human verification gate</span>
-          </div>
-          <div className="p-2.5 rounded border border-border bg-surface-strong/40">
-            <span className="font-mono text-xs font-bold text-trust-primary block">04</span>
-            <span className="font-semibold text-text-primary block text-xs">
-              Published with official link
-            </span>
-            <span className="text-xs text-text-secondary">Grounded with direct links</span>
-          </div>
-        </div>
+        <ol className="relative space-y-4 border-l-2 border-border pl-4 sm:grid sm:grid-cols-4 sm:gap-4 sm:space-y-0 sm:border-l-0 sm:pl-0">
+          {[
+            ['01', 'Official notice found', 'Crawled from SEBI, RBI, IBBI, TRAI, PIB'],
+            ['02', 'Source checked', 'PDF and order verification'],
+            ['03', 'Editorial review', 'Human verification gate'],
+            ['04', 'Published with official link', 'Grounded with direct links'],
+          ].map(([number, titleText, detail]) => (
+            <li key={number} className="relative sm:border-t-2 sm:border-border sm:pt-3">
+              <span className="font-mono text-xs font-bold text-trust-primary">{number}</span>
+              <span className="mt-1 block text-xs font-semibold text-text-primary">
+                {titleText}
+              </span>
+              <span className="mt-1 block text-xs leading-relaxed text-text-secondary">
+                {detail}
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
 
       {showActions && (
@@ -136,6 +126,6 @@ export function EmptyDirectoryNotice({
           </Link>
         </div>
       )}
-    </div>
+    </section>
   );
 }

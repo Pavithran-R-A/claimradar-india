@@ -26,13 +26,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const flatItems = visibleGroups.flatMap((group) => group.items);
 
   const navLinkClass =
-    'block rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary';
+    'block rounded-md border-l-2 border-transparent px-3 py-2 text-sm text-text-secondary transition-[background-color,color,border-color] hover:border-trust-primary/50 hover:bg-surface-strong hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary';
 
   return (
     <div className="flex min-h-screen flex-col bg-background lg:flex-row">
       {/* Mobile header + nav strip (< lg) */}
       <header className="border-b border-border bg-surface lg:hidden">
-        <div className="flex h-14 items-center justify-between gap-3 px-4">
+        <div className="flex h-14 items-center justify-between gap-3 border-l-2 border-trust-primary px-4">
           <Link
             href="/admin"
             className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
@@ -54,7 +54,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <li>
               <Link
                 href="/admin"
-                className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
+                className="whitespace-nowrap rounded-md border border-transparent px-3 py-1.5 text-xs font-semibold text-text-secondary transition-[background-color,color,border-color] hover:border-border hover:bg-surface-strong hover:text-text-primary"
               >
                 Dashboard
               </Link>
@@ -63,7 +63,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-strong hover:text-text-primary"
+                  className="whitespace-nowrap rounded-md border border-transparent px-3 py-1.5 text-xs font-medium text-text-secondary transition-[background-color,color,border-color] hover:border-border hover:bg-surface-strong hover:text-text-primary"
                 >
                   {item.label}
                 </Link>
@@ -97,13 +97,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
           )}
 
-          <nav className="mt-4 space-y-4" aria-label="Admin navigation">
+          <nav className="mt-6 space-y-5" aria-label="Admin navigation">
             <Link href="/admin" className={navLinkClass}>
               Dashboard
             </Link>
             {visibleGroups.map((group) => (
               <div key={group.heading}>
-                <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-text-muted">
+                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
                   {group.heading}
                 </p>
                 <div className="space-y-1">
@@ -117,7 +117,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             ))}
           </nav>
 
-          <p className="mt-6 border-t border-border pt-3 text-xs leading-relaxed text-text-muted">
+          <p className="mt-8 border-t border-border pt-4 text-xs leading-relaxed text-text-muted">
             Every write action on this panel is attributed to your account and recorded in the audit
             log.
           </p>

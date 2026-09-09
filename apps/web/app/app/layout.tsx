@@ -44,7 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip bg-background lg:flex-row">
       <AppSidebar siteName={brandConfig.siteName} unreadNotifications={unreadNotifications} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-border bg-background-elevated px-4 sm:px-6">
+        <header className="flex min-h-16 items-center justify-between gap-4 border-b border-border bg-background-elevated px-4 py-3 sm:px-6">
           <p className="truncate text-sm text-text-secondary">
             Signed in as <span className="font-medium text-text-primary">{user.email}</span>
             {displayName ? <span className="text-text-muted"> · {displayName}</span> : null}
