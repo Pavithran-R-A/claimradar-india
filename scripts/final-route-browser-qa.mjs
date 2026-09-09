@@ -68,6 +68,7 @@ try {
     for (const entry of inventory.routes) {
       const route = routePath(entry.route);
       const page = await context.newPage();
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       const consoleErrors = [];
       const pageErrors = [];
       page.on('console', (message) => {
