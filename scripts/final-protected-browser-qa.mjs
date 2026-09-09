@@ -554,15 +554,13 @@ async function exerciseInteractions(browser, identities, result) {
         });
         throw new Error(`settings_save_pointer_blocked:${JSON.stringify(diagnostics)}`);
       }
-      await customerPage.locator('[role="status"], [role="alert"]').first().waitFor({
-        state: 'visible',
-        timeout: 10_000,
-      });
       const status = customerPage.locator('[role="status"]');
-      if ((await status.count()) === 0) {
+      try {
+        await status.waitFor({ state: 'visible', timeout: 10_000 });
+      } catch {
         const feedback = await customerPage.locator('[role="alert"]').allTextContents();
         throw new Error(
-          `customer.settings.feedback_error:${feedback.join(' ').trim().slice(0, 160)}`,
+          `customer.settings.feedback_error:${feedback.join(' ').trim().slice(0, 160) || 'none'}`,
         );
       }
     } else {
