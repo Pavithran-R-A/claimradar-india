@@ -28,7 +28,6 @@ export function ClaimRadarBrand({
         'group inline-flex items-center gap-2.5 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 rounded-lg',
         className,
       )}
-      aria-label="ClaimRadar India — Homepage"
     >
       <DSBrandMark
         size={isSm ? 26 : isLg ? 36 : 30}

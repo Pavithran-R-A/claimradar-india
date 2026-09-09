@@ -91,3 +91,14 @@ jobs:
 
       - name: Browser smoke
         run: pnpm test:browser-smoke
+
+      - name: Final route browser QA
+        run: pnpm test:final-browser-qa
+
+      - name: Upload final route browser QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-route-browser-qa
+          path: docs/checkpoints/final-route-browser-qa.json
+          if-no-files-found: warn

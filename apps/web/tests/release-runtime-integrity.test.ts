@@ -15,12 +15,14 @@ describe('release runtime integrity coverage', () => {
 
   it('declares browser security boundaries in the Next.js headers', () => {
     const nextConfig = fs.readFileSync(path.resolve(__dirname, '../next.config.ts'), 'utf8');
+    const middleware = fs.readFileSync(path.resolve(__dirname, '../middleware.ts'), 'utf8');
 
-    expect(nextConfig).toContain("key: 'Content-Security-Policy'");
-    expect(nextConfig).toContain("frame-ancestors 'none'");
-    expect(nextConfig).toContain("base-uri 'self'");
-    expect(nextConfig).toContain("form-action 'self'");
-    expect(nextConfig).toContain("object-src 'none'");
+    expect(nextConfig).not.toContain("key: 'Content-Security-Policy'");
+    expect(middleware).toContain("frame-ancestors 'none'");
+    expect(middleware).toContain("base-uri 'self'");
+    expect(middleware).toContain("form-action 'self'");
+    expect(middleware).toContain("object-src 'none'");
+    expect(middleware).toContain("'nonce-");
   });
 
   it('detects the intentional runtime repair against the old freeze', () => {

@@ -34,7 +34,7 @@ export function DataUnavailableNotice({ message }: { message: string }) {
       </div>
       <h2 className="text-base font-bold text-text-primary">Directory Ingestion Status</h2>
       <p className="mt-2 text-xs leading-relaxed text-text-secondary">{message}</p>
-      <p className="mt-3 text-xs text-text-muted">
+      <p className="mt-3 text-xs text-text-secondary">
         ClaimRadar strictly serves verified database records. We never invent placeholder entries.
       </p>
     </div>
@@ -69,7 +69,7 @@ export function EmptyDirectoryNotice({
 
       {/* Discreet 4-Stage Verification Summary */}
       <div className="mt-6 pt-5 border-t border-border text-left">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3 text-center sm:text-left">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-secondary block mb-3 text-center sm:text-left">
           How a notice becomes a listing
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
@@ -78,24 +78,26 @@ export function EmptyDirectoryNotice({
             <span className="font-semibold text-text-primary block text-xs">
               Official notice found
             </span>
-            <span className="text-xs text-text-muted">Crawled from SEBI, RBI, IBBI, TRAI, PIB</span>
+            <span className="text-xs text-text-secondary">
+              Crawled from SEBI, RBI, IBBI, TRAI, PIB
+            </span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">02</span>
             <span className="font-semibold text-text-primary block text-xs">Source checked</span>
-            <span className="text-xs text-text-muted">PDF & order verification</span>
+            <span className="text-xs text-text-secondary">PDF & order verification</span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">03</span>
             <span className="font-semibold text-text-primary block text-xs">Editorial review</span>
-            <span className="text-xs text-text-muted">Human verification gate</span>
+            <span className="text-xs text-text-secondary">Human verification gate</span>
           </div>
           <div className="p-2.5 rounded border border-border bg-surface-strong/40">
             <span className="font-mono text-xs font-bold text-trust-primary block">04</span>
             <span className="font-semibold text-text-primary block text-xs">
               Published with official link
             </span>
-            <span className="text-xs text-text-muted">Grounded with direct links</span>
+            <span className="text-xs text-text-secondary">Grounded with direct links</span>
           </div>
         </div>
       </div>

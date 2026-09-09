@@ -112,7 +112,7 @@ export function InteractiveHeroSearch() {
             <button
               type="button"
               onClick={() => handleLookup(term)}
-              className="text-text-secondary hover:text-trust-primary hover:underline transition-colors duration-fast cursor-pointer"
+              className="inline-flex min-h-[24px] min-w-[24px] items-center justify-center text-text-secondary hover:text-trust-primary hover:underline transition-colors duration-fast cursor-pointer"
             >
               {term}
             </button>

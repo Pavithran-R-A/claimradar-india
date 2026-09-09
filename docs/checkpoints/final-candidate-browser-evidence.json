@@ -1,0 +1,71 @@
+{
+  "final_head": "17275fc8e25c865942321450d599bda44fe0c0c5",
+  "runtime_equivalent_to_protected_qa": true,
+  "protected_qa_runtime_head": "d617fcd375d7d47041316d1c78dc8bcd9c829e34",
+  "public_auth": {
+    "gha_run": "34321570779",
+    "route_count": 41,
+    "checks": 123,
+    "failures": 0,
+    "axe_violations": 0,
+    "page_errors": 0,
+    "overflow_failures": 0
+  },
+  "protected": {
+    "gha_run": "34320450223",
+    "route_count": 28,
+    "checks": 84,
+    "failures": 0,
+    "axe_violations": 0,
+    "console_errors": 0,
+    "page_errors": 0,
+    "overflow_failures": 0,
+    "unauthenticated_boundary_checks": 1,
+    "unauthenticated_boundary_failures": 0,
+    "primary_interactions_discovered": 11,
+    "primary_interactions_verified": 11,
+    "cleanup_deleted_users": 3,
+    "cleanup_residual_profiles": true
+  },
+  "manual_wcag": {
+    "keyboard": "PASS",
+    "focus": "PASS",
+    "zoom_reflow": "PASS",
+    "reduced_motion": "PASS",
+    "names_semantics": "PASS",
+    "forms": "PASS",
+    "target_sizes": "PASS",
+    "screen_reader_semantics": "PASS",
+    "method": "browser DOM semantics, keyboard, reduced-motion, and reflow checks"
+  },
+  "primary_interaction_routes": [
+    "/",
+    "/claimables",
+    "/faq",
+    "/sources",
+    "/login",
+    "/forgot-password",
+    "/reset-password",
+    "/onboarding",
+    "/app/settings",
+    "/app/tracker",
+    "/admin/candidates"
+  ],
+  "expected_not_found_routes": [
+    "/admin/candidates/<id>",
+    "/admin/claimables/<id>",
+    "/admin/crawl-runs/<id>",
+    "/admin/sources/<id>",
+    "/glossary/<term>",
+    "/guides/<slug>",
+    "/questions/<slug>",
+    "/updates/<slug>"
+  ],
+  "verdict": "PASS_WITH_VERCEL_PROTECTION_LIMITATION",
+  "vercel": {
+    "deployment_sha": "17275fc8e25c865942321450d599bda44fe0c0c5",
+    "deployment_url": "https://claimradar-staging-82mxf3vz4-pavithrans-projects-cae184b1.vercel.app",
+    "deployment_state": "READY",
+    "direct_route_crawl": "BLOCKED_BY_VERCEL_DEPLOYMENT_PROTECTION"
+  }
+}

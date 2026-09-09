@@ -75,6 +75,37 @@ Updated: 2026-09-07
 - Baseline DB source documents: exact IBBI PDF persisted, 25 IBBI documents present.
 - Baseline publication events: zero; candidates and AI budget remain zero.
 - New runtime freeze: `6f22c5ef4119000318218f136f5416987a451877`.
+- Qualifying scheduled run `34252651891`: slot `2026-09-08T12:17:00Z`, crawl `cdef4024-628e-4275-846e-af21efe84eca`, seven sources, 126 fetched, zero unexpected errors, zero publications.
+
+## Soak-safe finalization audit
+
+Updated: 2026-09-08
+
+The separate branch `codex/claimradar-soak-safe-finalization` adds audit and
+runbook documentation only. Runtime-sensitive diff after the freeze remains
+empty.
+
+| Gate                   | Final audit status                              |
+| ---------------------- | ----------------------------------------------- |
+| Public browser QA      | `PASS_WITH_LIMITATION`                          |
+| Accessibility          | `MATERIAL_RUNTIME_FIX_REQUIRED`                 |
+| Performance            | `PASS_WITH_LIMITATION`                          |
+| Supabase database      | `PASS_WITH_LIMITATION`                          |
+| Supabase security      | `PASS_WITH_LIMITATION`                          |
+| Supabase performance   | `PASS_WITH_ACCEPTED_CAPACITY_LIMIT`             |
+| Auth and SMTP          | `EXTERNAL_CONFIGURATION_REQUIRED`               |
+| CSP security           | `ACCEPTED_TRADEOFF_REQUIRES_SECURITY_OWNER_ACK` |
+| Vercel readiness       | `PASS_WITH_LIMITATION`                          |
+| Backup and recovery    | `EXTERNAL_CONFIGURATION_REQUIRED`               |
+| Observability          | `PASS_WITH_LIMITATION`                          |
+| Incident response      | `PASS`                                          |
+| Rollback readiness     | `PASS_WITH_LIMITATION`                          |
+| Production runbook     | `PASS`                                          |
+| Post-deploy smoke plan | `PASS`                                          |
+
+Material accessibility defects remain deliberately visible. They require a
+runtime repair and deliberate soak restart. Documentation does not alter the
+current soak or its qualifying run records.
 
 ## Runtime defect and soak restart
 
@@ -127,3 +158,135 @@ Updated: 2026-09-07
 
 Production remains untouched. Runtime gates now pass.
 The repaired runtime requires a new genuine soak.
+
+## Authoritative final-100 candidate update
+
+Updated: 2026-09-08
+
+| Gate                | Current status     | Evidence or blocker                                       |
+| ------------------- | ------------------ | --------------------------------------------------------- |
+| Final branch        | `IN_PROGRESS`      | `codex/claimradar-final-100` from `origin/main` `32fb580` |
+| Route inventory     | `PASS`             | 69 pages, 1 API source, 7 server-action sources           |
+| Accessibility fixes | `SOURCE_PASS`      | Focused six-test contract passes                          |
+| CSP repair          | `SOURCE_PASS`      | Nonce middleware removes static script `unsafe-inline`    |
+| Lint                | `PASS`             | Final candidate source lint passes                        |
+| Typecheck           | `PASS`             | Web typecheck passes after workspace package builds       |
+| Crawler acceptance  | `PASS`             | 48 files, 344 tests                                       |
+| Auth contract       | `PASS`             | Five sanitized runtime-contract tests pass                |
+| Migration contract  | `PASS`             | 17 ordered migrations                                     |
+| Full tests          | `BLOCKED`          | Five checks require `.next` production CSS output         |
+| Production build    | `BLOCKED`          | Local C drive reached zero free bytes                     |
+| Client secret scan  | `PENDING_BUILD`    | Final `.next/static` does not exist locally               |
+| Runtime freeze      | `PENDING`          | New freeze follows final merge and baseline               |
+| Route browser QA    | `PENDING_CI_RERUN` | 69 routes across desktop, tablet, and mobile              |
+
+The historical freeze remains evidence only. Frontend and CSP changes are
+runtime-sensitive. A new freeze is required after final candidate merge.
+
+## Current final-candidate verification refresh
+
+Updated: 2026-09-08
+
+| Gate                       | Status                         | Evidence                                              |
+| -------------------------- | ------------------------------ | ----------------------------------------------------- |
+| Candidate head             | `READY_FOR_FINAL_MERGE_REVIEW` | `5e65153039c745a371f1b06f360ae6c86bfe0afa`            |
+| Exact-head CI              | `PASS`                         | GHA run `34276267445`                                 |
+| Vercel exact head          | `PASS`                         | PR deployment check                                   |
+| Final route browser QA     | `PASS`                         | 207 checks, zero failures, zero axe violations        |
+| Public/auth route coverage | `PASS`                         | 123 checks, desktop/tablet/mobile                     |
+| Protected browser coverage | `AUTH_REQUIRED`                | 84 entries; credentialed runtime QA passed separately |
+| Dynamic 404 coverage       | `PASS`                         | 12 expected rendered 404 checks                       |
+| Final runtime freeze       | `PENDING`                      | Establish after merge and baseline                    |
+
+Protected browser routes are not claimed as unauthenticated visual passes.
+They remain covered by credentialed staging runtime evidence and require an
+authenticated browser run for complete protected-surface visual evidence.
+
+## Final candidate gate refresh
+
+- Updated: `2026-09-09`.
+- Candidate head: `74809dc2b1ec8467484d609a476d1d5095ed957d`.
+- Exact-head CI: `PASS`, GHA run `34308913068`.
+- Remote release gates: build, tests, inventory, browser smoke, route QA,
+  release integrity, and secret scan all passed.
+- Route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `3aa6eef4fd0f2644a39eff4c0c987c567b1ddadd`.
+- Exact-head CI: `PASS`, GHA run `34312344579`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `4e0ae8e12b092dc9f61f960e7ede867cc8e0404d`.
+- Exact-head CI: `PASS`, GHA run `34311888166`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `cb5478e91f0db32fc8e3de6f0206b51a04f46076`.
+- Exact-head CI: `PASS`, GHA run `34311512314`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+The local build remains disk-blocked only. Remote CI supplies build evidence.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `7547f34e2d10f52804b65f65befacb747a978cca`.
+- Exact-head CI: `PASS`, GHA run `34310073132`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+- Candidate head: `817fdf5d5f0465dd425c665ba4bc4763724ba8f1`.
+- Exact-head CI: `PASS`, GHA run `34311026621`.
+- Final route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+## Final candidate proof-completion refresh, authoritative
+
+Updated: `2026-09-09`.
+
+| Gate                     | Status     | Evidence                                         |
+| ------------------------ | ---------- | ------------------------------------------------ |
+| Candidate head           | `VERIFIED` | `17275fc8e25c865942321450d599bda44fe0c0c5`       |
+| Exact-head CI            | `PASS`     | GHA `34321570779`                                |
+| Public/auth route QA     | `PASS`     | 123 checks, zero failures                        |
+| Protected route QA       | `PASS`     | GHA `34320450223`, 84 checks                     |
+| Protected Axe            | `PASS`     | Zero violations                                  |
+| Protected runtime errors | `PASS`     | Zero console, page, and overflow failures        |
+| Protected interactions   | `PASS`     | 11 of 11 verified                                |
+| Disposable-user cleanup  | `PASS`     | Three deleted, no residual profiles              |
+| Route state matrix       | `PASS`     | 69 routes, zero pending or unknown fields        |
+| Vercel deployment        | `READY`    | Exact candidate deployment check                 |
+| Vercel direct route QA   | `BLOCKED`  | Deployment protection requires bypass credential |
+| Merge                    | `HELD`     | User explicitly said do not merge yet            |
+
+Manual browser categories passed through DOM, keyboard, focus, reflow,
+reduced-motion, form, naming, and target-size checks. Direct assistive
+technology testing remains outside this workspace. Protected QA ran at
+`d617fcd`; the runtime tree is unchanged at the final head.

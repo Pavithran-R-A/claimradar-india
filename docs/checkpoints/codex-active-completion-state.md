@@ -56,6 +56,11 @@ Updated: 2026-09-07
 - QUALIFYING_RUN_2_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications
 - QUALIFYING_SCHEDULED_RUN_3: `34220598983`, slot `2026-09-08T06:17:00Z`, crawl `196a1bd8-e33b-4bad-b689-d10a8a4b5e40`, PASS
 - QUALIFYING_RUN_3_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications
+- QUALIFYING_SCHEDULED_RUN_4: `34252651891`, slot `2026-09-08T12:17:00Z`, crawl `cdef4024-628e-4275-846e-af21efe84eca`, PASS
+- QUALIFYING_RUN_4_INVARIANTS: 7/7 sources, 126 fetched, zero errors, zero unexpected errors, zero publications; 1 candidate queued, no publication
+- QUALIFYING_RUN_4_HEAD: `32fb580e86c9d490cb0428f291c667f7d5538061` (documentation-only descendant of freeze)
+- QUALIFYING_RUN_4_DELAYED_START_UTC: `2026-09-08T16:42:03Z`
+- QUALIFYING_RUN_COUNT: `4`
 - SOAK_ELAPSED_AT_2026-09-08T16:37:54Z: `22.3h`
 - SOAK_48H: `PENDING_TIME_SOAK` - three valid scheduled runs
 - SOAK_72H: `PENDING_TIME_SOAK` - three valid scheduled runs
@@ -74,9 +79,50 @@ Updated: 2026-09-07
 - BASELINE_ACCOUNTING: workflow_dispatch run `34138764303` remains baseline-only
 - SOAK_STATE: active; manual runs excluded from qualification
 
+## Current final-candidate verification refresh
+
+Updated: 2026-09-08
+
+- CURRENT_HEAD: `5e65153039c745a371f1b06f360ae6c86bfe0afa`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`, GHA run `34276267445`.
+- FINAL_ROUTE_BROWSER_QA_EVIDENCE: 207 checks, zero failures, zero axe violations.
+- PUBLIC_AUTH_ROUTE_COVERAGE: 123 checks across three viewports.
+- PROTECTED_ROUTE_COVERAGE: 84 entries require authenticated browser credentials.
+- EXPECTED_NOT_FOUND_COVERAGE: 12 rendered dynamic 404 checks.
+- EXACT_HEAD_CI: `PASS`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- RUNTIME_SENSITIVE_DIFF: `PRESENT_BEFORE_FINAL_MERGE`; freeze pending.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- HUMAN_ACTION: approve final merge after reviewing PR #4.
+
 ## Next action
 
 Track genuine scheduled runs through the 72-hour window.
+
+## Soak-safe finalization audit
+
+Updated: 2026-09-08
+
+- Documentation branch: `codex/claimradar-soak-safe-finalization`.
+- Frozen runtime: `6f22c5ef4119000318218f136f5416987a451877`.
+- Runtime-sensitive diff after freeze: `EMPTY_AFTER_FREEZE`.
+- Public browser QA: `PASS_WITH_LIMITATION`.
+- Accessibility: `MATERIAL_RUNTIME_FIX_REQUIRED`.
+- Performance: `PASS_WITH_LIMITATION`.
+- Supabase database: `PASS_WITH_LIMITATION`.
+- Supabase Security Advisor: zero lints.
+- Supabase performance: accepted low-traffic findings.
+- Auth and SMTP: `EXTERNAL_CONFIGURATION_REQUIRED`.
+- CSP: security-owner acceptance required for `unsafe-inline`.
+- Vercel: READY staging; production controls remain external.
+- Backup and recovery: external plan or export action required.
+- Observability: existing evidence plus launch-alert actions required.
+- Incident, rollback, deployment, and smoke runbooks: complete.
+
+The WCAG audit found contrast, heading-order, accessible-name, and mobile
+target-size defects. These require runtime frontend repair. The active soak is
+not invalidated by this documentation-only branch. A repair requires a new
+freeze, baseline, and soak clock.
 
 ## Resolved internal defects
 
@@ -98,3 +144,144 @@ Track genuine scheduled runs through the 72-hour window.
 ## External blockers
 
 - New final soak requires real elapsed time.
+
+## Final 100 completion candidate
+
+Updated: 2026-09-08
+
+- FINAL_BRANCH: `codex/claimradar-final-100`.
+- FINAL_BASE: `origin/main` at `32fb580e86c9d490cb0428f291c667f7d5538061`.
+- FINAL_CANDIDATE_STATUS: `IN_PROGRESS`.
+- ROUTE_INVENTORY: `69` page routes, `1` API source, `7` server-action sources.
+- ROUTE_MATRIX: `docs/checkpoints/final-route-state-matrix.md`.
+- INVENTORY_GENERATOR: `scripts/generate-final-route-state-inventory.mjs`.
+- ACCESSIBILITY_SOURCE_FIXES: `IMPLEMENTED; focused contract tests pass`.
+- CSP_SOURCE_FIX: `IMPLEMENTED; nonce middleware replaces static script unsafe-inline`.
+- LINT: `PASS`.
+- TYPECHECK: `PASS`.
+- CRAWLER_INVENTORY_ACCEPTANCE: `PASS; 48 files, 344 tests`.
+- AUTH_RUNTIME_CONTRACT: `PASS; 5 tests`.
+- MIGRATION_CONTRACT: `PASS; 17 ordered migrations`.
+- FULL_TEST: `PARTIAL; 553 passed, 5 build-artifact checks blocked`.
+- BUILD: `BLOCKED_BY_LOCAL_DISK; C drive reached zero free bytes`.
+- CLIENT_BUNDLE_SCAN: `BLOCKED_BY_MISSING_FINAL_BUILD_OUTPUT`.
+- GLOBAL_FORMAT: `LEGACY_BASELINE_WARNINGS; scoped candidate files pass`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_CANDIDATE_MERGE`.
+- FINAL_ROUTE_BROWSER_QA: `ADDED_TO_EXACT_HEAD_CI; pending rerun`.
+- HISTORICAL_FREEZE: `6f22c5ef4119000318218f136f5416987a451877`.
+- PRODUCTION_READY_NOW: `NO`.
+
+This section is authoritative for this candidate. Earlier entries describe
+historical repaired-main evidence and the invalidated accessibility-era soak.
+
+## Final candidate gate refresh
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `74809dc2b1ec8467484d609a476d1d5095ed957d`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34308913068`.
+- REMOTE_BUILD: `PASS`.
+- REMOTE_FULL_TEST: `PASS`.
+- REMOTE_FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- REMOTE_AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- ROUTE_COVERAGE: 123 public/auth checks; 84 protected entries require auth.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `3aa6eef4fd0f2644a39eff4c0c987c567b1ddadd`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34312344579`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `4e0ae8e12b092dc9f61f960e7ede867cc8e0404d`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34311888166`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `cb5478e91f0db32fc8e3de6f0206b51a04f46076`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34311512314`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate gate refresh, latest
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `817fdf5d5f0465dd425c665ba4bc4763724ba8f1`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34311026621`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+## Final candidate proof-completion refresh, authoritative
+
+Updated: 2026-09-09
+
+- FINAL_HEAD: `17275fc8e25c865942321450d599bda44fe0c0c5`.
+- PR #4 remains open and unmerged.
+- Exact-head CI: `PASS`, GHA run `34321570779`.
+- Public/auth route QA: `PASS`, 123 checks, zero failures.
+- Protected browser QA: `PASS`, GHA run `34320450223`.
+- Protected QA runtime head: `d617fcd375d7d47041316d1c78dc8bcd9c829e34`.
+- Runtime tree unchanged after protected QA.
+- Protected coverage: 28 routes across three viewports, 84 checks.
+- Protected Axe, console, page, and overflow failures: `0`.
+- Authenticated boundary checks: `1`, passed.
+- Primary interactions: `11/11` verified.
+- Disposable users: three created, confirmed, and deleted.
+- Residual profiles: none.
+- Manual browser accessibility categories: all pass.
+- Route matrix: 69 routes, zero pending or unknown fields.
+- Vercel exact-head state: `READY`.
+- Direct Vercel route QA: blocked by deployment protection.
+- RUNTIME_FREEZE_STATUS: `NOT_ESTABLISHED_UNTIL_MERGE`.
+- MERGE_STATUS: `NOT_PERFORMED`; explicit hold remains active.
+- PRODUCTION_READY_NOW: `NO`.
+
+Direct deployment crawling needs the protected bypass credential.
+That credential is unavailable in this workspace.
+
+Local build limitations remain environmental only. The C drive is full.
+Remote Node 24 gates provide the release build evidence.
+
+## Final candidate gate refresh, latest
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `7547f34e2d10f52804b65f65befacb747a978cca`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34310073132`.
+- FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.

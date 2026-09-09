@@ -5,6 +5,23 @@ import { updateSession } from '@/lib/supabase/middleware';
 const authRequiredPrefixes = ['/app', '/admin', '/onboarding'];
 const authCallbackPrefix = '/auth/callback';
 
+function buildContentSecurityPolicy(nonce: string, isDevelopment: boolean): string {
+  return [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "object-src 'none'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ''}`,
+    `style-src 'self' 'nonce-${nonce}'${isDevelopment ? " 'unsafe-inline'" : ''}`,
+    "style-src-attr 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co wss://*.supabase.in",
+    'upgrade-insecure-requests',
+  ].join('; ');
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -17,9 +34,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Expose the current pathname to server components (used for return-path
-  // redirects after login) via a request header.
-  request.headers.set('x-pathname', pathname);
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const contentSecurityPolicy = buildContentSecurityPolicy(
+    nonce,
+    process.env.NODE_ENV === 'development',
+  );
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', pathname);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', contentSecurityPolicy);
 
   // Only refresh auth session on routes that need it
   const needsAuth =
@@ -27,10 +50,14 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(authCallbackPrefix);
 
   if (needsAuth) {
-    return await updateSession(request);
+    const response = await updateSession(request, requestHeaders);
+    response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+  return response;
 }
 
 export const config = {

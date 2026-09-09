@@ -100,8 +100,8 @@ export function Footer() {
         </div>
 
         {/* Clear Independence Disclaimer */}
-        <div className="mt-10 rounded-xl border border-border bg-ink-900/80 p-4 text-xs leading-relaxed text-text-secondary">
-          <strong className="font-semibold text-text-primary">Independence disclosure: </strong>
+        <div className="mt-10 rounded-xl border border-border bg-ink-900/80 p-4 text-xs leading-relaxed text-slate-300">
+          <strong className="font-semibold text-white">Independence disclosure: </strong>
           {brandConfig.siteName} is strictly an independent information directory and is not
           affiliated with the Government of India, any regulator (SEBI, RBI, IBBI, TRAI), court,
           tribunal, or listed company. We structure public notices and direct you to official

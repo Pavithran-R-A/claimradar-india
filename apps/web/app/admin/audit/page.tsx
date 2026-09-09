@@ -106,7 +106,11 @@ export default async function AuditPage({
         />
         <form method="get" className="flex max-w-sm items-center gap-2">
           {entityFilter && <input type="hidden" name="entity" value={entityFilter} />}
+          <label htmlFor="admin-audit-action" className="sr-only">
+            Filter by action
+          </label>
           <input
+            id="admin-audit-action"
             type="search"
             name="action"
             defaultValue={actionFilter}

@@ -71,7 +71,7 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
         <ResendVerificationForm />
       </div>
 
-      <p className="mb-4 text-center text-xs text-text-secondary/70">
+      <p className="mb-4 text-center text-xs text-text-secondary">
         If you don&apos;t see the email, check your spam folder. Links are single-use and expire
         shortly after being sent.
       </p>

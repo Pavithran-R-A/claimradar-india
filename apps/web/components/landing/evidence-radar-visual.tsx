@@ -120,12 +120,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
 
         {/* Dedicated Square Radar Canvas Container */}
         <div className="relative aspect-square w-full">
-          <svg
-            viewBox="0 0 520 520"
-            className="w-full h-full"
-            role="img"
-            aria-label="Radar diagram monitoring SEBI, RBI, IBBI, TRAI, and PIB"
-          >
+          <svg viewBox="0 0 520 520" className="w-full h-full" aria-hidden="true">
             <defs>
               {/* Rotating conic sweep trail gradient in deep editorial blue */}
               <radialGradient id="editorialSweepGradient" cx="50%" cy="50%" r="50%">
@@ -249,16 +244,6 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   key={node.code}
                   className="cursor-pointer group/node"
                   onClick={() => setSelectedNode(node)}
-                  role="button"
-                  tabIndex={0}
-                  aria-expanded={isSelected}
-                  aria-label={`${node.code}: ${node.name}. Click to inspect monitoring details.`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedNode(node);
-                    }
-                  }}
                 >
                   {/* Outer Focus / Selection Indicator — fill="none" */}
                   <circle
@@ -319,6 +304,23 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
               );
             })}
           </svg>
+
+          <nav aria-label="Monitored official sources" className="sr-only">
+            <p>Inspect source monitoring details.</p>
+            <ul>
+              {MONITORED_NODES.map((node) => (
+                <li key={node.code}>
+                  <button
+                    type="button"
+                    aria-pressed={selectedNode?.code === node.code}
+                    onClick={() => setSelectedNode(node)}
+                  >
+                    {node.code}: {node.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           {/* Accessible In-Place Inspector Drawer */}
           {selectedNode && (
