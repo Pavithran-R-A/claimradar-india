@@ -260,6 +260,18 @@ FINAL_CANDIDATE_STATUS = `READY_FOR_FINAL_MERGE_REVIEW`
 FINAL_RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
 HUMAN_ACTION = `approve final merge of PR #4`
 
+## Final candidate gate refresh, latest
+
+UPDATED_UTC = `2026-09-09`
+CURRENT_HEAD = `cb5478e91f0db32fc8e3de6f0206b51a04f46076`
+EXACT_HEAD_CI = `PASS` - GHA run `34311512314`
+VERCEL_EXACT_HEAD = `PASS`
+FINAL_ROUTE_BROWSER_QA = `PASS` - 69 routes, 207 checks, zero failures
+AXE_VIOLATIONS = `0`
+FINAL_CANDIDATE_STATUS = `READY_FOR_FINAL_MERGE_REVIEW`
+FINAL_RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
+HUMAN_ACTION = `approve final merge of PR #4`
+
 The local disk limitation does not affect remote evidence. Production remains
 untouched until merge, baseline, soak, and deployment approval.
 
