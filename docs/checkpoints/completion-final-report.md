@@ -243,3 +243,22 @@ HUMAN_ACTION = `approve final merge`
 Protected browser routes are not represented as unauthenticated passes.
 Credentialed staging runtime QA separately passed customer/admin/API and
 notification boundaries. The final merge must establish a new freeze.
+
+## Final candidate gate refresh
+
+UPDATED_UTC = `2026-09-09`
+CURRENT_HEAD = `74809dc2b1ec8467484d609a476d1d5095ed957d`
+EXACT_HEAD_CI = `PASS` - GHA run `34308913068`
+REMOTE_BUILD = `PASS`
+REMOTE_TESTS = `PASS`
+VERCEL_EXACT_HEAD = `PASS`
+FINAL_ROUTE_BROWSER_QA = `PASS` - 69 routes, 207 checks, zero failures
+AXE_VIOLATIONS = `0`
+PUBLIC_AUTH_ROUTE_CHECKS = `123` across desktop, tablet, and mobile
+PROTECTED_ROUTE_ENTRIES = `84` - authenticated browser credentials required
+FINAL_CANDIDATE_STATUS = `READY_FOR_FINAL_MERGE_REVIEW`
+FINAL_RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
+HUMAN_ACTION = `approve final merge of PR #4`
+
+The local disk limitation does not affect remote evidence. Production remains
+untouched until merge, baseline, soak, and deployment approval.

@@ -201,3 +201,18 @@ Updated: 2026-09-08
 Protected browser routes are not claimed as unauthenticated visual passes.
 They remain covered by credentialed staging runtime evidence and require an
 authenticated browser run for complete protected-surface visual evidence.
+
+## Final candidate gate refresh
+
+- Updated: `2026-09-09`.
+- Candidate head: `74809dc2b1ec8467484d609a476d1d5095ed957d`.
+- Exact-head CI: `PASS`, GHA run `34308913068`.
+- Remote release gates: build, tests, inventory, browser smoke, route QA,
+  release integrity, and secret scan all passed.
+- Route QA: 69 routes, 207 checks, zero failures, zero axe violations.
+- Vercel exact-head check: `PASS`.
+- Candidate state: `READY_FOR_FINAL_MERGE_REVIEW`.
+- Runtime freeze: pending merge and fresh baseline.
+- Human action: approve final merge of PR #4.
+
+The local build remains disk-blocked only. Remote CI supplies build evidence.

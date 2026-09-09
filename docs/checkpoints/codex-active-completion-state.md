@@ -173,3 +173,22 @@ Updated: 2026-09-08
 
 This section is authoritative for this candidate. Earlier entries describe
 historical repaired-main evidence and the invalidated accessibility-era soak.
+
+## Final candidate gate refresh
+
+Updated: 2026-09-09
+
+- CURRENT_HEAD: `74809dc2b1ec8467484d609a476d1d5095ed957d`.
+- EXACT_HEAD_CI: `PASS`, GHA run `34308913068`.
+- REMOTE_BUILD: `PASS`.
+- REMOTE_FULL_TEST: `PASS`.
+- REMOTE_FINAL_ROUTE_BROWSER_QA: `PASS`; 69 routes, 207 checks, zero failures.
+- REMOTE_AXE_VIOLATIONS: `0`.
+- VERCEL_EXACT_HEAD: `PASS`.
+- ROUTE_COVERAGE: 123 public/auth checks; 84 protected entries require auth.
+- FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
+- RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
+- HUMAN_ACTION: approve final merge of PR #4.
+
+Local build limitations remain environmental only. The C drive is full.
+Remote Node 24 gates provide the release build evidence.
