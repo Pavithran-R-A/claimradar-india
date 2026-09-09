@@ -535,7 +535,25 @@ async function exerciseInteractions(browser, identities, result) {
         exact: true,
       });
       await saveButton.scrollIntoViewIfNeeded();
-      await saveButton.click();
+      try {
+        await saveButton.click();
+      } catch (error) {
+        const diagnostics = await saveButton.evaluate((node) => {
+          const rect = node.getBoundingClientRect();
+          const center = document.elementFromPoint(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2,
+          );
+          return {
+            disabled: node.hasAttribute('disabled'),
+            rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+            viewport: { width: window.innerWidth, height: window.innerHeight },
+            topElement: center?.tagName ?? null,
+            topElementClass: center?.className ?? null,
+          };
+        });
+        throw new Error(`settings_save_pointer_blocked:${JSON.stringify(diagnostics)}`);
+      }
       await customerPage.locator('[role="status"], [role="alert"]').first().waitFor({
         state: 'visible',
         timeout: 10_000,
