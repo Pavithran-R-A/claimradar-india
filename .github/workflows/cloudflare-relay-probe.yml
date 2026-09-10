@@ -1,0 +1,28 @@
+name: Cloudflare TRAI Relay Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Probe signed TRAI relay
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Probe five independent relay requests
+        env:
+          TRAI_RELAY_URL: ${{ secrets.TRAI_RELAY_URL }}
+          TRAI_RELAY_SHARED_SECRET: ${{ secrets.TRAI_RELAY_SHARED_SECRET }}
+        run: node scripts/cloudflare-relay-probe.mjs
