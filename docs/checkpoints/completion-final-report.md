@@ -7,7 +7,7 @@ Date: 2026-09-10
 CURRENT_MAIN = `Runtime freeze plus checkpoint-only descendants; verify exact SHA from origin/main`
 RUNTIME_FREEZE_HEAD = `625bc9f922dd3a7b8eea67681ecedfc77e329a45`
 POST_FREEZE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
-POST_CHECKPOINT_CI = `PASS` - GHA run `34433562222` verified the preceding checkpoint-only head
+POST_CHECKPOINT_CI = `PASS` - GHA run `34439358251` verified the current checkpoint-only head
 FRESH_BASELINE = `BLOCKED`
 BASELINE_FAILURE = `Diagnostic attempts reached 6/7; TRAI connection timeout at www.trai.gov.in:443`
 MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`

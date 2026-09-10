@@ -7,7 +7,7 @@ Updated: 2026-09-10
 - Current main: runtime freeze plus checkpoint-only descendants; verify exact SHA from `origin/main`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime-sensitive changes after freeze: none.
-- Current-main CI: `PASS`; GHA run `34433562222` verified the preceding checkpoint-only head.
+- Current-main CI: `PASS`; GHA run `34439358251` verified the current checkpoint-only head.
 - Fresh baseline: blocked; diagnostic attempts reached 6/7, with TRAI connection timeout.
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
