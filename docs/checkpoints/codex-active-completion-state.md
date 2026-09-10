@@ -1,6 +1,6 @@
 # ClaimRadar India Active Completion State
 
-Updated: 2026-09-10T19:08:03Z
+Updated: 2026-09-10T19:38:29Z
 
 ## Permanent relay and fresh baseline
 
@@ -18,12 +18,12 @@ Updated: 2026-09-10T19:08:03Z
 - BASELINE_DB: seven source rows, 523 source documents, zero crawl errors, zero new claimables.
 - BASELINE_ARTIFACT: `staging-soak-summary`; retained and sanitized.
 - FINAL_SOAK: not started; manual runs never qualify.
-- CURRENT_MAIN: `64399787df905e962c0991f97e68a5cb6007733c`; checkpoint-only merges followed the runtime freeze.
+- CURRENT_MAIN: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8`; checkpoint-only merges followed the runtime freeze.
 - RUNTIME_SENSITIVE_DIFF: `EMPTY` from `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
 - LAST_SCHEDULED_RUN: `34502374906`; created `2026-09-10T16:29:04Z`; success before the baseline and excluded.
 - LAST_SCHEDULED_NOMINAL_SLOT: `2026-09-10T12:17:00Z`.
 - SLOT_BEFORE_LATEST_CHECKPOINT_MERGE: `2026-09-10T18:17:00Z`; no run visible and not eligible.
-- LATEST_CHECKPOINT_MERGE: `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`.
+- LATEST_CHECKPOINT_MERGE: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8` at `2026-09-10T19:15:35Z`.
 - FIRST_ELIGIBLE_NOMINAL_SLOT: `2026-09-11T00:17:00Z`.
 - NEXT_NOMINAL_SLOT: `2026-09-11T06:17:00Z`.
 - PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
@@ -44,8 +44,8 @@ Updated: 2026-09-10T19:08:03Z
 
 ## Current authoritative snapshot
 
-- CURRENT_HEAD: `64399787df905e962c0991f97e68a5cb6007733c`.
-- CURRENT_MAIN: `64399787df905e962c0991f97e68a5cb6007733c`.
+- CURRENT_HEAD: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8`.
+- CURRENT_MAIN: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8`.
 - CURRENT_PHASE: fresh baseline passed; final soak not started.
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - RUNTIME_CANDIDATE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.

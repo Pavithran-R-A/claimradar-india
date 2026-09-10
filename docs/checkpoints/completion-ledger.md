@@ -1,6 +1,6 @@
 # ClaimRadar India Completion Ledger
 
-Updated: 2026-09-10T19:08:03Z
+Updated: 2026-09-10T19:38:29Z
 
 ## Permanent relay and fresh baseline checkpoint
 
@@ -17,14 +17,14 @@ Updated: 2026-09-10T19:08:03Z
 - Final soak: not started; await the first eligible genuine scheduled slot.
 - Latest pre-baseline schedule: GHA `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
 - Slot `2026-09-10T18:17:00Z` preceded latest checkpoint merge; no credit.
-- Latest checkpoint merge: `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`.
+- Latest checkpoint merge: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8` at `2026-09-10T19:15:35Z`.
 - First eligible slot: `2026-09-11T00:17:00Z`.
 - Next nominal slot: `2026-09-11T06:17:00Z`.
 - Production readiness: NO; pending final 72-hour soak.
 
 ## Current authoritative status
 
-- Current main: `64399787df905e962c0991f97e68a5cb6007733c`.
+- Current main: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime candidate: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`; new freeze established after passing baseline.
 - Runtime-sensitive changes after candidate merge: none.

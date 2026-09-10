@@ -1,7 +1,7 @@
 # ClaimRadar India Completion Report
 
 Date: 2026-09-10
-Last monitoring check: `2026-09-10T19:08:03Z`
+Last monitoring check: `2026-09-10T19:38:29Z`
 
 ## Permanent relay and fresh baseline
 
@@ -33,7 +33,7 @@ FINAL_ROUTE_BROWSER_QA = `207 checks; 69 routes; 3 viewports; zero failures`
 
 ## Current authoritative status
 
-CURRENT_MAIN = `64399787df905e962c0991f97e68a5cb6007733c`
+CURRENT_MAIN = `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8`
 RUNTIME_CANDIDATE_HEAD = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
 NEW_RUNTIME_FREEZE_HEAD = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
 POST_MERGE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
@@ -60,7 +60,7 @@ LATEST_SCHEDULED_RUN = `34502374906` at nominal slot `2026-09-10T12:17:00Z`
 LATEST_SCHEDULED_RESULT = `PASS` - completed before the fresh baseline; excluded from soak credit
 SCHEDULED_RUN_34502374906_QUALIFICATION = `EXCLUDED` - pre-baseline scheduled execution
 SLOT_BEFORE_LATEST_CHECKPOINT_MERGE = `2026-09-10T18:17:00Z` - no credit
-LATEST_CHECKPOINT_MERGE = `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`
+LATEST_CHECKPOINT_MERGE = `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8` at `2026-09-10T19:15:35Z`
 FIRST_ELIGIBLE_NOMINAL_SLOT = `2026-09-11T00:17:00Z`
 NEXT_NOMINAL_SLOT = `2026-09-11T06:17:00Z`
 FINAL_SOAK = `NOT_STARTED - awaiting first eligible genuine scheduled slot`
