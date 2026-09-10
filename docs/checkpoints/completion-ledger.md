@@ -1,6 +1,6 @@
 # ClaimRadar India Completion Ledger
 
-Updated: 2026-09-10
+Updated: 2026-09-10T18:55:38Z
 
 ## Permanent relay and fresh baseline checkpoint
 
@@ -14,12 +14,15 @@ Updated: 2026-09-10
 - Guards: staging enabled; billing, auto-verification, and notifications disabled.
 - Database: seven source rows, 523 source documents, zero crawl errors, zero new claimables.
 - Artifact: sanitized `staging-soak-summary` retained.
-- Final soak: not started; await the next genuine scheduled slot.
+- Final soak: not started; await the first eligible genuine scheduled slot.
+- Latest pre-baseline schedule: GHA `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
+- First eligible slot: `2026-09-10T18:17:00Z`; no scheduled run visible at the latest check.
+- Next nominal slot: `2026-09-11T00:17:00Z`.
 - Production readiness: NO; pending final 72-hour soak.
 
 ## Current authoritative status
 
-- Current main: `57c389c33c8c32572dc281dafc59178b10cdfcb8`.
+- Current main: `64399787df905e962c0991f97e68a5cb6007733c`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime candidate: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`; new freeze established after passing baseline.
 - Runtime-sensitive changes after candidate merge: none.
@@ -39,9 +42,9 @@ Updated: 2026-09-10
 - Temporary matrix workflow removed; sanitized artifacts retained.
 - Human action: none for baseline; final soak remains required.
 - Manual workflow runs: excluded from soak qualification.
-- Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
-- Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
-- Scheduled qualification: no credit; the required fresh baseline was not successful.
+- Latest scheduled execution before the baseline: `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
+- Historical scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
+- Scheduled qualification: no credit before the fresh baseline; no eligible run has appeared after it.
 - Final soak: not started; await the next genuine schedule.
 - Production readiness: no; pending final 72-hour soak.
 
