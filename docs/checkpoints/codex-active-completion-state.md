@@ -12,10 +12,13 @@ Updated: 2026-09-10
 - POST_FREEZE_RUNTIME_SENSITIVE_DIFF: `EMPTY`; checkpoint documentation only.
 - POST_CHECKPOINT_CI: `PASS`; GHA run `34433562222` verified the preceding checkpoint-only head.
 - FRESH_BASELINE: `BLOCKED`; runs `34428249855`, `34428871150`, `34429825500`, `34430830404`.
-- BASELINE_FAILURE: TRAI connection timeout at `www.trai.gov.in:443`.
+- BASELINE_FAILURE: latest diagnostic baseline attempts reached 6/7; TRAI timed out at `www.trai.gov.in:443`.
 - BASELINE_INVARIANTS: every attempt reached 6/7 sources, zero unexpected errors, zero publications, sanitized artifacts retained.
 - MANUAL_WORKFLOW_DISPATCH_QUALIFICATION: `EXCLUDED`.
-- SCHEDULED_RUNS_AFTER_UI_MERGE: `NONE`.
+- LATEST_SCHEDULED_RUN: `34438700011`, event `schedule`, head `cc66de7485e6b3369d8bb0c8455184e01bb5db9d`, nominal slot `2026-09-10T00:17:00Z`.
+- LATEST_SCHEDULED_RESULT: `FAIL`; 4/7 sources succeeded, SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, artifact retained.
+- SCHEDULED_RUN_34438700011_QUALIFICATION: `EXCLUDED`; no successful fresh baseline existed beforehand.
+- SCHEDULED_RUNS_AFTER_UI_MERGE: `34438700011` failed; no qualifying runs.
 - NEXT_ACTION: rerun the manual baseline after TRAI connectivity recovers.
 - PRODUCTION_READY_NOW: `NO - FRESH BASELINE REQUIRED`.
 

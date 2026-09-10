@@ -8,9 +8,11 @@ Updated: 2026-09-10
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime-sensitive changes after freeze: none.
 - Current-main CI: `PASS`; GHA run `34433562222` verified the preceding checkpoint-only head.
-- Fresh baseline: blocked by repeated TRAI connection timeout.
+- Fresh baseline: blocked; diagnostic attempts reached 6/7, with TRAI connection timeout.
 - Manual workflow runs: excluded from soak qualification.
-- Scheduled executions after the UI merge: none.
+- Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
+- Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
+- Scheduled qualification: no credit; the required fresh baseline was not successful.
 - Final soak: not started.
 - Production readiness: no; fresh baseline remains required.
 

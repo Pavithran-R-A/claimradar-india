@@ -9,9 +9,11 @@ RUNTIME_FREEZE_HEAD = `625bc9f922dd3a7b8eea67681ecedfc77e329a45`
 POST_FREEZE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
 POST_CHECKPOINT_CI = `PASS` - GHA run `34433562222` verified the preceding checkpoint-only head
 FRESH_BASELINE = `BLOCKED`
-BASELINE_FAILURE = `TRAI connection timeout at www.trai.gov.in:443`
+BASELINE_FAILURE = `Diagnostic attempts reached 6/7; TRAI connection timeout at www.trai.gov.in:443`
 MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`
-SCHEDULED_RUNS_AFTER_UI_MERGE = `NONE`
+LATEST_SCHEDULED_RUN = `34438700011` at nominal slot `2026-09-10T00:17:00Z`
+LATEST_SCHEDULED_RESULT = `FAIL` - 4/7 sources; SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications
+SCHEDULED_RUN_34438700011_QUALIFICATION = `EXCLUDED` - fresh baseline was not successful
 FINAL_SOAK = `NOT_STARTED`
 PRODUCTION_READY_NOW = `NO - FRESH BASELINE REQUIRED`
 
