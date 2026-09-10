@@ -37,8 +37,8 @@ Updated: 2026-09-10
 
 ## Current authoritative snapshot
 
-- CURRENT_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
-- CURRENT_MAIN: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- CURRENT_HEAD: `57c389c33c8c32572dc281dafc59178b10cdfcb8`.
+- CURRENT_MAIN: `57c389c33c8c32572dc281dafc59178b10cdfcb8`.
 - CURRENT_PHASE: fresh baseline passed; final soak not started.
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - RUNTIME_CANDIDATE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.

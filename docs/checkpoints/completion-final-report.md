@@ -32,7 +32,7 @@ FINAL_ROUTE_BROWSER_QA = `207 checks; 69 routes; 3 viewports; zero failures`
 
 ## Current authoritative status
 
-CURRENT_MAIN = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
+CURRENT_MAIN = `57c389c33c8c32572dc281dafc59178b10cdfcb8`
 RUNTIME_CANDIDATE_HEAD = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
 NEW_RUNTIME_FREEZE_HEAD = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
 POST_MERGE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
