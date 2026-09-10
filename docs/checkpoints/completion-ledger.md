@@ -7,7 +7,7 @@ Updated: 2026-09-10
 - Current main: `378ed1fb6edc72dafbe8777a28351acdbb6062ff`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime-sensitive changes after freeze: none.
-- Current-main CI: `PASS`; GHA run `34433113216`.
+- Current-main CI: `PASS`; GHA run `34433562222`.
 - Fresh baseline: blocked by repeated TRAI connection timeout.
 - Manual workflow runs: excluded from soak qualification.
 - Scheduled executions after the UI merge: none.

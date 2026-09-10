@@ -10,7 +10,7 @@ Updated: 2026-09-10
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - RUNTIME_FREEZE_HEAD: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - POST_FREEZE_RUNTIME_SENSITIVE_DIFF: `EMPTY`; checkpoint documentation only.
-- POST_CHECKPOINT_CI: `PASS`; GHA run `34433113216` matches current main.
+- POST_CHECKPOINT_CI: `PASS`; GHA run `34433562222` matches current main.
 - FRESH_BASELINE: `BLOCKED`; runs `34428249855`, `34428871150`, `34429825500`, `34430830404`.
 - BASELINE_FAILURE: TRAI connection timeout at `www.trai.gov.in:443`.
 - BASELINE_INVARIANTS: every attempt reached 6/7 sources, zero unexpected errors, zero publications, sanitized artifacts retained.
