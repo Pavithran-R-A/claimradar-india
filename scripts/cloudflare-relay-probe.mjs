@@ -51,7 +51,7 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
       durationMs: Math.round(performance.now() - started),
       pass: response.status === 200 && officialBytes,
     });
-  } catch {
+  } catch (error) {
     results.push({
       attempt,
       status: null,
@@ -61,6 +61,9 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
       readable: false,
       officialBytes: false,
       durationMs: Math.round(performance.now() - started),
+      errorName: error?.name ?? 'UnknownError',
+      errorCode: typeof error?.code === 'string' ? error.code : null,
+      causeCode: typeof error?.cause?.code === 'string' ? error.cause.code : null,
       pass: false,
     });
   }
