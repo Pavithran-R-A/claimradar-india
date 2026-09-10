@@ -3,7 +3,7 @@
   "finalSoakBaselineGhaRun": "34509256561",
   "finalSoakBaselineHead": "cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e",
   "finalSoakBaselineCrawlRunId": "a32c7356-8254-4390-9a38-fb0a04fec1aa",
-  "finalSoakStartUtc": "2026-09-10T19:49:58Z",
+  "finalSoakStartUtc": "2026-09-10T23:12:21Z",
   "firstPostBaselineScheduledSlot": "2026-09-11T00:17:00.000Z",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
@@ -65,7 +65,7 @@
       "startedAtUtc": "2026-09-10T20:55:39Z",
       "nominalSlotUtc": "2026-09-10T18:17:00Z",
       "classification": "PRE_CHECKPOINT_NOMINAL_SLOT",
-      "reason": "The nominal slot preceded the latest checkpoint merge at 2026-09-10T19:49:58Z.",
+      "reason": "The nominal slot preceded the latest checkpoint merge at 2026-09-10T23:12:21Z.",
       "crawlRunId": "6419702c-5523-4bc5-a1b5-502a2b0ac939",
       "result": "PASS",
       "invariants": "7/7 sources, zero crawl errors, zero unexpected errors, zero publications, staging guards, sanitized artifact"
