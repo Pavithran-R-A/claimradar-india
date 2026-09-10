@@ -578,9 +578,9 @@ PRODUCTION_READY_NOW = `NO`
 
 ## Current soak monitor checkpoint
 
-Updated: `2026-09-10T23:00:00Z`.
+Updated: `2026-09-10T23:15:00Z`.
 
-CURRENT_MAIN = `f822c175feb92bf40390b67a553bbf4bee9feee1`
+CURRENT_MAIN = `b4bdd5bf44c6281117bdba5b22353f4fca9b7ca9`
 
 RUNTIME_FREEZE_HEAD = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
 

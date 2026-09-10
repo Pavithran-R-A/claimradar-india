@@ -446,12 +446,12 @@ This run remains outside relay-soak credit.
 
 ## Current soak monitor checkpoint
 
-Updated: `2026-09-10T23:00:00Z`.
+Updated: `2026-09-10T23:15:00Z`.
 
 | Item                     | Current evidence                                                        |
 | ------------------------ | ----------------------------------------------------------------------- |
 | Runtime freeze           | `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`                              |
-| Current main             | `f822c175feb92bf40390b67a553bbf4bee9feee1`                              |
+| Current main             | `b4bdd5bf44c6281117bdba5b22353f4fca9b7ca9`                              |
 | Runtime-sensitive diff   | `EMPTY`                                                                 |
 | Fresh baseline           | GHA `34509256561`, crawl `a32c7356-8254-4390-9a38-fb0a04fec1aa`, `PASS` |
 | Scheduled run            | GHA `34529249916`, crawl `6419702c-5523-4bc5-a1b5-502a2b0ac939`, `PASS` |
