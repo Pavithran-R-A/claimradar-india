@@ -404,3 +404,9 @@ Updated: `2026-09-10`.
 
 The relay implementation is local only.
 It remains unpushed and unqualified.
+
+Scheduled run `34471357419` passed direct fetching.
+Its crawl `5c6b9e90-b01f-4481-a7d1-ffb266a03225` passed 7/7.
+Database rows show seven completed sources.
+No crawl errors were recorded.
+This run remains outside relay-soak credit.

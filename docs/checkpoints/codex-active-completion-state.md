@@ -257,6 +257,11 @@ Updated: `2026-09-10`.
 - Runtime freeze: `NOT_ESTABLISHED`; relay integration remains local-only.
 - Soak: `NOT_STARTED`; manual diagnostics remain excluded.
 - Current verdict: `BLOCKED` pending permanent free Cloudflare account setup.
+- Scheduled run `34471357419`: `7/7`, zero crawl errors, zero publications.
+- Scheduled crawl: `5c6b9e90-b01f-4481-a7d1-ffb266a03225`.
+- Database corroboration: 7 completed source rows, zero crawl errors.
+- This direct-fetch run remains baseline evidence only.
+- It does not qualify the relay soak.
 
 ## UI perfection merge and fresh baseline
 

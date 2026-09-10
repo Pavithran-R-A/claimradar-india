@@ -272,6 +272,16 @@ RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
 HISTORICAL_RUNTIME_FREEZE = `6f22c5ef4119000318218f136f5416987a451877`
 PRODUCTION_READY_NOW = `NO`
 
+SCHEDULED_DIRECT_RUN = `34471357419`
+
+SCHEDULED_DIRECT_CRAWL = `5c6b9e90-b01f-4481-a7d1-ffb266a03225`
+
+SCHEDULED_DIRECT_RESULT = `7/7 sources, zero crawl errors, zero publications`
+
+SCHEDULED_DIRECT_DB = `7 completed source rows, zero crawl errors`
+
+SCHEDULED_DIRECT_SOAK_CREDIT = `EXCLUDED - relay candidate not deployed`
+
 No release claim is made from this intermediate state. The final candidate
 needs remote exact-head build, browser evidence, security evidence, and a new
 post-merge staging baseline before soak qualification can begin.
