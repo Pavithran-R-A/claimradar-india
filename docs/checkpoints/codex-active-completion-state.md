@@ -1,8 +1,24 @@
 # ClaimRadar India Active Completion State
 
-Updated: 2026-09-07
+Updated: 2026-09-10
 
-## Repository
+## Current authoritative snapshot
+
+- CURRENT_HEAD: `378ed1fb6edc72dafbe8777a28351acdbb6062ff`.
+- CURRENT_MAIN: `378ed1fb6edc72dafbe8777a28351acdbb6062ff`.
+- CURRENT_PHASE: fresh staging baseline blocked; final soak not started.
+- UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
+- RUNTIME_FREEZE_HEAD: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
+- POST_FREEZE_RUNTIME_SENSITIVE_DIFF: `EMPTY`; checkpoint documentation only.
+- FRESH_BASELINE: `BLOCKED`; runs `34428249855`, `34428871150`, `34429825500`, `34430830404`.
+- BASELINE_FAILURE: TRAI connection timeout at `www.trai.gov.in:443`.
+- BASELINE_INVARIANTS: every attempt reached 6/7 sources, zero unexpected errors, zero publications, sanitized artifacts retained.
+- MANUAL_WORKFLOW_DISPATCH_QUALIFICATION: `EXCLUDED`.
+- SCHEDULED_RUNS_AFTER_UI_MERGE: `NONE`.
+- NEXT_ACTION: rerun the manual baseline after TRAI connectivity recovers.
+- PRODUCTION_READY_NOW: `NO - FRESH BASELINE REQUIRED`.
+
+## Historical repository record
 
 - CURRENT_HEAD: `6f22c5ef4119000318218f136f5416987a451877`
 - CURRENT_MAIN: `6f22c5ef4119000318218f136f5416987a451877`
@@ -11,7 +27,7 @@ Updated: 2026-09-07
 - PR: `#2` completion merged; `#3` runtime repair merged
 - ORIGINAL_USER_CHECKOUT_TOUCHED: `NO`
 
-## Evidence
+## Historical evidence record
 
 - LAST_COMPLETED_GATE: repaired-main manual baseline
 - REPAIR_SOURCE_HEAD: `d2234a8614447fc86827bf8e11ebc15fbea4ca75`
