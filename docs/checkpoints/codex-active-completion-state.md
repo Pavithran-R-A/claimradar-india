@@ -190,6 +190,29 @@ Updated: 2026-09-09
 - RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
 - HUMAN_ACTION: approve final merge of PR #4.
 
+## UI perfection merge and fresh baseline
+
+Updated: 2026-09-10
+
+- MERGE_STATUS: `MERGED`
+- MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`
+- SOURCE_HEAD: `01a9627a5180327f7aea95691c3240fdc8924141`
+- MERGE_TIMESTAMP_UTC: `2026-09-10T02:07:16Z`
+- EXACT_HEAD_CI: `PASS`, GHA run `34427810132`.
+- VERCEL_EXACT_HEAD: `PASS`, deployment completed.
+- PROTECTED_BROWSER_QA: `PASS`, GHA run `34429378945`.
+- AUTH_RUNTIME_QA: `PASS`, GHA run `34429382482`.
+- DISPOSABLE_USER_CLEANUP: `PASS`, three users deleted, no residual profiles.
+- BASELINE_ATTEMPTS: `34428249855`, `34428871150`, `34429825500`.
+- BASELINE_RESULT: `BLOCKED`; each attempt had 6/7 sources.
+- BASELINE_FAILURE: TRAI connection timeout at `www.trai.gov.in:443`.
+- BASELINE_PUBLICATIONS: `0`.
+- BASELINE_UNEXPECTED_ERRORS: `0`.
+- BASELINE_ARTIFACTS: retained and sanitized.
+- RUNTIME_CANDIDATE_HEAD: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
+- RUNTIME_SOAK: `NOT_STARTED`; manual baselines never qualify.
+- PRODUCTION_READY_NOW: `NO - FRESH BASELINE REQUIRED`.
+
 ## Post-merge frozen-main baseline
 
 Updated: 2026-09-09
