@@ -1,7 +1,7 @@
 # ClaimRadar India Completion Report
 
 Date: 2026-09-10
-Last monitoring check: `2026-09-10T18:55:38Z`
+Last monitoring check: `2026-09-10T19:08:03Z`
 
 ## Permanent relay and fresh baseline
 
@@ -17,7 +17,7 @@ BASELINE_SAFETY = `zero crawl errors; zero unexpected errors; zero publications`
 BASELINE_GUARDS = `staging; billing disabled; auto-verification disabled; notifications disabled`
 BASELINE_DB = `7 source rows; 523 source documents; 0 crawl errors; 0 new claimables`
 BASELINE_ARTIFACT = `staging-soak-summary retained and sanitized`
-FINAL_SOAK = `NOT STARTED - first eligible slot 2026-09-10T18:17:00Z not visible`
+FINAL_SOAK = `NOT STARTED - first eligible slot 2026-09-11T00:17:00Z pending`
 PRODUCTION_READY_NOW = `NO - PENDING FINAL 72H SOAK`
 
 CONTROLLED_CRAWL_1 = `GHA 34509256561; crawl a32c7356-8254-4390-9a38-fb0a04fec1aa; PASS`
@@ -59,8 +59,10 @@ MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`
 LATEST_SCHEDULED_RUN = `34502374906` at nominal slot `2026-09-10T12:17:00Z`
 LATEST_SCHEDULED_RESULT = `PASS` - completed before the fresh baseline; excluded from soak credit
 SCHEDULED_RUN_34502374906_QUALIFICATION = `EXCLUDED` - pre-baseline scheduled execution
-FIRST_ELIGIBLE_NOMINAL_SLOT = `2026-09-10T18:17:00Z` - no run visible at latest check
-NEXT_NOMINAL_SLOT = `2026-09-11T00:17:00Z`
+SLOT_BEFORE_LATEST_CHECKPOINT_MERGE = `2026-09-10T18:17:00Z` - no credit
+LATEST_CHECKPOINT_MERGE = `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`
+FIRST_ELIGIBLE_NOMINAL_SLOT = `2026-09-11T00:17:00Z`
+NEXT_NOMINAL_SLOT = `2026-09-11T06:17:00Z`
 FINAL_SOAK = `NOT_STARTED - awaiting first eligible genuine scheduled slot`
 PRODUCTION_READY_NOW = `NO - PENDING FINAL 72H SOAK`
 
