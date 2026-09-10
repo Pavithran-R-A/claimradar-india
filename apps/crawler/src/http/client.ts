@@ -7,7 +7,9 @@ import { getConditionalHeaders, setCacheEntry, getCacheEntry } from './cache.js'
 import { sha256 } from './hash.js';
 import { retry } from './retry.js';
 import { FetchError } from './types.js';
-import type { FetchRequest, FetchResult, RateLimitConfig } from './types.js';
+import type { CloudflareRelayConfig, FetchRequest, FetchResult, RateLimitConfig } from './types.js';
+import { buildRelayUrl, createRelaySignature, getTraiRelayTarget } from './cloudflare-relay.js';
+import { randomUUID } from 'node:crypto';
 
 const DEFAULT_MAX_REDIRECTS = 2;
 const DEFAULT_MAX_BODY_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -16,6 +18,19 @@ const DEFAULT_HTTP_MAX_RETRIES = 3;
 const MAX_HTTP_MAX_RETRIES = 4;
 const DEFAULT_RETRY_BASE_DELAY_MS = 1_000;
 const DEFAULT_RETRY_MAX_DELAY_MS = 5_000;
+
+type RequestOptions = Parameters<typeof request>[1];
+
+export interface HttpResponse {
+  statusCode: number;
+  headers: Record<string, string | string[] | undefined>;
+  body: {
+    dump(): Promise<void>;
+    arrayBuffer(): Promise<ArrayBuffer>;
+  };
+}
+
+export type RequestExecutor = (url: string, options: RequestOptions) => Promise<HttpResponse>;
 
 /**
  * Safe undici Agent that validates the resolved IP at connection time,
@@ -69,6 +84,8 @@ export class HttpClient {
   private readonly maxRetries: number;
   private readonly retryBaseDelayMs: number;
   private readonly retryMaxDelayMs: number;
+  private readonly relay: CloudflareRelayConfig | undefined;
+  private readonly requestExecutor: RequestExecutor;
   private readonly rateLimiter = new RateLimiter();
 
   constructor(options: {
@@ -78,6 +95,8 @@ export class HttpClient {
     maxRetries?: number;
     retryBaseDelayMs?: number;
     retryMaxDelayMs?: number;
+    relay?: CloudflareRelayConfig;
+    requestExecutor?: RequestExecutor;
   }) {
     this.userAgent = options.userAgent;
     this.contactEmail = options.contactEmail;
@@ -91,6 +110,8 @@ export class HttpClient {
       this.retryBaseDelayMs,
       options.retryMaxDelayMs ?? DEFAULT_RETRY_MAX_DELAY_MS,
     );
+    this.relay = options.relay;
+    this.requestExecutor = options.requestExecutor ?? (request as unknown as RequestExecutor);
   }
 
   async fetch(req: FetchRequest, rateLimitConfig?: RateLimitConfig): Promise<FetchResult> {
@@ -105,14 +126,15 @@ export class HttpClient {
 
     // 2. Resolve and validate hostname (DNS check for private IPs)
     const parsed = new URL(url);
+    const relayTarget = this.relay ? getTraiRelayTarget(url) : null;
     try {
       await resolveAndValidate(parsed.hostname);
     } catch (err) {
-      throw new FetchError(
-        err instanceof Error ? err.message : 'SSRF validation failed',
-        'ssrf_blocked',
-        url,
-      );
+      const message = err instanceof Error ? err.message : 'SSRF validation failed';
+      const dnsResolutionFailure = message.includes('unable to resolve');
+      if (!relayTarget || !dnsResolutionFailure) {
+        throw new FetchError(message, 'ssrf_blocked', url);
+      }
     }
 
     // 3. Acquire rate limit slot
@@ -143,15 +165,32 @@ export class HttpClient {
     const timeoutMs = req.timeoutMs ?? this.defaultTimeoutMs;
 
     try {
-      const result = await retry(
-        () => this.executeRequest(url, req.method ?? 'GET', headers, timeoutMs, req.maxRedirects),
-        {
-          maxRetries: this.maxRetries,
-          baseDelay: this.retryBaseDelayMs,
-          maxDelay: this.retryMaxDelayMs,
-          shouldRetry: isRetryableFetchError,
-        },
-      );
+      let result;
+      try {
+        result = await retry(
+          () =>
+            this.executeDirectRequest(
+              url,
+              req.method ?? 'GET',
+              headers,
+              timeoutMs,
+              req.maxRedirects,
+            ),
+          this.retryOptions(),
+        );
+      } catch (directError) {
+        const directFailure = this.classifyRequestError(directError, url);
+        const targetPath = this.relay ? getTraiRelayTarget(url) : null;
+        if (!this.relay || !targetPath || !isRetryableFetchError(directFailure)) {
+          throw directFailure;
+        }
+
+        result = await retry(
+          () =>
+            this.executeRelayRequestSafe(url, req.method ?? 'GET', headers, timeoutMs, targetPath),
+          this.retryOptions(),
+        );
+      }
 
       // 7. Validate MIME type
       const contentType = result.contentType;
@@ -203,19 +242,28 @@ export class HttpClient {
         durationMs: Date.now() - startTime,
       };
     } catch (err) {
-      if (err instanceof FetchError) {
-        throw err;
-      }
-      // Classify timeout errors
-      if (err instanceof Error && err.message.includes('timeout')) {
-        throw new FetchError(err.message, 'timeout', url);
-      }
-      throw new FetchError(
-        err instanceof Error ? err.message : 'Unknown network error',
-        'network_error',
-        url,
-      );
+      throw this.classifyRequestError(err, url);
     }
+  }
+
+  private retryOptions() {
+    return {
+      maxRetries: this.maxRetries,
+      baseDelay: this.retryBaseDelayMs,
+      maxDelay: this.retryMaxDelayMs,
+      shouldRetry: isRetryableFetchError,
+    };
+  }
+
+  private classifyRequestError(error: unknown, url: string): FetchError {
+    if (error instanceof FetchError) return error;
+
+    const message = error instanceof Error ? error.message : 'Unknown network error';
+    const normalized = message.toLowerCase();
+    const category = /timeout|timed out|etimedout|headers_timeout|body_timeout/.test(normalized)
+      ? 'timeout'
+      : 'network_error';
+    return new FetchError(message, category, url);
   }
 
   private async executeRequest(
@@ -229,7 +277,7 @@ export class HttpClient {
     let currentUrl = url;
 
     for (let hop = 0; hop <= maxHops; hop++) {
-      const response = await request(currentUrl, {
+      const response = await this.requestExecutor(currentUrl, {
         method,
         headers,
         headersTimeout: timeoutMs,
@@ -240,13 +288,7 @@ export class HttpClient {
 
       const { statusCode, headers: resHeaders, body } = response;
 
-      // Normalize headers to Record<string, string>
-      const normalizedHeaders: Record<string, string> = {};
-      for (const [key, value] of Object.entries(resHeaders)) {
-        if (value !== undefined) {
-          normalizedHeaders[key] = Array.isArray(value) ? value.join(', ') : value;
-        }
-      }
+      const normalizedHeaders = this.normalizeHeaders(resHeaders);
 
       const contentType = normalizedHeaders['content-type'] ?? null;
       const etag = normalizedHeaders['etag'] ?? null;
@@ -267,6 +309,7 @@ export class HttpClient {
           lastModified: lastModified ?? cached?.lastModified ?? null,
           contentHash: cached?.contentHash ?? '',
           wasCached: true,
+          transport: 'DIRECT',
         };
       }
 
@@ -342,9 +385,140 @@ export class HttpClient {
         lastModified,
         contentHash,
         wasCached: false,
+        transport: 'DIRECT',
       };
     }
 
     throw new FetchError(`Too many redirects (max ${maxHops})`, 'network_error', url);
+  }
+
+  private async executeDirectRequest(
+    url: string,
+    method: 'GET' | 'HEAD',
+    headers: Record<string, string>,
+    timeoutMs: number,
+    maxRedirects?: number,
+  ): Promise<Omit<FetchResult, 'durationMs'>> {
+    try {
+      return await this.executeRequest(url, method, headers, timeoutMs, maxRedirects);
+    } catch (error) {
+      throw this.classifyRequestError(error, url);
+    }
+  }
+
+  private async executeRelayRequest(
+    originalUrl: string,
+    method: 'GET' | 'HEAD',
+    headers: Record<string, string>,
+    timeoutMs: number,
+    targetPath: string,
+  ): Promise<Omit<FetchResult, 'durationMs'>> {
+    if (!this.relay) {
+      throw new FetchError('Relay is not configured', 'network_error', originalUrl);
+    }
+
+    const relayEndpoint = new URL(this.relay.endpoint);
+    if (relayEndpoint.protocol !== 'https:') {
+      throw new FetchError('Relay endpoint must use HTTPS', 'network_error', originalUrl);
+    }
+
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const nonce = randomUUID();
+    const relayUrl = buildRelayUrl(this.relay.endpoint, targetPath);
+    const relayHeaders = {
+      ...headers,
+      'X-ClaimRadar-Original-URL': originalUrl,
+      'X-ClaimRadar-Timestamp': timestamp,
+      'X-ClaimRadar-Nonce': nonce,
+      'X-ClaimRadar-Signature': createRelaySignature(
+        timestamp,
+        nonce,
+        method,
+        targetPath,
+        this.relay.sharedSecret,
+      ),
+    };
+
+    const response = await this.requestExecutor(relayUrl, {
+      method,
+      headers: relayHeaders,
+      headersTimeout: this.relay.timeoutMs ?? timeoutMs,
+      bodyTimeout: this.relay.timeoutMs ?? timeoutMs,
+      maxRedirections: 0,
+      dispatcher: safeAgent,
+    } as RequestOptions);
+
+    const normalizedHeaders = this.normalizeHeaders(response.headers);
+    const relayError = normalizedHeaders['x-claimradar-relay-error'];
+    if (relayError) {
+      await response.body.dump();
+      const category =
+        relayError === 'TIMEOUT'
+          ? 'timeout'
+          : relayError === 'DNS_ERROR' ||
+              relayError === 'NETWORK_ERROR' ||
+              relayError === 'POLICY_BLOCKED'
+            ? 'network_error'
+            : 'network_error';
+      throw new FetchError(
+        `Cloudflare relay ${relayError.toLowerCase().replaceAll('_', ' ')}`,
+        category,
+        originalUrl,
+      );
+    }
+
+    if (response.statusCode >= 400) {
+      await response.body.dump();
+      throw new FetchError(
+        `HTTP ${response.statusCode} error for ${originalUrl}`,
+        'http_error',
+        originalUrl,
+        response.statusCode,
+      );
+    }
+
+    if (response.statusCode >= 300) {
+      await response.body.dump();
+      throw new FetchError('Unexpected relay redirect', 'network_error', originalUrl);
+    }
+
+    const body = Buffer.from(await response.body.arrayBuffer());
+    return {
+      url: originalUrl,
+      statusCode: response.statusCode,
+      headers: normalizedHeaders,
+      body,
+      contentType: normalizedHeaders['content-type'] ?? null,
+      etag: normalizedHeaders['etag'] ?? null,
+      lastModified: normalizedHeaders['last-modified'] ?? null,
+      contentHash: sha256(body),
+      wasCached: false,
+      transport: 'CLOUDFLARE_RELAY',
+    };
+  }
+
+  private async executeRelayRequestSafe(
+    originalUrl: string,
+    method: 'GET' | 'HEAD',
+    headers: Record<string, string>,
+    timeoutMs: number,
+    targetPath: string,
+  ): Promise<Omit<FetchResult, 'durationMs'>> {
+    try {
+      return await this.executeRelayRequest(originalUrl, method, headers, timeoutMs, targetPath);
+    } catch (error) {
+      throw this.classifyRequestError(error, originalUrl);
+    }
+  }
+
+  private normalizeHeaders(
+    headers: Record<string, string | string[] | undefined>,
+  ): Record<string, string> {
+    const normalized: Record<string, string> = {};
+    for (const [key, value] of Object.entries(headers)) {
+      if (value !== undefined)
+        normalized[key.toLowerCase()] = Array.isArray(value) ? value.join(', ') : value;
+    }
+    return normalized;
   }
 }

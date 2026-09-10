@@ -76,6 +76,9 @@ jobs:
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
           CRAWLER_USER_AGENT: 'ClaimRadar India/1.0'
+          TRAI_RELAY_URL: ${{ secrets.TRAI_RELAY_URL }}
+          TRAI_RELAY_SHARED_SECRET: ${{ secrets.TRAI_RELAY_SHARED_SECRET }}
+          TRAI_RELAY_TIMEOUT_MS: '15000'
           LIVE_ADAPTERS_ENABLED: 'true'
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'

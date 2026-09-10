@@ -32,7 +32,8 @@ interface PatternRule {
 const RULES: PatternRule[] = [
   {
     category: 'DNS_ERROR',
-    pattern: /enotfound|eai_again|dns|getaddrinfo|name.?resolution|no such host|domain.?not.?found/,
+    pattern:
+      /enotfound|eai_again|dns|getaddrinfo|name.?resolution|unable.?to.?resolve|no such host|domain.?not.?found/,
   },
   {
     category: 'TLS_ERROR',

@@ -15,12 +15,40 @@ Updated: 2026-09-10
 - Root cause: both official TRAI hostnames resolve to `164.100.85.161`; GitHub runner TCP connects time out.
 - Networking fix: explicit 30-second connect timeout; bounded four-retry ceiling; capped jittered backoff.
 - Classification fix: connect timeout is `TIMEOUT`, not `HTTP_4XX`.
+- Runner matrix: GHA `34455249230`, nine independent jobs completed.
+- Ubuntu, Windows, and macOS each failed TRAI connectivity three times.
+- All nine jobs passed SEBI RSS and public notices.
+- TRAI resolved IPv4 `164.100.85.161`; TCP, TLS, HEAD, and GET timed out.
+- SEBI resolved `202.191.181.30` and `202.191.181.158`; strict TLS and GET passed.
+- Reliable standard GitHub-hosted runner: none.
+- Temporary matrix workflow removed; sanitized artifacts retained.
+- Human action: provide an approved first-party runner reaching TRAI.
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
 - Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
 - Scheduled qualification: no credit; the required fresh baseline was not successful.
 - Final soak: not started.
 - Production readiness: no; external runner-network blocker remains.
+
+## Existing cloud egress investigation
+
+- Vercel build probe: `dpl_Vhm34TnQmG1boEZweRyz99LERiVt`.
+- Vercel region: `iad1`; Node `v24.19.0`.
+- Vercel TRAI: three rounds failed.
+- Vercel TRAI DNS: `164.100.85.161`, IPv4 only.
+- Vercel TRAI HEAD/GET: connection timeout.
+- Vercel SEBI GET: passed across three rounds.
+- Supabase Edge: three TRAI failures.
+- Supabase TRAI DNS: `164.100.85.161`, IPv4 only.
+- Supabase TRAI HEAD/GET: connection timeout.
+- Supabase SEBI GET: passed; apex RSS redirected.
+- Existing cloud egress: blocked for TRAI.
+- Temporary Vercel files: removed.
+- Clean Vercel deployment: `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
+- Temporary Supabase function: version 2; JWT verification enabled.
+- Supabase function deletion: unavailable here.
+- No relay selected; no crawler semantics changed.
+- No physical device is required.
 
 ## Historical baseline records
 
@@ -360,3 +388,25 @@ Updated: `2026-09-10`.
 
 The merged candidate remains unchanged.
 No scheduled run qualifies yet.
+
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+| Gate                        | Status          | Evidence                                   |
+| --------------------------- | --------------- | ------------------------------------------ |
+| Cloudflare temporary probe  | `PASS`          | 20/20 fixed-target requests                |
+| TRAI and SEBI probe routes  | `PASS`          | HTTP 200, official bytes, zero redirects   |
+| Permanent Worker deployment | `NOT_AVAILABLE` | No permanent account credentials present   |
+| Production relay            | `NOT_LIVE`      | Endpoint and secret not configured         |
+| Fresh staging baseline      | `BLOCKED`       | Requires live relay and exact current main |
+| Final soak                  | `NOT_STARTED`   | No successful fresh baseline               |
+
+The relay implementation is local only.
+It remains unpushed and unqualified.
+
+Scheduled run `34471357419` passed direct fetching.
+Its crawl `5c6b9e90-b01f-4481-a7d1-ffb266a03225` passed 7/7.
+Database rows show seven completed sources.
+No crawl errors were recorded.
+This run remains outside relay-soak credit.

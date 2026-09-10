@@ -68,5 +68,8 @@ describe('HTTP client reliability policy', () => {
     expect(classifyError('HTTP 403 Forbidden')).toBe('HTTP_4XX');
     expect(classifyError('HTTP 404 Not Found')).toBe('HTTP_4XX');
     expect(classifyError('HTTP 500 Internal Server Error')).toBe('HTTP_5XX');
+    expect(classifyError('SSRF blocked: unable to resolve hostname source.example.gov.in')).toBe(
+      'DNS_ERROR',
+    );
   });
 });

@@ -1,10 +1,11 @@
 import { runPipeline } from './pipeline/index.js';
-import { loadCrawlerEnv } from './env.js';
+import { getTraiRelayConfig, loadCrawlerEnv } from './env.js';
 export { loadCrawlerEnv };
 import { createAdminClient } from '@claimradar/database';
 import type { Source } from '@claimradar/database';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type { IDatabaseWriter } from './pipeline/db-writer.js';
+import type { SourceHealthResult } from './adapters/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
@@ -83,6 +84,7 @@ async function main() {
         break;
       }
       const sources = rawSources as Source[];
+      const traiRelay = getTraiRelayConfig(env);
 
       const { getAdapter } = await import('./adapters/registry.js');
       const { DatabaseWriter } = await import('./pipeline/db-writer.js');
@@ -91,6 +93,7 @@ async function main() {
         ok: boolean;
         latencyMs: number;
         category?: string;
+        transport?: SourceHealthResult['transport'];
       }> = [];
       let failures = 0;
       let writer: InstanceType<typeof DatabaseWriter> | null = null;
@@ -122,6 +125,9 @@ async function main() {
             dryRun: true,
             userAgent: env.CRAWLER_USER_AGENT,
             timeoutMs: env.CRAWLER_REQUEST_TIMEOUT_MS,
+            ...(source.id === 'trai-press-releases' && traiRelay !== undefined
+              ? { traiRelay }
+              : {}),
           };
           const health = await adapter.healthCheck(context);
           const category = health.ok
@@ -137,6 +143,7 @@ async function main() {
             ok: health.ok,
             latencyMs: health.latencyMs,
             ...(category !== undefined ? { category } : {}),
+            ...(health.transport !== undefined ? { transport: health.transport } : {}),
           });
           if (!health.ok) {
             failures++;
@@ -158,6 +165,7 @@ async function main() {
                 details: {
                   latencyMs: health.latencyMs,
                   ...(category !== undefined ? { category } : {}),
+                  ...(health.transport !== undefined ? { transport: health.transport } : {}),
                   ...(health.error !== undefined ? { error: health.error } : {}),
                 },
               });

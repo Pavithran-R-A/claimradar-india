@@ -21,6 +21,13 @@ Updated: 2026-09-10
 - CONNECTIVITY_ROOT_CAUSE: GitHub runner TCP timeout to shared TRAI IPv4 `164.100.85.161`; both official hostnames resolve there.
 - CONNECTIVITY_FIX: 30-second connect timeout, bounded four-retry ceiling, capped jittered backoff.
 - CLASSIFICATION_FIX: timeout with `:443` is `TIMEOUT`, never `HTTP_4XX`.
+- RUNNER_MATRIX_GHA_RUN: `34455249230`; nine independent jobs completed.
+- RUNNER_MATRIX_RESULT: Ubuntu, Windows, and macOS all failed TRAI; all passed SEBI.
+- RUNNER_MATRIX_TRAI: `164.100.85.161`, IPv4 only; TCP, TLS, HEAD, and GET timed out.
+- RUNNER_MATRIX_SEBI: `202.191.181.30`, `202.191.181.158`; strict TLS and GET passed.
+- RELIABLE_STANDARD_RUNNER: `NONE`.
+- TEMPORARY_MATRIX_WORKFLOW: removed after sanitized artifact capture.
+- HUMAN_ACTION_REQUIRED: first-party runner with reliable TRAI reachability.
 - MANUAL_WORKFLOW_DISPATCH_QUALIFICATION: `EXCLUDED`.
 - LATEST_SCHEDULED_RUN: `34438700011`, event `schedule`, head `cc66de7485e6b3369d8bb0c8455184e01bb5db9d`, nominal slot `2026-09-10T00:17:00Z`.
 - LATEST_SCHEDULED_RESULT: `FAIL`; 4/7 sources succeeded, SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, artifact retained.
@@ -28,6 +35,26 @@ Updated: 2026-09-10
 - SCHEDULED_RUNS_AFTER_UI_MERGE: `34438700011` failed; no qualifying runs.
 - NEXT_ACTION: use a first-party runner with TRAI reachability, then rerun baseline.
 - PRODUCTION_READY_NOW: `NO - EXTERNAL NETWORK BLOCKER; BASELINE REQUIRED`.
+
+## Existing cloud egress investigation
+
+- VERCEL_BUILD_PROBE: `dpl_Vhm34TnQmG1boEZweRyz99LERiVt`.
+- VERCEL_BUILD_REGION: `iad1`; Node `v24.19.0`.
+- VERCEL_TRAI: three rounds failed for both hostnames.
+- VERCEL_TRAI_DNS: `164.100.85.161`, IPv4 only.
+- VERCEL_TRAI_HTTP: HEAD and GET timed out.
+- VERCEL_SEBI: GET passed across three rounds.
+- SUPABASE_EDGE_PROBE: three invocations failed TRAI.
+- SUPABASE_TRAI_DNS: `164.100.85.161`, IPv4 only.
+- SUPABASE_TRAI_HTTP: HEAD and GET timed out.
+- SUPABASE_SEBI: GET passed; apex RSS redirected.
+- CLOUD_EGRESS_BLOCKED: `YES` for existing projects.
+- VERCEL_TEMPORARY_CODE: removed; clean deployment `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
+- SUPABASE_TEMPORARY_FUNCTION: active version 2; deletion unavailable here.
+- SUPABASE_FUNCTION_AUTH: JWT verification enabled before handoff.
+- SUPABASE_FUNCTION_SCOPE: fixed official targets; no caller URL; no secrets.
+- NO_RELAY_SELECTED: existing cloud paths failed TRAI.
+- EXTRA_PHYSICAL_DEVICE_REQUIRED: `NO`.
 
 ## Historical repository record
 
@@ -216,6 +243,25 @@ Updated: 2026-09-09
 - FINAL_CANDIDATE_STATUS: `READY_FOR_FINAL_MERGE_REVIEW`.
 - RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
 - HUMAN_ACTION: approve final merge of PR #4.
+
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+- Cloudflare temporary Worker probe: `PASS`, 20/20 fixed-target requests.
+- Probe coverage: TRAI RSS, TRAI apex RSS, SEBI RSS, and SEBI notices.
+- Probe result: HTTP 200, official bytes, zero redirects, all rounds.
+- Permanent Cloudflare deployment: `NOT_AVAILABLE` in this workspace.
+- Production relay: `NOT_LIVE`; no permanent endpoint or secret configured.
+- Full staging crawls: `NOT_RUN`; no valid fresh baseline exists.
+- Runtime freeze: `NOT_ESTABLISHED`; relay integration remains local-only.
+- Soak: `NOT_STARTED`; manual diagnostics remain excluded.
+- Current verdict: `BLOCKED` pending permanent free Cloudflare account setup.
+- Scheduled run `34471357419`: `7/7`, zero crawl errors, zero publications.
+- Scheduled crawl: `5c6b9e90-b01f-4481-a7d1-ffb266a03225`.
+- Database corroboration: 7 completed source rows, zero crawl errors.
+- This direct-fetch run remains baseline evidence only.
+- It does not qualify the relay soak.
 
 ## UI perfection merge and fresh baseline
 

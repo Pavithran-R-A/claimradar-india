@@ -18,12 +18,39 @@ BASELINE_RESULT = `6/7 sources; zero unexpected errors; zero publications; artif
 ROOT_CAUSE = `GitHub runner TCP timeout to shared TRAI IPv4 164.100.85.161`
 NETWORKING_FIX = `30-second connect timeout; bounded four-retry ceiling; capped jittered backoff`
 ERROR_CLASSIFICATION_FIX = `Timeout with :443 classified as TIMEOUT, never HTTP_4XX`
+RUNNER_MATRIX_GHA_RUN = `34455249230`
+RUNNER_MATRIX_RESULT = `9/9 jobs completed; TRAI failed 9/9; SEBI passed 9/9`
+UBUNTU_PROBE = `Linux X64; TRAI failed 3/3; SEBI passed 3/3`
+WINDOWS_PROBE = `Windows X64; TRAI failed 3/3; SEBI passed 3/3`
+MACOS_PROBE = `macOS ARM64; TRAI failed 3/3; SEBI passed 3/3`
+RELIABLE_STANDARD_RUNNER = `NONE`
+TEMPORARY_MATRIX_WORKFLOW = `REMOVED_AFTER_EVIDENCE_CAPTURE`
+HUMAN_ACTION_REQUIRED = `APPROVED FIRST-PARTY RUNNER WITH RELIABLE TRAI REACHABILITY`
 MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`
 LATEST_SCHEDULED_RUN = `34438700011` at nominal slot `2026-09-10T00:17:00Z`
 LATEST_SCHEDULED_RESULT = `FAIL` - 4/7 sources; SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications
 SCHEDULED_RUN_34438700011_QUALIFICATION = `EXCLUDED` - fresh baseline was not successful
 FINAL_SOAK = `NOT_STARTED`
 PRODUCTION_READY_NOW = `NO - EXTERNAL NETWORK BLOCKER; FRESH BASELINE REQUIRED`
+
+## Existing cloud egress decision
+
+VERCEL_TRAI_PROBE = `FAIL - three rounds; both hostnames timeout`
+VERCEL_TRAI_DNS = `164.100.85.161; IPv4 only`
+VERCEL_SEBI_PROBE = `PASS - GET responses across three rounds`
+SUPABASE_TRAI_PROBE = `FAIL - three invocations; both hostnames timeout`
+SUPABASE_TRAI_DNS = `164.100.85.161; IPv4 only`
+SUPABASE_SEBI_PROBE = `PASS - GET responses; apex RSS redirects`
+SELECTED_NETWORK_PATH = `NONE - existing cloud egress blocked`
+CLOUD_EGRESS_BLOCKED = `YES`
+EXTRA_PHYSICAL_DEVICE_REQUIRED = `NO`
+TEMPORARY_VERCEL_DIAGNOSTICS = `REMOVED`
+CLEAN_VERCEL_DEPLOYMENT = `dpl_B64AsXnmzski5azACdYMAdA5TEvk`
+TEMPORARY_SUPABASE_FUNCTION = `VERSION 2; JWT verification enabled; deletion unavailable`
+NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED`
+BASELINE_RESULT = `BLOCKED - no fresh 7/7 baseline`
+FINAL_SOAK_STARTED = `NO`
+HUMAN_ACTION_REQUIRED = `APPROVE first-party hosted egress reaching TRAI`
 
 ## Historical verification snapshot
 
@@ -244,6 +271,16 @@ GLOBAL_FORMAT = `LEGACY_BASELINE_WARNINGS`; scoped candidate files pass
 RUNTIME_FREEZE = `PENDING_FINAL_MERGE_AND_BASELINE`
 HISTORICAL_RUNTIME_FREEZE = `6f22c5ef4119000318218f136f5416987a451877`
 PRODUCTION_READY_NOW = `NO`
+
+SCHEDULED_DIRECT_RUN = `34471357419`
+
+SCHEDULED_DIRECT_CRAWL = `5c6b9e90-b01f-4481-a7d1-ffb266a03225`
+
+SCHEDULED_DIRECT_RESULT = `7/7 sources, zero crawl errors, zero publications`
+
+SCHEDULED_DIRECT_DB = `7 completed source rows, zero crawl errors`
+
+SCHEDULED_DIRECT_SOAK_CREDIT = `EXCLUDED - relay candidate not deployed`
 
 No release claim is made from this intermediate state. The final candidate
 needs remote exact-head build, browser evidence, security evidence, and a new
@@ -479,3 +516,29 @@ SOAK_STATUS = `NOT_STARTED`
 MANUAL_BASELINE_ACCOUNTING = `EXCLUDED_FROM_SOAK_QUALIFICATION`
 
 PRODUCTION_READY_NOW = `NO - FRESH BASELINE REQUIRED`
+
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+CLOUDFLARE_PROBE = `PASS - temporary Worker, 20/20 fixed-target requests`
+
+TRAI_PROBE_RESULT = `HTTP 200, official bytes, zero redirects`
+
+SEBI_CONTROL_RESULT = `HTTP 200, official bytes, zero redirects`
+
+SELECTED_ZERO_COST_PATH = `Cloudflare Workers Free, pending permanent account`
+
+MONTHLY_COST = `₹0`
+
+PRODUCTION_RELAY = `NOT_LIVE - permanent endpoint and secret unavailable`
+
+FULL_CRAWL_RUNS = `0`
+
+BASELINE_RESULT = `BLOCKED - no fresh 7/7 crawl`
+
+NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED`
+
+FINAL_SOAK_STARTED = `NO`
+
+PRODUCTION_READY_NOW = `NO`

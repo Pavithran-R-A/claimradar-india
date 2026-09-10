@@ -11,6 +11,7 @@ import { parseRssItem } from '../../extraction/rss.js';
 import { extractHtmlContent } from '../../extraction/html.js';
 import { HttpClient } from '../../http/client.js';
 import { sha256 } from '../../http/hash.js';
+import type { CloudflareRelayConfig } from '../../http/types.js';
 
 export class BaseRssAdapter implements SourceAdapter {
   public readonly sourceKey: string;
@@ -112,6 +113,7 @@ export class BaseRssAdapter implements SourceAdapter {
         publishedAt: document.publishedAt,
         dates: extracted.dates,
         pdfLinks: extracted.pdfLinks,
+        transport: result.transport,
         ...extracted.metadata,
       },
     };
@@ -141,6 +143,7 @@ export class BaseRssAdapter implements SourceAdapter {
         latencyMs: Date.now() - start,
         statusCode: result.statusCode,
         feedValid: isRss,
+        transport: result.transport,
       };
     } catch (err) {
       return {
@@ -156,9 +159,15 @@ export class BaseRssAdapter implements SourceAdapter {
   }
 
   protected createHttpClient(context: CrawlContext): HttpClient {
-    const options: { userAgent: string; defaultTimeoutMs: number; contactEmail?: string } = {
+    const options: {
+      userAgent: string;
+      defaultTimeoutMs: number;
+      contactEmail?: string;
+      relay?: CloudflareRelayConfig;
+    } = {
       userAgent: context.userAgent,
       defaultTimeoutMs: context.timeoutMs,
+      ...(context.traiRelay !== undefined ? { relay: context.traiRelay } : {}),
     };
     if (context.contactEmail !== undefined) {
       options.contactEmail = context.contactEmail;

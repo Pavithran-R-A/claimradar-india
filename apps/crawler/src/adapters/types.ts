@@ -1,9 +1,12 @@
+import type { CloudflareRelayConfig, FetchTransport } from '../http/types.js';
+
 export interface CrawlContext {
   runId: string;
   dryRun: boolean;
   userAgent: string;
   contactEmail?: string;
   timeoutMs: number;
+  traiRelay?: CloudflareRelayConfig;
 }
 
 export interface DiscoveredDocument {
@@ -33,6 +36,7 @@ export interface SourceHealthResult {
   statusCode?: number;
   error?: string;
   feedValid?: boolean;
+  transport?: FetchTransport;
 }
 
 export interface SourceAdapter {
