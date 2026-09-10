@@ -11,6 +11,11 @@ import type { FetchRequest, FetchResult, RateLimitConfig } from './types.js';
 
 const DEFAULT_MAX_REDIRECTS = 2;
 const DEFAULT_MAX_BODY_SIZE = 50 * 1024 * 1024; // 50 MB
+const DEFAULT_CONNECT_TIMEOUT_MS = 30_000;
+const DEFAULT_HTTP_MAX_RETRIES = 3;
+const MAX_HTTP_MAX_RETRIES = 4;
+const DEFAULT_RETRY_BASE_DELAY_MS = 1_000;
+const DEFAULT_RETRY_MAX_DELAY_MS = 5_000;
 
 /**
  * Safe undici Agent that validates the resolved IP at connection time,
@@ -18,6 +23,9 @@ const DEFAULT_MAX_BODY_SIZE = 50 * 1024 * 1024; // 50 MB
  */
 const safeAgent = new Agent({
   connect: {
+    // Undici's default connect timeout is 10s. Official government hosts can
+    // take longer to establish a connection from hosted runners.
+    timeout: DEFAULT_CONNECT_TIMEOUT_MS,
     lookup: (hostname, options, callback) => {
       dnsLookup(
         hostname,
@@ -47,16 +55,45 @@ const safeAgent = new Agent({
   },
 });
 
+export function isRetryableFetchError(error: unknown): boolean {
+  return (
+    error instanceof FetchError &&
+    (error.category === 'network_error' || error.category === 'timeout')
+  );
+}
+
 export class HttpClient {
   private readonly userAgent: string;
   private readonly contactEmail: string | undefined;
   private readonly defaultTimeoutMs: number;
+  private readonly maxRetries: number;
+  private readonly retryBaseDelayMs: number;
+  private readonly retryMaxDelayMs: number;
   private readonly rateLimiter = new RateLimiter();
 
-  constructor(options: { userAgent: string; contactEmail?: string; defaultTimeoutMs: number }) {
+  constructor(options: {
+    userAgent: string;
+    contactEmail?: string;
+    defaultTimeoutMs: number;
+    maxRetries?: number;
+    retryBaseDelayMs?: number;
+    retryMaxDelayMs?: number;
+  }) {
     this.userAgent = options.userAgent;
     this.contactEmail = options.contactEmail;
     this.defaultTimeoutMs = options.defaultTimeoutMs;
+    this.maxRetries = Math.min(
+      MAX_HTTP_MAX_RETRIES,
+      Math.max(0, Math.floor(options.maxRetries ?? DEFAULT_HTTP_MAX_RETRIES)),
+    );
+    this.retryBaseDelayMs = Math.max(
+      0,
+      options.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS,
+    );
+    this.retryMaxDelayMs = Math.max(
+      this.retryBaseDelayMs,
+      options.retryMaxDelayMs ?? DEFAULT_RETRY_MAX_DELAY_MS,
+    );
   }
 
   async fetch(req: FetchRequest, rateLimitConfig?: RateLimitConfig): Promise<FetchResult> {
@@ -112,14 +149,10 @@ export class HttpClient {
       const result = await retry(
         () => this.executeRequest(url, req.method ?? 'GET', headers, timeoutMs, req.maxRedirects),
         {
-          maxRetries: 2,
-          baseDelay: 1000,
-          shouldRetry: (error) => {
-            if (error instanceof FetchError) {
-              return error.category === 'network_error' || error.category === 'timeout';
-            }
-            return true;
-          },
+          maxRetries: this.maxRetries,
+          baseDelay: this.retryBaseDelayMs,
+          maxDelay: this.retryMaxDelayMs,
+          shouldRetry: isRetryableFetchError,
         },
       );
 

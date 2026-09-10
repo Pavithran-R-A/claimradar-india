@@ -24,6 +24,11 @@ describe('Failure category classification', () => {
   it('classifies DNS, timeout, and connection errors', () => {
     expect(classifyError('getaddrinfo ENOTFOUND feeds.example.gov.in')).toBe('DNS_ERROR');
     expect(classifyError('UND_ERR_HEADERS_TIMEOUT')).toBe('TIMEOUT');
+    expect(
+      classifyError(
+        'Connect Timeout Error (attempted address: www.trai.gov.in:443, timeout: 10000ms)',
+      ),
+    ).toBe('TIMEOUT');
     expect(classifyError('fetch failed: ECONNRESET')).toBe('CONNECTION_ERROR');
     expect(classifyError('socket hang up')).toBe('CONNECTION_ERROR');
   });

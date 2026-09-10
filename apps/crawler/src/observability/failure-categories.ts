@@ -82,8 +82,12 @@ export function classifyError(message?: string | null, statusCode?: number): Fai
   if (!message) return 'UNKNOWN';
   const lower = message.toLowerCase();
 
-  // Explicit HTTP status embedded in message, e.g. "HTTP 403 Forbidden"
-  const statusMatch = /\b(?:http\s*)?([45]\d\d)\b/.exec(lower);
+  // Explicit HTTP status embedded in a message. Do not treat arbitrary
+  // three-digit values such as the HTTPS port (":443") as a status code.
+  const statusMatch =
+    /\b(?:http\s*|status(?:\s*code)?\s*[:=]?\s*|response(?:\s+status(?:\s*code)?)?\s*[:=]?\s*|(?:returned|received|got)\s+)([45]\d{2})\b/.exec(
+      lower,
+    );
   if (statusMatch) {
     const code = Number(statusMatch[1]);
     if (code === 429) return 'RATE_LIMITED';
