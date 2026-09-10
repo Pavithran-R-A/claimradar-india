@@ -4,10 +4,12 @@ const MAX_BODY_BYTES = 50 * 1024 * 1024;
 const MAX_CLOCK_SKEW_SECONDS = 300;
 const RELAY_PATH = '/fetch';
 
-function json(body, status) {
+function json(body, status, relayError) {
+  const headers = { 'content-type': 'application/json', 'cache-control': 'no-store' };
+  if (relayError) headers['x-claimradar-relay-error'] = relayError;
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+    headers,
   });
 }
 
@@ -169,14 +171,15 @@ export async function handleRequest(request, env, fetchImpl = fetch) {
       if (upstream.status < 300 || upstream.status >= 400 || !upstream.headers.get('location')) {
         return safeResponse(upstream);
       }
-      if (redirect === MAX_REDIRECTS) return json({ error: 'Too many redirects' }, 502);
+      if (redirect === MAX_REDIRECTS)
+        return json({ error: 'Too many redirects' }, 502, 'POLICY_BLOCKED');
       const nextUrl = new URL(upstream.headers.get('location'), upstreamUrl);
       if (
         nextUrl.protocol !== 'https:' ||
         nextUrl.hostname !== ALLOWED_HOST ||
         !isAllowedTarget(`${nextUrl.pathname}${nextUrl.search}`)
       ) {
-        return json({ error: 'Redirect blocked' }, 502);
+        return json({ error: 'Redirect blocked' }, 502, 'POLICY_BLOCKED');
       }
       upstreamUrl = nextUrl.href;
       await upstream.body?.cancel();

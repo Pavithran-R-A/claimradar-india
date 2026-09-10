@@ -388,3 +388,19 @@ Updated: `2026-09-10`.
 
 The merged candidate remains unchanged.
 No scheduled run qualifies yet.
+
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+| Gate                        | Status          | Evidence                                   |
+| --------------------------- | --------------- | ------------------------------------------ |
+| Cloudflare temporary probe  | `PASS`          | 20/20 fixed-target requests                |
+| TRAI and SEBI probe routes  | `PASS`          | HTTP 200, official bytes, zero redirects   |
+| Permanent Worker deployment | `NOT_AVAILABLE` | No permanent account credentials present   |
+| Production relay            | `NOT_LIVE`      | Endpoint and secret not configured         |
+| Fresh staging baseline      | `BLOCKED`       | Requires live relay and exact current main |
+| Final soak                  | `NOT_STARTED`   | No successful fresh baseline               |
+
+The relay implementation is local only.
+It remains unpushed and unqualified.

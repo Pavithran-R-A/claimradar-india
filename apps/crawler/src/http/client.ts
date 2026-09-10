@@ -455,10 +455,16 @@ export class HttpClient {
       const category =
         relayError === 'TIMEOUT'
           ? 'timeout'
-          : relayError === 'DNS_ERROR' || relayError === 'NETWORK_ERROR'
+          : relayError === 'DNS_ERROR' ||
+              relayError === 'NETWORK_ERROR' ||
+              relayError === 'POLICY_BLOCKED'
             ? 'network_error'
             : 'network_error';
-      throw new FetchError(`Cloudflare relay ${relayError}`, category, originalUrl);
+      throw new FetchError(
+        `Cloudflare relay ${relayError.toLowerCase().replaceAll('_', ' ')}`,
+        category,
+        originalUrl,
+      );
     }
 
     if (response.statusCode >= 400) {

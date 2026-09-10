@@ -123,5 +123,6 @@ describe('Cloudflare TRAI relay security boundary', () => {
     );
 
     expect(response.status).toBe(502);
+    expect(response.headers.get('x-claimradar-relay-error')).toBe('POLICY_BLOCKED');
   });
 });

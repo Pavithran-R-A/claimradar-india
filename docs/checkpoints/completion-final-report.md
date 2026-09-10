@@ -506,3 +506,29 @@ SOAK_STATUS = `NOT_STARTED`
 MANUAL_BASELINE_ACCOUNTING = `EXCLUDED_FROM_SOAK_QUALIFICATION`
 
 PRODUCTION_READY_NOW = `NO - FRESH BASELINE REQUIRED`
+
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+CLOUDFLARE_PROBE = `PASS - temporary Worker, 20/20 fixed-target requests`
+
+TRAI_PROBE_RESULT = `HTTP 200, official bytes, zero redirects`
+
+SEBI_CONTROL_RESULT = `HTTP 200, official bytes, zero redirects`
+
+SELECTED_ZERO_COST_PATH = `Cloudflare Workers Free, pending permanent account`
+
+MONTHLY_COST = `₹0`
+
+PRODUCTION_RELAY = `NOT_LIVE - permanent endpoint and secret unavailable`
+
+FULL_CRAWL_RUNS = `0`
+
+BASELINE_RESULT = `BLOCKED - no fresh 7/7 crawl`
+
+NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED`
+
+FINAL_SOAK_STARTED = `NO`
+
+PRODUCTION_READY_NOW = `NO`

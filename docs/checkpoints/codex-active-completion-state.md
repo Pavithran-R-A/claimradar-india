@@ -244,6 +244,20 @@ Updated: 2026-09-09
 - RUNTIME_FREEZE_STATUS: `PENDING_FINAL_MERGE_AND_BASELINE`.
 - HUMAN_ACTION: approve final merge of PR #4.
 
+## Zero-cost hosted egress evaluation
+
+Updated: `2026-09-10`.
+
+- Cloudflare temporary Worker probe: `PASS`, 20/20 fixed-target requests.
+- Probe coverage: TRAI RSS, TRAI apex RSS, SEBI RSS, and SEBI notices.
+- Probe result: HTTP 200, official bytes, zero redirects, all rounds.
+- Permanent Cloudflare deployment: `NOT_AVAILABLE` in this workspace.
+- Production relay: `NOT_LIVE`; no permanent endpoint or secret configured.
+- Full staging crawls: `NOT_RUN`; no valid fresh baseline exists.
+- Runtime freeze: `NOT_ESTABLISHED`; relay integration remains local-only.
+- Soak: `NOT_STARTED`; manual diagnostics remain excluded.
+- Current verdict: `BLOCKED` pending permanent free Cloudflare account setup.
+
 ## UI perfection merge and fresh baseline
 
 Updated: 2026-09-10

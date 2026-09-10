@@ -5,6 +5,7 @@ import { createAdminClient } from '@claimradar/database';
 import type { Source } from '@claimradar/database';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type { IDatabaseWriter } from './pipeline/db-writer.js';
+import type { SourceHealthResult } from './adapters/types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyClient = any;
@@ -92,6 +93,7 @@ async function main() {
         ok: boolean;
         latencyMs: number;
         category?: string;
+        transport?: SourceHealthResult['transport'];
       }> = [];
       let failures = 0;
       let writer: InstanceType<typeof DatabaseWriter> | null = null;
@@ -141,6 +143,7 @@ async function main() {
             ok: health.ok,
             latencyMs: health.latencyMs,
             ...(category !== undefined ? { category } : {}),
+            ...(health.transport !== undefined ? { transport: health.transport } : {}),
           });
           if (!health.ok) {
             failures++;
@@ -162,6 +165,7 @@ async function main() {
                 details: {
                   latencyMs: health.latencyMs,
                   ...(category !== undefined ? { category } : {}),
+                  ...(health.transport !== undefined ? { transport: health.transport } : {}),
                   ...(health.error !== undefined ? { error: health.error } : {}),
                 },
               });

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { HttpClient } from '../../src/http/client.js';
 import { FetchError } from '../../src/http/types.js';
+import { crawlerEnvSchema } from '../../src/env.js';
+import { getTraiRelayTarget } from '../../src/http/cloudflare-relay.js';
 
 function response(
   statusCode: number,
@@ -20,6 +22,23 @@ function response(
 }
 
 describe('Cloudflare TRAI relay fallback', () => {
+  it('allows only HTTPS official TRAI targets', () => {
+    expect(getTraiRelayTarget('https://www.trai.gov.in/rss.xml')).toBe('/rss.xml');
+    expect(getTraiRelayTarget('http://www.trai.gov.in/rss.xml')).toBeNull();
+    expect(getTraiRelayTarget('https://www.trai.gov.in/private')).toBeNull();
+  });
+
+  it('treats empty workflow secrets as disabled relay configuration', () => {
+    expect(
+      crawlerEnvSchema.parse({
+        APP_ENV: 'staging',
+        SUPABASE_URL: 'https://example.supabase.co',
+        TRAI_RELAY_URL: '',
+        TRAI_RELAY_SHARED_SECRET: '',
+      }).TRAI_RELAY_URL,
+    ).toBeUndefined();
+  });
+
   it('uses the signed relay after a bounded direct timeout', async () => {
     const calls: string[] = [];
     const relayHeaders: Record<string, string> = {};
@@ -98,6 +117,32 @@ describe('Cloudflare TRAI relay fallback', () => {
       client.fetch({ url: 'https://www.trai.gov.in/rss.xml', method: 'GET' }),
     ).rejects.toMatchObject({ category: 'timeout' });
     expect(calls).toHaveLength(4);
+  });
+
+  it('does not classify relay policy failures as HTTP failures', async () => {
+    let calls = 0;
+    const client = new HttpClient({
+      userAgent: 'ClaimRadar test',
+      defaultTimeoutMs: 100,
+      maxRetries: 0,
+      relay: {
+        endpoint: 'https://relay.example.test/fetch',
+        sharedSecret: 'a'.repeat(32),
+      },
+      requestExecutor: async () => {
+        calls += 1;
+        if (calls === 1) throw new Error('connect timed out');
+        return response(502, 'blocked', {
+          'content-type': 'application/json',
+          'x-claimradar-relay-error': 'POLICY_BLOCKED',
+        });
+      },
+    });
+
+    await expect(
+      client.fetch({ url: 'https://www.trai.gov.in/rss.xml', method: 'GET' }),
+    ).rejects.toMatchObject({ category: 'network_error', statusCode: undefined });
+    expect(calls).toBe(2);
   });
 
   it('keeps SSRF protection before any relay attempt', async () => {

@@ -10,7 +10,7 @@ export function getTraiRelayTarget(url: string): string | null {
     return null;
   }
 
-  if (!['http:', 'https:'].includes(parsed.protocol)) return null;
+  if (parsed.protocol !== 'https:') return null;
   if (!TRAI_HOSTS.has(parsed.hostname.toLowerCase())) return null;
 
   const allowedPath = parsed.pathname === '/rss.xml' || parsed.pathname.startsWith('/consumer/');
