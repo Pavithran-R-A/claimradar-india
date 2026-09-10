@@ -21,6 +21,13 @@ Updated: 2026-09-10
 - CONNECTIVITY_ROOT_CAUSE: GitHub runner TCP timeout to shared TRAI IPv4 `164.100.85.161`; both official hostnames resolve there.
 - CONNECTIVITY_FIX: 30-second connect timeout, bounded four-retry ceiling, capped jittered backoff.
 - CLASSIFICATION_FIX: timeout with `:443` is `TIMEOUT`, never `HTTP_4XX`.
+- RUNNER_MATRIX_GHA_RUN: `34455249230`; nine independent jobs completed.
+- RUNNER_MATRIX_RESULT: Ubuntu, Windows, and macOS all failed TRAI; all passed SEBI.
+- RUNNER_MATRIX_TRAI: `164.100.85.161`, IPv4 only; TCP, TLS, HEAD, and GET timed out.
+- RUNNER_MATRIX_SEBI: `202.191.181.30`, `202.191.181.158`; strict TLS and GET passed.
+- RELIABLE_STANDARD_RUNNER: `NONE`.
+- TEMPORARY_MATRIX_WORKFLOW: removed after sanitized artifact capture.
+- HUMAN_ACTION_REQUIRED: first-party runner with reliable TRAI reachability.
 - MANUAL_WORKFLOW_DISPATCH_QUALIFICATION: `EXCLUDED`.
 - LATEST_SCHEDULED_RUN: `34438700011`, event `schedule`, head `cc66de7485e6b3369d8bb0c8455184e01bb5db9d`, nominal slot `2026-09-10T00:17:00Z`.
 - LATEST_SCHEDULED_RESULT: `FAIL`; 4/7 sources succeeded, SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, artifact retained.

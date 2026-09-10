@@ -15,6 +15,14 @@ Updated: 2026-09-10
 - Root cause: both official TRAI hostnames resolve to `164.100.85.161`; GitHub runner TCP connects time out.
 - Networking fix: explicit 30-second connect timeout; bounded four-retry ceiling; capped jittered backoff.
 - Classification fix: connect timeout is `TIMEOUT`, not `HTTP_4XX`.
+- Runner matrix: GHA `34455249230`, nine independent jobs completed.
+- Ubuntu, Windows, and macOS each failed TRAI connectivity three times.
+- All nine jobs passed SEBI RSS and public notices.
+- TRAI resolved IPv4 `164.100.85.161`; TCP, TLS, HEAD, and GET timed out.
+- SEBI resolved `202.191.181.30` and `202.191.181.158`; strict TLS and GET passed.
+- Reliable standard GitHub-hosted runner: none.
+- Temporary matrix workflow removed; sanitized artifacts retained.
+- Human action: provide an approved first-party runner reaching TRAI.
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
 - Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
