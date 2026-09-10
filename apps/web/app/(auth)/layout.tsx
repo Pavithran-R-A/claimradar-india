@@ -24,7 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Main Auth Content */}
       <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-card">
+          <div className="rounded-xl border border-border border-t-2 border-t-trust-primary bg-surface p-6 shadow-card sm:p-8">
             {children}
           </div>
 

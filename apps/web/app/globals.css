@@ -15,6 +15,7 @@
   --c-surface: 255 255 255; /* #FFFFFF surface */
   --c-surface-strong: 240 239 234; /* #F0EFEA understated contrast surface */
   --c-border: #d9dad6; /* 1px hairline rule */
+  --c-border-strong: #b8bcb8;
   --c-text-primary: 21 23 26; /* #15171A primary ink */
   --c-text-secondary: 82 90 101; /* #525A65 secondary text (8.8:1 contrast) */
   --c-text-muted: 93 101 112; /* #5D6570 muted text (5.4:1 contrast) */
@@ -26,6 +27,10 @@
   --c-info: 33 78 128; /* #214E80 */
   --c-verified-background: rgba(35, 112, 90, 0.08);
   --c-deadline-background: rgba(180, 95, 6, 0.08);
+
+  /* Composition tokens */
+  --content-measure: 68ch;
+  --section-space: clamp(3.5rem, 7vw, 6.5rem);
 
   /* Motion Tokens */
   --motion-instant: 100ms;
@@ -46,6 +51,7 @@
   --c-surface: 255 255 255;
   --c-surface-strong: 240 239 234;
   --c-border: #d9dad6;
+  --c-border-strong: #b8bcb8;
   --c-text-primary: 21 23 26;
   --c-text-secondary: 82 90 101;
   --c-text-muted: 93 101 112;
@@ -65,6 +71,7 @@
   --c-surface: 30 36 45;
   --c-surface-strong: 38 45 56;
   --c-border: rgba(255, 255, 255, 0.1);
+  --c-border-strong: rgba(255, 255, 255, 0.24);
   --c-text-primary: 247 246 242;
   --c-text-secondary: 161 174 195;
   --c-text-muted: 112 119 130;
@@ -99,6 +106,34 @@ body {
 /* Editorial display typography */
 .font-display {
   font-family: var(--font-newsreader), Georgia, serif;
+}
+
+/* Shared editorial primitives. Keep these deliberately quiet. */
+.editorial-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgb(var(--c-trust-primary));
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.editorial-kicker::before {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.reading-measure {
+  max-width: var(--content-measure);
+}
+
+.hairline-rule {
+  border-color: var(--c-border);
 }
 
 /* ==========================================================================

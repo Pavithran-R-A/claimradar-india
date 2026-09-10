@@ -23,6 +23,7 @@ module.exports = {
         surface: 'rgb(var(--c-surface) / <alpha-value>)',
         'surface-strong': 'rgb(var(--c-surface-strong) / <alpha-value>)',
         border: 'var(--c-border)',
+        'border-strong': 'var(--c-border-strong)',
         'text-primary': 'rgb(var(--c-text-primary) / <alpha-value>)',
         'text-secondary': 'rgb(var(--c-text-secondary) / <alpha-value>)',
         'text-muted': 'rgb(var(--c-text-muted) / <alpha-value>)',

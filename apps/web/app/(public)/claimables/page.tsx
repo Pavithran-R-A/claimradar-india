@@ -83,6 +83,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       <header className="max-w-3xl">
+        <p className="editorial-kicker">Verified public record</p>
         <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-text-primary">
           Claimables Directory
         </h1>
@@ -98,7 +99,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
           {/* Desktop filter panel */}
           <aside className="hidden lg:block" aria-label="Directory filters">
-            <div className="sticky top-24 rounded-md border border-border bg-surface p-5">
+            <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
               <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
               <div className="space-y-4">
                 <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
