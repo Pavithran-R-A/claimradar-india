@@ -19,6 +19,15 @@ export interface FetchResult {
   contentHash: string;
   durationMs: number;
   wasCached: boolean;
+  transport: FetchTransport;
+}
+
+export type FetchTransport = 'DIRECT' | 'CLOUDFLARE_RELAY';
+
+export interface CloudflareRelayConfig {
+  endpoint: string;
+  sharedSecret: string;
+  timeoutMs?: number;
 }
 
 export interface CacheEntry {

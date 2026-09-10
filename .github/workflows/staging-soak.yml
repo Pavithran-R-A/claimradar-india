@@ -91,6 +91,9 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           CRAWLER_USER_AGENT: 'ClaimRadar India/1.0'
+          TRAI_RELAY_URL: ${{ secrets.TRAI_RELAY_URL }}
+          TRAI_RELAY_SHARED_SECRET: ${{ secrets.TRAI_RELAY_SHARED_SECRET }}
+          TRAI_RELAY_TIMEOUT_MS: '15000'
           LIVE_ADAPTERS_ENABLED: 'true'
           AI_DAILY_REQUEST_BUDGET: ${{ vars.AI_DAILY_REQUEST_BUDGET || '40' }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

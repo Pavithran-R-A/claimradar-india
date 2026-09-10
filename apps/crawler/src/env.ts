@@ -21,6 +21,13 @@ export const crawlerEnvSchema = z.object({
   LIVE_ADAPTERS_ENABLED: envBoolean(false),
   CRAWLER_CONCURRENCY: z.coerce.number().default(3),
   CRAWLER_REQUEST_TIMEOUT_MS: z.coerce.number().default(30000),
+  TRAI_RELAY_URL: z
+    .string()
+    .url()
+    .refine((value) => new URL(value).protocol === 'https:', 'TRAI relay must use HTTPS')
+    .optional(),
+  TRAI_RELAY_SHARED_SECRET: z.string().min(32).optional(),
+  TRAI_RELAY_TIMEOUT_MS: z.coerce.number().min(1000).max(30000).default(15000),
   AUTO_VERIFY_CLAIMABLES: envBoolean(false),
   ENABLE_BILLING: envBoolean(false),
   /** Staging must never notify real customers. */
@@ -34,6 +41,20 @@ export const crawlerEnvSchema = z.object({
 });
 
 export type CrawlerEnv = z.infer<typeof crawlerEnvSchema>;
+
+export function getTraiRelayConfig(env: CrawlerEnv) {
+  const endpoint = env.TRAI_RELAY_URL;
+  const sharedSecret = env.TRAI_RELAY_SHARED_SECRET;
+  if ((endpoint === undefined) !== (sharedSecret === undefined)) {
+    throw new Error('TRAI relay requires both URL and shared secret');
+  }
+  if (endpoint === undefined || sharedSecret === undefined) return undefined;
+  return {
+    endpoint,
+    sharedSecret,
+    timeoutMs: env.TRAI_RELAY_TIMEOUT_MS,
+  };
+}
 
 function readEnvFile(filePath: string): Record<string, string> {
   if (!existsSync(filePath)) return {};

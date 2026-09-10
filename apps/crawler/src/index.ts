@@ -1,5 +1,5 @@
 import { runPipeline } from './pipeline/index.js';
-import { loadCrawlerEnv } from './env.js';
+import { getTraiRelayConfig, loadCrawlerEnv } from './env.js';
 export { loadCrawlerEnv };
 import { createAdminClient } from '@claimradar/database';
 import type { Source } from '@claimradar/database';
@@ -83,6 +83,7 @@ async function main() {
         break;
       }
       const sources = rawSources as Source[];
+      const traiRelay = getTraiRelayConfig(env);
 
       const { getAdapter } = await import('./adapters/registry.js');
       const { DatabaseWriter } = await import('./pipeline/db-writer.js');
@@ -122,6 +123,9 @@ async function main() {
             dryRun: true,
             userAgent: env.CRAWLER_USER_AGENT,
             timeoutMs: env.CRAWLER_REQUEST_TIMEOUT_MS,
+            ...(source.id === 'trai-press-releases' && traiRelay !== undefined
+              ? { traiRelay }
+              : {}),
           };
           const health = await adapter.healthCheck(context);
           const category = health.ok

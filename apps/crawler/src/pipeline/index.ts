@@ -7,7 +7,7 @@
 import { randomUUID } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import * as path from 'node:path';
-import { loadCrawlerEnv } from '../env.js';
+import { getTraiRelayConfig, loadCrawlerEnv } from '../env.js';
 import { getAdapter } from '../adapters/registry.js';
 import type { CrawlContext } from '../adapters/types.js';
 import type { SourceDefinition } from '@claimradar/source-registry';
@@ -184,6 +184,7 @@ async function processSource(params: {
   try {
     const sourceDef = toSourceDefinition(source);
     const adapter = getAdapter(sourceDef);
+    const traiRelay = sourceDef.id === 'trai-press-releases' ? getTraiRelayConfig(env) : undefined;
 
     const context: CrawlContext = {
       runId,
@@ -193,6 +194,7 @@ async function processSource(params: {
       ...(env.CRAWLER_CONTACT_EMAIL !== undefined
         ? { contactEmail: env.CRAWLER_CONTACT_EMAIL }
         : {}),
+      ...(traiRelay !== undefined ? { traiRelay } : {}),
     };
 
     // 1. Discover documents
