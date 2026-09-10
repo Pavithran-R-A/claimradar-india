@@ -4,7 +4,7 @@ Updated: 2026-09-10
 
 ## Current authoritative status
 
-- Current main: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
+- Current main: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - Runtime candidate: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`; new freeze awaits a passing baseline.
 - Runtime-sensitive changes after candidate merge: none.

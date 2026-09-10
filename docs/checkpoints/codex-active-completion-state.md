@@ -4,8 +4,8 @@ Updated: 2026-09-10
 
 ## Current authoritative snapshot
 
-- CURRENT_HEAD: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
-- CURRENT_MAIN: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
+- CURRENT_HEAD: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
+- CURRENT_MAIN: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
 - CURRENT_PHASE: fresh staging baseline blocked; final soak not started.
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
 - RUNTIME_CANDIDATE_HEAD: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
