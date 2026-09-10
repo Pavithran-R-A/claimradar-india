@@ -86,10 +86,7 @@ export class HttpClient {
       MAX_HTTP_MAX_RETRIES,
       Math.max(0, Math.floor(options.maxRetries ?? DEFAULT_HTTP_MAX_RETRIES)),
     );
-    this.retryBaseDelayMs = Math.max(
-      0,
-      options.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS,
-    );
+    this.retryBaseDelayMs = Math.max(0, options.retryBaseDelayMs ?? DEFAULT_RETRY_BASE_DELAY_MS);
     this.retryMaxDelayMs = Math.max(
       this.retryBaseDelayMs,
       options.retryMaxDelayMs ?? DEFAULT_RETRY_MAX_DELAY_MS,

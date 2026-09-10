@@ -39,11 +39,13 @@ describe('HTTP client reliability policy', () => {
   });
 
   it('retries a timeout and network error, but not an HTTP response error', () => {
-    expect(isRetryableFetchError(new FetchError('timed out', 'timeout', 'https://example.com'))).toBe(
-      true,
-    );
     expect(
-      isRetryableFetchError(new FetchError('connection reset', 'network_error', 'https://example.com')),
+      isRetryableFetchError(new FetchError('timed out', 'timeout', 'https://example.com')),
+    ).toBe(true);
+    expect(
+      isRetryableFetchError(
+        new FetchError('connection reset', 'network_error', 'https://example.com'),
+      ),
     ).toBe(true);
     expect(
       isRetryableFetchError(new FetchError('HTTP 403', 'http_error', 'https://example.com', 403)),

@@ -47,7 +47,9 @@ function officialFamily(host) {
 async function resolveHost(host) {
   const started = Date.now();
   const [lookupResult, ipv4Result, ipv6Result] = await Promise.all([
-    dns.lookup(host, { all: true, verbatim: true }).catch((error) => ({ error: errorDetails(error) })),
+    dns
+      .lookup(host, { all: true, verbatim: true })
+      .catch((error) => ({ error: errorDetails(error) })),
     dns.resolve4(host).catch((error) => ({ error: errorDetails(error) })),
     dns.resolve6(host).catch((error) => ({ error: errorDetails(error) })),
   ]);
@@ -143,9 +145,16 @@ function requestOnce(urlString, method) {
         );
       },
     );
-    request.setTimeout(PROBE_TIMEOUT_MS, () => request.destroy(Object.assign(new Error('HTTP request timeout'), { code: 'ETIMEDOUT' })));
+    request.setTimeout(PROBE_TIMEOUT_MS, () =>
+      request.destroy(Object.assign(new Error('HTTP request timeout'), { code: 'ETIMEDOUT' })),
+    );
     request.once('error', (error) =>
-      resolve({ ok: false, method, durationMs: durationSince(started), error: errorDetails(error) }),
+      resolve({
+        ok: false,
+        method,
+        durationMs: durationSince(started),
+        error: errorDetails(error),
+      }),
     );
     request.end();
   });
@@ -166,7 +175,10 @@ async function traceRedirects(urlString, method) {
     } catch {
       return { hops, finalUrl: undefined, redirectError: 'invalid_location' };
     }
-    if (next.protocol !== 'https:' || officialFamily(next.hostname) !== officialFamily(new URL(current).hostname)) {
+    if (
+      next.protocol !== 'https:' ||
+      officialFamily(next.hostname) !== officialFamily(new URL(current).hostname)
+    ) {
       return { hops, finalUrl: undefined, redirectError: 'external_or_non_https_redirect' };
     }
     current = next.href;
@@ -190,7 +202,14 @@ async function probeHost(entry) {
       get: await traceRedirects(base, 'GET'),
     };
   }
-  return { host: entry.host, family: entry.family, dns: dnsResult, tcp, tls: tlsResults, endpoints };
+  return {
+    host: entry.host,
+    family: entry.family,
+    dns: dnsResult,
+    tcp,
+    tls: tlsResults,
+    endpoints,
+  };
 }
 
 const outputPath = process.env.PROBE_OUTPUT ?? 'github-source-connectivity.json';
