@@ -1,0 +1,41 @@
+name: Deploy ClaimRadar TRAI Relay
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy permanent TRAI relay
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+
+      - name: Verify Cloudflare authentication
+        run: npx --yes wrangler@4.130.0 whoami
+
+      - name: Deploy relay Worker
+        run: npx --yes wrangler@4.130.0 deploy --config infra/cloudflare/trai-relay/wrangler.jsonc
+
+      - name: Configure encrypted relay secret
+        env:
+          RELAY_SHARED_SECRET: ${{ secrets.TRAI_RELAY_SHARED_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$RELAY_SHARED_SECRET"
+          printf '%s' "$RELAY_SHARED_SECRET" | npx --yes wrangler@4.130.0 secret put RELAY_SHARED_SECRET --config infra/cloudflare/trai-relay/wrangler.jsonc
