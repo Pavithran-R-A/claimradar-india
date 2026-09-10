@@ -4,23 +4,30 @@ Updated: 2026-09-10
 
 ## Current authoritative snapshot
 
-- CURRENT_HEAD: runtime freeze plus checkpoint-only descendants; verify exact SHA from `origin/main`.
-- CURRENT_MAIN: runtime freeze plus checkpoint-only descendants; runtime code remains frozen.
+- CURRENT_HEAD: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
+- CURRENT_MAIN: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
 - CURRENT_PHASE: fresh staging baseline blocked; final soak not started.
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
-- RUNTIME_FREEZE_HEAD: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
-- POST_FREEZE_RUNTIME_SENSITIVE_DIFF: `EMPTY`; checkpoint documentation only.
-- POST_CHECKPOINT_CI: `PASS`; GHA run `34439358251` verified the current checkpoint-only head.
-- FRESH_BASELINE: `BLOCKED`; runs `34428249855`, `34428871150`, `34429825500`, `34430830404`.
-- BASELINE_FAILURE: latest diagnostic baseline attempts reached 6/7; TRAI timed out at `www.trai.gov.in:443`.
-- BASELINE_INVARIANTS: every attempt reached 6/7 sources, zero unexpected errors, zero publications, sanitized artifacts retained.
+- RUNTIME_CANDIDATE_HEAD: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
+- NEW_RUNTIME_FREEZE_HEAD: `NOT_ESTABLISHED; fresh baseline failed`.
+- POST_MERGE_RUNTIME_SENSITIVE_DIFF: `EMPTY` after `ddc5a343`; no later runtime edits.
+- EXACT_HEAD_CI: `PASS`; GHA run `34444804984` passed Node 24 gates.
+- VERCEL_EXACT_HEAD: `PASS`; Preview deployment reports success.
+- FRESH_BASELINE: `BLOCKED`; manual GHA run `34445580296`.
+- BASELINE_CRAWL_RUN: `a47aa01f-d400-4286-8f15-51d006164ae4`.
+- BASELINE_FAILURE: TRAI timed out at `www.trai.gov.in:443` after bounded retries.
+- BASELINE_INVARIANTS: 6/7 sources, zero unexpected errors, zero publications, sanitized artifact retained.
+- CONNECTIVITY_PROBE: GHA run `34445314939`; sanitized artifact retained.
+- CONNECTIVITY_ROOT_CAUSE: GitHub runner TCP timeout to shared TRAI IPv4 `164.100.85.161`; both official hostnames resolve there.
+- CONNECTIVITY_FIX: 30-second connect timeout, bounded four-retry ceiling, capped jittered backoff.
+- CLASSIFICATION_FIX: timeout with `:443` is `TIMEOUT`, never `HTTP_4XX`.
 - MANUAL_WORKFLOW_DISPATCH_QUALIFICATION: `EXCLUDED`.
 - LATEST_SCHEDULED_RUN: `34438700011`, event `schedule`, head `cc66de7485e6b3369d8bb0c8455184e01bb5db9d`, nominal slot `2026-09-10T00:17:00Z`.
 - LATEST_SCHEDULED_RESULT: `FAIL`; 4/7 sources succeeded, SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, artifact retained.
 - SCHEDULED_RUN_34438700011_QUALIFICATION: `EXCLUDED`; no successful fresh baseline existed beforehand.
 - SCHEDULED_RUNS_AFTER_UI_MERGE: `34438700011` failed; no qualifying runs.
-- NEXT_ACTION: rerun the manual baseline after TRAI connectivity recovers.
-- PRODUCTION_READY_NOW: `NO - FRESH BASELINE REQUIRED`.
+- NEXT_ACTION: use a first-party runner with TRAI reachability, then rerun baseline.
+- PRODUCTION_READY_NOW: `NO - EXTERNAL NETWORK BLOCKER; BASELINE REQUIRED`.
 
 ## Historical repository record
 

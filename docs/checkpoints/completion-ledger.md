@@ -4,17 +4,23 @@ Updated: 2026-09-10
 
 ## Current authoritative status
 
-- Current main: runtime freeze plus checkpoint-only descendants; verify exact SHA from `origin/main`.
+- Current main: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
-- Runtime-sensitive changes after freeze: none.
-- Current-main CI: `PASS`; GHA run `34439358251` verified the current checkpoint-only head.
-- Fresh baseline: blocked; diagnostic attempts reached 6/7, with TRAI connection timeout.
+- Runtime candidate: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`; new freeze awaits a passing baseline.
+- Runtime-sensitive changes after candidate merge: none.
+- Current candidate CI: `PASS`; GHA run `34444804984` passed Node 24 gates.
+- GitHub probe: `PASS`; GHA run `34445314939`, sanitized artifact retained.
+- Fresh baseline: blocked; GHA run `34445580296`, crawl `a47aa01f-d400-4286-8f15-51d006164ae4`.
+- Baseline result: 6/7 sources; TRAI TCP timeout after bounded retries.
+- Root cause: both official TRAI hostnames resolve to `164.100.85.161`; GitHub runner TCP connects time out.
+- Networking fix: explicit 30-second connect timeout; bounded four-retry ceiling; capped jittered backoff.
+- Classification fix: connect timeout is `TIMEOUT`, not `HTTP_4XX`.
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
 - Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
 - Scheduled qualification: no credit; the required fresh baseline was not successful.
 - Final soak: not started.
-- Production readiness: no; fresh baseline remains required.
+- Production readiness: no; external runner-network blocker remains.
 
 ## Historical baseline records
 

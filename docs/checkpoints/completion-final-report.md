@@ -4,18 +4,26 @@ Date: 2026-09-10
 
 ## Current authoritative status
 
-CURRENT_MAIN = `Runtime freeze plus checkpoint-only descendants; verify exact SHA from origin/main`
-RUNTIME_FREEZE_HEAD = `625bc9f922dd3a7b8eea67681ecedfc77e329a45`
-POST_FREEZE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
-POST_CHECKPOINT_CI = `PASS` - GHA run `34439358251` verified the current checkpoint-only head
+CURRENT_MAIN = `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`
+RUNTIME_CANDIDATE_HEAD = `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`
+NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED - fresh baseline failed`
+POST_MERGE_RUNTIME_SENSITIVE_DIFF = `EMPTY`
+EXACT_HEAD_CI = `PASS` - GHA run `34444804984` passed Node 24 gates
+GITHUB_RUNNER_PROBE = `PASS` - GHA run `34445314939`; sanitized artifact retained
 FRESH_BASELINE = `BLOCKED`
-BASELINE_FAILURE = `Diagnostic attempts reached 6/7; TRAI connection timeout at www.trai.gov.in:443`
+BASELINE_GHA_RUN = `34445580296`
+BASELINE_CRAWL_RUN = `a47aa01f-d400-4286-8f15-51d006164ae4`
+BASELINE_FAILURE = `TRAI TCP connection timeout at www.trai.gov.in:443 after bounded retries`
+BASELINE_RESULT = `6/7 sources; zero unexpected errors; zero publications; artifact retained`
+ROOT_CAUSE = `GitHub runner TCP timeout to shared TRAI IPv4 164.100.85.161`
+NETWORKING_FIX = `30-second connect timeout; bounded four-retry ceiling; capped jittered backoff`
+ERROR_CLASSIFICATION_FIX = `Timeout with :443 classified as TIMEOUT, never HTTP_4XX`
 MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`
 LATEST_SCHEDULED_RUN = `34438700011` at nominal slot `2026-09-10T00:17:00Z`
 LATEST_SCHEDULED_RESULT = `FAIL` - 4/7 sources; SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications
 SCHEDULED_RUN_34438700011_QUALIFICATION = `EXCLUDED` - fresh baseline was not successful
 FINAL_SOAK = `NOT_STARTED`
-PRODUCTION_READY_NOW = `NO - FRESH BASELINE REQUIRED`
+PRODUCTION_READY_NOW = `NO - EXTERNAL NETWORK BLOCKER; FRESH BASELINE REQUIRED`
 
 ## Historical verification snapshot
 
