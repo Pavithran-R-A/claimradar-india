@@ -2,16 +2,31 @@
 
 Updated: 2026-09-10
 
+## Permanent relay and fresh baseline checkpoint
+
+- Runtime freeze: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- Permanent Worker: `claimradar-trai-relay`; deployment GHA `34507290715` passed.
+- Relay qualification: four probe runs, `20/20` signed requests passed.
+- Fresh baseline: GHA `34509256561`, workflow dispatch, baseline-only.
+- Baseline crawl: `a32c7356-8254-4390-9a38-fb0a04fec1aa`.
+- Baseline: PASS, 7/7 sources, 126 discovered, 126 fetched.
+- Safety: zero crawl errors, zero unexpected errors, zero publications.
+- Guards: staging enabled; billing, auto-verification, and notifications disabled.
+- Database: seven source rows, 523 source documents, zero crawl errors, zero new claimables.
+- Artifact: sanitized `staging-soak-summary` retained.
+- Final soak: not started; await the next genuine scheduled slot.
+- Production readiness: NO; pending final 72-hour soak.
+
 ## Current authoritative status
 
-- Current main: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
+- Current main: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
 - UI merge freeze: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
-- Runtime candidate: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`; new freeze awaits a passing baseline.
+- Runtime candidate: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`; new freeze established after passing baseline.
 - Runtime-sensitive changes after candidate merge: none.
 - Current candidate CI: `PASS`; GHA run `34444804984` passed Node 24 gates.
 - GitHub probe: `PASS`; GHA run `34445314939`, sanitized artifact retained.
-- Fresh baseline: blocked; GHA run `34445580296`, crawl `a47aa01f-d400-4286-8f15-51d006164ae4`.
-- Baseline result: 6/7 sources; TRAI TCP timeout after bounded retries.
+- Fresh baseline: PASS; GHA run `34509256561`, crawl `a32c7356-8254-4390-9a38-fb0a04fec1aa`.
+- Baseline result: 7/7 sources; zero crawl errors, unexpected errors, and publications.
 - Root cause: both official TRAI hostnames resolve to `164.100.85.161`; GitHub runner TCP connects time out.
 - Networking fix: explicit 30-second connect timeout; bounded four-retry ceiling; capped jittered backoff.
 - Classification fix: connect timeout is `TIMEOUT`, not `HTTP_4XX`.
@@ -22,13 +37,13 @@ Updated: 2026-09-10
 - SEBI resolved `202.191.181.30` and `202.191.181.158`; strict TLS and GET passed.
 - Reliable standard GitHub-hosted runner: none.
 - Temporary matrix workflow removed; sanitized artifacts retained.
-- Human action: provide an approved first-party runner reaching TRAI.
+- Human action: none for baseline; final soak remains required.
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution: `34438700011`, nominal slot `2026-09-10T00:17:00Z`, failed at 4/7 sources.
 - Scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
 - Scheduled qualification: no credit; the required fresh baseline was not successful.
-- Final soak: not started.
-- Production readiness: no; external runner-network blocker remains.
+- Final soak: not started; await the next genuine schedule.
+- Production readiness: no; pending final 72-hour soak.
 
 ## Existing cloud egress investigation
 
