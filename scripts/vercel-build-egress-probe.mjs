@@ -108,16 +108,21 @@ async function probe(target) {
   };
 }
 
-const rounds = [];
 for (let round = 1; round <= 3; round += 1) {
-  rounds.push({ round, targets: await Promise.all(TARGETS.map(probe)) });
+  const targets = await Promise.all(TARGETS.map(probe));
+  for (const target of targets) {
+    console.log(
+      JSON.stringify({
+        diagnostic: 'vercel-build-fixed-official-target',
+        platform: 'vercel-build-environment',
+        node: process.version,
+        round,
+        id: target.id,
+        url: target.url,
+        dns: target.dns,
+        head: target.head,
+        get: target.get,
+      }),
+    );
+  }
 }
-
-console.log(
-  JSON.stringify({
-    diagnostic: 'vercel-build-fixed-official-targets',
-    platform: 'vercel-build-environment',
-    node: process.version,
-    rounds,
-  }),
-);
