@@ -575,6 +575,7 @@ NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED`
 FINAL_SOAK_STARTED = `NO`
 
 PRODUCTION_READY_NOW = `NO`
+
 ## Current soak monitor checkpoint
 
 Updated: `2026-09-10T23:00:00Z`.
