@@ -1,5 +1,24 @@
 # ClaimRadar India Active Completion State
 
+## Current soak monitor checkpoint
+
+Updated: 2026-09-10T23:00:00Z.
+
+- CURRENT_MAIN: `f822c175feb92bf40390b67a553bbf4bee9feee1`.
+- RUNTIME_FREEZE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- RUNTIME_SENSITIVE_DIFF: `EMPTY` from the runtime freeze to current main.
+- BASELINE_GHA_RUN: `34509256561`; workflow_dispatch and baseline-only.
+- BASELINE_CRAWL_RUN: `a32c7356-8254-4390-9a38-fb0a04fec1aa`; `PASS`, 7/7 sources.
+- LATEST_SCHEDULED_RUN: `34529249916`; event `schedule`; `PASS`.
+- LATEST_SCHEDULED_CRAWL: `6419702c-5523-4bc5-a1b5-502a2b0ac939`; 7/7, zero errors, zero publications.
+- LATEST_SCHEDULED_NOMINAL_SLOT: `2026-09-10T18:17:00Z`.
+- LATEST_CHECKPOINT_MERGE: `f822c175feb92bf40390b67a553bbf4bee9feee1` at `2026-09-10T19:49:58Z`.
+- LATEST_SCHEDULED_CLASSIFICATION: `PRE_CHECKPOINT_NOMINAL_SLOT`; excluded permanently.
+- FIRST_ELIGIBLE_NOMINAL_SLOT: `2026-09-11T00:17:00Z`.
+- FINAL_SOAK: `NOT_STARTED`; no qualifying scheduled run exists.
+- MANUAL_RUNS: excluded from soak credit.
+- PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
+
 Updated: 2026-09-10T19:38:29Z
 
 ## Permanent relay and fresh baseline
