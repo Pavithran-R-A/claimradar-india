@@ -45,7 +45,8 @@ Updated: 2026-09-10
 - Existing cloud egress: blocked for TRAI.
 - Temporary Vercel files: removed.
 - Clean Vercel deployment: `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
-- Temporary Supabase function deletion: unavailable here.
+- Temporary Supabase function: version 2; JWT verification enabled.
+- Supabase function deletion: unavailable here.
 - No relay selected; no crawler semantics changed.
 - No physical device is required.
 

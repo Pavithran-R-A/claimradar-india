@@ -50,7 +50,8 @@ Updated: 2026-09-10
 - SUPABASE_SEBI: GET passed; apex RSS redirected.
 - CLOUD_EGRESS_BLOCKED: `YES` for existing projects.
 - VERCEL_TEMPORARY_CODE: removed; clean deployment `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
-- SUPABASE_TEMPORARY_FUNCTION: deletion unavailable through current control surface.
+- SUPABASE_TEMPORARY_FUNCTION: active version 2; deletion unavailable here.
+- SUPABASE_FUNCTION_AUTH: JWT verification enabled before handoff.
 - SUPABASE_FUNCTION_SCOPE: fixed official targets; no caller URL; no secrets.
 - NO_RELAY_SELECTED: existing cloud paths failed TRAI.
 - EXTRA_PHYSICAL_DEVICE_REQUIRED: `NO`.
