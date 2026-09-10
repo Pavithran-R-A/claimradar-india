@@ -1,0 +1,3 @@
+{
+  "buildCommand": "node ../../scripts/vercel-build-egress-probe.mjs && pnpm build"
+}
