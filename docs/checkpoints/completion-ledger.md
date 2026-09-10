@@ -45,6 +45,15 @@ Updated: 2026-09-10
 - Final soak: not started; await the next genuine schedule.
 - Production readiness: no; pending final 72-hour soak.
 
+## Controlled crawl evidence
+
+- Crawl 1: GHA `34509256561`, crawl `a32c7356-8254-4390-9a38-fb0a04fec1aa`, PASS.
+- Crawl 2: GHA `34511360332`, crawl `17b938e2-a347-437f-99e9-d9b9cfd6ea99`, PASS.
+- Crawl 3: GHA `34512108642`, crawl `2d7218bd-92a3-466d-9749-d27004703fae`, PASS.
+- All three: 7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, zero publications.
+- Database corroboration: seven source rows, seven completed rows, zero crawl errors, zero new claimables per crawl.
+- Soak qualification: not started; manual runs remain excluded.
+
 ## Existing cloud egress investigation
 
 - Vercel build probe: `dpl_Vhm34TnQmG1boEZweRyz99LERiVt`.
