@@ -333,7 +333,7 @@ Updated: `2026-09-10`.
 | Protected browser QA | `PASS` | GHA `34429378945` |
 | Auth runtime QA | `PASS` | GHA `34429382482` |
 | Disposable cleanup | `PASS` | Three users deleted; no residual profiles |
-| Fresh staging baseline | `BLOCKED` | Runs `34428249855`, `34428871150`, `34429825500` |
+| Fresh staging baseline | `BLOCKED` | Runs `34428249855`, `34428871150`, `34429825500`, `34430830404` |
 | TRAI source | `BLOCKED` | Repeated connection timeout on port 443 |
 | Automatic publication | `PASS` | Zero |
 | Soak qualification | `NOT STARTED` | Manual baselines excluded |
