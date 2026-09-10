@@ -30,6 +30,25 @@ Updated: 2026-09-10
 - Final soak: not started.
 - Production readiness: no; external runner-network blocker remains.
 
+## Existing cloud egress investigation
+
+- Vercel build probe: `dpl_Vhm34TnQmG1boEZweRyz99LERiVt`.
+- Vercel region: `iad1`; Node `v24.19.0`.
+- Vercel TRAI: three rounds failed.
+- Vercel TRAI DNS: `164.100.85.161`, IPv4 only.
+- Vercel TRAI HEAD/GET: connection timeout.
+- Vercel SEBI GET: passed across three rounds.
+- Supabase Edge: three TRAI failures.
+- Supabase TRAI DNS: `164.100.85.161`, IPv4 only.
+- Supabase TRAI HEAD/GET: connection timeout.
+- Supabase SEBI GET: passed; apex RSS redirected.
+- Existing cloud egress: blocked for TRAI.
+- Temporary Vercel files: removed.
+- Clean Vercel deployment: `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
+- Temporary Supabase function deletion: unavailable here.
+- No relay selected; no crawler semantics changed.
+- No physical device is required.
+
 ## Historical baseline records
 
 - Branch: `main`.

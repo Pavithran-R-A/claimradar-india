@@ -36,6 +36,25 @@ Updated: 2026-09-10
 - NEXT_ACTION: use a first-party runner with TRAI reachability, then rerun baseline.
 - PRODUCTION_READY_NOW: `NO - EXTERNAL NETWORK BLOCKER; BASELINE REQUIRED`.
 
+## Existing cloud egress investigation
+
+- VERCEL_BUILD_PROBE: `dpl_Vhm34TnQmG1boEZweRyz99LERiVt`.
+- VERCEL_BUILD_REGION: `iad1`; Node `v24.19.0`.
+- VERCEL_TRAI: three rounds failed for both hostnames.
+- VERCEL_TRAI_DNS: `164.100.85.161`, IPv4 only.
+- VERCEL_TRAI_HTTP: HEAD and GET timed out.
+- VERCEL_SEBI: GET passed across three rounds.
+- SUPABASE_EDGE_PROBE: three invocations failed TRAI.
+- SUPABASE_TRAI_DNS: `164.100.85.161`, IPv4 only.
+- SUPABASE_TRAI_HTTP: HEAD and GET timed out.
+- SUPABASE_SEBI: GET passed; apex RSS redirected.
+- CLOUD_EGRESS_BLOCKED: `YES` for existing projects.
+- VERCEL_TEMPORARY_CODE: removed; clean deployment `dpl_B64AsXnmzski5azACdYMAdA5TEvk`.
+- SUPABASE_TEMPORARY_FUNCTION: deletion unavailable through current control surface.
+- SUPABASE_FUNCTION_SCOPE: fixed official targets; no caller URL; no secrets.
+- NO_RELAY_SELECTED: existing cloud paths failed TRAI.
+- EXTRA_PHYSICAL_DEVICE_REQUIRED: `NO`.
+
 ## Historical repository record
 
 - CURRENT_HEAD: `6f22c5ef4119000318218f136f5416987a451877`

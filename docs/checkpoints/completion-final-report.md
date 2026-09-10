@@ -33,6 +33,25 @@ SCHEDULED_RUN_34438700011_QUALIFICATION = `EXCLUDED` - fresh baseline was not su
 FINAL_SOAK = `NOT_STARTED`
 PRODUCTION_READY_NOW = `NO - EXTERNAL NETWORK BLOCKER; FRESH BASELINE REQUIRED`
 
+## Existing cloud egress decision
+
+VERCEL_TRAI_PROBE = `FAIL - three rounds; both hostnames timeout`
+VERCEL_TRAI_DNS = `164.100.85.161; IPv4 only`
+VERCEL_SEBI_PROBE = `PASS - GET responses across three rounds`
+SUPABASE_TRAI_PROBE = `FAIL - three invocations; both hostnames timeout`
+SUPABASE_TRAI_DNS = `164.100.85.161; IPv4 only`
+SUPABASE_SEBI_PROBE = `PASS - GET responses; apex RSS redirects`
+SELECTED_NETWORK_PATH = `NONE - existing cloud egress blocked`
+CLOUD_EGRESS_BLOCKED = `YES`
+EXTRA_PHYSICAL_DEVICE_REQUIRED = `NO`
+TEMPORARY_VERCEL_DIAGNOSTICS = `REMOVED`
+CLEAN_VERCEL_DEPLOYMENT = `dpl_B64AsXnmzski5azACdYMAdA5TEvk`
+TEMPORARY_SUPABASE_FUNCTION = `REMAINS; deletion control unavailable`
+NEW_RUNTIME_FREEZE_HEAD = `NOT_ESTABLISHED`
+BASELINE_RESULT = `BLOCKED - no fresh 7/7 baseline`
+FINAL_SOAK_STARTED = `NO`
+HUMAN_ACTION_REQUIRED = `APPROVE first-party hosted egress reaching TRAI`
+
 ## Historical verification snapshot
 
 RUNTIME_FREEZE_HEAD = `6f22c5ef4119000318218f136f5416987a451877`
