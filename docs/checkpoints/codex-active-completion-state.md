@@ -1,6 +1,6 @@
 # ClaimRadar India Active Completion State
 
-Updated: 2026-09-10T18:55:38Z
+Updated: 2026-09-10T19:08:03Z
 
 ## Permanent relay and fresh baseline
 
@@ -22,8 +22,10 @@ Updated: 2026-09-10T18:55:38Z
 - RUNTIME_SENSITIVE_DIFF: `EMPTY` from `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
 - LAST_SCHEDULED_RUN: `34502374906`; created `2026-09-10T16:29:04Z`; success before the baseline and excluded.
 - LAST_SCHEDULED_NOMINAL_SLOT: `2026-09-10T12:17:00Z`.
-- FIRST_ELIGIBLE_NOMINAL_SLOT: `2026-09-10T18:17:00Z`; no run visible at the latest check.
-- NEXT_NOMINAL_SLOT: `2026-09-11T00:17:00Z`.
+- SLOT_BEFORE_LATEST_CHECKPOINT_MERGE: `2026-09-10T18:17:00Z`; no run visible and not eligible.
+- LATEST_CHECKPOINT_MERGE: `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`.
+- FIRST_ELIGIBLE_NOMINAL_SLOT: `2026-09-11T00:17:00Z`.
+- NEXT_NOMINAL_SLOT: `2026-09-11T06:17:00Z`.
 - PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
 
 ### Controlled crawl evidence

@@ -1,6 +1,6 @@
 # ClaimRadar India Completion Ledger
 
-Updated: 2026-09-10T18:55:38Z
+Updated: 2026-09-10T19:08:03Z
 
 ## Permanent relay and fresh baseline checkpoint
 
@@ -16,8 +16,10 @@ Updated: 2026-09-10T18:55:38Z
 - Artifact: sanitized `staging-soak-summary` retained.
 - Final soak: not started; await the first eligible genuine scheduled slot.
 - Latest pre-baseline schedule: GHA `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
-- First eligible slot: `2026-09-10T18:17:00Z`; no scheduled run visible at the latest check.
-- Next nominal slot: `2026-09-11T00:17:00Z`.
+- Slot `2026-09-10T18:17:00Z` preceded latest checkpoint merge; no credit.
+- Latest checkpoint merge: `6d48bcaa6cde8620da632953e6ef1cd3fdef0510` at `2026-09-10T19:04:33Z`.
+- First eligible slot: `2026-09-11T00:17:00Z`.
+- Next nominal slot: `2026-09-11T06:17:00Z`.
 - Production readiness: NO; pending final 72-hour soak.
 
 ## Current authoritative status
@@ -44,7 +46,7 @@ Updated: 2026-09-10T18:55:38Z
 - Manual workflow runs: excluded from soak qualification.
 - Latest scheduled execution before the baseline: `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
 - Historical scheduled failure details: SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, sanitized artifact retained.
-- Scheduled qualification: no credit before the fresh baseline; no eligible run has appeared after it.
+- Scheduled qualification: no credit before the latest checkpoint merge; no eligible run has appeared.
 - Final soak: not started; await the next genuine schedule.
 - Production readiness: no; pending final 72-hour soak.
 
