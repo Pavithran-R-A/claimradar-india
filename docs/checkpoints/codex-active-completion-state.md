@@ -21,6 +21,15 @@ Updated: 2026-09-10
 - NEXT_QUALIFYING_SLOT: next genuine `17 */6 * * *` schedule after the baseline.
 - PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
 
+### Controlled crawl evidence
+
+- CONTROLLED_CRAWL_1: GHA `34509256561`; crawl `a32c7356-8254-4390-9a38-fb0a04fec1aa`; `PASS`.
+- CONTROLLED_CRAWL_2: GHA `34511360332`; crawl `17b938e2-a347-437f-99e9-d9b9cfd6ea99`; `PASS`.
+- CONTROLLED_CRAWL_3: GHA `34512108642`; crawl `2d7218bd-92a3-466d-9749-d27004703fae`; `PASS`.
+- CONTROLLED_CRAWL_INVARIANTS: all three had 7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, and zero publications.
+- CONTROLLED_CRAWL_DB: each had seven completed source rows, seven expected sources, zero crawl errors, and zero new claimables.
+- SOAK_START: pending first genuine scheduled run after baseline.
+
 ## Current authoritative snapshot
 
 - CURRENT_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.

@@ -19,6 +19,13 @@ BASELINE_ARTIFACT = `staging-soak-summary retained and sanitized`
 FINAL_SOAK = `NOT STARTED - awaiting next genuine scheduled slot`
 PRODUCTION_READY_NOW = `NO - PENDING FINAL 72H SOAK`
 
+CONTROLLED_CRAWL_1 = `GHA 34509256561; crawl a32c7356-8254-4390-9a38-fb0a04fec1aa; PASS`
+CONTROLLED_CRAWL_2 = `GHA 34511360332; crawl 17b938e2-a347-437f-99e9-d9b9cfd6ea99; PASS`
+CONTROLLED_CRAWL_3 = `GHA 34512108642; crawl 2d7218bd-92a3-466d-9749-d27004703fae; PASS`
+CONTROLLED_CRAWL_INVARIANTS = `7/7 sources; 126 discovered; 126 fetched; zero crawl errors; zero unexpected errors; zero publications`
+CONTROLLED_CRAWL_DB = `7 source rows; 7 completed rows; zero crawl errors; zero new claimables per crawl`
+FINAL_SOAK_STARTED = `NO - awaiting first genuine scheduled run`
+
 ## Current authoritative status
 
 CURRENT_MAIN = `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`
