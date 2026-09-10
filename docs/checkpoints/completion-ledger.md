@@ -53,6 +53,10 @@ Updated: 2026-09-10
 - All three: 7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, zero publications.
 - Database corroboration: seven source rows, seven completed rows, zero crawl errors, zero new claimables per crawl.
 - Soak qualification: not started; manual runs remain excluded.
+- Node 24 CI: GHA `34508399417`; 593 tests and 73 test files passed.
+- Inventory acceptance: 372 tests and 51 test files passed.
+- Browser smoke: 10 routes across two viewports passed.
+- Final route browser QA: 207 checks, 69 routes, 3 viewports, zero failures.
 
 ## Existing cloud egress investigation
 

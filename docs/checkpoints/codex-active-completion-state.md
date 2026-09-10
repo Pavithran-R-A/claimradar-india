@@ -29,6 +29,11 @@ Updated: 2026-09-10
 - CONTROLLED_CRAWL_INVARIANTS: all three had 7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, and zero publications.
 - CONTROLLED_CRAWL_DB: each had seven completed source rows, seven expected sources, zero crawl errors, and zero new claimables.
 - SOAK_START: pending first genuine scheduled run after baseline.
+- FINAL_CI_RUN: `34508399417`; Node 24 CI passed.
+- FULL_TEST_COUNT: `593 tests across 73 test files passed`.
+- INVENTORY_ACCEPTANCE: `372 tests across 51 test files passed`.
+- BROWSER_SMOKE: `10 routes across two viewports passed`.
+- FINAL_ROUTE_BROWSER_QA: `207 checks; 69 routes; 3 viewports; 0 failures`.
 
 ## Current authoritative snapshot
 

@@ -25,6 +25,10 @@ CONTROLLED_CRAWL_3 = `GHA 34512108642; crawl 2d7218bd-92a3-466d-9749-d27004703fa
 CONTROLLED_CRAWL_INVARIANTS = `7/7 sources; 126 discovered; 126 fetched; zero crawl errors; zero unexpected errors; zero publications`
 CONTROLLED_CRAWL_DB = `7 source rows; 7 completed rows; zero crawl errors; zero new claimables per crawl`
 FINAL_SOAK_STARTED = `NO - awaiting first genuine scheduled run`
+FULL_TEST_COUNT = `593 tests; 73 test files; Node 24 CI run 34508399417`
+INVENTORY_ACCEPTANCE = `372 tests; 51 test files`
+BROWSER_SMOKE = `10 routes; two viewports`
+FINAL_ROUTE_BROWSER_QA = `207 checks; 69 routes; 3 viewports; zero failures`
 
 ## Current authoritative status
 
