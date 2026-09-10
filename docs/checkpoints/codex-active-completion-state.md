@@ -2,22 +2,41 @@
 
 Updated: 2026-09-10
 
+## Permanent relay and fresh baseline
+
+- RUNTIME_FREEZE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- MAIN_RUNTIME_STATE: merged and frozen; no post-freeze runtime edits.
+- PERMANENT_RELAY: `https://claimradar-trai-relay.first-moonflower.workers.dev/fetch`.
+- RELAY_DEPLOY_GHA: `34507290715`; deployment and encrypted secret upload passed.
+- RELAY_PROBE_GHA: `34508506486`, `34508568898`, `34508631422`, `34508694039`.
+- RELAY_PROBE_RESULT: `20/20` signed requests passed.
+- BASELINE_GHA_RUN: `34509256561`; event `workflow_dispatch`; baseline-only.
+- BASELINE_CRAWL_RUN: `a32c7356-8254-4390-9a38-fb0a04fec1aa`.
+- BASELINE_RESULT: `PASS`; 7/7 sources, 126 discovered, 126 fetched.
+- BASELINE_SAFETY: zero crawl errors, zero unexpected errors, zero publications.
+- BASELINE_GUARDS: staging, billing disabled, auto-verification disabled, notifications disabled.
+- BASELINE_DB: seven source rows, 523 source documents, zero crawl errors, zero new claimables.
+- BASELINE_ARTIFACT: `staging-soak-summary`; retained and sanitized.
+- FINAL_SOAK: not started; manual runs never qualify.
+- NEXT_QUALIFYING_SLOT: next genuine `17 */6 * * *` schedule after the baseline.
+- PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
+
 ## Current authoritative snapshot
 
-- CURRENT_HEAD: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
-- CURRENT_MAIN: `e92736a4f7325392da215ae4e349a7ef03e4defa`.
-- CURRENT_PHASE: fresh staging baseline blocked; final soak not started.
+- CURRENT_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- CURRENT_MAIN: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- CURRENT_PHASE: fresh baseline passed; final soak not started.
 - UI_MERGE_SHA: `625bc9f922dd3a7b8eea67681ecedfc77e329a45`.
-- RUNTIME_CANDIDATE_HEAD: `ddc5a343c3e8586cdb3be2e7f8f164cd4347622d`.
-- NEW_RUNTIME_FREEZE_HEAD: `NOT_ESTABLISHED; fresh baseline failed`.
-- POST_MERGE_RUNTIME_SENSITIVE_DIFF: `EMPTY` after `ddc5a343`; no later runtime edits.
+- RUNTIME_CANDIDATE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- NEW_RUNTIME_FREEZE_HEAD: `cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e`.
+- POST_MERGE_RUNTIME_SENSITIVE_DIFF: `EMPTY` after `cfcc791`; no later runtime edits.
 - EXACT_HEAD_CI: `PASS`; GHA run `34444804984` passed Node 24 gates.
 - VERCEL_EXACT_HEAD: `PASS`; Preview deployment reports success.
-- FRESH_BASELINE: `BLOCKED`; manual GHA run `34445580296`.
-- BASELINE_CRAWL_RUN: `a47aa01f-d400-4286-8f15-51d006164ae4`.
-- BASELINE_FAILURE: TRAI timed out at `www.trai.gov.in:443` after bounded retries.
-- BASELINE_INVARIANTS: 6/7 sources, zero unexpected errors, zero publications, sanitized artifact retained.
-- CONNECTIVITY_PROBE: GHA run `34445314939`; sanitized artifact retained.
+- FRESH_BASELINE: `PASS`; manual GHA run `34509256561`.
+- BASELINE_CRAWL_RUN: `a32c7356-8254-4390-9a38-fb0a04fec1aa`.
+- BASELINE_FAILURE: none.
+- BASELINE_INVARIANTS: 7/7 sources, zero crawl errors, zero unexpected errors, zero publications, sanitized artifact retained.
+- CONNECTIVITY_PROBE: permanent relay probes `34508506486`, `34508568898`, `34508631422`, `34508694039`; sanitized evidence retained.
 - CONNECTIVITY_ROOT_CAUSE: GitHub runner TCP timeout to shared TRAI IPv4 `164.100.85.161`; both official hostnames resolve there.
 - CONNECTIVITY_FIX: 30-second connect timeout, bounded four-retry ceiling, capped jittered backoff.
 - CLASSIFICATION_FIX: timeout with `:443` is `TIMEOUT`, never `HTTP_4XX`.
@@ -33,8 +52,8 @@ Updated: 2026-09-10
 - LATEST_SCHEDULED_RESULT: `FAIL`; 4/7 sources succeeded, SEBI RSS, SEBI public notices, and TRAI timed out; zero unexpected errors, zero publications, artifact retained.
 - SCHEDULED_RUN_34438700011_QUALIFICATION: `EXCLUDED`; no successful fresh baseline existed beforehand.
 - SCHEDULED_RUNS_AFTER_UI_MERGE: `34438700011` failed; no qualifying runs.
-- NEXT_ACTION: use a first-party runner with TRAI reachability, then rerun baseline.
-- PRODUCTION_READY_NOW: `NO - EXTERNAL NETWORK BLOCKER; BASELINE REQUIRED`.
+- NEXT_ACTION: await the next genuine scheduled slot; track the final 72-hour soak.
+- PRODUCTION_READY_NOW: `NO - PENDING FINAL 72H SOAK`.
 
 ## Existing cloud egress investigation
 
