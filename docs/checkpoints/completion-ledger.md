@@ -336,18 +336,18 @@ technology testing remains outside this workspace. Protected QA ran at
 
 Updated: `2026-09-10`.
 
-| Gate | Status | Evidence |
-| --- | --- | --- |
-| Merge | `PASS` | Main `625bc9f922dd3a7b8eea67681ecedfc77e329a45` |
-| Exact-head CI | `PASS` | GHA `34427810132` |
-| Vercel exact-head | `PASS` | Deployment completed |
-| Protected browser QA | `PASS` | GHA `34429378945` |
-| Auth runtime QA | `PASS` | GHA `34429382482` |
-| Disposable cleanup | `PASS` | Three users deleted; no residual profiles |
-| Fresh staging baseline | `BLOCKED` | Runs `34428249855`, `34428871150`, `34429825500`, `34430830404` |
-| TRAI source | `BLOCKED` | Repeated connection timeout on port 443 |
-| Automatic publication | `PASS` | Zero |
-| Soak qualification | `NOT STARTED` | Manual baselines excluded |
+| Gate                   | Status        | Evidence                                                        |
+| ---------------------- | ------------- | --------------------------------------------------------------- |
+| Merge                  | `PASS`        | Main `625bc9f922dd3a7b8eea67681ecedfc77e329a45`                 |
+| Exact-head CI          | `PASS`        | GHA `34427810132`                                               |
+| Vercel exact-head      | `PASS`        | Deployment completed                                            |
+| Protected browser QA   | `PASS`        | GHA `34429378945`                                               |
+| Auth runtime QA        | `PASS`        | GHA `34429382482`                                               |
+| Disposable cleanup     | `PASS`        | Three users deleted; no residual profiles                       |
+| Fresh staging baseline | `BLOCKED`     | Runs `34428249855`, `34428871150`, `34429825500`, `34430830404` |
+| TRAI source            | `BLOCKED`     | Repeated connection timeout on port 443                         |
+| Automatic publication  | `PASS`        | Zero                                                            |
+| Soak qualification     | `NOT STARTED` | Manual baselines excluded                                       |
 
 The merged candidate remains unchanged.
 No scheduled run qualifies yet.
