@@ -70,5 +70,28 @@
       "result": "PASS",
       "invariants": "7/7 sources, zero crawl errors, zero unexpected errors, zero publications, staging guards, sanitized artifact"
     }
-  ]
+  ],
+  "qualifyingScheduledRuns": [
+    {
+      "ghaRun": "34563498863",
+      "event": "schedule",
+      "headSha": "60784e43d0013ffb5fa533b50a3efbba86017b87",
+      "startedAtUtc": "2026-09-11T04:47:10Z",
+      "nominalSlotUtc": "2026-09-11T00:17:00Z",
+      "classification": "FINAL_SOAK",
+      "crawlRunId": "89a3af46-906a-4a71-a137-73cc197d8a4c",
+      "result": "PASS",
+      "invariants": "7/7 sources, 126 discovered, 126 fetched, zero crawl errors, zero unexpected errors, zero publications, staging guards, sanitized artifact",
+      "database": "completed crawl_runs row, 7 completed crawl_run_sources rows, zero crawl_errors, 529 source_documents total; zero run-window documents because all fetched documents were duplicates",
+      "artifact": "staging-soak-summary retained and sanitized"
+    }
+  ],
+  "qualifyingSoakStartUtc": "2026-09-11T00:17:00Z",
+  "qualifyingSoakStartIst": "2026-09-11T05:47:00+05:30",
+  "qualifyingSoakStartGhaRun": "34563498863",
+  "qualifyingSoakStartCrawlRunId": "89a3af46-906a-4a71-a137-73cc197d8a4c",
+  "soak48hReadinessUtc": "2026-09-13T00:17:00Z",
+  "soak48hReadinessIst": "2026-09-13T05:47:00+05:30",
+  "soak72hQualificationUtc": "2026-09-14T00:17:00Z",
+  "soak72hQualificationIst": "2026-09-14T05:47:00+05:30"
 }

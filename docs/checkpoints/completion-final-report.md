@@ -1,7 +1,7 @@
 # ClaimRadar India Completion Report
 
-Date: 2026-09-10
-Last monitoring check: `2026-09-10T19:38:29Z`
+Date: 2026-09-11
+Last monitoring check: `2026-09-11T07:40:14Z`
 
 ## Permanent relay and fresh baseline
 
@@ -17,7 +17,7 @@ BASELINE_SAFETY = `zero crawl errors; zero unexpected errors; zero publications`
 BASELINE_GUARDS = `staging; billing disabled; auto-verification disabled; notifications disabled`
 BASELINE_DB = `7 source rows; 523 source documents; 0 crawl errors; 0 new claimables`
 BASELINE_ARTIFACT = `staging-soak-summary retained and sanitized`
-FINAL_SOAK = `NOT STARTED - first eligible slot 2026-09-11T00:17:00Z pending`
+FINAL_SOAK = `IN PROGRESS - started at nominal slot 2026-09-11T00:17:00Z`
 PRODUCTION_READY_NOW = `NO - PENDING FINAL 72H SOAK`
 
 CONTROLLED_CRAWL_1 = `GHA 34509256561; crawl a32c7356-8254-4390-9a38-fb0a04fec1aa; PASS`
@@ -25,7 +25,7 @@ CONTROLLED_CRAWL_2 = `GHA 34511360332; crawl 17b938e2-a347-437f-99e9-d9b9cfd6ea9
 CONTROLLED_CRAWL_3 = `GHA 34512108642; crawl 2d7218bd-92a3-466d-9749-d27004703fae; PASS`
 CONTROLLED_CRAWL_INVARIANTS = `7/7 sources; 126 discovered; 126 fetched; zero crawl errors; zero unexpected errors; zero publications`
 CONTROLLED_CRAWL_DB = `7 source rows; 7 completed rows; zero crawl errors; zero new claimables per crawl`
-FINAL_SOAK_STARTED = `NO - awaiting first genuine scheduled run`
+FINAL_SOAK_STARTED = `YES - GHA 34563498863; crawl 89a3af46-906a-4a71-a137-73cc197d8a4c`
 FULL_TEST_COUNT = `593 tests; 73 test files; Node 24 CI run 34508399417`
 INVENTORY_ACCEPTANCE = `372 tests; 51 test files`
 BROWSER_SMOKE = `10 routes; two viewports`
@@ -56,14 +56,19 @@ RELIABLE_STANDARD_RUNNER = `permanent Cloudflare Worker relay`
 TEMPORARY_MATRIX_WORKFLOW = `REMOVED_AFTER_EVIDENCE_CAPTURE`
 HUMAN_ACTION_REQUIRED = `NONE`
 MANUAL_WORKFLOW_DISPATCH_QUALIFICATION = `EXCLUDED`
-LATEST_SCHEDULED_RUN = `34502374906` at nominal slot `2026-09-10T12:17:00Z`
-LATEST_SCHEDULED_RESULT = `PASS` - completed before the fresh baseline; excluded from soak credit
-SCHEDULED_RUN_34502374906_QUALIFICATION = `EXCLUDED` - pre-baseline scheduled execution
-SLOT_BEFORE_LATEST_CHECKPOINT_MERGE = `2026-09-10T18:17:00Z` - no credit
-LATEST_CHECKPOINT_MERGE = `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8` at `2026-09-10T19:15:35Z`
+LATEST_SCHEDULED_RUN = `34563498863` at nominal slot `2026-09-11T00:17:00Z`
+LATEST_SCHEDULED_RESULT = `PASS` - first qualifying final-soak execution
+SCHEDULED_RUN_34563498863_QUALIFICATION = `FINAL_SOAK`
+SCHEDULED_RUN_34563498863_CRAWL = `89a3af46-906a-4a71-a137-73cc197d8a4c`
+SCHEDULED_RUN_34563498863_DB = `completed crawl_runs; 7 completed crawl_run_sources; 0 crawl_errors; 529 source_documents total; 0 run-window inserts because all were duplicates`
+SCHEDULED_RUN_34563498863_ARTIFACT = `staging-soak-summary retained and sanitized`
+LATEST_CHECKPOINT_MERGE = `60784e43d0013ffb5fa533b50a3efbba86017b87` at `2026-09-10T23:21:13Z`
 FIRST_ELIGIBLE_NOMINAL_SLOT = `2026-09-11T00:17:00Z`
-NEXT_NOMINAL_SLOT = `2026-09-11T06:17:00Z`
-FINAL_SOAK = `NOT_STARTED - awaiting first eligible genuine scheduled slot`
+SOAK_START_UTC = `2026-09-11T00:17:00Z`
+SOAK_START_IST = `2026-09-11T05:47:00+05:30`
+SOAK_48H_READINESS_UTC = `2026-09-13T00:17:00Z`
+SOAK_72H_QUALIFICATION_UTC = `2026-09-14T00:17:00Z`
+FINAL_SOAK = `IN PROGRESS - awaiting 48-hour and 72-hour thresholds`
 PRODUCTION_READY_NOW = `NO - PENDING FINAL 72H SOAK`
 
 ## Existing cloud egress decision

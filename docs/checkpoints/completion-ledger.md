@@ -1,6 +1,6 @@
 # ClaimRadar India Completion Ledger
 
-Updated: 2026-09-10T19:38:29Z
+Updated: 2026-09-11T07:40:14Z
 
 ## Permanent relay and fresh baseline checkpoint
 
@@ -14,12 +14,18 @@ Updated: 2026-09-10T19:38:29Z
 - Guards: staging enabled; billing, auto-verification, and notifications disabled.
 - Database: seven source rows, 523 source documents, zero crawl errors, zero new claimables.
 - Artifact: sanitized `staging-soak-summary` retained.
-- Final soak: not started; await the first eligible genuine scheduled slot.
+- Final soak: in progress from nominal slot `2026-09-11T00:17:00Z`.
+- Qualifying scheduled run: GHA `34563498863`; crawl `89a3af46-906a-4a71-a137-73cc197d8a4c`.
+- Qualifying run: 7/7 sources, 126 discovered and fetched, zero crawl errors, zero unexpected errors, zero publications.
+- Qualifying database evidence: completed `crawl_runs`, 7 completed `crawl_run_sources`, zero `crawl_errors`; 529 total `source_documents`, with zero run-window inserts because all were duplicates.
+- Qualifying artifact: `staging-soak-summary` retained and sanitized.
 - Latest pre-baseline schedule: GHA `34502374906`, nominal slot `2026-09-10T12:17:00Z`, success; excluded from soak credit.
 - Slot `2026-09-10T18:17:00Z` preceded latest checkpoint merge; no credit.
-- Latest checkpoint merge: `439f56d55e119cd3cb40dc50ffd1a41e2029ecf8` at `2026-09-10T19:15:35Z`.
+- Latest checkpoint merge: `60784e43d0013ffb5fa533b50a3efbba86017b87` at `2026-09-10T23:21:13Z`.
 - First eligible slot: `2026-09-11T00:17:00Z`.
-- Next nominal slot: `2026-09-11T06:17:00Z`.
+- Soak start IST: `2026-09-11T05:47:00+05:30`.
+- 48-hour readiness: `2026-09-13T00:17:00Z` / `2026-09-13T05:47:00+05:30`.
+- 72-hour qualification: `2026-09-14T00:17:00Z` / `2026-09-14T05:47:00+05:30`.
 - Production readiness: NO; pending final 72-hour soak.
 
 ## Current authoritative status
