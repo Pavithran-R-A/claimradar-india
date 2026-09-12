@@ -58,6 +58,12 @@ describe('ClaimKhoj production UI/UX contract', () => {
     expect(page).toContain('lg:grid-cols-4');
   });
 
+  it('keeps journey editorial notes in normal flow so they cannot collide with stage labels', () => {
+    expect(page).toContain('data-ui="journey-notes"');
+    expect(page).not.toContain('absolute left-1 top-5 hidden font-display');
+    expect(page).not.toContain('absolute right-1 top-5 hidden font-display');
+  });
+
   it('keeps exactly one public main landmark and points the skip link to it', () => {
     expect(publicLayout).toContain('<main id="main-content"');
     expect(header).toContain('href="#main-content"');
