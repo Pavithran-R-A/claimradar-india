@@ -10,18 +10,18 @@
    ========================================================================== */
 
 :root {
-  --c-background: 247 246 242; /* #F7F6F2 warm paper canvas */
+  --c-background: 255 255 255; /* #FFFFFF reference homepage canvas */
   --c-background-elevated: 255 255 255; /* #FFFFFF surface */
   --c-surface: 255 255 255; /* #FFFFFF surface */
-  --c-surface-strong: 240 239 234; /* #F0EFEA understated contrast surface */
-  --c-border: #d9dad6; /* 1px hairline rule */
-  --c-border-strong: #b8bcb8;
-  --c-text-primary: 21 23 26; /* #15171A primary ink */
-  --c-text-secondary: 82 90 101; /* #525A65 secondary text (8.8:1 contrast) */
-  --c-text-muted: 93 101 112; /* #5D6570 muted text (5.4:1 contrast) */
-  --c-trust-primary: 33 78 128; /* #214E80 deep editorial blue */
-  --c-trust-primary-hover: 23 59 98; /* #173B62 */
-  --c-success: 35 112 90; /* #23705A verified subdued forest */
+  --c-surface-strong: 241 247 248; /* #F1F7F8 pale teal band */
+  --c-border: #d9e2e6; /* 1px hairline rule */
+  --c-border-strong: #b5c7cf;
+  --c-text-primary: 13 33 72; /* #0D2148 deep indigo */
+  --c-text-secondary: 61 79 111; /* accessible supporting ink */
+  --c-text-muted: 88 105 132;
+  --c-trust-primary: 13 33 72; /* #0D2148 deep indigo */
+  --c-trust-primary-hover: 7 23 54; /* #071736 */
+  --c-success: 15 139 141; /* #0F8B8D teal */
   --c-deadline: 122 62 0; /* #7A3E00 accessible deadline ochre */
   --c-danger: 180 35 24; /* #B42318 */
   --c-info: 33 78 128; /* #214E80 */
@@ -46,18 +46,18 @@
 }
 
 .theme-light {
-  --c-background: 247 246 242;
+  --c-background: 255 255 255;
   --c-background-elevated: 255 255 255;
   --c-surface: 255 255 255;
-  --c-surface-strong: 240 239 234;
-  --c-border: #d9dad6;
-  --c-border-strong: #b8bcb8;
-  --c-text-primary: 21 23 26;
-  --c-text-secondary: 82 90 101;
-  --c-text-muted: 93 101 112;
-  --c-trust-primary: 33 78 128;
-  --c-trust-primary-hover: 23 59 98;
-  --c-success: 35 112 90;
+  --c-surface-strong: 241 247 248;
+  --c-border: #d9e2e6;
+  --c-border-strong: #b5c7cf;
+  --c-text-primary: 13 33 72;
+  --c-text-secondary: 61 79 111;
+  --c-text-muted: 88 105 132;
+  --c-trust-primary: 13 33 72;
+  --c-trust-primary-hover: 7 23 54;
+  --c-success: 15 139 141;
   --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
@@ -194,6 +194,33 @@ details[open] .faq-content {
   from {
     opacity: 0;
     transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.journey-rail > div {
+  animation: journey-step 520ms var(--ease-out) both;
+}
+
+.journey-rail > div:nth-child(2) {
+  animation-delay: 100ms;
+}
+
+.journey-rail > div:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.journey-rail > div:nth-child(4) {
+  animation-delay: 300ms;
+}
+
+@keyframes journey-step {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -433,5 +460,9 @@ details[open] .faq-content {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .journey-rail > div {
+    animation: none;
   }
 }

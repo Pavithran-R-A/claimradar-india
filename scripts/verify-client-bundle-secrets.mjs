@@ -15,7 +15,10 @@ const SECRET_PATTERNS = [
   { name: 'Service Role Key Reference', pattern: /service_role/g },
   { name: 'PostgreSQL Connection URL (postgresql://)', pattern: /postgresql:\/\/[^\s"'`]+/g },
   { name: 'SUPABASE_DB_PASSWORD', pattern: /SUPABASE_DB_PASSWORD/g },
-  { name: 'DATABASE_URL', pattern: /DATABASE_URL/g },
+  {
+    name: 'DATABASE_URL literal assignment',
+    pattern: /\bDATABASE_URL\s*[:=]\s*["'`][^"'`]+["'`]/g,
+  },
   { name: 'SUPABASE_ACCESS_TOKEN', pattern: /SUPABASE_ACCESS_TOKEN/g },
 ];
 

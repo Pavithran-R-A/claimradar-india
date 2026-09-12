@@ -8,11 +8,11 @@ import { Menu, X, Search } from 'lucide-react';
 import { BrandLockup } from './brand-mark';
 
 const navLinks = [
-  { href: '/claimables', label: 'Find claims' },
-  { href: '/closing-soon', label: 'Closing soon' },
-  { href: '/companies', label: 'Companies' },
-  { href: '/sectors', label: 'Sectors' },
-  { href: '/how-it-works', label: 'How it works' },
+  { href: '/', label: 'Home' },
+  { href: '/claimables', label: 'Opportunities' },
+  { href: '/how-it-works', label: 'How It Works' },
+  { href: '/sources', label: 'Sources' },
+  { href: '/about', label: 'About' },
 ] as const;
 
 export function Header() {
@@ -84,7 +84,10 @@ export function Header() {
           <nav className="hidden lg:block" aria-label="Main navigation">
             <ul className="flex items-center gap-1">
               {navLinks.map((link) => {
-                const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+                const active =
+                  link.href === '/'
+                    ? pathname === '/'
+                    : pathname === link.href || pathname.startsWith(`${link.href}/`);
                 return (
                   <li key={link.href}>
                     <Link
@@ -114,12 +117,11 @@ export function Header() {
               <Search className="h-4 w-4" />
             </Link>
 
-            <Link
-              href="/login"
-              className="rounded-md px-3.5 py-2 text-sm font-semibold text-text-secondary hover:text-text-primary transition-colors duration-fast hover:-translate-y-[0.5px]"
-            >
-              Sign in
-            </Link>
+            <p className="max-w-[7.5rem] text-center text-xs leading-4 text-text-secondary">
+              A fairer India
+              <br />
+              for every consumer
+            </p>
 
             <Link
               href="/claimables"
@@ -128,7 +130,7 @@ export function Header() {
                 'rounded-md font-bold px-4',
               )}
             >
-              <span>Explore claims</span>
+              <span>Explore Claims</span>
             </Link>
           </div>
 
@@ -199,7 +201,10 @@ export function Header() {
             <nav className="mt-6 flex-1 overflow-y-auto" aria-label="Mobile navigation links">
               <ul className="space-y-1.5">
                 {navLinks.map((link, idx) => {
-                  const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+                  const active =
+                    link.href === '/'
+                      ? pathname === '/'
+                      : pathname === link.href || pathname.startsWith(`${link.href}/`);
                   return (
                     <li
                       key={link.href}
@@ -234,7 +239,7 @@ export function Header() {
                   'w-full justify-center text-sm font-bold min-h-[44px] rounded-md',
                 )}
               >
-                Explore all claims
+                Explore Claims
               </Link>
               <Link
                 href="/login"

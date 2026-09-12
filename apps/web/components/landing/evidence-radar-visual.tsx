@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ShieldCheck, X } from 'lucide-react';
-import { cn } from '@claimradar/design-system';
+import { BrandMark, cn } from '@claimradar/design-system';
 
 interface AuthorityNode {
   code: string;
@@ -113,7 +113,9 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
         <div className="flex items-center justify-between border-b border-border pb-2.5 mb-3 text-xs text-text-muted">
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-trust-primary" />
-            <span className="font-bold text-text-primary tracking-wide">SOURCE VERIFICATION</span>
+            <span className="font-bold text-text-primary tracking-wide">
+              OFFICIAL SOURCES WE CHECK
+            </span>
           </div>
           <span className="text-text-secondary text-xs">Monitored official sources</span>
         </div>
@@ -336,6 +338,16 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
               );
             })}
           </nav>
+
+          <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-trust-primary/15 bg-white/90 p-4 text-center shadow-sm backdrop-blur-sm">
+            <BrandMark size={42} variant="light" />
+            <span className="mt-1 font-display text-sm font-bold text-trust-primary">
+              ClaimKhoj
+            </span>
+            <span className="mt-0.5 text-[0.52rem] font-bold uppercase tracking-[0.2em] text-text-muted">
+              Find what you can claim
+            </span>
+          </div>
 
           {/* Accessible In-Place Inspector Drawer */}
           {selectedNode && (

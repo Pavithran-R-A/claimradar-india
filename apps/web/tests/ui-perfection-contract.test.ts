@@ -9,10 +9,10 @@ describe('UI perfection contracts', () => {
   it('keeps the homepage trust hierarchy explicit', () => {
     const source = read('app/(public)/page.tsx');
 
-    expect(source).toContain('Public records, made useful');
-    expect(source).toContain('Official links');
-    expect(source).toContain('Human review');
-    expect(source).toContain('No filing fees');
+    expect(source).toContain('Find what&apos;s rightfully yours.');
+    expect(source).toContain('Official sources');
+    expect(source).toContain('Pan-India view');
+    expect(source).toContain('Your next step');
   });
 
   it('keeps the truthful empty directory editorial rather than card-heavy', () => {

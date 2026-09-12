@@ -2,15 +2,17 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ArrowRight, X } from 'lucide-react';
+import { Search, ArrowRight, X, MapPin } from 'lucide-react';
 import { Button } from '@claimradar/design-system';
 
-const SUGGESTIONS = ['PACL', 'Sahara', 'SEBI recovery', 'Fixed deposit claim', 'IBBI insolvency'];
+const SUGGESTIONS = ['unclaimed deposits', 'SEBI recovery', 'insolvency claim', 'telecom refund'];
 
 export function InteractiveHeroSearch() {
   const router = useRouter();
   const [query, setQuery] = React.useState('');
+  const [location, setLocation] = React.useState('All India');
   const [isFocused, setIsFocused] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -28,9 +30,11 @@ export function InteractiveHeroSearch() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const trimmed = query.trim();
+    setIsSubmitting(true);
+    const submittedQuery = new FormData(e.currentTarget).get('query');
+    const trimmed = String(submittedQuery ?? query).trim();
     if (trimmed) {
       router.push(`/claimables?search=${encodeURIComponent(trimmed)}`);
     } else {
@@ -47,7 +51,8 @@ export function InteractiveHeroSearch() {
     <div className="w-full">
       <form
         onSubmit={handleSubmit}
-        className="group relative flex w-full flex-col sm:flex-row items-stretch gap-2.5 rounded-lg border border-border bg-surface p-2 shadow-xs transition-all duration-ui ease-out hover:border-border/90 hover:shadow-sm focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20 focus-within:shadow-sm focus-within:-translate-y-[1px]"
+        className="group relative flex w-full flex-col items-stretch gap-2 rounded-md border border-border bg-surface p-1.5 shadow-xs transition-all duration-ui ease-out hover:border-trust-primary/40 hover:shadow-sm focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20 focus-within:shadow-sm focus-within:-translate-y-[1px] sm:flex-row"
+        aria-busy={isSubmitting}
       >
         <div className="relative flex-1 flex items-center min-w-0">
           <div
@@ -64,12 +69,13 @@ export function InteractiveHeroSearch() {
           <input
             ref={inputRef}
             id="hero-search-input"
+            name="query"
             type="text"
             value={query}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search company, regulator, or notice (e.g. PACL, Sahara, SEBI)"
+            placeholder="Search refunds, claims, schemes or your situation"
             style={{ paddingLeft: '48px', paddingRight: '48px' }}
             className="h-12 sm:h-14 w-full rounded-md border-0 bg-transparent text-base sm:text-lg text-text-primary placeholder:text-text-muted focus:outline-none"
           />
@@ -93,13 +99,24 @@ export function InteractiveHeroSearch() {
             </div>
           )}
         </div>
+        <label className="flex min-h-12 items-center gap-2 border-t border-border px-3 text-sm text-text-secondary sm:min-h-14 sm:border-l sm:border-t-0 sm:px-4">
+          <MapPin className="h-4 w-4 shrink-0 text-trust-primary" aria-hidden="true" />
+          <span className="sr-only">Search location</span>
+          <select
+            value={location}
+            onChange={(event) => setLocation(event.target.value)}
+            className="w-full cursor-pointer border-0 bg-transparent font-semibold text-text-primary outline-none sm:w-auto"
+          >
+            <option>All India</option>
+          </select>
+        </label>
         <Button
           type="submit"
           variant="default"
           size="default"
           className="h-12 sm:h-14 px-7 rounded-md text-sm font-bold text-white sm:w-auto shadow-xs transition-all duration-fast shrink-0"
         >
-          <span>Search notices</span>
+          <span>{isSubmitting ? 'Searching...' : 'Search Claims'}</span>
           <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-0.5" />
         </Button>
       </form>

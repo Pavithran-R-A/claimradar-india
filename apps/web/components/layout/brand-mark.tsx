@@ -52,7 +52,7 @@ export function BrandLockup({
               theme === 'dark' ? 'text-trust-primary' : 'text-trust-primary',
             )}
           >
-            India
+            {brandConfig.descriptor}
           </span>
         )}
       </div>

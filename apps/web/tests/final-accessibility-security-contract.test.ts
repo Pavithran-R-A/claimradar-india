@@ -7,14 +7,14 @@ const read = (...parts: string[]) =>
 
 describe('Final accessibility and security contracts', () => {
   it('uses an AA-safe muted text token on light surfaces', () => {
-    expect(read('app', 'globals.css')).toContain('--c-text-muted: 93 101 112;');
+    expect(read('app', 'globals.css')).toContain('--c-text-muted: 88 105 132;');
   });
 
   it('keeps the visible logo name as its accessible name', () => {
     const brand = read('components', 'layout', 'brand-mark.tsx');
     expect(brand).not.toContain('aria-label="ClaimKhoj — Homepage"');
     expect(brand).toContain('brandConfig.shortName');
-    expect(brand).toContain('India');
+    expect(brand).toContain('brandConfig.descriptor');
   });
 
   it('keeps the evidence flow heading hierarchy sequential', () => {
@@ -23,10 +23,10 @@ describe('Final accessibility and security contracts', () => {
     expect(flow).toContain('<h3');
   });
 
-  it('keeps footer disclosure text readable on dark ink', () => {
+  it('keeps footer disclosure text readable on white', () => {
     const footer = read('components', 'layout', 'footer.tsx');
-    expect(footer).toContain('text-slate-300');
-    expect(footer).toContain('text-white');
+    expect(footer).toContain('bg-white');
+    expect(footer).toContain('Better information.');
   });
 
   it('keeps hero suggestion controls at least 24 by 24 CSS pixels', () => {

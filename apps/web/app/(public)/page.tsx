@@ -1,387 +1,319 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, ShieldCheck, Landmark } from 'lucide-react';
-import { FaqAccordion } from '@/components/landing/interactive';
-import { InteractiveHeroSearch } from '@/components/landing/interactive-hero-search';
-import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
+import {
+  ArrowRight,
+  BadgeCheck,
+  BarChart3,
+  Building2,
+  FileText,
+  Landmark,
+  Radio,
+  Search,
+} from 'lucide-react';
 import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
-import { MonitoredSourcesNetwork } from '@/components/landing/monitored-sources-network';
-import { EditorialPrinciples } from '@/components/landing/editorial-principles';
-import { AccountCta } from '@/components/landing/account-cta';
-import { ClaimableCard, ClaimableRow } from '@/components/directory/claimable-card';
-import { DemoDataBanner, EmptyDirectoryNotice } from '@/components/repository-states';
+import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
+import { InteractiveHeroSearch } from '@/components/landing/interactive-hero-search';
+import { EmptyDirectoryNotice, DemoDataBanner } from '@/components/repository-states';
 import { Reveal } from '@/components/motion/reveal';
 import { getPublishedClaimables } from '@/lib/claimables-repository';
+import { formatIstDate } from '@/lib/dates';
 import { publicSourceFamilies } from '@claimradar/source-registry';
 import { brandConfig } from '@claimradar/config';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: `${brandConfig.siteName} — Grounded Refund, Compensation & Claim Opportunities`,
-  description: `${brandConfig.siteName} discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.`,
+  title: `${brandConfig.siteName} - Find what you can claim`,
+  description: brandConfig.tagline,
   alternates: { canonical: '/' },
   openGraph: {
-    title: `${brandConfig.siteName} — Grounded Refund, Compensation & Claim Opportunities`,
-    description: `${brandConfig.siteName} discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.`,
+    title: `${brandConfig.siteName} - Find what you can claim`,
+    description: brandConfig.tagline,
     url: '/',
     type: 'website',
   },
 };
 
-const FAQ_ITEMS = [
-  {
-    question: `What is ${brandConfig.siteName}?`,
-    answer: `${brandConfig.siteName} is an independent public information service that monitors official Indian source families (including SEBI, RBI, IBBI, TRAI, and PIB press releases) for public refund, compensation, and claims notices. We explain who may be affected and direct users to official portals. We do not file claims on your behalf.`,
-  },
-  {
-    question: `Is ${brandConfig.siteName} a government portal or legal representative?`,
-    answer: `No. ${brandConfig.siteName} is strictly an independent information service. We are not affiliated with the Government of India, any court, tribunal, regulator, law firm, or listed company. We link directly to authentic official authority sources so you can verify information yourself.`,
-  },
-  {
-    question: `Does ${brandConfig.siteName} guarantee I will receive a refund or compensation?`,
-    answer:
-      'No. We surface potential opportunities based on official regulatory announcements and government notices. Whether you qualify or receive compensation depends strictly on the official eligibility criteria, your submitted evidence, and the official scheme process.',
-  },
-  {
-    question: `How does ${brandConfig.siteName} discover and verify opportunities?`,
-    answer:
-      'Our public source registry covers SEBI, RBI, IBBI, TRAI, and PIB. We organize notices from those source families and link each published record to its underlying official source for review.',
-  },
-  {
-    question: 'How do I submit a correction or update for a listing?',
-    answer:
-      'Visit our Corrections page to submit an update. Our editorial desk reviews all correction requests against the underlying official order and updates published records promptly.',
-  },
-];
+const SOURCE_MARKS = {
+  SEBI: BarChart3,
+  RBI: Landmark,
+  IBBI: FileText,
+  TRAI: Radio,
+  PIB: Building2,
+} as const;
 
-const MONITORED_AUTHORITIES = publicSourceFamilies.map((source) => ({
-  code: source.shortName,
-  name: source.name,
-  domain: source.category,
-}));
+const JOURNEY = [
+  ['DISCOVER', 'Find relevant records'],
+  ['VERIFY', 'Read the official source'],
+  ['UNDERSTAND', 'See what may apply'],
+  ['ACT', 'Follow the official route'],
+] as const;
+
+function SourceIcon({ code }: { code: string }) {
+  const Icon = SOURCE_MARKS[code as keyof typeof SOURCE_MARKS] ?? FileText;
+  return <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />;
+}
 
 export default async function LandingPage() {
-  const [claimables] = await Promise.all([getPublishedClaimables({ limit: 200 })]);
-
-  const ok = claimables.ok;
-  const items = ok ? claimables.data.items : [];
-
+  const claimables = await getPublishedClaimables({ limit: 200 });
+  const items = claimables.ok ? claimables.data.items : [];
   const latest = [...items]
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
-    .slice(0, 6);
-
-  const now = Date.now();
-  const closingSoon = items
-    .filter((c) => c.deadlineDate && Date.parse(c.deadlineDate) >= now)
-    .sort((a, b) => Date.parse(a.deadlineDate!) - Date.parse(b.deadlineDate!))
     .slice(0, 5);
 
   return (
-    <>
-      {/* ------------------------------------------------------------------ */}
-      {/*  1. HERO — Light-First Editorial Search Hero & Source Ledger       */}
-      {/* ------------------------------------------------------------------ */}
-      <section
-        aria-labelledby="home-hero-heading"
-        className="relative overflow-hidden bg-background pt-12 pb-16 sm:pt-16 sm:pb-20 border-b border-border"
-      >
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Dominant Left: Value Proposition & Signature Search */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left">
-              <p className="enter-seq-0 editorial-kicker">Public records, made useful</p>
-
-              {/* Human Headline with 0ms entrance */}
+    <main className="overflow-hidden bg-background">
+      <section aria-labelledby="home-hero-heading" className="relative bg-white">
+        <div className="mx-auto max-w-content px-4 pb-14 pt-10 sm:px-6 sm:pb-16 sm:pt-14 lg:px-8 lg:pb-12 lg:pt-12">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.92fr)] lg:gap-8">
+            <div className="max-w-3xl">
+              <span aria-hidden="true" className="block h-1.5 w-9 rounded-full bg-gold-bright" />
               <h1
                 id="home-hero-heading"
-                className="enter-seq-1 mt-5 max-w-2xl text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.12]"
+                className="enter-seq-1 mt-6 max-w-3xl font-display text-5xl font-bold leading-[0.98] tracking-[-0.045em] text-trust-primary sm:text-6xl lg:text-[4.9rem]"
               >
-                {brandConfig.tagline}
+                Find what&apos;s rightfully yours.
               </h1>
-
-              {/* Concise Supporting Copy with 70ms entrance */}
-              <p className="enter-seq-2 mt-4 reading-measure text-base sm:text-lg leading-relaxed text-text-secondary">
-                Search notices from SEBI, RBI, IBBI, TRAI, and PIB. We organize public refund,
-                compensation, and creditor-claim information with links to the underlying official
-                record.
+              <p className="enter-seq-2 mt-6 max-w-2xl text-lg leading-8 text-text-secondary sm:text-xl">
+                {brandConfig.siteName} checks official sources for refunds, benefits, compensation,
+                and claim opportunities - so you can find what you may be eligible for.
               </p>
 
-              {/* Dominant Search Input Experience with 140ms entrance */}
-              <div className="enter-seq-3 mt-8 w-full max-w-2xl">
+              <div className="enter-seq-3 mt-8 max-w-3xl">
                 <InteractiveHeroSearch />
               </div>
 
-              {/* Understated Independence & Navigation Links with 210ms entrance */}
-              <div className="enter-seq-4 mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-muted">
-                <span className="flex items-center gap-1.5 text-text-secondary font-medium">
-                  <ShieldCheck className="h-4 w-4 text-trust-primary" />
-                  Independent service
-                </span>
-                <span className="text-border" aria-hidden>
-                  •
-                </span>
-                <Link
-                  href="/claimables"
-                  className="text-trust-primary hover:underline font-semibold transition-colors duration-fast"
-                >
-                  {items.length > 0
-                    ? `Browse all verified notices (${items.length})`
-                    : 'Browse verified notices'}
-                </Link>
-                <span className="text-border" aria-hidden>
-                  •
-                </span>
-                <Link
-                  href="/editorial-policy"
-                  className="text-text-muted hover:text-text-primary transition-colors duration-fast"
-                >
-                  Editorial standards
-                </Link>
-              </div>
-
-              <div className="enter-seq-4 mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-xs text-text-secondary">
-                <span>
-                  <strong className="font-semibold text-text-primary">Official links</strong> for
-                  every published notice
-                </span>
-                <span>
-                  <strong className="font-semibold text-text-primary">Human review</strong> before
-                  publication
-                </span>
-                <span>
-                  <strong className="font-semibold text-text-primary">No filing fees</strong>{' '}
-                  through {brandConfig.siteName}
-                </span>
-              </div>
-            </div>
-
-            {/* Right: Restrained Official Source Ledger with 260ms entrance */}
-            <div className="enter-seq-5 lg:col-span-5 w-full">
-              <div className="relative rounded-md border border-border bg-surface p-5 shadow-xs transition-colors duration-fast hover:border-border-strong">
-                <div
-                  className="absolute left-0 top-5 bottom-5 w-0.5 bg-trust-primary"
-                  aria-hidden
-                />
-                <div className="flex items-center justify-between border-b border-border pb-3 mb-3">
-                  <div className="flex items-center gap-2">
-                    <Landmark className="h-4 w-4 text-trust-primary" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
-                      Monitored Official Sources
-                    </span>
-                  </div>
-                  <span className="text-xs text-text-muted">India</span>
+              <div className="enter-seq-4 mt-10 grid max-w-3xl gap-5 border-t border-border pt-5 sm:grid-cols-3">
+                <div className="flex gap-3">
+                  <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <p className="text-sm leading-5 text-text-secondary">
+                    <strong className="text-text-primary">Official sources</strong>
+                    <br />
+                    Direct links to the record.
+                  </p>
                 </div>
-
-                <div className="divide-y divide-border/60">
-                  {MONITORED_AUTHORITIES.map((auth, idx) => (
-                    <div
-                      key={auth.code}
-                      className={`enter-seq-${6 + Math.min(idx, 1)} group relative flex items-center justify-between py-2.5 px-2 rounded -mx-2 text-xs transition-all duration-fast hover:bg-surface-strong/70`}
-                    >
-                      <div className="absolute left-0 top-1.5 bottom-1.5 w-[2px] bg-trust-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-fast origin-center" />
-                      <div className="flex items-center gap-2 min-w-0 pr-2 transition-transform duration-fast group-hover:translate-x-1">
-                        <span className="font-bold text-text-primary shrink-0">{auth.code}</span>
-                        <span className="text-text-muted truncate hidden sm:inline">
-                          {auth.name}
-                        </span>
-                      </div>
-                      <span className="text-text-secondary font-medium text-right shrink-0">
-                        {auth.domain}
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex gap-3">
+                  <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <p className="text-sm leading-5 text-text-secondary">
+                    <strong className="text-text-primary">Pan-India view</strong>
+                    <br />
+                    Public sources across India.
+                  </p>
                 </div>
-
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
-                  <span>Configured public source families</span>
-                  <Link
-                    href="/sources"
-                    className="font-semibold text-trust-primary hover:underline transition-colors duration-fast"
-                  >
-                    All sources →
-                  </Link>
+                <div className="flex gap-3">
+                  <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <p className="text-sm leading-5 text-text-secondary">
+                    <strong className="text-text-primary">Your next step</strong>
+                    <br />
+                    You act on the official portal.
+                  </p>
                 </div>
               </div>
             </div>
+
+            <div className="enter-seq-5 relative lg:-mr-8">
+              <EvidenceRadarVisual />
+              <p className="pointer-events-none absolute -right-1 -top-9 hidden max-w-[9rem] -rotate-6 font-display text-lg italic leading-tight text-trust-primary/80 xl:block">
+                Checking trusted sources for you
+              </p>
+            </div>
+          </div>
+
+          <div
+            className="journey-rail mt-10 hidden items-end gap-0 lg:flex"
+            aria-label="ClaimKhoj discovery journey"
+          >
+            {JOURNEY.map(([label, description], index) => (
+              <div key={label} className="relative flex flex-1 items-center gap-3">
+                <div className="relative z-10 h-3 w-3 shrink-0 rounded-full border-2 border-white bg-gold-bright shadow-[0_0_0_1px_rgba(244,163,64,0.45)]" />
+                <div className="-ml-3 border-t border-dashed border-trust-primary/60 pt-4 pl-6">
+                  <p className="text-[0.65rem] font-bold tracking-[0.18em] text-trust-primary">
+                    {label}
+                  </p>
+                  <p className="mt-1 text-xs text-text-muted">{description}</p>
+                </div>
+                {index < JOURNEY.length - 1 && (
+                  <div
+                    className="absolute left-3 right-0 top-1.5 border-t border-dashed border-trust-primary/60"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Demo data banner when using fallback data */}
       {claimables.ok && claimables.demo && (
-        <div className="mx-auto max-w-content px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-content px-4 pt-5 sm:px-6 lg:px-8">
           <DemoDataBanner />
         </div>
       )}
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  2. VERIFIED OPPORTUNITIES (OR TRUTHFUL EDITORIAL EMPTY STATE)     */}
-      {/* ------------------------------------------------------------------ */}
       <Reveal
         as="section"
-        className="mx-auto max-w-content px-4 py-14 sm:px-6 lg:px-8"
-        aria-labelledby="latest-opps-heading"
+        className="border-y border-border bg-surface-strong/45"
+        aria-labelledby="sources-strip-heading"
       >
-        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end mb-8 border-b border-border pb-4">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Verified Notices
-            </span>
-            <h2
-              id="latest-opps-heading"
-              className="mt-1 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight"
+        <div className="mx-auto flex max-w-content flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:px-8">
+          <div className="shrink-0 lg:w-56">
+            <p
+              id="sources-strip-heading"
+              className="text-xs font-bold uppercase tracking-[0.14em] text-trust-primary"
             >
-              Latest Verified Opportunities
-            </h2>
-            <p className="mt-1 text-sm text-text-secondary">
-              Organized from official records in our configured public source families.
+              Official sources we check
+            </p>
+            <p className="mt-1 text-xs leading-5 text-text-secondary">
+              Configured source families, linked to their official domains.
             </p>
           </div>
+          <div className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-5">
+            {publicSourceFamilies.map((source) => (
+              <Link
+                key={source.id}
+                href={`/sources#${source.id}`}
+                className="group flex min-h-[72px] items-center gap-3 rounded-md border border-border bg-white px-3 py-2 transition-all duration-fast hover:-translate-y-0.5 hover:border-trust-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-trust-primary"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary transition-colors duration-fast group-hover:bg-trust-primary group-hover:text-white">
+                  <SourceIcon code={source.shortName} />
+                </span>
+                <span className="min-w-0">
+                  <strong className="block text-sm text-text-primary">{source.shortName}</strong>
+                  <span className="block truncate text-[0.68rem] leading-4 text-text-muted">
+                    {source.scope}
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
           <Link
-            href="/claimables"
-            className="group inline-flex items-center gap-1.5 text-sm font-bold text-trust-primary hover:text-trust-primary-hover shrink-0 transition-colors duration-fast"
+            href="/sources"
+            className="group flex shrink-0 items-center gap-1 text-sm font-semibold text-trust-primary hover:underline"
           >
-            <span>{items.length > 0 ? `View directory (${items.length})` : 'View directory'}</span>
+            View all sources{' '}
             <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
           </Link>
         </div>
-
-        {latest.length > 0 ? (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {latest.map((item) => (
-              <ClaimableCard key={item.id} claim={item} />
-            ))}
-          </div>
-        ) : (
-          <EmptyDirectoryNotice />
-        )}
       </Reveal>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  3. CLOSING SOON STATUTORY DEADLINES                               */}
-      {/* ------------------------------------------------------------------ */}
-      {closingSoon.length > 0 && (
-        <Reveal as="section" className="border-t border-border bg-surface-strong/30 py-14">
-          <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
+      <Reveal
+        as="section"
+        className="mx-auto max-w-content px-4 py-14 sm:px-6 lg:px-8 lg:py-16"
+        aria-labelledby="latest-opportunities-heading"
+      >
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)] lg:gap-14">
+          <div>
+            <div className="flex items-end justify-between gap-4 border-b border-border pb-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-deadline">
-                  Statutory Windows
-                </span>
-                <h2 className="text-xl sm:text-2xl font-display font-bold text-text-primary tracking-tight">
-                  Closing Soon
+                <h2
+                  id="latest-opportunities-heading"
+                  className="font-display text-3xl font-bold tracking-tight text-trust-primary"
+                >
+                  Latest verified opportunities
                 </h2>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Recent records from official source families.
+                </p>
               </div>
               <Link
-                href="/closing-soon"
-                className="group text-xs sm:text-sm font-semibold text-trust-primary hover:underline flex items-center gap-1"
+                href="/claimables"
+                className="group shrink-0 text-sm font-semibold text-trust-primary hover:underline"
               >
-                <span>View all deadlines</span>
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-fast group-hover:translate-x-0.5" />
+                View all{' '}
+                <ArrowRight className="inline h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
               </Link>
             </div>
-            <div className="divide-y divide-border rounded-md border border-border bg-surface shadow-xs">
-              {closingSoon.map((item) => (
-                <ClaimableRow key={item.id} claim={item} />
-              ))}
-            </div>
-          </div>
-        </Reveal>
-      )}
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  4. METHODOLOGY & RADAR SECTION — Relocated Scientific Diagram     */}
-      {/* ------------------------------------------------------------------ */}
-      <Reveal as="section" className="border-t border-border bg-surface py-16 sm:py-20">
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            {/* Left: 4-Stage Precision Pipeline Narrative */}
-            <div className="lg:col-span-7 flex flex-col items-start">
-              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-                Verification Methodology
-              </span>
-              <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-text-primary tracking-tight">
-                How {brandConfig.siteName} verifies an official notice.
-              </h2>
-              <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-2xl">
-                Published records link to an official source and are reviewed against that source
-                before publication.
-              </p>
-
-              <div className="mt-8 w-full">
-                <EvidenceFlowDiagram />
+            {latest.length > 0 ? (
+              <div className="divide-y divide-border">
+                {latest.map((item, index) => (
+                  <Link
+                    key={item.id}
+                    href={`/claimables/${item.slug}`}
+                    className="group flex min-h-[74px] items-center gap-3 py-3 transition-colors duration-fast hover:bg-surface-strong/40 motion-safe:animate-rise"
+                    style={{ animationDelay: `${index * 60}ms` }}
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-bright/10 text-trust-primary">
+                      <FileText className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <strong className="block truncate text-sm font-semibold text-text-primary group-hover:text-trust-primary">
+                        {item.title}
+                      </strong>
+                      <span className="mt-1 block truncate text-xs text-text-muted">
+                        {item.authority || 'Official source'}
+                        {item.publishedAt ? ` - ${formatIstDate(item.publishedAt)}` : ''}
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-transform duration-fast group-hover:translate-x-1 group-hover:text-trust-primary" />
+                  </Link>
+                ))}
               </div>
-            </div>
+            ) : (
+              <EmptyDirectoryNotice showActions={false} />
+            )}
+          </div>
 
-            {/* Right: Relocated Scientific Radar Visual */}
-            <div className="lg:col-span-5 flex justify-center w-full lg:pt-2">
-              <EvidenceRadarVisual />
+          <div
+            className="border-l-0 border-border lg:border-l lg:pl-12"
+            aria-labelledby="how-it-works-heading"
+          >
+            <div className="flex items-end justify-between gap-4 border-b border-border pb-4">
+              <div>
+                <h2
+                  id="how-it-works-heading"
+                  className="font-display text-3xl font-bold tracking-tight text-trust-primary"
+                >
+                  How {brandConfig.siteName} works
+                </h2>
+                <p className="mt-1 text-sm text-text-secondary">
+                  A simple path from source record to official action.
+                </p>
+              </div>
+              <Link
+                href="/how-it-works"
+                className="group shrink-0 text-sm font-semibold text-trust-primary hover:underline"
+              >
+                Learn more{' '}
+                <ArrowRight className="inline h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
+              </Link>
             </div>
+            <EvidenceFlowDiagram />
           </div>
         </div>
       </Reveal>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  5. MONITORED AUTHORITIES NETWORK                                  */}
-      {/* ------------------------------------------------------------------ */}
-      <Reveal as="section" className="border-t border-border bg-background py-16">
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-8">
-            <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              Authoritative Coverage
+      <Reveal
+        as="section"
+        className="border-t border-border bg-brand-bright/10"
+        aria-labelledby="public-benefit-heading"
+      >
+        <div className="mx-auto flex max-w-content flex-col gap-5 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div className="flex items-start gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-bright shadow-sm">
+              <Search className="h-5 w-5" />
             </span>
-            <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
-              Configured Indian Public Source Families
-            </h2>
-            <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-              Coverage follows the public source registry: securities, banking, insolvency, telecom,
-              and Union government notices.
-            </p>
-          </div>
-          <MonitoredSourcesNetwork />
-        </div>
-      </Reveal>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  6. EDITORIAL MANIFESTO                                            */}
-      {/* ------------------------------------------------------------------ */}
-      <Reveal as="section" className="border-t border-border bg-surface py-16">
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <EditorialPrinciples />
-        </div>
-      </Reveal>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  7. WATCHLIST ALERT CTA                                            */}
-      {/* ------------------------------------------------------------------ */}
-      <Reveal as="section" className="border-t border-border bg-background py-16">
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <AccountCta />
-        </div>
-      </Reveal>
-
-      {/* ------------------------------------------------------------------ */}
-      {/*  8. FREQUENTLY ASKED QUESTIONS                                     */}
-      {/* ------------------------------------------------------------------ */}
-      <Reveal as="section" className="border-t border-border bg-surface py-16">
-        <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
-            <div className="text-center mb-10">
-              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-                Public FAQ
-              </span>
-              <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
-                Frequently Asked Questions
+            <div>
+              <h2
+                id="public-benefit-heading"
+                className="font-display text-xl font-bold text-trust-primary"
+              >
+                Built for a more informed India
               </h2>
-              <p className="mt-2 text-sm text-text-secondary">
-                Clear facts on our public directory, independence, and verification standards.
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-text-secondary">
+                {brandConfig.siteName} helps consumers discover public refunds, benefits, and claim
+                opportunities from official records.
               </p>
             </div>
-            <FaqAccordion items={FAQ_ITEMS} />
           </div>
+          <Link
+            href="/about"
+            className="group inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-trust-primary hover:underline"
+          >
+            Learn more{' '}
+            <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
+          </Link>
         </div>
       </Reveal>
-    </>
+    </main>
   );
 }

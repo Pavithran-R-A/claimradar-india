@@ -9,6 +9,7 @@ const sourcesPath = path.resolve(__dirname, '../components/landing/monitored-sou
 const sourcePagePath = path.resolve(__dirname, '../app/(public)/sources/page.tsx');
 const howItWorksPath = path.resolve(__dirname, '../app/(public)/how-it-works/page.tsx');
 const methodologyPath = path.resolve(__dirname, '../app/(public)/methodology/page.tsx');
+const heroSearchPath = path.resolve(__dirname, '../components/landing/interactive-hero-search.tsx');
 
 const read = (filePath: string) => fs.readFileSync(filePath, 'utf8');
 
@@ -69,11 +70,12 @@ describe('truthful public copy contracts', () => {
 
   it('keeps landing copy search-first and source-bounded', () => {
     const page = read(landingPath).replace(/\s+/g, ' ');
+    const search = read(heroSearchPath).replace(/\s+/g, ' ');
 
-    expect(page).toContain("Find refunds, benefits & claims you're entitled to.");
-    expect(page).toContain('Search notices from SEBI, RBI, IBBI, TRAI, and PIB.');
-    expect(page).toContain('public refund, compensation, and creditor-claim information');
-    expect(page).toContain('View all deadlines');
+    expect(page).toContain('Find what&apos;s rightfully yours.');
+    expect(page).toContain('checks official sources for refunds, benefits, compensation');
+    expect(search).toContain('Search refunds, claims, schemes or your situation');
+    expect(page).toContain('Latest verified opportunities');
 
     for (const unsupportedClaim of [
       'government gazettes',
@@ -81,6 +83,7 @@ describe('truthful public copy contracts', () => {
       'tribunal orders',
       'state authorities',
       'company submission portal',
+      'ClaimKhoj does not file claims or promise payouts.',
     ]) {
       expect(page).not.toContain(unsupportedClaim);
     }
