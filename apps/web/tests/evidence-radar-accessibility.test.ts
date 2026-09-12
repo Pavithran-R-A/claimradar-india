@@ -67,4 +67,18 @@ describe('Evidence Radar Visual Accessibility & Motion', () => {
     expect(fileContent).toContain("accent: '#0F8B8D'");
     expect(fileContent).toContain("accent: '#3B82F6'");
   });
+
+  it('keeps decorative radar depth behind the ClaimKhoj hub so the brand icon stays unobstructed', () => {
+    const atmosphere = fileContent.indexOf('data-ui="radar-atmosphere"');
+    const hub = fileContent.indexOf('data-ui="radar-hub"');
+    expect(atmosphere).toBeGreaterThan(-1);
+    expect(hub).toBeGreaterThan(atmosphere);
+    expect(fileContent).not.toContain('left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-bright');
+  });
+
+  it('adds selected-source depth without covering the interactive source buttons', () => {
+    expect(fileContent).toContain('<radialGradient');
+    expect(fileContent).toContain('data-ui="radar-selected-halo"');
+    expect(fileContent).toContain('role="group" aria-label="Monitored official sources"');
+  });
 });
