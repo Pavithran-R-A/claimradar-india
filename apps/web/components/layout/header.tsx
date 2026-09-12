@@ -77,7 +77,7 @@ export function Header() {
             : 'border-border/80 bg-white/92 backdrop-blur-sm',
         )}
       >
-        <div className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-full max-w-[1760px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 2xl:px-16">
           <BrandLockup size="md" />
 
           <nav className="hidden lg:block" aria-label="Main navigation">
