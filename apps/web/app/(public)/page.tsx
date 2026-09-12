@@ -8,8 +8,6 @@ import {
   FileText,
   Landmark,
   Radio,
-  Search,
-  ShieldCheck,
 } from 'lucide-react';
 import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
 import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
@@ -375,68 +373,6 @@ export default async function LandingPage() {
           </div>
         </div>
       </Reveal>
-
-      <Reveal
-        as="section"
-        className="border-y border-border bg-[#EEF8F6]"
-        aria-labelledby="public-benefit-heading"
-      >
-        <div className="mx-auto grid max-w-[1760px] gap-6 px-4 py-7 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center lg:px-10 2xl:px-16">
-          <div className="flex items-start gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#0F8B8D] shadow-sm">
-              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-[0.66rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
-                Public-source first
-              </p>
-              <h2
-                id="public-benefit-heading"
-                className="mt-1 font-display text-2xl font-bold tracking-tight text-trust-primary"
-              >
-                Better information before you act
-              </h2>
-              <p className="mt-1.5 max-w-3xl text-sm leading-5 text-text-secondary">
-                {brandConfig.siteName} helps you discover public refunds, benefits, compensation,
-                and claim opportunities from official records. It does not file claims, promise
-                payouts, or collect official filing fees.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
-            <Link
-              href="/claimables"
-              className="public-focus inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-trust-primary px-5 text-sm font-bold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
-            >
-              Explore opportunities
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link
-              href="/about"
-              className="public-focus inline-flex min-h-[46px] items-center justify-center rounded-xl border border-trust-primary/20 bg-white px-5 text-sm font-semibold text-trust-primary transition-colors duration-fast hover:bg-white/70"
-            >
-              About ClaimKhoj
-            </Link>
-          </div>
-        </div>
-      </Reveal>
-
-      <section className="bg-white" aria-label="Start searching ClaimKhoj">
-        <div className="mx-auto flex max-w-[1760px] flex-col items-start justify-between gap-4 px-4 py-7 sm:px-6 md:flex-row md:items-center lg:px-10 2xl:px-16">
-          <div>
-            <p className="font-display text-2xl font-bold text-trust-primary">Ready to check what may apply to you?</p>
-            <p className="mt-1 text-sm text-text-secondary">Start with a search, then verify the record on the official source.</p>
-          </div>
-          <Link
-            href="/claimables"
-            className="public-focus inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-[#F5B940] px-6 text-sm font-extrabold text-[#0D2148] shadow-[0_10px_24px_rgba(217,154,24,0.18)] transition-all duration-fast hover:bg-[#F0AE2F] hover:shadow-[0_12px_28px_rgba(217,154,24,0.24)]"
-          >
-            <Search className="h-4 w-4" aria-hidden="true" />
-            Search claims
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }
