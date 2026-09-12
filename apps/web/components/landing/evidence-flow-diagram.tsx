@@ -5,20 +5,10 @@ import { ArrowRight, CheckCircle2, FileSearch, ListChecks, Search } from 'lucide
 import { cn } from '@claimradar/design-system';
 
 const STAGES = [
-  { number: '1', title: 'Search', description: "Tell us what you're looking for", icon: Search },
-  { number: '2', title: 'We check', description: 'We monitor official sources', icon: FileSearch },
-  {
-    number: '3',
-    title: 'See matches',
-    description: 'Review relevant opportunities',
-    icon: ListChecks,
-  },
-  {
-    number: '4',
-    title: 'Take action',
-    description: 'Follow the official process',
-    icon: CheckCircle2,
-  },
+  { number: '1', title: 'Discover', description: 'Find relevant public records', icon: Search },
+  { number: '2', title: 'Verify', description: 'Read the official source', icon: FileSearch },
+  { number: '3', title: 'Understand', description: 'See what may apply to you', icon: ListChecks },
+  { number: '4', title: 'Act', description: 'Follow the official route', icon: CheckCircle2 },
 ] as const;
 
 const TONES = [
@@ -38,6 +28,7 @@ export function EvidenceFlowDiagram() {
       setIsInView(true);
       return;
     }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -47,17 +38,22 @@ export function EvidenceFlowDiagram() {
       },
       { threshold: 0.15 },
     );
+
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
 
   return (
     <div ref={containerRef} className="relative py-6 sm:py-8">
-      <div className="absolute left-[8%] right-[8%] top-[3.9rem] hidden border-t border-dashed border-trust-primary/25 sm:block" aria-hidden="true" />
+      <div
+        className="absolute left-[8%] right-[8%] top-[3.9rem] hidden border-t border-dashed border-trust-primary/25 sm:block"
+        aria-hidden="true"
+      />
       <ol className="relative grid gap-7 sm:grid-cols-4 sm:gap-2">
         {STAGES.map((stage, index) => {
           const Icon = stage.icon;
           const tone = TONES[index] ?? TONES[0];
+
           return (
             <li
               key={stage.number}
@@ -75,7 +71,7 @@ export function EvidenceFlowDiagram() {
               </div>
               <div className="pt-1 sm:pt-4">
                 <p className="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-text-muted">
-                  {stage.number}. {stage.title}
+                  Step {stage.number}
                 </p>
                 <h3 className="mt-1 font-display text-[1.05rem] font-bold leading-tight text-trust-primary sm:text-lg">
                   {stage.title}
@@ -92,7 +88,7 @@ export function EvidenceFlowDiagram() {
           );
         })}
       </ol>
-      <div className="mt-6 rounded-lg border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-3 text-xs leading-5 text-text-secondary sm:text-center">
+      <div className="mt-6 rounded-xl border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-3 text-xs leading-5 text-text-secondary sm:text-center">
         <strong className="text-trust-primary">Built for informed action.</strong>{' '}
         ClaimKhoj directs you to the official route; it does not file claims or promise payouts.
       </div>
