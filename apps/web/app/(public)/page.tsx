@@ -183,21 +183,28 @@ export default async function LandingPage() {
             </div>
           </div>
 
+          <div
+            data-ui="journey-notes"
+            aria-hidden="true"
+            className="mt-3 hidden min-h-5 items-center justify-between gap-8 px-1 xl:flex"
+          >
+            <p className="max-w-[13rem] font-display text-sm italic leading-tight text-trust-primary/65">
+              From official records to your next step
+            </p>
+            <p className="max-w-[15rem] text-right font-display text-sm italic leading-tight text-trust-primary/65">
+              Better information. Fairer outcomes.
+            </p>
+          </div>
+
           <ol
             data-ui="claim-journey"
             aria-label="ClaimKhoj discovery journey"
-            className="journey-rail relative mt-3 grid gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:border-t-0 lg:pt-5"
+            className="journey-rail relative mt-1 grid gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:border-t-0 lg:pt-3"
           >
-            <p className="pointer-events-none absolute left-1 top-5 hidden font-display text-sm italic text-trust-primary/65 xl:block" aria-hidden="true">
-              From official records to your next step
-            </p>
-            <p className="pointer-events-none absolute right-1 top-5 hidden font-display text-sm italic text-trust-primary/65 xl:block" aria-hidden="true">
-              Better information. Fairer outcomes.
-            </p>
             <svg
               viewBox="0 0 1000 70"
               preserveAspectRatio="none"
-              className="pointer-events-none absolute left-0 top-[2.8rem] hidden h-10 w-full lg:block"
+              className="pointer-events-none absolute left-0 top-8 hidden h-10 w-full lg:block"
               aria-hidden="true"
             >
               <path
