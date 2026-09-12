@@ -1,0 +1,5 @@
+Exact-head visual candidate branch: design/claimkhoj-final-visual
+Visual implementation commit before docs-only review notes: 24dd80cf75ba68cb7beb5bfadd49a42ec014ffa1
+Latest branch includes only documentation after that visual commit.
+Vercel visual deployment for 24dd80c: claimradar-staging-cujtzoy7r-pavithrans-projects-cae184b1.vercel.app
+Temporary share links may expire; use the branch alias or regenerate a Vercel share URL for review.
