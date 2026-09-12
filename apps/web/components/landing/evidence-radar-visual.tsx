@@ -8,7 +8,6 @@ import {
   Landmark,
   Radio,
   ShieldCheck,
-  X,
   type LucideIcon,
 } from 'lucide-react';
 import { BrandMark, cn } from '@claimradar/design-system';
@@ -115,15 +114,7 @@ const MONITORED_NODES: AuthorityNode[] = [
 
 const DEFAULT_NODE = MONITORED_NODES[1]!;
 
-function SourceSpotlight({
-  node,
-  onReset,
-  compact = false,
-}: {
-  node: AuthorityNode;
-  onReset: () => void;
-  compact?: boolean;
-}) {
+function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compact?: boolean }) {
   const Icon = node.icon;
 
   return (
@@ -136,32 +127,21 @@ function SourceSpotlight({
         compact ? 'p-4' : 'min-h-[236px] p-4',
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
-            style={{ backgroundColor: node.pale, color: node.accent }}
-          >
-            <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
-              Source spotlight
-            </p>
-            <p className="mt-1 font-mono text-xs font-extrabold tracking-wide" style={{ color: node.accent }}>
-              {node.code}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={onReset}
-          className="public-focus inline-flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg text-text-muted transition-colors duration-fast hover:bg-white hover:text-text-primary"
-          aria-label="Close authority inspector"
-          title="Reset source spotlight"
+      <div className="flex items-center gap-3">
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+          style={{ backgroundColor: node.pale, color: node.accent }}
         >
-          <X className="h-4 w-4" aria-hidden="true" />
-        </button>
+          <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+        </div>
+        <div>
+          <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
+            Source spotlight
+          </p>
+          <p className="mt-1 font-mono text-xs font-extrabold tracking-wide" style={{ color: node.accent }}>
+            {node.code}
+          </p>
+        </div>
       </div>
 
       <h3 className="mt-4 font-display text-xl font-bold leading-tight text-trust-primary">
@@ -200,7 +180,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           <span className="hidden text-text-secondary sm:inline">5 monitored families</span>
         </div>
 
-        <div data-ui="radar-desktop" className="hidden sm:grid sm:grid-cols-[minmax(0,1fr)_200px] sm:items-center sm:gap-5">
+        <div
+          data-ui="radar-desktop"
+          className="hidden md:grid md:grid-cols-[minmax(0,1fr)_200px] md:items-center md:gap-5"
+        >
           <div className="relative aspect-square min-w-0">
             <svg viewBox="0 0 520 520" className="h-full w-full" aria-hidden="true">
               <defs>
@@ -312,11 +295,11 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             </div>
           </div>
 
-          <SourceSpotlight node={selectedNode} onReset={() => setSelectedNode(DEFAULT_NODE)} />
+          <SourceSpotlight node={selectedNode} />
         </div>
 
-        <div data-ui="radar-mobile" className="sm:hidden">
-          <div className="grid grid-cols-2 gap-2" aria-label="Monitored official sources">
+        <div data-ui="radar-mobile" className="md:hidden">
+          <div role="group" className="grid grid-cols-2 gap-2" aria-label="Monitored official sources">
             {MONITORED_NODES.map((node) => {
               const Icon = node.icon;
               const isSelected = selectedNode.code === node.code;
@@ -325,6 +308,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   key={node.code}
                   type="button"
                   aria-pressed={isSelected}
+                  aria-label={`Inspect ${node.code}: ${node.name}`}
                   onClick={() => setSelectedNode(node)}
                   className={cn(
                     'public-focus flex min-h-[44px] items-center gap-2 rounded-xl border px-3 py-2 text-left transition-colors duration-fast',
@@ -336,8 +320,9 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                   <span
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
                     style={{ backgroundColor: node.pale, color: node.accent }}
+                    aria-hidden="true"
                   >
-                    <Icon className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                    <Icon className="h-4 w-4" strokeWidth={2} />
                   </span>
                   <span className="min-w-0">
                     <span className="block text-xs font-extrabold">{node.code}</span>
@@ -349,7 +334,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           </div>
 
           <div className="mt-3">
-            <SourceSpotlight node={selectedNode} onReset={() => setSelectedNode(DEFAULT_NODE)} compact />
+            <SourceSpotlight node={selectedNode} compact />
           </div>
         </div>
 
