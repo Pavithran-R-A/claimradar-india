@@ -23,6 +23,8 @@ export const contactConfig = {
     'Direct support email and formal contact channels will be published before unrestricted public release.',
 } as const;
 
+const siteUrl = getEnv('NEXT_PUBLIC_SITE_URL') ?? 'https://claimradar-staging.vercel.app';
+
 export const brandConfig = {
   /**
    * Provisional public identity. Keep this object as the only source of
@@ -34,7 +36,10 @@ export const brandConfig = {
   tagline: "Find refunds, benefits & claims you're entitled to.",
   isProvisional: true,
   description: 'Discover refunds, benefits, and claims you may be entitled to in India',
-  url: 'https://claimradar.in',
+  // Canonical/OG URLs must follow the environment being served. Until the
+  // final ClaimKhoj production domain is approved, fail safely to staging
+  // instead of advertising the retired ClaimRadar domain.
+  url: siteUrl,
   supportEmail: contactConfig.supportEmail,
 } as const;
 
