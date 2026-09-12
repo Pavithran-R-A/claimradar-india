@@ -107,7 +107,7 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-content px-4 pb-9 pt-8 sm:px-6 sm:pb-12 sm:pt-11 lg:px-8 lg:pb-10 lg:pt-14">
           <div
             data-ui="hero-grid"
-            className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(440px,0.92fr)] xl:gap-14"
+            className="grid items-center gap-10 xl:grid-cols-[minmax(0,0.9fr)_minmax(560px,1.1fr)] xl:gap-10"
           >
             <div className="max-w-3xl">
               <span aria-hidden="true" className="block h-1.5 w-9 rounded-full bg-gold-bright" />
@@ -154,14 +154,14 @@ export default async function LandingPage() {
               </div>
             </div>
 
-            <div className="enter-seq-5 relative pt-2 xl:pt-14">
+            <div className="enter-seq-5 relative pt-2 xl:pt-12">
               <div
                 data-ui="hero-annotation"
-                className="pointer-events-none absolute right-5 top-0 hidden items-end gap-2 xl:flex"
+                className="pointer-events-none absolute right-2 top-0 hidden items-end gap-2 xl:flex"
                 aria-hidden="true"
               >
                 <p className="max-w-[10rem] text-right font-display text-base italic leading-tight text-trust-primary/70">
-                  Checking trusted sources for you
+                  Scanning official sources for you
                 </p>
                 <svg viewBox="0 0 72 44" className="h-10 w-16 text-trust-primary/50">
                   <path
@@ -188,21 +188,39 @@ export default async function LandingPage() {
           <ol
             data-ui="claim-journey"
             aria-label="ClaimKhoj discovery journey"
-            className="journey-rail mt-10 grid gap-3 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0"
+            className="journey-rail relative mt-8 grid gap-3 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:border-t-0 lg:pt-7"
           >
+            <svg
+              viewBox="0 0 1000 70"
+              preserveAspectRatio="none"
+              className="pointer-events-none absolute left-0 top-[3.15rem] hidden h-12 w-full lg:block"
+              aria-hidden="true"
+            >
+              <path
+                d="M10 38 C120 8 180 62 280 38 S450 12 535 38 S700 58 790 36 S920 18 990 42"
+                fill="none"
+                stroke="#5D94BC"
+                strokeWidth="1.4"
+                strokeDasharray="5 6"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
             {JOURNEY.map(([label, description], index) => (
               <li
                 key={label}
-                className="group relative flex items-center gap-3 rounded-xl px-2 py-3 lg:items-start lg:border-r lg:border-border lg:px-5 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+                className="group relative z-10 flex items-center gap-3 rounded-xl px-2 py-3 lg:flex-col lg:gap-2 lg:px-4 lg:py-0 lg:text-center"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/40 bg-[#FFF7DD] text-xs font-extrabold text-trust-primary">
+                <span className="order-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/45 bg-[#FFF7DD] text-xs font-extrabold text-trust-primary shadow-[0_0_0_5px_rgba(255,255,255,0.95)] lg:h-3 lg:w-3 lg:text-[0px]">
                   {index + 1}
                 </span>
-                <span>
+                <span className="order-1 lg:min-h-[34px]">
                   <span className="block text-[0.66rem] font-extrabold tracking-[0.16em] text-trust-primary">
                     {label}
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-text-secondary">{description}</span>
+                  <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">{description}</span>
+                </span>
+                <span className="order-3 hidden max-w-[11rem] text-xs leading-5 text-text-muted lg:block">
+                  {description}
                 </span>
               </li>
             ))}
