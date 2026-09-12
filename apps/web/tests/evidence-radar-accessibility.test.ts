@@ -19,24 +19,32 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
   });
 
   it('ensures visible focus indication on nodes', () => {
-    expect(fileContent).toContain('group-focus-visible:opacity-100');
+    expect(fileContent).toContain('public-focus');
     expect(fileContent).toContain('strokeDasharray="3 3"');
   });
 
-  it('ensures drawer overlay has region role, live region announcement, and accessible close button', () => {
+  it('ensures spotlight details use a live region and accessible reset control', () => {
     expect(fileContent).toContain('role="region"');
     expect(fileContent).toContain('aria-live="polite"');
     expect(fileContent).toContain('aria-label="Close authority inspector"');
   });
 
-  it('ensures Escape key closes the inspector drawer', () => {
-    expect(fileContent).toContain("e.key === 'Escape'");
+  it('ensures Escape key restores the default spotlight', () => {
+    expect(fileContent).toContain("event.key === 'Escape'");
+    expect(fileContent).toContain('setSelectedNode(DEFAULT_NODE)');
   });
 
   it('opens with a truthful source spotlight so the instrument does not read as decorative', () => {
-    expect(fileContent).toContain('SOURCE SPOTLIGHT');
-    expect(fileContent).toContain('MONITORED_NODES[1] ?? null');
+    expect(fileContent).toContain('Source spotlight');
+    expect(fileContent).toContain('const DEFAULT_NODE = MONITORED_NODES[1]!');
     expect(fileContent).toContain('This is not a live activity feed');
+  });
+
+  it('uses dedicated desktop and mobile source presentations from one monitored-source model', () => {
+    expect(fileContent).toContain('data-ui="radar-desktop"');
+    expect(fileContent).toContain('data-ui="radar-mobile"');
+    expect(fileContent).toContain('min-h-[44px]');
+    expect(fileContent.match(/MONITORED_NODES\.map/g)?.length).toBeGreaterThanOrEqual(3);
   });
 
   it('uses differentiated authority accents without changing the supported source set', () => {
