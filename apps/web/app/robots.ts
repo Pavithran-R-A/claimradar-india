@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
+import { brandConfig } from '@claimradar/config';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://claimradar.in';
+const SITE_URL = brandConfig.url;
 
 export default function robots(): MetadataRoute.Robots {
   // Staging and preview deployments must never be indexed. Only the
