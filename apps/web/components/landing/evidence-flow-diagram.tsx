@@ -1,14 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { ArrowRight, CheckCircle2, FileSearch, ListChecks, Search } from 'lucide-react';
+import { ArrowRight, FileSearch, ListChecks, Search, UserRound } from 'lucide-react';
 import { cn } from '@claimradar/design-system';
 
 const STAGES = [
-  { number: '1', title: 'Discover', description: 'Find relevant public records', icon: Search },
-  { number: '2', title: 'Verify', description: 'Read the official source', icon: FileSearch },
-  { number: '3', title: 'Understand', description: 'See what may apply to you', icon: ListChecks },
-  { number: '4', title: 'Act', description: 'Follow the official route', icon: CheckCircle2 },
+  { number: '1', title: 'Search', description: "Tell us what you're looking for", icon: Search },
+  { number: '2', title: 'We scan', description: 'We check official sources', icon: FileSearch },
+  { number: '3', title: 'See matches', description: 'Get relevant opportunities', icon: ListChecks },
+  { number: '4', title: 'Take action', description: 'Follow official steps to claim', icon: UserRound },
 ] as const;
 
 const TONES = [
@@ -44,12 +44,12 @@ export function EvidenceFlowDiagram() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative py-6 sm:py-8">
+    <div ref={containerRef} className="relative py-4 sm:py-5">
       <div
-        className="absolute left-[8%] right-[8%] top-[3.9rem] hidden border-t border-dashed border-trust-primary/25 sm:block"
+        className="absolute left-[8%] right-[8%] top-[3.35rem] hidden border-t border-dashed border-trust-primary/25 sm:block"
         aria-hidden="true"
       />
-      <ol className="relative grid gap-7 sm:grid-cols-4 sm:gap-2">
+      <ol className="relative grid gap-6 sm:grid-cols-4 sm:gap-2">
         {STAGES.map((stage, index) => {
           const Icon = stage.icon;
           const tone = TONES[index] ?? TONES[0];
@@ -64,23 +64,23 @@ export function EvidenceFlowDiagram() {
               style={{ transitionDelay: isInView ? `${index * 90}ms` : '0ms' }}
             >
               <div
-                className="relative z-10 mx-0 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white shadow-[0_8px_22px_rgba(13,33,72,0.08)] transition-all duration-fast group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(13,33,72,0.12)] sm:mx-auto"
+                className="relative z-10 mx-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white shadow-[0_8px_22px_rgba(13,33,72,0.08)] transition-all duration-fast group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(13,33,72,0.12)] sm:mx-auto"
                 style={{ backgroundColor: tone.bg, color: tone.fg }}
               >
-                <Icon className="h-6 w-6" strokeWidth={1.8} aria-hidden="true" />
+                <Icon className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
               </div>
-              <div className="pt-1 sm:pt-4">
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-text-muted">
+              <div className="pt-1 sm:pt-3">
+                <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.15em] text-text-muted">
                   Step {stage.number}
                 </p>
-                <h3 className="mt-1 font-display text-[1.05rem] font-bold leading-tight text-trust-primary sm:text-lg">
+                <h3 className="mt-0.5 font-display text-base font-bold leading-tight text-trust-primary sm:text-[1.05rem]">
                   {stage.title}
                 </h3>
-                <p className="mt-1 text-sm leading-5 text-text-secondary">{stage.description}</p>
+                <p className="mt-1 text-xs leading-4 text-text-secondary sm:text-sm sm:leading-5">{stage.description}</p>
               </div>
               {index < STAGES.length - 1 && (
                 <ArrowRight
-                  className="absolute -right-2 top-[2.7rem] hidden h-5 w-5 text-trust-primary/45 sm:block"
+                  className="absolute -right-2 top-[2.25rem] hidden h-5 w-5 text-trust-primary/45 sm:block"
                   aria-hidden="true"
                 />
               )}
@@ -88,9 +88,9 @@ export function EvidenceFlowDiagram() {
           );
         })}
       </ol>
-      <div className="mt-6 rounded-xl border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-3 text-xs leading-5 text-text-secondary sm:text-center">
-        <strong className="text-trust-primary">Built for informed action.</strong>{' '}
-        ClaimKhoj directs you to the official route; it does not file claims or promise payouts.
+      <div className="mt-4 rounded-xl border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-2.5 text-xs leading-5 text-text-secondary sm:text-center">
+        <strong className="text-trust-primary">Built for a more informed India.</strong>{' '}
+        ClaimKhoj helps you discover what may apply, then sends you to the official route.
       </div>
     </div>
   );
