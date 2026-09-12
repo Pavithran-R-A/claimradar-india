@@ -21,6 +21,13 @@ const STAGES = [
   },
 ] as const;
 
+const TONES = [
+  { bg: '#EAF3FF', fg: '#2563EB' },
+  { bg: '#EAF7F5', fg: '#0F8B8D' },
+  { bg: '#FFF5D6', fg: '#D99A18' },
+  { bg: '#EAF3FF', fg: '#214E80' },
+] as const;
+
 export function EvidenceFlowDiagram() {
   const [isInView, setIsInView] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -45,14 +52,12 @@ export function EvidenceFlowDiagram() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative py-7 sm:py-9">
-      <div
-        className="absolute left-10 right-10 top-[4.2rem] hidden border-t border-dashed border-trust-primary/35 sm:block"
-        aria-hidden="true"
-      />
-      <ol className="relative grid gap-7 sm:grid-cols-4 sm:gap-3">
+    <div ref={containerRef} className="relative py-6 sm:py-8">
+      <div className="absolute left-[8%] right-[8%] top-[3.9rem] hidden border-t border-dashed border-trust-primary/25 sm:block" aria-hidden="true" />
+      <ol className="relative grid gap-7 sm:grid-cols-4 sm:gap-2">
         {STAGES.map((stage, index) => {
           const Icon = stage.icon;
+          const tone = TONES[index] ?? TONES[0];
           return (
             <li
               key={stage.number}
@@ -60,21 +65,26 @@ export function EvidenceFlowDiagram() {
                 'group relative flex items-start gap-4 transition-all duration-enter ease-out sm:block sm:text-center',
                 isInView ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
               )}
-              style={{ transitionDelay: isInView ? `${index * 100}ms` : '0ms' }}
+              style={{ transitionDelay: isInView ? `${index * 90}ms` : '0ms' }}
             >
-              <div className="relative z-10 mx-0 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-trust-primary/15 bg-[#eef8f8] text-trust-primary shadow-xs transition-all duration-fast group-hover:-translate-y-1 group-hover:border-brand-bright group-hover:bg-brand-bright/10 sm:mx-auto">
-                <Icon className="h-6 w-6" strokeWidth={1.7} aria-hidden="true" />
-                <span className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-bright text-[0.65rem] font-bold text-white">
-                  {stage.number}
-                </span>
+              <div
+                className="relative z-10 mx-0 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white shadow-[0_8px_22px_rgba(13,33,72,0.08)] transition-all duration-fast group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_rgba(13,33,72,0.12)] sm:mx-auto"
+                style={{ backgroundColor: tone.bg, color: tone.fg }}
+              >
+                <Icon className="h-6 w-6" strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div className="pt-1 sm:pt-4">
-                <h3 className="font-display text-lg font-bold text-trust-primary">{stage.title}</h3>
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-[0.15em] text-text-muted">
+                  {stage.number}. {stage.title}
+                </p>
+                <h3 className="mt-1 font-display text-[1.05rem] font-bold leading-tight text-trust-primary sm:text-lg">
+                  {stage.title}
+                </h3>
                 <p className="mt-1 text-sm leading-5 text-text-secondary">{stage.description}</p>
               </div>
               {index < STAGES.length - 1 && (
                 <ArrowRight
-                  className="absolute right-[-0.6rem] top-5 hidden h-5 w-5 text-trust-primary/50 sm:block"
+                  className="absolute -right-2 top-[2.7rem] hidden h-5 w-5 text-trust-primary/45 sm:block"
                   aria-hidden="true"
                 />
               )}
@@ -82,9 +92,10 @@ export function EvidenceFlowDiagram() {
           );
         })}
       </ol>
-      <p className="mt-6 border-t border-border pt-4 text-xs leading-5 text-text-muted sm:text-center">
-        ClaimKhoj directs you to the official route. It does not file claims or promise payouts.
-      </p>
+      <div className="mt-6 rounded-lg border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-3 text-xs leading-5 text-text-secondary sm:text-center">
+        <strong className="text-trust-primary">Built for informed action.</strong>{' '}
+        ClaimKhoj directs you to the official route; it does not file claims or promise payouts.
+      </div>
     </div>
   );
 }
