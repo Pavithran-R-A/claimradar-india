@@ -32,4 +32,16 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
   it('ensures Escape key closes the inspector drawer', () => {
     expect(fileContent).toContain("e.key === 'Escape'");
   });
+
+  it('opens with a truthful source spotlight so the instrument does not read as decorative', () => {
+    expect(fileContent).toContain('SOURCE SPOTLIGHT');
+    expect(fileContent).toContain('MONITORED_NODES[1] ?? null');
+    expect(fileContent).toContain('This is not a live activity feed');
+  });
+
+  it('uses differentiated authority accents without changing the supported source set', () => {
+    expect(fileContent).toContain("accent: '#F5B940'");
+    expect(fileContent).toContain("accent: '#0F8B8D'");
+    expect(fileContent).toContain("accent: '#3B82F6'");
+  });
 });
