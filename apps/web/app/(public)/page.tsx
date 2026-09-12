@@ -9,6 +9,7 @@ import {
   Landmark,
   Radio,
   Search,
+  ShieldCheck,
 } from 'lucide-react';
 import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
 import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
@@ -51,15 +52,41 @@ const SOURCE_TONES = {
 } as const;
 
 const JOURNEY = [
-  ['DISCOVER', 'Find relevant records', '8%'],
-  ['VERIFY', 'Read the official source', '36%'],
-  ['UNDERSTAND', 'See what may apply', '65%'],
-  ['ACT', 'Follow the official route', '91%'],
+  ['DISCOVER', 'Find relevant records'],
+  ['VERIFY', 'Read the official source'],
+  ['UNDERSTAND', 'See what may apply'],
+  ['ACT', 'Follow the official route'],
 ] as const;
 
 function SourceIcon({ code }: { code: string }) {
   const Icon = SOURCE_MARKS[code as keyof typeof SOURCE_MARKS] ?? FileText;
   return <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />;
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div>
+      {eyebrow ? (
+        <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
+          {eyebrow}
+        </p>
+      ) : null}
+      <h2 className="mt-1 font-display text-3xl font-bold tracking-[-0.02em] text-trust-primary sm:text-[2.15rem]">
+        {title}
+      </h2>
+      {description ? (
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">{description}</p>
+      ) : null}
+    </div>
+  );
 }
 
 export default async function LandingPage() {
@@ -70,19 +97,22 @@ export default async function LandingPage() {
     .slice(0, 5);
 
   return (
-    <main className="overflow-hidden bg-background">
+    <main id="main-content" className="overflow-hidden bg-background">
       <section aria-labelledby="home-hero-heading" className="relative bg-white">
-        <div className="mx-auto max-w-content px-4 pb-10 pt-8 sm:px-6 sm:pb-12 sm:pt-10 lg:px-8 lg:pb-8 lg:pt-9">
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.06fr)_minmax(520px,0.94fr)] lg:gap-8">
+        <div className="mx-auto max-w-content px-4 pb-9 pt-8 sm:px-6 sm:pb-12 sm:pt-11 lg:px-8 lg:pb-10 lg:pt-14">
+          <div
+            data-ui="hero-grid"
+            className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(440px,0.92fr)] xl:gap-14"
+          >
             <div className="max-w-3xl">
               <span aria-hidden="true" className="block h-1.5 w-9 rounded-full bg-gold-bright" />
               <h1
                 id="home-hero-heading"
-                className="enter-seq-1 mt-5 max-w-[760px] font-display text-5xl font-bold leading-[0.96] tracking-[-0.048em] text-trust-primary sm:text-6xl lg:text-[4.45rem]"
+                className="enter-seq-1 mt-5 max-w-[760px] font-display text-[clamp(3.2rem,6vw,4.8rem)] font-bold leading-[0.96] tracking-[-0.048em] text-trust-primary"
               >
                 Find what&apos;s rightfully yours.
               </h1>
-              <p className="enter-seq-2 mt-5 max-w-2xl text-lg leading-8 text-text-secondary sm:text-[1.22rem]">
+              <p className="enter-seq-2 mt-5 max-w-[680px] text-[1.05rem] leading-8 text-text-secondary sm:text-[1.18rem]">
                 {brandConfig.siteName} checks official sources for refunds, benefits, compensation,
                 and claim opportunities — so you can find what you may be eligible for.
               </p>
@@ -91,9 +121,9 @@ export default async function LandingPage() {
                 <InteractiveHeroSearch />
               </div>
 
-              <div className="enter-seq-4 mt-8 grid max-w-[760px] gap-4 border-t border-border pt-5 sm:grid-cols-3">
+              <div className="enter-seq-4 mt-8 grid max-w-[760px] gap-4 border-t border-border pt-5 sm:grid-cols-3 sm:gap-5">
                 <div className="flex gap-3">
-                  <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Official sources</strong>
                     <br />
@@ -101,7 +131,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Pan-India view</strong>
                     <br />
@@ -109,7 +139,7 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" />
+                  <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Your next step</strong>
                     <br />
@@ -119,64 +149,59 @@ export default async function LandingPage() {
               </div>
             </div>
 
-            <div className="enter-seq-5 relative lg:-mr-10">
-              <EvidenceRadarVisual />
-              <div className="pointer-events-none absolute -right-2 -top-8 hidden xl:block">
-                <p className="max-w-[10rem] -rotate-5 font-display text-lg italic leading-tight text-trust-primary/80">
+            <div className="enter-seq-5 relative pt-2 xl:pt-14">
+              <div
+                data-ui="hero-annotation"
+                className="pointer-events-none absolute right-5 top-0 hidden items-end gap-2 xl:flex"
+                aria-hidden="true"
+              >
+                <p className="max-w-[10rem] text-right font-display text-base italic leading-tight text-trust-primary/72">
                   Checking trusted sources for you
                 </p>
-                <svg viewBox="0 0 92 58" className="ml-8 mt-1 h-12 w-20 text-trust-primary/65" aria-hidden="true">
-                  <path d="M5 8 C54 6 79 20 68 45" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" />
-                  <path d="m62 40 6 6 7-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <svg viewBox="0 0 72 44" className="h-10 w-16 text-trust-primary/50">
+                  <path
+                    d="M4 6 C38 5 58 14 54 34"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeDasharray="4 4"
+                  />
+                  <path
+                    d="m49 29 5 6 6-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
+              <EvidenceRadarVisual />
             </div>
           </div>
 
-          <div className="relative mt-6 hidden h-[116px] lg:block" aria-label="ClaimKhoj discovery journey">
-            <div className="absolute left-0 top-1 flex items-center gap-3 text-trust-primary/75">
-              <div className="relative h-12 w-14" aria-hidden="true">
-                <FileText className="absolute left-0 top-2 h-9 w-9 -rotate-6" strokeWidth={1.25} />
-                <FileText className="absolute left-4 top-0 h-9 w-9 rotate-3" strokeWidth={1.25} />
-              </div>
-              <p className="max-w-[180px] -rotate-3 font-display text-sm italic leading-tight">
-                From official records to your next step
-              </p>
-            </div>
-
-            <svg
-              viewBox="0 0 1200 96"
-              preserveAspectRatio="none"
-              className="absolute inset-x-0 bottom-2 h-[82px] w-full overflow-visible"
-              aria-hidden="true"
-            >
-              <path
-                d="M20 50 C170 82 250 22 385 46 C535 74 640 27 765 48 C900 70 1000 24 1180 48"
-                fill="none"
-                stroke="#2B679C"
-                strokeWidth="1.5"
-                strokeDasharray="5 5"
-                className="animate-draw-line"
-              />
-            </svg>
-
-            {JOURNEY.map(([label, description, left]) => (
-              <div
+          <ol
+            data-ui="claim-journey"
+            aria-label="ClaimKhoj discovery journey"
+            className="journey-rail mt-10 grid gap-3 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0"
+          >
+            {JOURNEY.map(([label, description], index) => (
+              <li
                 key={label}
-                className="absolute bottom-0 -translate-x-1/2"
-                style={{ left }}
+                className="group relative flex items-center gap-3 rounded-xl px-2 py-3 lg:items-start lg:border-r lg:border-border lg:px-5 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
               >
-                <div className="journey-step-dot mx-auto h-3 w-3 rounded-full border-2 border-white bg-gold-bright shadow-[0_0_0_1px_rgba(244,163,64,0.45)]" />
-                <p className="mt-3 text-center text-[0.65rem] font-extrabold tracking-[0.18em] text-trust-primary">
-                  {label}
-                </p>
-                <p className="mt-1 whitespace-nowrap text-center text-xs text-text-muted">{description}</p>
-              </div>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/40 bg-[#FFF7DD] text-xs font-extrabold text-trust-primary">
+                  {index + 1}
+                </span>
+                <span>
+                  <span className="block text-[0.66rem] font-extrabold tracking-[0.16em] text-trust-primary">
+                    {label}
+                  </span>
+                  <span className="mt-1 block text-sm leading-5 text-text-secondary">{description}</span>
+                </span>
+              </li>
             ))}
-            <p className="absolute bottom-7 right-0 rotate-[-4deg] font-display text-sm italic text-trust-primary/70">
-              Better information. Fairer outcomes.
-            </p>
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -188,97 +213,97 @@ export default async function LandingPage() {
 
       <Reveal
         as="section"
-        className="border-y border-border bg-surface-strong/45"
+        className="border-y border-border bg-surface-strong/55"
         aria-labelledby="sources-strip-heading"
       >
-        <div className="mx-auto flex max-w-content flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:px-8">
-          <div className="shrink-0 lg:w-56">
-            <p
-              id="sources-strip-heading"
-              className="text-xs font-bold uppercase tracking-[0.14em] text-trust-primary"
-            >
-              Official sources we check
-            </p>
-            <p className="mt-1 text-xs leading-5 text-text-secondary">
-              Monitored source families, linked to official domains.
-            </p>
-          </div>
-          <div className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-5">
-            {publicSourceFamilies.map((source) => {
-              const tone = SOURCE_TONES[source.shortName as keyof typeof SOURCE_TONES] ?? {
-                accent: '#214E80',
-                pale: '#EEF4F8',
-              };
-              return (
-                <Link
-                  key={source.id}
-                  href={`/sources#${source.id}`}
-                  className="group flex min-h-[76px] items-center gap-3 rounded-lg border border-border bg-white px-3 py-2.5 shadow-[0_6px_18px_rgba(13,33,72,0.025)] transition-all duration-fast hover:-translate-y-1 hover:border-trust-primary/30 hover:shadow-[0_10px_24px_rgba(13,33,72,0.08)] focus-visible:ring-2 focus-visible:ring-trust-primary"
-                >
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-fast group-hover:scale-105"
-                    style={{ backgroundColor: tone.pale, color: tone.accent }}
+        <div className="mx-auto max-w-content px-4 py-7 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
+            <div className="shrink-0 lg:w-56">
+              <p
+                id="sources-strip-heading"
+                className="text-xs font-bold uppercase tracking-[0.14em] text-trust-primary"
+              >
+                Official sources we check
+              </p>
+              <p className="mt-1 text-xs leading-5 text-text-secondary">
+                Monitored source families linked to official domains.
+              </p>
+            </div>
+
+            <div className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+              {publicSourceFamilies.map((source) => {
+                const tone = SOURCE_TONES[source.shortName as keyof typeof SOURCE_TONES] ?? {
+                  accent: '#214E80',
+                  pale: '#EEF4F8',
+                };
+
+                return (
+                  <Link
+                    key={source.id}
+                    href={`/sources#${source.id}`}
+                    className="public-focus group flex min-h-[80px] items-center gap-3 rounded-xl border border-border bg-white px-3 py-3 transition-all duration-fast hover:-translate-y-0.5 hover:border-trust-primary/25 hover:shadow-[0_10px_24px_rgba(13,33,72,0.06)]"
                   >
-                    <SourceIcon code={source.shortName} />
-                  </span>
-                  <span className="min-w-0">
-                    <strong className="block text-sm text-text-primary">{source.shortName}</strong>
-                    <span className="block truncate text-[0.68rem] leading-4 text-text-muted">
-                      {source.scope}
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform duration-fast group-hover:scale-105"
+                      style={{ backgroundColor: tone.pale, color: tone.accent }}
+                    >
+                      <SourceIcon code={source.shortName} />
                     </span>
-                  </span>
-                </Link>
-              );
-            })}
+                    <span className="min-w-0">
+                      <strong className="block text-sm text-text-primary">{source.shortName}</strong>
+                      <span className="block truncate text-[0.68rem] leading-4 text-text-muted">
+                        {source.scope}
+                      </span>
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <Link
+              href="/sources"
+              className="public-focus group inline-flex min-h-[44px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
+            >
+              View all sources
+              <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
           </div>
-          <Link
-            href="/sources"
-            className="group flex shrink-0 items-center gap-1 text-sm font-semibold text-trust-primary hover:underline"
-          >
-            View all sources{' '}
-            <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
-          </Link>
         </div>
       </Reveal>
 
       <Reveal
         as="section"
-        className="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8 lg:py-14"
+        className="public-section mx-auto max-w-content px-4 sm:px-6 lg:px-8"
         aria-labelledby="latest-opportunities-heading"
       >
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.14fr)] lg:gap-12">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-14">
           <div>
-            <div className="flex items-end justify-between gap-4 border-b border-border pb-4">
-              <div>
-                <h2
-                  id="latest-opportunities-heading"
-                  className="font-display text-3xl font-bold tracking-tight text-trust-primary"
-                >
-                  Latest verified opportunities
-                </h2>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Recent records from official source families.
-                </p>
-              </div>
+            <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading
+                eyebrow="Recently verified"
+                title="Latest opportunities"
+                description="Recent records from official source families, with direct routes back to the source."
+              />
               <Link
                 href="/claimables"
-                className="group shrink-0 text-sm font-semibold text-trust-primary hover:underline"
+                className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
               >
-                View all{' '}
-                <ArrowRight className="inline h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
+                View all
+                <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
               </Link>
             </div>
+
             {latest.length > 0 ? (
               <div className="divide-y divide-border">
                 {latest.map((item, index) => (
                   <Link
                     key={item.id}
                     href={`/claimables/${item.slug}`}
-                    className="group flex min-h-[66px] items-center gap-3 px-1 py-3 transition-all duration-fast hover:bg-surface-strong/45 motion-safe:animate-rise"
+                    className="public-focus group flex min-h-[76px] items-center gap-3 rounded-lg px-2 py-3 transition-all duration-fast hover:bg-surface-strong/55 motion-safe:animate-rise"
                     style={{ animationDelay: `${index * 60}ms` }}
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#2563EB] transition-transform duration-fast group-hover:scale-105">
-                      <FileText className="h-4 w-4" />
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#2563EB] transition-transform duration-fast group-hover:scale-105">
+                      <FileText className="h-4 w-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <strong className="block truncate text-sm font-semibold text-text-primary group-hover:text-trust-primary">
@@ -289,37 +314,32 @@ export default async function LandingPage() {
                         {item.publishedAt ? ` · ${formatIstDate(item.publishedAt)}` : ''}
                       </span>
                     </span>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-transform duration-fast group-hover:translate-x-1 group-hover:text-trust-primary" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-transform duration-fast group-hover:translate-x-1 group-hover:text-trust-primary" aria-hidden="true" />
                   </Link>
                 ))}
               </div>
             ) : (
-              <EmptyDirectoryNotice showActions={false} />
+              <div className="pt-4">
+                <EmptyDirectoryNotice showActions={false} />
+              </div>
             )}
           </div>
 
-          <div
-            className="border-l-0 border-border lg:border-l lg:pl-10"
-            aria-labelledby="how-it-works-heading"
-          >
-            <div className="flex items-end justify-between gap-4 border-b border-border pb-4">
-              <div>
-                <h2
-                  id="how-it-works-heading"
-                  className="font-display text-3xl font-bold tracking-tight text-trust-primary"
-                >
-                  How {brandConfig.siteName} works
-                </h2>
-                <p className="mt-1 text-sm text-text-secondary">
-                  A simple path from source record to official action.
-                </p>
+          <div className="border-border lg:border-l lg:pl-12" aria-labelledby="how-it-works-heading">
+            <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <div id="how-it-works-heading">
+                <SectionHeading
+                  eyebrow="From record to action"
+                  title={`How ${brandConfig.siteName} works`}
+                  description="A clear path from official records to the next official step."
+                />
               </div>
               <Link
                 href="/how-it-works"
-                className="group shrink-0 text-sm font-semibold text-trust-primary hover:underline"
+                className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
               >
-                Learn more{' '}
-                <ArrowRight className="inline h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
+                Learn more
+                <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
               </Link>
             </div>
             <EvidenceFlowDiagram />
@@ -329,36 +349,65 @@ export default async function LandingPage() {
 
       <Reveal
         as="section"
-        className="border-t border-border bg-[#EAF7F5]"
+        className="border-y border-border bg-[#EEF8F6]"
         aria-labelledby="public-benefit-heading"
       >
-        <div className="mx-auto flex max-w-content flex-col gap-5 px-4 py-6 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+        <div className="mx-auto grid max-w-content gap-8 px-4 py-10 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center lg:px-8 lg:py-12">
           <div className="flex items-start gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#0F8B8D] shadow-sm">
-              <Search className="h-5 w-5" />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#0F8B8D] shadow-sm">
+              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
             </span>
             <div>
+              <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
+                Public-source first
+              </p>
               <h2
                 id="public-benefit-heading"
-                className="font-display text-xl font-bold text-trust-primary"
+                className="mt-1 font-display text-2xl font-bold tracking-tight text-trust-primary sm:text-3xl"
               >
-                Built for a more informed India
+                Better information before you act
               </h2>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-text-secondary">
-                {brandConfig.siteName} helps consumers discover public refunds, benefits, and claim
-                opportunities from official records.
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+                {brandConfig.siteName} helps you discover public refunds, benefits, compensation,
+                and claim opportunities from official records. It does not file claims, promise
+                payouts, or collect official filing fees.
               </p>
             </div>
           </div>
-          <Link
-            href="/about"
-            className="group inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-trust-primary hover:underline"
-          >
-            Learn more{' '}
-            <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
-          </Link>
+
+          <div className="flex flex-col gap-2 sm:flex-row md:flex-col lg:flex-row">
+            <Link
+              href="/claimables"
+              className="public-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-trust-primary px-5 text-sm font-bold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
+            >
+              Explore opportunities
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+            <Link
+              href="/about"
+              className="public-focus inline-flex min-h-[48px] items-center justify-center rounded-xl border border-trust-primary/20 bg-white px-5 text-sm font-semibold text-trust-primary transition-colors duration-fast hover:bg-white/70"
+            >
+              About ClaimKhoj
+            </Link>
+          </div>
         </div>
       </Reveal>
+
+      <section className="bg-white" aria-label="Start searching ClaimKhoj">
+        <div className="mx-auto flex max-w-content flex-col items-start justify-between gap-5 px-4 py-10 sm:px-6 md:flex-row md:items-center lg:px-8">
+          <div>
+            <p className="font-display text-2xl font-bold text-trust-primary">Ready to check what may apply to you?</p>
+            <p className="mt-1 text-sm text-text-secondary">Start with a search, then verify the record on the official source.</p>
+          </div>
+          <Link
+            href="/claimables"
+            className="public-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#F5B940] px-6 text-sm font-extrabold text-[#0D2148] shadow-[0_10px_24px_rgba(217,154,24,0.18)] transition-all duration-fast hover:bg-[#F0AE2F] hover:shadow-[0_12px_28px_rgba(217,154,24,0.24)]"
+          >
+            <Search className="h-4 w-4" aria-hidden="true" />
+            Search claims
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
