@@ -18,7 +18,7 @@ export default function MethodologyPage() {
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
           The principles, cryptographic provenance checks, and editorial standards governing every
-          record published on ClaimRadar India.
+          record published on ClaimKhoj India.
         </p>
       </header>
 
@@ -94,7 +94,7 @@ export default function MethodologyPage() {
               4. Freshness and Lifecycle Tracking
             </h2>
             <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
-              Records in ClaimRadar undergo regular re-verification sweeps. If an official deadline
+              Records in ClaimKhoj undergo regular re-verification sweeps. If an official deadline
               passes, the record status transitions immediately to{' '}
               <code className="rounded bg-surface-strong px-1.5 py-0.5 text-xs">closed</code> or{' '}
               <code className="rounded bg-surface-strong px-1.5 py-0.5 text-xs">expired</code>. If a

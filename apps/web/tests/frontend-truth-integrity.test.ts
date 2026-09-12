@@ -174,16 +174,16 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const content = fs.readFileSync(radarPath, 'utf8');
 
     const normalized = content.replace(/\s+/g, ' ');
-    expect(normalized).toContain('SOURCE VERIFICATION');
+    expect(normalized).toContain('OFFICIAL SOURCES WE CHECK');
     expect(normalized).toContain('Every listing is checked against the source.');
     expect(normalized).toContain('Monitored official sources');
     expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
     expect(normalized).toContain(
-      'This shows our verification process. It is not a live activity feed.',
+      'Select a source to inspect its monitoring scope. This is not a live activity feed.',
     );
     expect(normalized).toContain(
-      'ClaimRadar does not file claims or collect official filing fees. You act on the official portal.',
+      'ClaimKhoj does not file claims or collect official filing fees. You act on the official portal.',
     );
 
     // Prohibit tiny text and old AI jargon
@@ -251,12 +251,9 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const pagePath = path.resolve(__dirname, '../app/(public)/page.tsx');
     const pageContent = fs.readFileSync(pagePath, 'utf8');
 
-    expect(pageContent).toContain('Browse all verified notices (${items.length})');
-    expect(pageContent).toContain('Browse verified notices');
-    expect(pageContent).toContain('View directory (${items.length})');
-    expect(pageContent).toContain('View directory');
-    expect(pageContent).not.toContain('Browse all verified notices (0)');
-    expect(pageContent).not.toContain('View directory (0)');
+    expect(pageContent).toContain('latest.length > 0');
+    expect(pageContent).toContain('Latest verified opportunities');
+    expect(pageContent).not.toContain('Latest verified opportunities (0)');
 
     const statePath = path.resolve(__dirname, '../components/repository-states.tsx');
     const stateContent = fs.readFileSync(statePath, 'utf8');

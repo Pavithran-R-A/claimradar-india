@@ -2,14 +2,14 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Editorial Policy',
-  'How ClaimRadar India publishes, reviews and corrects content.',
+  'How ClaimKhoj India publishes, reviews and corrects content.',
 );
 
 export default function EditorialPolicyPage() {
   return (
     <LegalPageTemplate title="Editorial Policy" lastUpdated="July 27, 2026">
       <p className="text-base">
-        This policy governs how content is published on ClaimRadar India. Our editorial standards
+        This policy governs how content is published on ClaimKhoj India. Our editorial standards
         prioritise accuracy, source transparency and consumer protection.
       </p>
 

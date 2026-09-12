@@ -9,7 +9,7 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Company Directory — ClaimRadar India',
+  title: 'Company Directory — ClaimKhoj India',
   description:
     'Explore companies referenced in published refund, compensation and claim records verified from official Indian sources.',
   alternates: { canonical: '/companies' },
@@ -97,9 +97,9 @@ export default async function CompaniesPage() {
         <Building2 aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" />
         <p>
           <strong className="font-semibold text-text-secondary">Neutral listing disclosure:</strong>{' '}
-          listing a company on ClaimRadar India indicates only that an official notice, refund
-          scheme or order references the entity. It implies no judgment about the company&apos;s
-          conduct, liability or current standing.
+          listing a company on ClaimKhoj India indicates only that an official notice, refund scheme
+          or order references the entity. It implies no judgment about the company&apos;s conduct,
+          liability or current standing.
         </p>
       </div>
     </div>

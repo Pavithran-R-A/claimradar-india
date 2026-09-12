@@ -14,7 +14,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*  BrandMark ("Evidence Radar" Icon & Wordmark Mark)                          */
+/*  BrandMark (ClaimKhoj route-and-entitlement mark)                          */
 /* -------------------------------------------------------------------------- */
 
 export interface BrandMarkProps extends React.SVGAttributes<SVGSVGElement> {
@@ -40,33 +40,15 @@ export function BrandMark({
 }: BrandMarkProps) {
   const pixelSize = typeof size === 'number' ? size : brandMarkSizes[size] || 32;
 
-  const isDark = variant === 'dark';
   const isLight = variant === 'light';
   const isMonochrome = variant === 'monochrome';
   const isSignal = variant === 'signal';
 
-  const bgFill = isLight ? '#FFFFFF' : isDark ? '#FFFFFF' : isSignal ? '#214E80' : '#15171A';
-  const primaryStroke = isMonochrome
-    ? 'currentColor'
-    : isDark
-      ? '#214E80'
-      : isSignal
-        ? '#FFFFFF'
-        : '#214E80';
-  const secondaryStroke = isMonochrome
-    ? 'currentColor'
-    : isDark
-      ? '#525A65'
-      : isSignal
-        ? 'rgba(255,255,255,0.7)'
-        : '#525A65';
-  const ringStroke = isMonochrome
-    ? 'currentColor'
-    : isDark
-      ? 'rgba(33,78,128,0.2)'
-      : isSignal
-        ? 'rgba(255,255,255,0.25)'
-        : 'rgba(217,218,214,0.6)';
+  const onDark = variant === 'default' || isSignal;
+  const bgFill = isLight ? '#FFFFFF' : onDark ? '#0D2148' : 'transparent';
+  const primaryStroke = isMonochrome ? 'currentColor' : onDark ? '#FFFFFF' : '#0D2148';
+  const secondaryStroke = isMonochrome ? 'currentColor' : '#0F8B8D';
+  const accentFill = isMonochrome ? 'currentColor' : '#F4A62A';
 
   return (
     <svg
@@ -83,25 +65,30 @@ export function BrandMark({
       {...props}
     >
       <rect width="32" height="32" rx="7" fill={bgFill} />
-      <circle cx="16" cy="16" r="11" stroke={ringStroke} strokeWidth="1" strokeDasharray="2 2" />
-      <circle cx="16" cy="16" r="7" stroke={ringStroke} strokeWidth="1" />
-      <circle cx="16" cy="16" r="3" stroke={ringStroke} strokeWidth="1" />
-      <line x1="16" y1="4" x2="16" y2="28" stroke={ringStroke} strokeWidth="0.75" />
-      <line x1="4" y1="16" x2="28" y2="16" stroke={ringStroke} strokeWidth="0.75" />
       <path
-        d="M21 11.5C19.8 10 17.8 9 15.5 9C11.9 9 9 11.9 9 15.5C9 19.1 11.9 22 15.5 22C17.5 22 19.3 21.1 20.5 19.8"
+        d="M7 24V10.5L13 4.5H24V15.5L15.5 24H7Z"
         stroke={primaryStroke}
-        strokeWidth="2"
+        strokeWidth="3"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle
-        cx="21"
-        cy="11.5"
-        r="2.2"
-        fill={secondaryStroke}
-        className={animated ? 'animate-beacon-pulse origin-[21px_11.5px]' : undefined}
+      <path
+        d="M7 24H15.5L24 15.5"
+        stroke={secondaryStroke}
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle cx="16" cy="16" r="1" fill={primaryStroke} />
+      <path d="M13 4.5V10H18.5" fill={accentFill} stroke={accentFill} strokeWidth="1" />
+      {animated && (
+        <circle
+          cx="24"
+          cy="15.5"
+          r="1.75"
+          fill={accentFill}
+          className="animate-beacon-pulse origin-[24px_15.5px]"
+        />
+      )}
     </svg>
   );
 }

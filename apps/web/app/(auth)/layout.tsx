@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ClaimRadarBrand } from '@/components/layout/brand-mark';
+import { BrandLockup } from '@/components/layout/brand-mark';
 import { ShieldCheck } from 'lucide-react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Auth Header */}
       <header className="relative z-10 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-4 sm:px-6">
-          <ClaimRadarBrand size="sm" />
+          <BrandLockup size="sm" />
           <Link
             href="/"
             className="text-xs font-semibold text-text-secondary hover:text-trust-primary transition-colors"

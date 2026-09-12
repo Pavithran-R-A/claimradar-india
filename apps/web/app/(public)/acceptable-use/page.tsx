@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Acceptable Use Policy',
-  'Acceptable use rules for ClaimRadar India platform.',
+  'Acceptable use rules for ClaimKhoj India platform.',
 );
 
 export default function AcceptableUsePage() {
@@ -10,7 +10,7 @@ export default function AcceptableUsePage() {
     <LegalPageTemplate title="Acceptable Use Policy" lastUpdated="July 27, 2026">
       <h2>1. Purpose</h2>
       <p>
-        This Acceptable Use Policy defines the rules for using ClaimRadar India. By using the
+        This Acceptable Use Policy defines the rules for using ClaimKhoj India. By using the
         Platform, you agree to comply with these rules. Violations may result in account suspension
         or termination.
       </p>
@@ -35,7 +35,7 @@ export default function AcceptableUsePage() {
           Scrape, crawl, or use automated tools to extract data from the Platform without written
           permission
         </li>
-        <li>Misrepresent yourself as being affiliated with ClaimRadar or any government body</li>
+        <li>Misrepresent yourself as being affiliated with ClaimKhoj or any government body</li>
         <li>Use the Platform to harass, defraud, or mislead other users or third parties</li>
         <li>Resell or redistribute Platform content as your own service or product</li>
         <li>Interfere with or disrupt the Platform, servers, or connected networks</li>
@@ -44,14 +44,14 @@ export default function AcceptableUsePage() {
 
       <h2>4. Content You Submit</h2>
       <p>
-        If you submit content (correction reports, feedback, etc.), you grant ClaimRadar a
+        If you submit content (correction reports, feedback, etc.), you grant ClaimKhoj a
         non-exclusive licence to use, review, and act on that content. You must not submit content
         that is defamatory, abusive, or infringes on third-party rights.
       </p>
 
       <h2>5. Enforcement</h2>
       <p>
-        ClaimRadar reserves the right to investigate violations and take appropriate action,
+        ClaimKhoj reserves the right to investigate violations and take appropriate action,
         including:
       </p>
       <ul>

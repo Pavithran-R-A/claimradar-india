@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { BrandMark as DSBrandMark } from '@claimradar/design-system';
 import { cn } from '@claimradar/design-system';
+import { brandConfig } from '@claimradar/config';
 
 export interface BrandProps {
   size?: 'sm' | 'md' | 'lg';
@@ -12,7 +13,7 @@ export interface BrandProps {
   theme?: 'light' | 'dark' | 'auto';
 }
 
-export function ClaimRadarBrand({
+export function BrandLockup({
   size = 'md',
   showDescriptor = true,
   className,
@@ -31,7 +32,7 @@ export function ClaimRadarBrand({
     >
       <DSBrandMark
         size={isSm ? 26 : isLg ? 36 : 30}
-        variant={theme === 'dark' ? 'default' : theme === 'light' ? 'light' : 'default'}
+        variant={theme === 'dark' ? 'default' : 'light'}
         animated={false}
         className="transition-transform duration-ui group-hover:scale-105"
       />
@@ -42,7 +43,7 @@ export function ClaimRadarBrand({
             isSm ? 'text-base' : isLg ? 'text-xl' : 'text-lg',
           )}
         >
-          ClaimRadar
+          {brandConfig.shortName}
         </span>
         {showDescriptor && (
           <span
@@ -51,7 +52,7 @@ export function ClaimRadarBrand({
               theme === 'dark' ? 'text-trust-primary' : 'text-trust-primary',
             )}
           >
-            India
+            {brandConfig.descriptor}
           </span>
         )}
       </div>

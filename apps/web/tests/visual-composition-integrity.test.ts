@@ -32,15 +32,12 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
     expect(radarSource).toContain('aspect-square w-full');
   });
 
-  it('C. Methodology desktop stage area uses vertical timeline instead of 4 skinny columns', () => {
+  it('C. Homepage process stage area uses responsive horizontal journey', () => {
     const flowPath = path.resolve(__dirname, '../components/landing/evidence-flow-diagram.tsx');
     const flowSource = fs.readFileSync(flowPath, 'utf8');
 
-    // Must not use lg:grid-cols-4 or grid-cols-4
-    expect(flowSource).not.toContain('lg:grid-cols-4');
-    expect(flowSource).not.toContain('grid-cols-4');
-    // Must use vertical editorial timeline structure
-    expect(flowSource).toContain('relative pl-7 sm:pl-8');
+    expect(flowSource).toContain('sm:grid-cols-4');
+    expect(flowSource).toContain('prefers-reduced-motion: reduce');
   });
 
   it('D. Monitored sources network provides dedicated mobile layout without table scrolling', () => {
@@ -61,6 +58,6 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
     const flowPath = path.resolve(__dirname, '../components/landing/evidence-flow-diagram.tsx');
     const flowSource = fs.readFileSync(flowPath, 'utf8');
     expect(flowSource).toContain('prefers-reduced-motion: reduce');
-    expect(flowSource).toContain('motion-reduce:!opacity-100');
+    expect(flowSource).toContain('translate-y-0 opacity-100');
   });
 });

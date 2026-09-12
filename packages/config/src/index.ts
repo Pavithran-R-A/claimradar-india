@@ -24,8 +24,16 @@ export const contactConfig = {
 } as const;
 
 export const brandConfig = {
-  siteName: 'ClaimRadar India',
-  description: 'Discover and track claimable opportunities in India',
+  /**
+   * Provisional public identity. Keep this object as the only source of
+   * visible brand naming until official trademark screening is complete.
+   */
+  siteName: 'ClaimKhoj',
+  shortName: 'ClaimKhoj',
+  descriptor: 'Find what you can claim',
+  tagline: "Find refunds, benefits & claims you're entitled to.",
+  isProvisional: true,
+  description: 'Discover refunds, benefits, and claims you may be entitled to in India',
   url: 'https://claimradar.in',
   supportEmail: contactConfig.supportEmail,
 } as const;

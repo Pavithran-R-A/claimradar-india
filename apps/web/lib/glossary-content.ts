@@ -56,7 +56,7 @@ export const GLOSSARY_TERMS: GlossaryTerm[] = [
     definition:
       'An authoritative document or channel issued by a government body, court, tribunal, regulator or the concerned company, such as an order, notification, press release or public notice.',
     context:
-      'ClaimRadar links every listing back to its official sources so users can verify the information independently. We do not treat third-party commentary or news reports as official sources.',
+      'ClaimKhoj links every listing back to its official sources so users can verify the information independently. We do not treat third-party commentary or news reports as official sources.',
   },
   {
     slug: 'disgorgement',

@@ -59,11 +59,13 @@ export const rbiRssSource: SourceDefinition = {
   domain: 'rbi.org.in',
   sourceType: SourceType.RSS,
   adapterType: 'rss-rbi',
-  baseUrl: 'https://www.rbi.org.in',
-  // Verified 2026-07-27: the previous URL was a single press-release DETAIL page,
+  baseUrl: 'https://rbi.org.in',
+  // Verified 2026-09-12: RBI's official bare-host RSS endpoint is live.
+  // The feed publishes legacy HTTP item links; rss-rbi upgrades them to HTTPS.
+  // The previous URL was a single press-release DETAIL page,
   // not a feed. RBI's official press-release RSS (listed on rbi.org.in/scripts/rss.aspx)
   // is pressreleases_rss.xml, live with ETag/Last-Modified/304 support.
-  feedUrl: 'https://www.rbi.org.in/pressreleases_rss.xml',
+  feedUrl: 'https://rbi.org.in/pressreleases_rss.xml',
   trustLevel: 'official',
   rateLimit: { requestsPerMinute: 10 },
 };
@@ -124,8 +126,8 @@ export const rbiNotificationsRssSource: SourceDefinition = {
   domain: 'rbi.org.in',
   sourceType: SourceType.RSS,
   adapterType: 'rss-rbi',
-  baseUrl: 'https://www.rbi.org.in',
-  feedUrl: 'https://www.rbi.org.in/notifications_rss.xml',
+  baseUrl: 'https://rbi.org.in',
+  feedUrl: 'https://rbi.org.in/notifications_rss.xml',
   trustLevel: 'official',
   rateLimit: { requestsPerMinute: 10 },
 };

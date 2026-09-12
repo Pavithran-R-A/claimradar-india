@@ -8,6 +8,7 @@ import { sha256 } from '../../src/http/hash.js';
 import { matchByUrl } from '../../src/deduplication/strategies.js';
 import { discoverFromFeedXml, parseFeedTitle } from './live-helpers.js';
 import type { DiscoveredDocument } from '../../src/adapters/types.js';
+import { normalizeRbiUrl } from '../../src/adapters/rss/rbi.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixtureDir = resolve(__dirname, '..', 'fixtures', 'live', 'rbi');
@@ -20,7 +21,10 @@ describe('RBI live fixture regression', () => {
   let documents: DiscoveredDocument[] = [];
 
   beforeAll(async () => {
-    documents = await discoverFromFeedXml(feedXml);
+    documents = (await discoverFromFeedXml(feedXml)).map((document) => ({
+      ...document,
+      url: normalizeRbiUrl(document.url),
+    }));
   });
 
   describe('feed parsing', () => {
@@ -45,7 +49,7 @@ describe('RBI live fixture regression', () => {
     it('should extract valid rbi.org.in press-release URLs', () => {
       for (const doc of documents) {
         const url = new URL(doc.url);
-        expect(url.hostname).toBe('www.rbi.org.in');
+        expect(url.hostname).toBe('rbi.org.in');
         expect(url.pathname).toBe('/scripts/BS_PressReleaseDisplay.aspx');
         expect(url.searchParams.get('prid')).toMatch(/^\d+$/);
       }
@@ -55,6 +59,33 @@ describe('RBI live fixture regression', () => {
       expect(documents[0]!.description).toContain('34,000 crore');
       expect(documents[0]!.description).not.toContain('<table');
       expect(documents[0]!.description).not.toContain('<p>');
+    });
+  });
+
+  describe('official URL canonicalization', () => {
+    it('upgrades legacy HTTP item links to the official HTTPS host', () => {
+      expect(
+        normalizeRbiUrl('http://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63587'),
+      ).toBe('https://rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63587');
+    });
+
+    it('accepts both official RBI hostnames over HTTPS', () => {
+      expect(normalizeRbiUrl('https://www.rbi.org.in/pressreleases_rss.xml')).toBe(
+        'https://rbi.org.in/pressreleases_rss.xml',
+      );
+      expect(normalizeRbiUrl('https://rbi.org.in/pressreleases_rss.xml')).toBe(
+        'https://rbi.org.in/pressreleases_rss.xml',
+      );
+    });
+
+    it.each([
+      'https://example.com/redirect',
+      'https://127.0.0.1/private',
+      'ftp://rbi.org.in/feed.xml',
+      'https://rbi.org.in:8443/feed.xml',
+      'not a URL',
+    ])('rejects unsafe or malformed URL: %s', (url) => {
+      expect(() => normalizeRbiUrl(url)).toThrow();
     });
   });
 

@@ -16,7 +16,7 @@ export default function HowItWorksPage() {
           Consumer Guide
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-text-primary tracking-tight">
-          How ClaimRadar Works
+          How ClaimKhoj Works
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
           From official public notices to your direct action: how we discover, verify, structure,
@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
             <div>
               <h2 className="text-xl font-bold text-text-primary">Human Editorial Review Gate</h2>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
-                No record is ever published automatically. ClaimRadar editors verify every extracted
+                No record is ever published automatically. ClaimKhoj editors verify every extracted
                 fact against the primary source document. Only records that meet our strict
                 verification criteria are approved for the public directory.
               </p>
@@ -91,7 +91,7 @@ export default function HowItWorksPage() {
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                 Every listing surfaces the authentic official submission route. You submit your
                 claim directly on the official regulator or statutory administrator website.
-                ClaimRadar never files claims for you, never takes a percentage, and never asks for
+                ClaimKhoj never files claims for you, never takes a percentage, and never asks for
                 bank account details or Aadhaar numbers.
               </p>
             </div>
@@ -107,12 +107,12 @@ export default function HowItWorksPage() {
         <EvidenceFlowDiagram />
       </section>
 
-      {/* What ClaimRadar Does and Does NOT Do */}
+      {/* What ClaimKhoj Does and Does NOT Do */}
       <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
           <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold mb-4">
             <CheckCircle2 className="h-5 w-5" />
-            <h2 className="text-lg">What ClaimRadar Does</h2>
+            <h2 className="text-lg">What ClaimKhoj Does</h2>
           </div>
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">
@@ -137,7 +137,7 @@ export default function HowItWorksPage() {
         <div className="rounded-md border border-rose-500/20 bg-rose-500/5 p-6 sm:p-8">
           <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold mb-4">
             <XCircle className="h-5 w-5" />
-            <h2 className="text-lg">What ClaimRadar Does NOT Do</h2>
+            <h2 className="text-lg">What ClaimKhoj Does NOT Do</h2>
           </div>
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">

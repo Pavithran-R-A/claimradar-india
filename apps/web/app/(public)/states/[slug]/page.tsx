@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
   const { slug } = await params;
   const outcome = await getPublishedStateBySlug(slug);
   if (!outcome.ok || !outcome.data) {
-    return { title: 'State not found | ClaimRadar India', robots: { index: false, follow: false } };
+    return { title: 'State not found | ClaimKhoj India', robots: { index: false, follow: false } };
   }
   return {
-    title: `${outcome.data.name} — Claim Opportunities | ClaimRadar India`,
+    title: `${outcome.data.name} — Claim Opportunities | ClaimKhoj India`,
     description: `Published claim and refund opportunities related to ${outcome.data.name}, sourced from official records.`,
     alternates: { canonical: `/states/${outcome.data.slug}` },
   };

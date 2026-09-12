@@ -84,7 +84,7 @@ function createMockSoakSample(overrides: Record<string, unknown> = {}): Record<s
   };
 }
 
-describe('ClaimRadar Release Evidence Integrity & Multi-State Soak Qualification', () => {
+describe('ClaimKhoj Release Evidence Integrity & Multi-State Soak Qualification', () => {
   it('1. full HEAD SHA in generated evidence comes directly from git output', () => {
     const gitState = getGitState();
     expect(gitState.head).toMatch(/^[0-9a-f]{40}$/i);

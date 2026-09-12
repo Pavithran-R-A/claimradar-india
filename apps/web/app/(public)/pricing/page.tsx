@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { CheckCircle2, X } from 'lucide-react';
 
 export const metadata = {
-  title: 'Pricing — ClaimRadar India',
+  title: 'Pricing — ClaimKhoj India',
   description:
     'Simple, transparent pricing. Free forever or upgrade to Plus for unlimited features.',
 };

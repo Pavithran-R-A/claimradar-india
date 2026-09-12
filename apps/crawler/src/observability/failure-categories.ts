@@ -102,6 +102,18 @@ export function classifyError(message?: string | null, statusCode?: number): Fai
   return 'UNKNOWN';
 }
 
+/** Classify a fetch failure without losing its transport status. */
+export function classifyFetchError(error: unknown): FailureCategory {
+  if (error instanceof Error) {
+    const statusCode =
+      typeof error === 'object' && error !== null && 'statusCode' in error
+        ? (error as { statusCode?: unknown }).statusCode
+        : undefined;
+    return classifyError(error.message, typeof statusCode === 'number' ? statusCode : undefined);
+  }
+  return classifyError(String(error));
+}
+
 /** All categories, for dashboards and exhaustive switches. */
 export const FAILURE_CATEGORIES: readonly FailureCategory[] = [
   'DNS_ERROR',

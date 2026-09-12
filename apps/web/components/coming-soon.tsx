@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { brandConfig } from '@claimradar/config';
 
 interface ComingSoonProps {
   title: string;
@@ -46,9 +47,17 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
   );
 }
 
+export function generateLegacyComingSoonMetadata(title: string, description: string): Metadata {
+  return {
+    title: `${title} — Coming Soon — ${brandConfig.siteName}`,
+    description,
+    robots: { index: false, follow: false },
+  };
+}
+
 export function generateComingSoonMetadata(title: string, description: string): Metadata {
   return {
-    title: `${title} — Coming Soon — ClaimRadar India`,
+    title: `${title} — Coming Soon — ${brandConfig.siteName}`,
     description,
     robots: { index: false, follow: false },
   };

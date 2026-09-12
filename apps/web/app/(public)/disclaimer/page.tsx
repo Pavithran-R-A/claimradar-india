@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Disclaimer',
-  'Important disclaimers about ClaimRadar India and the information it provides.',
+  'Important disclaimers about ClaimKhoj India and the information it provides.',
 );
 
 export default function DisclaimerPage() {
@@ -10,7 +10,7 @@ export default function DisclaimerPage() {
     <LegalPageTemplate title="Disclaimer" lastUpdated="July 27, 2026">
       <h2>Not Legal Advice</h2>
       <p>
-        The information provided on ClaimRadar India is for general informational purposes only. It
+        The information provided on ClaimKhoj India is for general informational purposes only. It
         does not constitute legal, financial, tax, or regulatory advice. No attorney-client or
         advisor-client relationship is created by your use of the Platform.
       </p>
@@ -22,14 +22,14 @@ export default function DisclaimerPage() {
 
       <h2>Not a Law Firm</h2>
       <p>
-        ClaimRadar is not a law firm, legal services provider, or claims management company. We do
+        ClaimKhoj is not a law firm, legal services provider, or claims management company. We do
         not represent users in legal proceedings, file claims on your behalf, or negotiate
         settlements. We are an information platform that surfaces publicly available data.
       </p>
 
       <h2>Not Government-Affiliated</h2>
       <p>
-        ClaimRadar is an independent, privately operated platform. We are not affiliated with,
+        ClaimKhoj is an independent, privately operated platform. We are not affiliated with,
         endorsed by, or connected to:
       </p>
       <ul>
@@ -42,7 +42,7 @@ export default function DisclaimerPage() {
       <p>
         References to government schemes, court orders, or regulatory actions are sourced from
         public records and linked to official sources where possible. The presence of such
-        information on ClaimRadar does not imply official endorsement.
+        information on ClaimKhoj does not imply official endorsement.
       </p>
 
       <h2>No Guarantee of Results</h2>
@@ -55,7 +55,7 @@ export default function DisclaimerPage() {
       </ul>
       <p>
         All claim outcomes are determined solely by the relevant official authority, company, or
-        adjudicating body. ClaimRadar has no influence over these decisions.
+        adjudicating body. ClaimKhoj has no influence over these decisions.
       </p>
 
       <h2>Information Accuracy</h2>

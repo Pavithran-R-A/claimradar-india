@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Security',
-  'How ClaimRadar India protects your data and platform integrity.',
+  'How ClaimKhoj India protects your data and platform integrity.',
 );
 
 export default function SecurityPage() {

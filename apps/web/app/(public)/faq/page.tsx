@@ -3,14 +3,14 @@ import Link from 'next/link';
 import { FaqAccordion } from '@/components/landing/interactive';
 
 export const metadata: Metadata = {
-  title: 'FAQ | ClaimRadar India',
+  title: 'FAQ | ClaimKhoj India',
   description:
-    'Answers to common questions about ClaimRadar India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+    'Answers to common questions about ClaimKhoj India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
   alternates: { canonical: '/faq' },
   openGraph: {
-    title: 'FAQ | ClaimRadar India',
+    title: 'FAQ | ClaimKhoj India',
     description:
-      'Answers to common questions about ClaimRadar India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+      'Answers to common questions about ClaimKhoj India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
     url: '/faq',
     type: 'website',
   },
@@ -18,22 +18,22 @@ export const metadata: Metadata = {
 
 const faqItems = [
   {
-    question: 'What is ClaimRadar?',
+    question: 'What is ClaimKhoj?',
     answer:
-      'ClaimRadar is an independent information platform that aggregates publicly available refund, compensation and claim opportunities from official sources in India. We monitor financial regulators, insolvency authorities, telecom regulators, and government press releases to surface opportunities you might otherwise miss. We do not file claims on your behalf.',
+      'ClaimKhoj is an independent information platform that aggregates publicly available refund, compensation and claim opportunities from official sources in India. We monitor financial regulators, insolvency authorities, telecom regulators, and government press releases to surface opportunities you might otherwise miss. We do not file claims on your behalf.',
   },
   {
-    question: 'Is ClaimRadar a government website?',
+    question: 'Is ClaimKhoj a government website?',
     answer:
-      'No. ClaimRadar is an independent platform. We are not affiliated with the Government of India, any state government, any court, tribunal, regulatory body (RBI, SEBI, IRDAI, etc.), or any listed or private company. We link to official sources so you can verify information yourself.',
+      'No. ClaimKhoj is an independent platform. We are not affiliated with the Government of India, any state government, any court, tribunal, regulatory body (RBI, SEBI, IRDAI, etc.), or any listed or private company. We link to official sources so you can verify information yourself.',
   },
   {
-    question: 'Does ClaimRadar guarantee I will receive money?',
+    question: 'Does ClaimKhoj guarantee I will receive money?',
     answer:
       'No. We surface potential opportunities based on publicly available information. Whether you qualify or receive a refund depends on the specific scheme, your circumstances, the evidence you provide and the official process. We never guarantee outcomes.',
   },
   {
-    question: 'How does ClaimRadar find opportunities?',
+    question: 'How does ClaimKhoj find opportunities?',
     answer:
       'We monitor verified official sources across key statutory categories: securities regulators (SEBI), banking authorities (RBI), insolvency boards (IBBI), telecom regulation (TRAI), and government press releases (PIB). Our automated discovery systems extract structured parameters and our human editorial team reviews each candidate record before it goes live.',
   },
@@ -48,7 +48,7 @@ const faqItems = [
       'The free plan gives you access to browse all published claimables, search by company or sector, view deadlines and source links, and set up a basic watchlist for one company with weekly email digests. The core platform is free forever.',
   },
   {
-    question: 'What does ClaimRadar Plus include?',
+    question: 'What does ClaimKhoj Plus include?',
     answer:
       'Plus subscribers get unlimited watchlists, real-time email and push alerts for new opportunities matching their watchlist, priority access to closing-soon alerts, detailed source breakdowns showing extraction confidence, and the ability to export listing data. Plus costs ₹149 per month or ₹999 per year (saving 44%).',
   },
@@ -60,7 +60,7 @@ const faqItems = [
   {
     question: 'Can I cancel my subscription at any time?',
     answer:
-      'Yes. You can cancel your ClaimRadar Plus subscription at any time from your account settings. You will retain access to Plus features until the end of your current billing period. For annual subscriptions, prorated refunds are available within the first 30 days. See our Refund Policy for details.',
+      'Yes. You can cancel your ClaimKhoj Plus subscription at any time from your account settings. You will retain access to Plus features until the end of your current billing period. For annual subscriptions, prorated refunds are available within the first 30 days. See our Refund Policy for details.',
   },
   {
     question: 'What are status classifications?',
@@ -87,7 +87,7 @@ export default function FaqPage() {
           Frequently Asked Questions
         </h1>
         <p className="mt-3 text-base text-text-secondary">
-          Everything you need to know about ClaimRadar India.
+          Everything you need to know about ClaimKhoj India.
         </p>
       </header>
       <FaqAccordion items={faqItems} />

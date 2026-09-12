@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { brandConfig } from '@claimradar/config';
 
 export function EditorialPrinciples() {
   return (
@@ -14,11 +15,11 @@ export function EditorialPrinciples() {
             Our Standard
           </span>
           <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight leading-snug">
-            Why ClaimRadar Publishes Less, Not More.
+            Why {brandConfig.siteName} Publishes Less, Not More.
           </h2>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-text-secondary">
-            Public financial notices can be difficult to find and interpret. ClaimRadar organizes
-            the record around clear eligibility, evidence, and next steps.
+            Public financial notices can be difficult to find and interpret. {brandConfig.siteName}{' '}
+            organizes the record around clear eligibility, evidence, and next steps.
           </p>
           <div className="mt-6">
             <Link

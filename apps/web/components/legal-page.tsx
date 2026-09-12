@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import * as React from 'react';
+import { brandConfig } from '@claimradar/config';
 
 interface LegalPageTemplateProps {
   title: string;
@@ -23,9 +24,16 @@ export function LegalPageTemplate({ title, lastUpdated, children }: LegalPageTem
   );
 }
 
+export function generateLegacyLegalMetadata(title: string, description: string): Metadata {
+  return {
+    title: `${title} — ${brandConfig.siteName}`,
+    description,
+  };
+}
+
 export function generateLegalMetadata(title: string, description: string): Metadata {
   return {
-    title: `${title} — ClaimRadar India`,
+    title: `${title} — ${brandConfig.siteName}`,
     description,
   };
 }

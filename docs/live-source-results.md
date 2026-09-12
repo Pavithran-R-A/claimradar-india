@@ -24,7 +24,7 @@
 | ------- | ------------------------------------------------------------------ | ------ | ----- | --------------------- |
 | PIB     | `https://www.pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3&reg=3` | 200\*  | 20    | Failing (bot-blocked) |
 | SEBI    | `https://www.sebi.gov.in/sebirss.xml`                              | 200    | 30    | Healthy               |
-| RBI     | `https://www.rbi.org.in/pressreleases_rss.xml`                     | 200    | 10    | Healthy               |
+| RBI     | `https://rbi.org.in/pressreleases_rss.xml`                         | 200    | 10    | Healthy               |
 | Generic | n/a (adapter validated offline against standard RSS 2.0 / Atom)    | n/a    | n/a   | n/a                   |
 
 \* 200 with a browser User-Agent only; the declared crawler User-Agent receives HTTP 403 —
@@ -123,11 +123,13 @@ The previous registry `feedUrl`
 (`https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=56133`) is a single
 press-release **detail page** (200 `text/html`), not a feed. RBI's official RSS index at
 `https://rbi.org.in/scripts/rss.aspx` lists the press-release feed
-`https://www.rbi.org.in/pressreleases_rss.xml`, which was verified working.
+`https://rbi.org.in/pressreleases_rss.xml`, which was verified working.
+The feed's legacy HTTP item links are canonicalized to HTTPS on `rbi.org.in`
+before document fetches; the same detail pages return 404 over HTTP and 200 over HTTPS.
 
 | Field                     | Value                                                                     |
 | ------------------------- | ------------------------------------------------------------------------- |
-| Final feed URL            | `https://www.rbi.org.in/pressreleases_rss.xml`                            |
+| Final feed URL            | `https://rbi.org.in/pressreleases_rss.xml`                                |
 | HTTP status               | 200 (and **304** on conditional GET with `If-None-Match` — verified)      |
 | MIME type                 | `text/xml`                                                                |
 | Response size             | 91,759 bytes (brotli transfer encoding)                                   |
@@ -181,7 +183,7 @@ RFC-822 GMT dates, non-permalink GUIDs, embedded HTML descriptions; and
 | ------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------- |
 | PIB    | `https://pib.gov.in/indexallrss.aspx`                                      | `https://www.pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3&reg=3` | Old URL dead (redirects to error page) |
 | SEBI   | `https://www.sebi.gov.in/sebi_data/attachdocs/rss-feeds/press-release.xml` | `https://www.sebi.gov.in/sebirss.xml`                              | Old URL 404 since ~2022                |
-| RBI    | `https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=56133`    | `https://www.rbi.org.in/pressreleases_rss.xml`                     | Old URL was a detail page, not a feed  |
+| RBI    | `https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=56133`    | `https://rbi.org.in/pressreleases_rss.xml`                         | Old URL was a detail page, not a feed  |
 
 Adapter fallback URLs in `apps/crawler/src/adapters/rss/{pib,sebi,rbi}.ts` were updated to
 match. All fixture provenance (capture dates, original URLs, SHA-256 hashes of the original

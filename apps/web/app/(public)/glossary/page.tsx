@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { GLOSSARY_TERMS } from '@/lib/glossary-content';
 
 export const metadata: Metadata = {
-  title: 'Glossary | ClaimRadar India',
+  title: 'Glossary | ClaimKhoj India',
   description:
     'Plain-language definitions of core consumer and investor claim terms — settlement, refund scheme, compensation fund, claim window and more.',
   alternates: { canonical: '/glossary' },

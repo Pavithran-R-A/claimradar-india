@@ -16,6 +16,10 @@ describe('source registry adapter alignment', () => {
     expect(sebiRssSource.adapterType).toBe('rss-sebi');
     expect(rbiRssSource.adapterType).toBe('rss-rbi');
     expect(rbiNotificationsRssSource.adapterType).toBe('rss-rbi');
+    expect(rbiRssSource.baseUrl).toBe('https://rbi.org.in');
+    expect(rbiRssSource.feedUrl).toBe('https://rbi.org.in/pressreleases_rss.xml');
+    expect(rbiNotificationsRssSource.baseUrl).toBe('https://rbi.org.in');
+    expect(rbiNotificationsRssSource.feedUrl).toBe('https://rbi.org.in/notifications_rss.xml');
     expect(traiPressReleasesSource.adapterType).toBe('rss-generic');
     expect(ibbiAnnouncementsSource.adapterType).toBe('ibbi-public-announcement');
     expect(sebiPublicNoticesSource.adapterType).toBe('sebi-public-notices');

@@ -9,7 +9,7 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Sectors Directory — ClaimRadar India',
+  title: 'Sectors Directory — ClaimKhoj India',
   description:
     'Browse published refund, compensation and claim opportunities by industry sector, verified from official Indian sources.',
   alternates: { canonical: '/sectors' },

@@ -9,7 +9,7 @@ import {
 import { Clock } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Closing Soon — Urgent Claim Deadlines | ClaimRadar India',
+  title: 'Closing Soon — Urgent Claim Deadlines | ClaimKhoj India',
   description:
     'Refund and claim opportunities in India with approaching official submission deadlines.',
   alternates: { canonical: '/closing-soon' },

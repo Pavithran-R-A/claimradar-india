@@ -24,13 +24,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const outcome = await getPublishedCompanyBySlug(slug);
   if (!outcome.ok || !outcome.data) {
     return {
-      title: 'Company Not Found — ClaimRadar India',
+      title: 'Company Not Found — ClaimKhoj India',
       robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `${outcome.data.name} — Published Refund & Claim Records | ClaimRadar India`,
+    title: `${outcome.data.name} — Published Refund & Claim Records | ClaimKhoj India`,
     description: `Published refund, compensation and claim records referencing ${outcome.data.name}, verified from official sources.`,
     alternates: {
       canonical: `https://claimradar.in/companies/${outcome.data.slug}`,
@@ -115,7 +115,7 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
 
         <p className="mt-6 rounded-field border border-border bg-background-elevated p-4 text-xs leading-relaxed text-text-muted">
           <strong className="font-semibold text-text-secondary">Neutral listing disclaimer:</strong>{' '}
-          listing on ClaimRadar India indicates that this entity has been named in official
+          listing on ClaimKhoj India indicates that this entity has been named in official
           regulatory, judicial or corporate public notices that we published. It does not imply
           wrongdoing or liability by the company or its officers.
         </p>
