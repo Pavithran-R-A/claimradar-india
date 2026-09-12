@@ -160,7 +160,7 @@ export default async function LandingPage() {
               />
             </svg>
 
-            {JOURNEY.map(([label, description, left], index) => (
+            {JOURNEY.map(([label, description, left]) => (
               <div
                 key={label}
                 className="absolute bottom-0 -translate-x-1/2"
