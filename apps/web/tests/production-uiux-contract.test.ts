@@ -64,7 +64,7 @@ describe('ClaimKhoj production UI/UX contract', () => {
     expect(page).not.toContain('absolute right-1 top-5 hidden font-display');
   });
 
-  it('authors the desktop rail through the four checkpoint centers instead of floating past them', () => {
+  it('authors the desktop rail through the four checkpoint centers in the rendered layout', () => {
     expect(page).toContain('const JOURNEY_RAIL_PATH');
     expect(page).toContain('data-ui="journey-rail-path"');
     expect(page).toContain('125 14');
@@ -72,6 +72,8 @@ describe('ClaimKhoj production UI/UX contract', () => {
     expect(page).toContain('625 14');
     expect(page).toContain('875 14');
     expect(page).toContain('lg:min-h-7');
+    expect(page).toContain('absolute left-0 top-11 hidden h-10 w-full lg:block');
+    expect(page).not.toContain('absolute left-0 top-8 hidden h-10 w-full lg:block');
   });
 
   it('keeps exactly one public main landmark and points the skip link to it', () => {

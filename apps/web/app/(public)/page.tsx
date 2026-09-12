@@ -207,7 +207,7 @@ export default async function LandingPage() {
             <svg
               viewBox="0 0 1000 70"
               preserveAspectRatio="none"
-              className="pointer-events-none absolute left-0 top-8 hidden h-10 w-full lg:block"
+              className="pointer-events-none absolute left-0 top-11 hidden h-10 w-full lg:block"
               aria-hidden="true"
             >
               <path
