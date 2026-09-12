@@ -116,6 +116,11 @@ export function Header() {
             >
               <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             </Link>
+            <div className="hidden border-l border-border pl-4 pr-1 font-display text-[0.78rem] leading-[1.15] text-trust-primary/75 xl:block">
+              A fairer India
+              <br />
+              for every consumer
+            </div>
             <Link
               href="/claimables"
               className={cn(
