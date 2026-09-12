@@ -32,7 +32,7 @@ const footerLinkClass =
 export function Footer() {
   return (
     <footer className="border-t border-border bg-white" aria-label="Site footer">
-      <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+      <div className="mx-auto max-w-[1760px] px-4 py-9 sm:px-6 lg:px-10 lg:py-10 2xl:px-16">
         <div className="grid gap-9 lg:grid-cols-[minmax(0,1.2fr)_0.8fr_0.8fr] lg:gap-12">
           <div>
             <BrandLockup size="md" showDescriptor />
@@ -79,7 +79,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-9 flex flex-col gap-5 border-t border-border pt-6 text-xs text-text-muted lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-8 flex flex-col gap-5 border-t border-border pt-6 text-xs text-text-muted lg:flex-row lg:items-center lg:justify-between">
           <nav aria-label="Legal navigation">
             <ul className="flex flex-wrap gap-x-4 gap-y-1">
               {legalLinks.map((link) => (
