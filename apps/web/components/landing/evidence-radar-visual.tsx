@@ -175,7 +175,7 @@ function SourceSpotlight({
           key={`${node.code}-${radarRunning ? 'running' : 'paused'}`}
           className={cn(
             'radar-status-progress block h-full rounded-full bg-[#0F8B8D]',
-            !radarRunning && 'radar-status-progress-paused',
+            !radarRunning && '[animation-play-state:paused]',
           )}
         />
       </div>
@@ -256,7 +256,7 @@ function RadarCanvas({
               type="rotate"
               from="0 260 260"
               to="360 260 260"
-              dur="7.5s"
+              dur="5.5s"
               repeatCount="indefinite"
             />
           ) : null}
