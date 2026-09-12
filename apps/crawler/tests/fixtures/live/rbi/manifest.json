@@ -4,7 +4,7 @@
   "capturedBy": "Wave 2 live source commissioning (Task #25)",
   "files": {
     "feed.xml": {
-      "originalUrl": "https://www.rbi.org.in/pressreleases_rss.xml",
+      "originalUrl": "https://rbi.org.in/pressreleases_rss.xml",
       "originalSha256": "ac6ed4dc78b710b04eededfe4fcc86aec831f8a6c43843e47dc43984d222647f",
       "originalSizeBytes": 91759,
       "notes": [
@@ -17,7 +17,7 @@
       ]
     },
     "detail.html": {
-      "originalUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63243",
+        "originalUrl": "https://rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63243",
       "originalSha256": "8f788ef67f81013e3cebfc4e04d7af8f114d913f5203453098fb8a2d7b4b826c",
       "originalSizeBytes": 107600,
       "notes": [

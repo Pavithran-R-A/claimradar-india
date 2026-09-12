@@ -87,7 +87,7 @@ export interface TrackerStatusMeta {
 
 /**
  * The eight user-reported tracker statuses.
- * "Submitted externally" is always user-reported — ClaimRadar never files
+ * "Submitted externally" is always user-reported — ClaimKhoj never files
  * claims with any company or authority on a user's behalf.
  */
 export const TRACKER_STATUSES: TrackerStatusMeta[] = [
@@ -110,7 +110,7 @@ export const TRACKER_STATUSES: TrackerStatusMeta[] = [
     value: TrackerStatus.SubmittedExternally,
     label: 'Submitted externally (user-reported)',
     description:
-      'You told us you filed this claim with the company or authority yourself. ClaimRadar does not file claims.',
+      'You told us you filed this claim with the company or authority yourself. ClaimKhoj does not file claims.',
   },
   {
     value: TrackerStatus.AwaitingResponse,

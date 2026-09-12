@@ -4,8 +4,8 @@ import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { ResetPasswordForm } from './reset-password-form';
 
 export const metadata: Metadata = {
-  title: 'Reset Password | ClaimRadar India',
-  description: 'Set a new password for your ClaimRadar India account.',
+  title: 'Reset Password | ClaimKhoj India',
+  description: 'Set a new password for your ClaimKhoj India account.',
   robots: { index: false, follow: false },
 };
 

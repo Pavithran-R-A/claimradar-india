@@ -11,10 +11,10 @@ export async function generateMetadata({ params }: GlossaryTermPageProps): Promi
   const { term } = await params;
   const entry = getGlossaryTermBySlug(term);
   if (!entry) {
-    return { title: 'Term not found | ClaimRadar India', robots: { index: false, follow: false } };
+    return { title: 'Term not found | ClaimKhoj India', robots: { index: false, follow: false } };
   }
   return {
-    title: `${entry.term} | Glossary | ClaimRadar India`,
+    title: `${entry.term} | Glossary | ClaimKhoj India`,
     description: entry.definition,
     alternates: { canonical: `/glossary/${entry.slug}` },
   };

@@ -114,12 +114,14 @@ describe('Cloudflare TRAI relay security boundary', () => {
     expect(await response.text()).toBe('<rss>official</rss>');
   });
 
-  it('blocks redirects outside the official hostname', async () => {
+  it.each([
+    ['external hostname', 'https://evil.example/'],
+    ['private address', 'https://127.0.0.1/admin'],
+  ])('blocks %s redirects', async (_label, location) => {
     const response = await handleRequest(
       signedRequest('/rss.xml'),
       { RELAY_SHARED_SECRET: secret },
-      async () =>
-        new Response(null, { status: 302, headers: { location: 'https://evil.example/' } }),
+      async () => new Response(null, { status: 302, headers: { location } }),
     );
 
     expect(response.status).toBe(502);

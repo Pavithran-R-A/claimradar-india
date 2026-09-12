@@ -8,7 +8,7 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'States | ClaimRadar India',
+  title: 'States | ClaimKhoj India',
   description:
     'Browse published claim and refund opportunities across Indian states, derived from the geographic scope of official records.',
   alternates: { canonical: '/states' },

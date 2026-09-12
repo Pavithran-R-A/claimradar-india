@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export const metadata = generateLegalMetadata(
   'Corrections',
-  'Report errors and view our correction workflow on ClaimRadar India.',
+  'Report errors and view our correction workflow on ClaimKhoj India.',
 );
 
 export default function CorrectionsPage() {
@@ -16,7 +16,7 @@ export default function CorrectionsPage() {
       </p>
 
       <h2>How to Report an Error</h2>
-      <p>If you find incorrect or outdated information on ClaimRadar, please report it with:</p>
+      <p>If you find incorrect or outdated information on ClaimKhoj, please report it with:</p>
       <ul>
         <li>The URL or title of the listing in question</li>
         <li>A description of the error</li>

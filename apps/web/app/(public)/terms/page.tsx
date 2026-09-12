@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Terms and Conditions',
-  'Terms and conditions for using ClaimRadar India.',
+  'Terms and conditions for using ClaimKhoj India.',
 );
 
 export default function TermsPage() {
@@ -10,13 +10,13 @@ export default function TermsPage() {
     <LegalPageTemplate title="Terms and Conditions" lastUpdated="July 27, 2026">
       <h2>1. Acceptance of Terms</h2>
       <p>
-        By accessing or using ClaimRadar India (&quot;the Platform&quot;), you agree to be bound by
+        By accessing or using ClaimKhoj India (&quot;the Platform&quot;), you agree to be bound by
         these Terms and Conditions. If you do not agree, do not use the Platform.
       </p>
 
       <h2>2. Scope of Service</h2>
       <p>
-        ClaimRadar is an independent information platform that aggregates publicly available
+        ClaimKhoj is an independent information platform that aggregates publicly available
         information about refund opportunities, compensation schemes, consumer complaints and
         related claim processes in India. The Platform provides informational content only and does
         not constitute legal, financial or regulatory advice.
@@ -32,7 +32,7 @@ export default function TermsPage() {
 
       <h2>4. No Government Affiliation</h2>
       <p>
-        ClaimRadar is not affiliated with, endorsed by, or connected to the Government of India, any
+        ClaimKhoj is not affiliated with, endorsed by, or connected to the Government of India, any
         state government, any court, tribunal, regulatory body, or any listed or private company
         unless expressly stated in writing.
       </p>
@@ -55,14 +55,13 @@ export default function TermsPage() {
       <h2>7. Intellectual Property</h2>
       <p>
         All content on the Platform, including text, graphics, logos, and software, is the property
-        of ClaimRadar or its licensors and is protected by applicable intellectual property laws.
-        You may not reproduce, distribute, or create derivative works without prior written
-        permission.
+        of ClaimKhoj or its licensors and is protected by applicable intellectual property laws. You
+        may not reproduce, distribute, or create derivative works without prior written permission.
       </p>
 
       <h2>8. Limitation of Liability</h2>
       <p>
-        To the maximum extent permitted by law, ClaimRadar and its officers, directors, employees,
+        To the maximum extent permitted by law, ClaimKhoj and its officers, directors, employees,
         and agents shall not be liable for any indirect, incidental, special, consequential, or
         punitive damages arising out of or related to your use of the Platform, even if advised of
         the possibility of such damages.

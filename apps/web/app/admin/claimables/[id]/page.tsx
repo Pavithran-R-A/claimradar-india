@@ -196,7 +196,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
                 label="Approve publication"
                 pendingLabel="Publishing…"
                 confirmLabel="Publish"
-                confirmMessage={`Publishing makes "${claimable.public_title}" visible to everyone on the public ClaimRadar website and in search engines. This is recorded in the audit log and as a publication event.`}
+                confirmMessage={`Publishing makes "${claimable.public_title}" visible to everyone on the public ClaimKhoj website and in search engines. This is recorded in the audit log and as a publication event.`}
               />
             )}
             {claimable.publication_status !== 'archived' && (

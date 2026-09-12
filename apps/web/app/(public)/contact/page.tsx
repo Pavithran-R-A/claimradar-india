@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export const metadata = generateLegalMetadata(
   'Contact Us',
-  'Get in touch with the ClaimRadar India team.',
+  'Get in touch with the ClaimKhoj India team.',
 );
 
 export default function ContactPage() {

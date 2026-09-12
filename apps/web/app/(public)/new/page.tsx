@@ -11,7 +11,7 @@ import {
 import { formatIstDate } from '@/lib/dates';
 
 export const metadata: Metadata = {
-  title: 'Newly Published Claimables — ClaimRadar India',
+  title: 'Newly Published Claimables — ClaimKhoj India',
   description:
     'Recently published refund, compensation and claim opportunities verified from official Indian sources.',
   alternates: { canonical: '/new' },

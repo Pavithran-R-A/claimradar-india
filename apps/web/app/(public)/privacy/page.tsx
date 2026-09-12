@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Privacy Policy',
-  'How ClaimRadar India collects, uses, and protects your personal data.',
+  'How ClaimKhoj India collects, uses, and protects your personal data.',
 );
 
 export default function PrivacyPage() {
@@ -10,9 +10,9 @@ export default function PrivacyPage() {
     <LegalPageTemplate title="Privacy Policy" lastUpdated="July 27, 2026">
       <h2>1. Introduction</h2>
       <p>
-        ClaimRadar India (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to
-        protecting your privacy. This policy explains what personal data we collect, how we use it,
-        and your rights regarding that data.
+        ClaimKhoj India (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting
+        your privacy. This policy explains what personal data we collect, how we use it, and your
+        rights regarding that data.
       </p>
 
       <h2>2. Data We Collect</h2>

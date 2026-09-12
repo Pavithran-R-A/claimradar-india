@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyError } from '../../src/observability/failure-categories.js';
+import { classifyError, classifyFetchError } from '../../src/observability/failure-categories.js';
 import { isRetryableFetchError } from '../../src/http/client.js';
 import { retry } from '../../src/http/retry.js';
 import { FetchError } from '../../src/http/types.js';
@@ -71,5 +71,24 @@ describe('HTTP client reliability policy', () => {
     expect(classifyError('SSRF blocked: unable to resolve hostname source.example.gov.in')).toBe(
       'DNS_ERROR',
     );
+  });
+
+  it('does not classify a transport timeout as HTTP_4XX', () => {
+    expect(
+      classifyFetchError(new FetchError('connect timed out', 'timeout', 'https://rbi.org.in')),
+    ).toBe('TIMEOUT');
+  });
+
+  it('preserves HTTP status categories from FetchError', () => {
+    expect(
+      classifyFetchError(
+        new FetchError('HTTP 404 Not Found', 'http_error', 'https://rbi.org.in', 404),
+      ),
+    ).toBe('HTTP_4XX');
+    expect(
+      classifyFetchError(
+        new FetchError('HTTP 500 Server Error', 'http_error', 'https://rbi.org.in', 500),
+      ),
+    ).toBe('HTTP_5XX');
   });
 });

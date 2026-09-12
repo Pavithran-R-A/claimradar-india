@@ -25,8 +25,7 @@ export default async function TrackerPage() {
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">Claim tracker</h1>
         <p className="mt-1 max-w-2xl text-sm text-text-secondary">
           Track your own progress on claimables you believe you may be affected by. All statuses are
-          user-reported — ClaimRadar never files claims with any company or authority on your
-          behalf.
+          user-reported — ClaimKhoj never files claims with any company or authority on your behalf.
         </p>
       </div>
 

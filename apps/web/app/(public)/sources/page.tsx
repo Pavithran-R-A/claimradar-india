@@ -18,7 +18,7 @@ export default function SourcesPage() {
           Monitored Official Sources
         </h1>
         <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed">
-          ClaimRadar monitors configured public source pages and feeds from statutory regulators and
+          ClaimKhoj monitors configured public source pages and feeds from statutory regulators and
           central government bureaus. Below is the current coverage matrix.
         </p>
       </header>

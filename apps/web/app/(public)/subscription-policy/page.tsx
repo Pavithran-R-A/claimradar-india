@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Subscription Policy',
-  'Billing terms and subscription details for ClaimRadar India.',
+  'Billing terms and subscription details for ClaimKhoj India.',
 );
 
 export default function SubscriptionPolicyPage() {
@@ -10,7 +10,7 @@ export default function SubscriptionPolicyPage() {
     <LegalPageTemplate title="Subscription Policy" lastUpdated="July 27, 2026">
       <h2>1. Plans and Pricing</h2>
       <p>
-        ClaimRadar offers two subscription tiers: Free (₹0) and Plus (₹149 per month or ₹999 per
+        ClaimKhoj offers two subscription tiers: Free (₹0) and Plus (₹149 per month or ₹999 per
         year). Pricing is in Indian Rupees and inclusive of applicable taxes unless otherwise
         stated.
       </p>

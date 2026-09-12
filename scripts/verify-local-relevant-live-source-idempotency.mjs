@@ -104,14 +104,14 @@ await supabase.from('sources').upsert([
     id: RBI_ID,
     name: 'Reserve Bank of India RSS (Official)',
     domain: 'rbi.org.in',
-    base_url: 'https://www.rbi.org.in',
+    base_url: 'https://rbi.org.in',
     source_type: 'rss',
     adapter_name: 'rss',
     trust_level: 'official',
     enabled: true,
     fetch_frequency_hours: 12,
     rate_limit_per_minute: 10,
-    metadata: { feedUrl: 'https://www.rbi.org.in/pressreleases_rss.xml' },
+    metadata: { feedUrl: 'https://rbi.org.in/pressreleases_rss.xml' },
   },
 ]);
 
@@ -192,7 +192,7 @@ RELEVANT_LIVE_SOURCE_POSTGRES_IDEMPOTENCY = ${ok ? 'PASS' : 'FAIL'}
 - **Node Version:** \`v24.19.0\`
 - **Tested Sources:**
   - **SEBI RSS Feed:** \`https://www.sebi.gov.in/sebirss.xml\` (ID: \`${SEBI_ID}\`)
-  - **RBI RSS Feed:** \`https://www.rbi.org.in/pressreleases_rss.xml\` (ID: \`${RBI_ID}\`)
+  - **RBI RSS Feed:** \`https://rbi.org.in/pressreleases_rss.xml\` (ID: \`${RBI_ID}\`)
 - **Safety Flags:** \`AUTO_VERIFY_CLAIMABLES=false\`, \`ENABLE_BILLING=false\`, \`NOTIFY_CUSTOMERS_ENABLED=false\`
 
 ## Database Row-Count Evidence

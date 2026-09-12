@@ -21,7 +21,7 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Claimables Directory — Published Refund & Compensation Records | ClaimRadar India',
+  title: 'Claimables Directory — Published Refund & Compensation Records | ClaimKhoj India',
   description:
     'Search and filter published refund, compensation and claim opportunities verified from official Indian sources. Filter by status and sector, sort by deadline.',
   alternates: { canonical: '/claimables' },

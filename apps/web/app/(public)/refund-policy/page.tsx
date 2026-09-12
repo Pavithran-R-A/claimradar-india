@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Refund Policy',
-  'Refund policy for ClaimRadar India subscriptions.',
+  'Refund policy for ClaimKhoj India subscriptions.',
 );
 
 export default function RefundPolicyPage() {
@@ -10,7 +10,7 @@ export default function RefundPolicyPage() {
     <LegalPageTemplate title="Refund Policy" lastUpdated="July 27, 2026">
       <h2>1. Overview</h2>
       <p>
-        This Refund Policy applies to paid subscriptions on ClaimRadar India. The Platform itself is
+        This Refund Policy applies to paid subscriptions on ClaimKhoj India. The Platform itself is
         a free information service; paid subscriptions unlock additional features such as unlimited
         watchlists, real-time alerts, and detailed source breakdowns.
       </p>

@@ -11,7 +11,7 @@ import {
 import { daysUntil, formatIstDate } from '@/lib/dates';
 
 export const metadata: Metadata = {
-  title: 'Filing Deadlines Schedule — ClaimRadar India',
+  title: 'Filing Deadlines Schedule — ClaimKhoj India',
   description:
     'Chronological schedule of official filing deadlines for published claim records. Dates shown in Indian Standard Time.',
   alternates: { canonical: '/deadlines' },

@@ -2,7 +2,7 @@ import { LegalPageTemplate, generateLegalMetadata } from '@/components/legal-pag
 
 export const metadata = generateLegalMetadata(
   'Cookie Policy',
-  'How ClaimRadar India uses cookies and similar technologies.',
+  'How ClaimKhoj India uses cookies and similar technologies.',
 );
 
 export default function CookiePolicyPage() {
@@ -15,7 +15,7 @@ export default function CookiePolicyPage() {
       </p>
 
       <h2>2. How We Use Cookies</h2>
-      <p>ClaimRadar uses cookies for the following purposes:</p>
+      <p>ClaimKhoj uses cookies for the following purposes:</p>
       <h3>2.1 Essential Cookies</h3>
       <p>
         Required for the Platform to function. These include session cookies for authentication and

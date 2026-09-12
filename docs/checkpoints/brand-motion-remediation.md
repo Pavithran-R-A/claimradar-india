@@ -1,7 +1,7 @@
-# ClaimRadar Rebrand + Motion Remediation Gate
+# ClaimKhoj Rebrand + Motion Remediation Gate
 
 Date: 2026-09-12
-Status: RELEASE BLOCKING
+Status: IMPLEMENTED — NEW RBI BASELINE REQUIRED
 Branch: `codex/claimradar-rebrand-motion-remediation`
 
 ## Why the current candidate is not release-ready
@@ -127,3 +127,19 @@ For `prefers-reduced-motion: reduce`:
 ## Acceptance condition
 
 This release blocker is closed only when the public brand is legally safer, visually ownable, motion feels intentional on capable devices, reduced motion remains fully accessible, favicon/app identity are complete, and the UI no longer reads as a static generic template.
+
+## 2026-09-12 implementation update
+
+- ClaimKhoj now replaces the legacy visible product name across web routes,
+  metadata, legal copy, tracker copy, and admin publishing copy.
+- The provisional name remains subject to official IP India wordmark and
+  phonetic screening. No trademark clearance is claimed here.
+- RBI registry and staging seed entries now use the official bare-host feeds.
+- RBI RSS item links are validated and canonicalized to HTTPS on `rbi.org.in`
+  before fetching. External, private, malformed, non-HTTP, and non-default-port
+  URLs are rejected.
+- Fetch failures retain transport status for classification. Timeouts remain
+  `TIMEOUT`; HTTP 4xx and 5xx responses retain their HTTP categories.
+- Root formatter, lint, typecheck, test, build, and client-secret gates pass.
+- A fresh staging baseline and final soak remain required after this runtime
+  change. The previous soak cannot qualify this candidate.

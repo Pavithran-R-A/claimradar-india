@@ -34,7 +34,7 @@ import {
 } from '../observability/summary.js';
 import { initSentry, captureError } from '../observability/sentry.js';
 import { createAlertSink } from '../observability/alerts.js';
-import { classifyError } from '../observability/failure-categories.js';
+import { classifyFetchError } from '../observability/failure-categories.js';
 
 export class StagingPolicyViolationError extends Error {
   readonly violations: string[];
@@ -180,6 +180,7 @@ async function processSource(params: {
     errors: 0,
   };
   let firstDocumentError: string | null = null;
+  let firstDocumentErrorCause: unknown = null;
 
   try {
     const sourceDef = toSourceDefinition(source);
@@ -569,6 +570,7 @@ async function processSource(params: {
         summary.errorCount++;
         stats.errors++;
         firstDocumentError ??= errMsg;
+        firstDocumentErrorCause ??= docError;
         logger.error('document', `Document processing failed: ${doc.url}`, {
           sourceId: source.id,
           error: errMsg,
@@ -589,7 +591,7 @@ async function processSource(params: {
     if (stats.errors > 0) {
       summary.sourcesFailed++;
       const errorMessage = firstDocumentError ?? 'Document processing failed';
-      const category = classifyError(errorMessage);
+      const category = classifyFetchError(firstDocumentErrorCause);
       if (crawlRunSourceId && !options.dryRun) {
         await db.updateCrawlRunSource(crawlRunSourceId, {
           status: 'failed',
@@ -643,7 +645,7 @@ async function processSource(params: {
     summary.errorCount++;
     stats.errors++;
     const errorMessage = sourceError instanceof Error ? sourceError.message : 'unknown';
-    const category = classifyError(errorMessage);
+    const category = classifyFetchError(sourceError);
     summary.perSource.push({
       sourceId: source.id,
       sourceName: source.name,

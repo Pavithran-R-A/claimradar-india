@@ -28,13 +28,13 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
   const outcome = await getPublishedClaimableBySlug(slug);
   if (!outcome.ok || !outcome.data) {
     return {
-      title: 'Claim Not Found | ClaimRadar India',
+      title: 'Claim Not Found | ClaimKhoj',
       robots: { index: false, follow: false },
     };
   }
   const claim = outcome.data;
   return {
-    title: `${claim.title} — Official Claim Dossier | ClaimRadar India`,
+    title: `${claim.title} — Official Claim Dossier | ClaimKhoj`,
     description: `${claim.statusExplanation} Verification and official source links for ${claim.companyName}.`,
     alternates: {
       canonical: `https://claimradar.in/claimables/${claim.slug}`,
@@ -231,7 +231,7 @@ function ClaimableDossier({
             </p>
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            ClaimRadar only publishes figures explicitly stated in the regulatory order — never
+            ClaimKhoj only publishes figures explicitly stated in the regulatory order — never
             estimates.
           </p>
         </section>
@@ -286,7 +286,7 @@ function ClaimableDossier({
             )}
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            You submit your claim directly to the company or statutory regulator. ClaimRadar never
+            You submit your claim directly to the company or statutory regulator. ClaimKhoj never
             collects claim documents or acts as a broker.
           </p>
         </section>
@@ -460,7 +460,7 @@ function DisclaimerFooter() {
   return (
     <footer className="mt-12 border-t border-border pt-6 text-xs text-text-muted">
       <p>
-        <strong>Legal notice: </strong> ClaimRadar India is an independent information service. We
+        <strong>Legal notice: </strong> ClaimKhoj India is an independent information service. We
         are not affiliated with any court, tribunal, regulatory body, or corporate entity. We do not
         guarantee individual claim outcomes or provide legal representation. Always verify all
         instructions and deadlines on the official authority portal.

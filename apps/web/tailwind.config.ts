@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * ClaimRadar design tokens.
+ * ClaimKhoj design tokens.
  *
  * Token architecture (documented in docs/design/design-system.md):
  * - Semantic colour tokens are defined as CSS custom properties in
