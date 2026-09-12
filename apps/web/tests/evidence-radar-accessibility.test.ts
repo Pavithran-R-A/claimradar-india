@@ -2,11 +2,13 @@ import { describe, it, expect } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
-describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
+describe('Evidence Radar Visual Accessibility & Motion', () => {
   const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
+  const cssPath = path.resolve(__dirname, '../app/globals.css');
   const fileContent = fs.readFileSync(radarPath, 'utf8');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
 
-  it('ensures source details have semantic keyboard controls', () => {
+  it('uses semantic keyboard controls for every monitored source', () => {
     expect(fileContent).toContain('<button');
     expect(fileContent).toContain('aria-pressed=');
     expect(fileContent).toContain('aria-label="Monitored official sources"');
@@ -18,18 +20,51 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
     expect(fileContent).not.toContain('tabIndex={0}');
   });
 
-  it('ensures visible focus indication on nodes', () => {
-    expect(fileContent).toContain('group-focus-visible:opacity-100');
-    expect(fileContent).toContain('strokeDasharray="3 3"');
+  it('uses native SVG animation so rotation does not depend on CSS SVG transform behavior', () => {
+    expect(fileContent).toContain('data-ui="radar-rotor"');
+    expect(fileContent).toContain('<animateTransform');
+    expect(fileContent).toContain('type="rotate"');
+    expect(fileContent).toContain('from="0 260 260"');
+    expect(fileContent).toContain('to="360 260 260"');
+    expect(fileContent).toContain('repeatCount="indefinite"');
+    expect(fileContent).not.toContain('className="radar-sweep-rotor"');
   });
 
-  it('ensures drawer overlay has region role, live region announcement, and accessible close button', () => {
-    expect(fileContent).toContain('role="region"');
-    expect(fileContent).toContain('aria-live="polite"');
-    expect(fileContent).toContain('aria-label="Close authority inspector"');
+  it('keeps the moving radar visually meaningful without claiming live crawl state', () => {
+    expect(fileContent).toContain('Now highlighting');
+    expect(fileContent).toContain('Animated source overview');
+    expect(fileContent).toContain('data-ui="radar-status"');
+    expect(fileContent).toContain('Visual scan, not live crawl status');
   });
 
-  it('ensures Escape key closes the inspector drawer', () => {
-    expect(fileContent).toContain("e.key === 'Escape'");
+  it('provides an explicit pause and resume control for continuous scan motion', () => {
+    expect(fileContent).toContain('radarRunning');
+    expect(fileContent).toContain('Pause radar animation');
+    expect(fileContent).toContain('Resume radar animation');
+    expect(fileContent).toContain('aria-pressed={!radarRunning}');
+  });
+
+  it('keeps reduced-motion handling for nonessential CSS effects', () => {
+    expect(cssContent).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(cssContent).toContain('.animate-detection-blip');
+  });
+
+  it('ensures Escape key restores the default spotlight', () => {
+    expect(fileContent).toContain("event.key === 'Escape'");
+    expect(fileContent).toContain('DEFAULT_NODE_INDEX');
+  });
+
+  it('keeps the full radar-plus-status layout for wide screens only and preserves the radar on narrower screens', () => {
+    expect(fileContent).toContain('data-ui="radar-desktop"');
+    expect(fileContent).toContain('data-ui="radar-mobile"');
+    expect(fileContent).toContain('hidden xl:grid');
+    expect(fileContent).toContain('xl:hidden');
+    expect(fileContent.match(/<RadarCanvas/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('uses differentiated authority accents without changing the supported source set', () => {
+    expect(fileContent).toContain("accent: '#F5B940'");
+    expect(fileContent).toContain("accent: '#0F8B8D'");
+    expect(fileContent).toContain("accent: '#3B82F6'");
   });
 });

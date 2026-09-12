@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { brandConfig } from '@claimradar/config';
 import { GLOSSARY_TERMS } from '@/lib/glossary-content';
 import {
   getPublishedClaimables,
@@ -7,7 +8,7 @@ import {
   getPublishedStates,
 } from '@/lib/claimables-repository';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://claimradar.in';
+const SITE_URL = brandConfig.url;
 
 /**
  * Genuine, indexable static routes.

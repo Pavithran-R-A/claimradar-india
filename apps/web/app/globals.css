@@ -10,27 +10,32 @@
    ========================================================================== */
 
 :root {
-  --c-background: 255 255 255; /* #FFFFFF reference homepage canvas */
-  --c-background-elevated: 255 255 255; /* #FFFFFF surface */
-  --c-surface: 255 255 255; /* #FFFFFF surface */
-  --c-surface-strong: 241 247 248; /* #F1F7F8 pale teal band */
-  --c-border: #d9e2e6; /* 1px hairline rule */
+  --c-background: 255 255 255;
+  --c-background-elevated: 255 255 255;
+  --c-surface: 255 255 255;
+  --c-surface-strong: 241 247 248;
+  --c-border: #d9e2e6;
   --c-border-strong: #b5c7cf;
-  --c-text-primary: 13 33 72; /* #0D2148 deep indigo */
-  --c-text-secondary: 61 79 111; /* accessible supporting ink */
+  --c-text-primary: 13 33 72;
+  --c-text-secondary: 61 79 111;
   --c-text-muted: 88 105 132;
-  --c-trust-primary: 13 33 72; /* #0D2148 deep indigo */
-  --c-trust-primary-hover: 7 23 54; /* #071736 */
-  --c-success: 15 139 141; /* #0F8B8D teal */
-  --c-deadline: 122 62 0; /* #7A3E00 accessible deadline ochre */
-  --c-danger: 180 35 24; /* #B42318 */
-  --c-info: 33 78 128; /* #214E80 */
+  --c-trust-primary: 13 33 72;
+  --c-trust-primary-hover: 7 23 54;
+  --c-success: 15 139 141;
+  --c-deadline: 122 62 0;
+  --c-danger: 180 35 24;
+  --c-info: 33 78 128;
   --c-verified-background: rgba(35, 112, 90, 0.08);
   --c-deadline-background: rgba(180, 95, 6, 0.08);
 
   /* Composition tokens */
   --content-measure: 68ch;
   --section-space: clamp(3.5rem, 7vw, 6.5rem);
+  --public-radius-card: 1rem;
+  --public-radius-control: 0.75rem;
+  --public-shadow-card: 0 18px 48px rgba(13, 33, 72, 0.07);
+  --public-shadow-control: 0 10px 28px rgba(13, 33, 72, 0.06);
+  --public-section-space: clamp(3.5rem, 7vw, 6rem);
 
   /* Motion Tokens */
   --motion-instant: 100ms;
@@ -66,7 +71,7 @@
 }
 
 .theme-dark {
-  --c-background: 23 28 35; /* #171C23 optional dark editorial field */
+  --c-background: 23 28 35;
   --c-background-elevated: 30 36 45;
   --c-surface: 30 36 45;
   --c-surface-strong: 38 45 56;
@@ -136,18 +141,26 @@ body {
   border-color: var(--c-border);
 }
 
+.public-card {
+  border: 1px solid var(--c-border);
+  border-radius: var(--public-radius-card);
+  background: rgb(var(--c-surface));
+  box-shadow: var(--public-shadow-card);
+}
+
+.public-section {
+  padding-block: var(--public-section-space);
+}
+
+.public-focus:focus-visible {
+  outline: 2px solid rgb(var(--c-trust-primary));
+  outline-offset: 3px;
+}
+
 /* ==========================================================================
    Motion System (Restrained, Composited, GPU-Optimized)
-   --------------------------------------------------------------------------
-   Instant: 100ms (clicks, checks)
-   Fast: 140ms (hover physics, icon shift)
-   UI: 180ms (focus ring, active transitions)
-   Panel: 260ms (drawer, accordion, modal)
-   Enter: 380ms (section reveals)
-   Editorial: 520ms (staggered narratives)
    ========================================================================== */
 
-/* Nav Underline Indicator ScaleX */
 .nav-link-indicator {
   position: relative;
 }
@@ -168,7 +181,6 @@ body {
   transform: scaleX(1);
 }
 
-/* FAQ Details Accordion Motion */
 details summary .faq-chevron {
   transition: transform var(--motion-ui) var(--ease-out);
 }
@@ -189,7 +201,6 @@ details[open] .faq-content {
   }
 }
 
-/* Route entry animation */
 @keyframes route-entry {
   from {
     opacity: 0;
@@ -201,19 +212,19 @@ details[open] .faq-content {
   }
 }
 
-.journey-rail > div {
+.journey-rail > li {
   animation: journey-step 520ms var(--ease-out) both;
 }
 
-.journey-rail > div:nth-child(2) {
+.journey-rail > li:nth-child(2) {
   animation-delay: 100ms;
 }
 
-.journey-rail > div:nth-child(3) {
+.journey-rail > li:nth-child(3) {
   animation-delay: 200ms;
 }
 
-.journey-rail > div:nth-child(4) {
+.journey-rail > li:nth-child(4) {
   animation-delay: 300ms;
 }
 
@@ -231,7 +242,6 @@ details[open] .faq-content {
   animation: route-entry var(--motion-panel) var(--ease-out) both;
 }
 
-/* Mobile Navigation Drawer Animations */
 .drawer-backdrop-enter {
   animation: drawer-backdrop-fade var(--motion-ui) var(--ease-out) both;
 }
@@ -296,7 +306,6 @@ details[open] .faq-content {
   }
 }
 
-/* Search Clear Button Zoom Entrance */
 .search-clear-enter {
   animation: search-clear-zoom var(--motion-fast) var(--ease-out) both;
 }
@@ -311,7 +320,6 @@ details[open] .faq-content {
   }
 }
 
-/* Keyframes */
 @keyframes rise {
   from {
     opacity: 0;
@@ -351,7 +359,6 @@ details[open] .faq-content {
   animation: fade var(--motion-panel) var(--ease-out) both;
 }
 
-/* Staggered Hero Entrance Sequence */
 .enter-seq-0 {
   animation: rise var(--motion-enter) var(--ease-out) 0ms both;
 }
@@ -377,13 +384,26 @@ details[open] .faq-content {
   animation: rise var(--motion-enter) var(--ease-out) 390ms both;
 }
 
-/* Scientific Editorial Radar Motion */
 @keyframes radar-sweep {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes radar-status-progress {
+  0% {
+    opacity: 0.55;
+    transform: scaleX(0.06);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
   }
 }
 
@@ -403,6 +423,20 @@ details[open] .faq-content {
   }
 }
 
+.radar-sweep-rotor {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: radar-sweep 5.5s linear infinite;
+  will-change: transform;
+}
+
+.radar-status-progress {
+  width: 100%;
+  transform: scaleX(0.06);
+  transform-origin: left center;
+  animation: radar-status-progress 5.5s linear infinite;
+}
+
 .animate-radar-sweep {
   animation: radar-sweep 6s linear infinite;
 }
@@ -411,7 +445,6 @@ details[open] .faq-content {
   animation: detection-blip 6s ease-in-out infinite;
 }
 
-/* Progressive Evidence Rail Line Drawing */
 @keyframes draw-line {
   from {
     stroke-dashoffset: 1000;
@@ -426,7 +459,6 @@ details[open] .faq-content {
   animation: draw-line 1.1s var(--ease-out) forwards;
 }
 
-/* Reduced Motion Directives */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -437,6 +469,8 @@ details[open] .faq-content {
     scroll-behavior: auto !important;
   }
 
+  .radar-sweep-rotor,
+  .radar-status-progress,
   .animate-radar-sweep,
   .animate-detection-blip,
   .animate-draw-line,
@@ -462,7 +496,7 @@ details[open] .faq-content {
     transform: none !important;
   }
 
-  .journey-rail > div {
+  .journey-rail > li {
     animation: none;
   }
 }

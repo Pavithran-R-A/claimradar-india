@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn, buttonVariants } from '@claimradar/design-system';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import { BrandLockup } from './brand-mark';
 
 const navLinks = [
@@ -24,9 +24,7 @@ export function Header() {
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 12);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -46,6 +44,7 @@ export function Header() {
 
   React.useEffect(() => {
     if (!mobileOpen) return;
+
     closeButtonRef.current?.focus();
     document.body.style.overflow = 'hidden';
 
@@ -65,20 +64,20 @@ export function Header() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-trust-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[120] focus:rounded-md focus:bg-trust-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg"
       >
         Skip to main content
       </a>
 
       <header
         className={cn(
-          'sticky top-0 z-50 transition-all duration-ui ease-out border-b h-16',
+          'sticky top-0 z-50 h-16 border-b transition-all duration-ui ease-out lg:h-[72px]',
           scrolled
-            ? 'border-border bg-surface/95 backdrop-blur-md shadow-xs'
-            : 'border-border/80 bg-background/90 backdrop-blur-sm',
+            ? 'border-border bg-white/95 shadow-[0_8px_28px_rgba(13,33,72,0.06)] backdrop-blur-md'
+            : 'border-border/80 bg-white/92 backdrop-blur-sm',
         )}
       >
-        <div className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-full max-w-[1760px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 2xl:px-16">
           <BrandLockup size="md" />
 
           <nav className="hidden lg:block" aria-label="Main navigation">
@@ -88,15 +87,16 @@ export function Header() {
                   link.href === '/'
                     ? pathname === '/'
                     : pathname === link.href || pathname.startsWith(`${link.href}/`);
+
                 return (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        'nav-link nav-link-indicator rounded-md px-3.5 py-2 text-sm font-semibold transition-colors duration-fast',
+                        'nav-link-indicator public-focus inline-flex min-h-[44px] items-center rounded-md px-3.5 py-2 text-sm font-semibold transition-colors duration-fast',
                         active
-                          ? 'text-trust-primary font-bold'
+                          ? 'font-bold text-trust-primary'
                           : 'text-text-secondary hover:text-text-primary',
                       )}
                     >
@@ -108,39 +108,37 @@ export function Header() {
             </ul>
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-2.5 lg:flex">
             <Link
               href="/claimables"
               aria-label="Search all opportunities"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-all duration-fast hover:scale-[1.04] active:scale-[0.96] border border-transparent hover:border-border"
+              className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-transparent text-text-secondary transition-all duration-fast hover:border-border hover:bg-surface-strong hover:text-text-primary"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             </Link>
-
-            <p className="max-w-[7.5rem] text-center text-xs leading-4 text-text-secondary">
+            <div className="hidden border-l border-border pl-4 pr-1 font-display text-[0.78rem] leading-[1.15] text-trust-primary/75 xl:block">
               A fairer India
               <br />
               for every consumer
-            </p>
-
+            </div>
             <Link
               href="/claimables"
               className={cn(
                 buttonVariants({ variant: 'default', size: 'sm' }),
-                'rounded-md font-bold px-4',
+                'public-focus min-h-[44px] rounded-lg px-5 font-bold',
               )}
             >
-              <span>Explore Claims</span>
+              Explore Claims
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-1.5 lg:hidden">
             <Link
               href="/claimables"
               aria-label="Search all opportunities"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-colors duration-fast"
+              className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-text-secondary transition-colors duration-fast hover:bg-surface-strong hover:text-text-primary"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-5 w-5" aria-hidden="true" />
             </Link>
             <button
               ref={menuButtonRef}
@@ -152,9 +150,9 @@ export function Header() {
               aria-label="Open navigation menu"
               aria-expanded={mobileOpen}
               aria-controls="mobile-navigation-drawer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text-primary hover:bg-surface-strong transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary"
+              className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-border bg-white text-text-primary transition-colors duration-fast hover:bg-surface-strong"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -168,7 +166,6 @@ export function Header() {
           aria-label="Site navigation"
           className="fixed inset-0 z-[100] lg:hidden"
         >
-          {/* Backdrop with 180ms ease-out opacity */}
           <div
             className={cn(
               'fixed inset-0 bg-text-primary/40 backdrop-blur-xs transition-opacity',
@@ -178,10 +175,9 @@ export function Header() {
             aria-hidden="true"
           />
 
-          {/* Drawer Panel with 260ms translateX & opacity */}
           <div
             className={cn(
-              'fixed inset-y-0 right-0 flex w-full max-w-xs flex-col bg-surface p-6 shadow-2xl border-l border-border transition-all',
+              'fixed inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-border bg-white p-5 shadow-2xl transition-all sm:p-6',
               isClosing ? 'drawer-panel-exit' : 'drawer-panel-enter',
             )}
           >
@@ -192,19 +188,20 @@ export function Header() {
                 type="button"
                 onClick={handleClose}
                 aria-label="Close navigation menu"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-strong hover:text-text-primary transition-colors duration-fast"
+                className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-text-secondary transition-colors duration-fast hover:bg-surface-strong hover:text-text-primary"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
-            <nav className="mt-6 flex-1 overflow-y-auto" aria-label="Mobile navigation links">
-              <ul className="space-y-1.5">
+            <nav className="mt-5 flex-1 overflow-y-auto" aria-label="Mobile navigation links">
+              <ul className="space-y-1">
                 {navLinks.map((link, idx) => {
                   const active =
                     link.href === '/'
                       ? pathname === '/'
                       : pathname === link.href || pathname.startsWith(`${link.href}/`);
+
                   return (
                     <li
                       key={link.href}
@@ -216,9 +213,9 @@ export function Header() {
                         aria-current={active ? 'page' : undefined}
                         onClick={handleClose}
                         className={cn(
-                          'flex min-h-[44px] items-center rounded-md px-4 py-2.5 text-base font-semibold transition-colors duration-fast',
+                          'public-focus flex min-h-[48px] items-center rounded-lg px-4 py-2.5 text-base font-semibold transition-colors duration-fast',
                           active
-                            ? 'bg-trust-primary/10 text-trust-primary font-bold'
+                            ? 'bg-trust-primary/10 font-bold text-trust-primary'
                             : 'text-text-primary hover:bg-surface-strong',
                         )}
                       >
@@ -236,7 +233,7 @@ export function Header() {
                 onClick={handleClose}
                 className={cn(
                   buttonVariants({ variant: 'default', size: 'lg' }),
-                  'w-full justify-center text-sm font-bold min-h-[44px] rounded-md',
+                  'public-focus min-h-[48px] w-full justify-center rounded-lg text-sm font-bold',
                 )}
               >
                 Explore Claims
@@ -246,7 +243,7 @@ export function Header() {
                 onClick={handleClose}
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'lg' }),
-                  'w-full justify-center text-sm font-semibold min-h-[44px] rounded-md',
+                  'public-focus min-h-[48px] w-full justify-center rounded-lg text-sm font-semibold',
                 )}
               >
                 Sign in
