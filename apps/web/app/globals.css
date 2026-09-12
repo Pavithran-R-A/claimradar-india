@@ -212,19 +212,19 @@ details[open] .faq-content {
   }
 }
 
-.journey-rail > div {
+.journey-rail > li {
   animation: journey-step 520ms var(--ease-out) both;
 }
 
-.journey-rail > div:nth-child(2) {
+.journey-rail > li:nth-child(2) {
   animation-delay: 100ms;
 }
 
-.journey-rail > div:nth-child(3) {
+.journey-rail > li:nth-child(3) {
   animation-delay: 200ms;
 }
 
-.journey-rail > div:nth-child(4) {
+.journey-rail > li:nth-child(4) {
   animation-delay: 300ms;
 }
 
@@ -393,6 +393,20 @@ details[open] .faq-content {
   }
 }
 
+@keyframes radar-status-progress {
+  0% {
+    opacity: 0.55;
+    transform: scaleX(0.06);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 @keyframes detection-blip {
   0%,
   88% {
@@ -407,6 +421,20 @@ details[open] .faq-content {
     opacity: 0;
     transform: scale(1);
   }
+}
+
+.radar-sweep-rotor {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: radar-sweep 5.5s linear infinite;
+  will-change: transform;
+}
+
+.radar-status-progress {
+  width: 100%;
+  transform: scaleX(0.06);
+  transform-origin: left center;
+  animation: radar-status-progress 5.5s linear infinite;
 }
 
 .animate-radar-sweep {
@@ -441,6 +469,8 @@ details[open] .faq-content {
     scroll-behavior: auto !important;
   }
 
+  .radar-sweep-rotor,
+  .radar-status-progress,
   .animate-radar-sweep,
   .animate-detection-blip,
   .animate-draw-line,
@@ -466,7 +496,7 @@ details[open] .faq-content {
     transform: none !important;
   }
 
-  .journey-rail > div {
+  .journey-rail > li {
     animation: none;
   }
 }
