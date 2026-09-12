@@ -23,10 +23,11 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
     expect(fileContent).toContain('strokeDasharray="3 3"');
   });
 
-  it('ensures spotlight details use a live region and accessible reset control', () => {
+  it('keeps spotlight details persistently readable instead of exposing a fake close action', () => {
     expect(fileContent).toContain('role="region"');
     expect(fileContent).toContain('aria-live="polite"');
-    expect(fileContent).toContain('aria-label="Close authority inspector"');
+    expect(fileContent).not.toContain('aria-label="Close authority inspector"');
+    expect(fileContent).not.toContain('title="Reset source spotlight"');
   });
 
   it('ensures Escape key restores the default spotlight', () => {
@@ -40,9 +41,12 @@ describe('Evidence Radar Visual Accessibility & Keyboard Navigation', () => {
     expect(fileContent).toContain('This is not a live activity feed');
   });
 
-  it('uses dedicated desktop and mobile source presentations from one monitored-source model', () => {
+  it('uses dedicated tablet-safe desktop and mobile source presentations from one monitored-source model', () => {
     expect(fileContent).toContain('data-ui="radar-desktop"');
     expect(fileContent).toContain('data-ui="radar-mobile"');
+    expect(fileContent).toContain('hidden md:grid');
+    expect(fileContent).toContain('md:hidden');
+    expect(fileContent).toContain('role="group"');
     expect(fileContent).toContain('min-h-[44px]');
     expect(fileContent.match(/MONITORED_NODES\.map/g)?.length).toBeGreaterThanOrEqual(3);
   });
