@@ -164,9 +164,9 @@ function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compa
           className="radar-status-progress block h-full rounded-full bg-[#0F8B8D]"
         />
       </div>
-      <div className="mt-2 flex items-center justify-between gap-3 text-[0.67rem] leading-4 text-text-muted">
+      <div className="mt-2 text-[0.67rem] leading-4 text-text-muted">
         <span>Animated source overview</span>
-        <span className="shrink-0">{node.monitoringType}</span>
+        <span className="mt-0.5 block truncate text-text-secondary">{node.monitoringType}</span>
       </div>
     </div>
   );
@@ -184,7 +184,7 @@ function RadarCanvas({
   const gradientId = `claimkhoj-beam-${React.useId().replace(/:/g, '')}`;
 
   return (
-    <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[390px]' : 'min-w-0')}>
+    <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[410px]' : 'min-w-0')}>
       <svg viewBox="0 0 520 520" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
           <linearGradient id={gradientId} x1="260" y1="260" x2="485" y2="260" gradientUnits="userSpaceOnUse">
@@ -342,10 +342,10 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn('relative mx-auto w-full max-w-[700px] select-none', className)}
+      className={cn('relative mx-auto w-full max-w-[720px] select-none', className)}
       aria-label="Monitored official sources diagram"
     >
-      <div data-ui="radar-desktop" className="hidden lg:grid lg:grid-cols-[minmax(360px,1fr)_220px] lg:items-center lg:gap-4 xl:grid-cols-[minmax(410px,1fr)_230px] xl:gap-5">
+      <div data-ui="radar-desktop" className="hidden xl:grid xl:grid-cols-[minmax(0,1fr)_200px] xl:items-center xl:gap-4 2xl:grid-cols-[minmax(0,1fr)_220px] 2xl:gap-5">
         <RadarCanvas selectedIndex={selectedIndex} onSelect={setSelectedIndex} />
         <div className="relative">
           <SourceSpotlight node={selectedNode} />
@@ -358,7 +358,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div data-ui="radar-mobile" className="lg:hidden">
+      <div data-ui="radar-mobile" className="xl:hidden">
         <div className="rounded-[var(--public-radius-card)] border border-border/80 bg-[#FBFDFE] p-2 shadow-[0_12px_32px_rgba(13,33,72,0.05)] sm:p-3">
           <RadarCanvas selectedIndex={selectedIndex} onSelect={setSelectedIndex} compact />
         </div>
