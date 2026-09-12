@@ -1,0 +1,1 @@
+Reference visual direction approved by product owner. Exact browser visual sign-off is still required before merge.
