@@ -64,6 +64,14 @@ describe('ClaimKhoj production UI/UX contract', () => {
     expect(page).not.toContain('absolute right-1 top-5 hidden font-display');
   });
 
+  it('anchors every desktop journey checkpoint directly to the authored rail geometry', () => {
+    expect(page).toContain('data-ui="journey-rail-path"');
+    expect(page).toContain('data-ui="journey-checkpoint-layer"');
+    expect(page.match(/data-ui="journey-checkpoint"/g)?.length).toBe(1);
+    expect(page).toContain('JOURNEY_RAIL_CHECKPOINTS.map');
+    expect(page).toContain('lg:hidden');
+  });
+
   it('keeps exactly one public main landmark and points the skip link to it', () => {
     expect(publicLayout).toContain('<main id="main-content"');
     expect(header).toContain('href="#main-content"');
