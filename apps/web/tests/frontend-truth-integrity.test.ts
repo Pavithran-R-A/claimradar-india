@@ -180,10 +180,10 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
     expect(normalized).toContain(
-      'This shows our verification process. It is not a live activity feed.',
+      'Select a source to inspect its monitoring scope. This is not a live activity feed.',
     );
     expect(normalized).toContain(
-      'ClaimRadar does not file claims or collect official filing fees. You act on the official portal.',
+      'ClaimKhoj does not file claims or collect official filing fees. You act on the official portal.',
     );
 
     // Prohibit tiny text and old AI jargon

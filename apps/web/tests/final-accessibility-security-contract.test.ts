@@ -12,8 +12,8 @@ describe('Final accessibility and security contracts', () => {
 
   it('keeps the visible logo name as its accessible name', () => {
     const brand = read('components', 'layout', 'brand-mark.tsx');
-    expect(brand).not.toContain('aria-label="ClaimRadar India — Homepage"');
-    expect(brand).toContain('ClaimRadar');
+    expect(brand).not.toContain('aria-label="ClaimKhoj — Homepage"');
+    expect(brand).toContain('brandConfig.shortName');
     expect(brand).toContain('India');
   });
 

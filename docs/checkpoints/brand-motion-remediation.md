@@ -15,13 +15,13 @@ The current public UI has material brand and interaction defects that were not c
 
 2. **Brand mark / favicon quality**
    - The current `BrandMark` is a dense 32×32 radar glyph with multiple rings/crosshairs that collapses visually at navigation and favicon sizes.
-   - The root Next.js app currently has no dedicated `favicon.ico`, `icon.*`, or `apple-icon.*` metadata asset in `apps/web/app`.
-   - Root metadata only sets title and description.
-   - A complete brand system is required: simplified mark, wordmark lockup, favicon, app icon, social/OG identity, light/dark-safe variants.
+   - The previous root Next.js app lacked dedicated icon and social metadata assets.
+   - The remediation now provides a simplified mark, wordmark lockup, SVG favicon, app icon, manifest, and social/OG identity.
+   - Official trademark screening remains separate from this technical identity work.
 
 3. **Radar interaction quality**
-   - `EvidenceRadarVisual` currently uses a 14-second sweep and 14-second detection-blip cycle. This reads as static / inert in normal observation.
-   - Visible SVG authority nodes use click handlers but do not communicate affordance strongly enough.
+   - The previous `EvidenceRadarVisual` used a 14-second sweep and detection-blip cycle.
+   - The remediation uses a six-second sweep with direct keyboard and pointer controls.
    - The radar currently feels decorative rather than informative.
    - The UI must make source inspection discoverable and responsive, with immediate hover/tap/focus feedback, active sweep behavior, and data-linked state.
 
@@ -64,11 +64,13 @@ A new name must pass all of these before being committed as final branding:
 
 No agent may claim a name is trademark-clear solely from ordinary web search.
 
-### Current provisional low-collision candidate
+### Current provisional candidate
 
-`PraptiQ`
+`ClaimKhoj`
 
-Rationale: Indian linguistic cue (`prapti`, attainment/receipt) + concise technology identity; current broad web search found no active commercial software/claims brand using the exact string, and `praptiq.com` was available at the time of the check. This is **not final trademark clearance**. IP India official search is still mandatory before locking the name.
+Rationale: `Claim` plus Hindi `khoj` (search/discovery) makes the product purpose legible to Indian consumers. The candidate remains provisional. Exact and phonetic IP India searches, plus wider collision screening, are still mandatory before commercial lock-in.
+
+Domain precheck: `claimkhoj.com` appeared available during the latest check. This is supporting evidence only, not trademark clearance.
 
 ## Brand design target
 

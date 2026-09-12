@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Badge, BrandMark } from '@claimradar/design-system';
+import { brandConfig } from '@claimradar/config';
 import type { StaffRole } from '@/lib/auth';
 import { isStaffRole, requireRoles } from '@/lib/auth';
 import { adminNavGroups, ALL_STAFF } from './_lib/roles';
@@ -82,7 +83,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           >
             <BrandMark size={28} variant="default" animated={false} />
             <div className="flex flex-col leading-none">
-              <span className="text-sm font-extrabold text-text-primary">ClaimRadar</span>
+              <span className="text-sm font-extrabold text-text-primary">
+                {brandConfig.shortName}
+              </span>
               <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
                 Operations Desk
               </span>

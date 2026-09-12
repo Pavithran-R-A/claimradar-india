@@ -2,12 +2,9 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ClaimRadarBrand } from './brand-mark';
+import { BrandLockup } from './brand-mark';
 import { ShieldCheck } from 'lucide-react';
-
-const brandConfig = {
-  siteName: 'ClaimRadar India',
-} as const;
+import { brandConfig } from '@claimradar/config';
 
 const navigationGroups = [
   {
@@ -23,7 +20,7 @@ const navigationGroups = [
   {
     title: 'About & How It Works',
     links: [
-      { href: '/how-it-works', label: 'How ClaimRadar works' },
+      { href: '/how-it-works', label: `How ${brandConfig.siteName} works` },
       { href: '/methodology', label: 'Verification methodology' },
       { href: '/sources', label: 'Monitored official sources' },
       { href: '/faq', label: 'Frequently asked questions' },
@@ -63,7 +60,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           {/* Brand & Purpose Column */}
           <div className="md:col-span-4 flex flex-col items-start">
-            <ClaimRadarBrand size="md" theme="dark" />
+            <BrandLockup size="md" theme="dark" />
             <p className="mt-3 text-xs leading-relaxed text-text-secondary max-w-sm">
               Independent claims information directory discovering, structuring, and surfacing
               public refund, compensation and recovery notices from official Indian regulatory

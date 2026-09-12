@@ -70,7 +70,7 @@ describe('truthful public copy contracts', () => {
   it('keeps landing copy search-first and source-bounded', () => {
     const page = read(landingPath).replace(/\s+/g, ' ');
 
-    expect(page).toContain('Find refunds and claims you may be entitled to.');
+    expect(page).toContain("Find refunds, benefits & claims you're entitled to.");
     expect(page).toContain('Search notices from SEBI, RBI, IBBI, TRAI, and PIB.');
     expect(page).toContain('public refund, compensation, and creditor-claim information');
     expect(page).toContain('View all deadlines');

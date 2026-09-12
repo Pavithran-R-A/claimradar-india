@@ -13,18 +13,17 @@ import { DemoDataBanner, EmptyDirectoryNotice } from '@/components/repository-st
 import { Reveal } from '@/components/motion/reveal';
 import { getPublishedClaimables } from '@/lib/claimables-repository';
 import { publicSourceFamilies } from '@claimradar/source-registry';
+import { brandConfig } from '@claimradar/config';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities',
-  description:
-    'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.',
+  title: `${brandConfig.siteName} — Grounded Refund, Compensation & Claim Opportunities`,
+  description: `${brandConfig.siteName} discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.`,
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'ClaimRadar India — Grounded Refund, Compensation & Claim Opportunities',
-    description:
-      'ClaimRadar India discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.',
+    title: `${brandConfig.siteName} — Grounded Refund, Compensation & Claim Opportunities`,
+    description: `${brandConfig.siteName} discovers, verifies, and structures refund, compensation and claim opportunities from official Indian regulatory and government notices.`,
     url: '/',
     type: 'website',
   },
@@ -32,22 +31,20 @@ export const metadata: Metadata = {
 
 const FAQ_ITEMS = [
   {
-    question: 'What is ClaimRadar India?',
-    answer:
-      'ClaimRadar is an independent public information service that monitors official Indian source families (including SEBI, RBI, IBBI, TRAI, and PIB press releases) for public refund, compensation, and claims notices. We explain who may be affected and direct users to official portals. We do not file claims on your behalf.',
+    question: `What is ${brandConfig.siteName}?`,
+    answer: `${brandConfig.siteName} is an independent public information service that monitors official Indian source families (including SEBI, RBI, IBBI, TRAI, and PIB press releases) for public refund, compensation, and claims notices. We explain who may be affected and direct users to official portals. We do not file claims on your behalf.`,
   },
   {
-    question: 'Is ClaimRadar a government portal or legal representative?',
-    answer:
-      'No. ClaimRadar is strictly an independent information service. We are not affiliated with the Government of India, any court, tribunal, regulator, law firm, or listed company. We link directly to authentic official authority sources so you can verify information yourself.',
+    question: `Is ${brandConfig.siteName} a government portal or legal representative?`,
+    answer: `No. ${brandConfig.siteName} is strictly an independent information service. We are not affiliated with the Government of India, any court, tribunal, regulator, law firm, or listed company. We link directly to authentic official authority sources so you can verify information yourself.`,
   },
   {
-    question: 'Does ClaimRadar guarantee I will receive a refund or compensation?',
+    question: `Does ${brandConfig.siteName} guarantee I will receive a refund or compensation?`,
     answer:
       'No. We surface potential opportunities based on official regulatory announcements and government notices. Whether you qualify or receive compensation depends strictly on the official eligibility criteria, your submitted evidence, and the official scheme process.',
   },
   {
-    question: 'How does ClaimRadar discover and verify opportunities?',
+    question: `How does ${brandConfig.siteName} discover and verify opportunities?`,
     answer:
       'Our public source registry covers SEBI, RBI, IBBI, TRAI, and PIB. We organize notices from those source families and link each published record to its underlying official source for review.',
   },
@@ -100,7 +97,7 @@ export default async function LandingPage() {
                 id="home-hero-heading"
                 className="enter-seq-1 mt-5 max-w-2xl text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-text-primary leading-[1.12]"
               >
-                Find refunds and claims you may be entitled to.
+                {brandConfig.tagline}
               </h1>
 
               {/* Concise Supporting Copy with 70ms entrance */}
@@ -154,7 +151,7 @@ export default async function LandingPage() {
                 </span>
                 <span>
                   <strong className="font-semibold text-text-primary">No filing fees</strong>{' '}
-                  through ClaimRadar
+                  through {brandConfig.siteName}
                 </span>
               </div>
             </div>
@@ -305,7 +302,7 @@ export default async function LandingPage() {
                 Verification Methodology
               </span>
               <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-text-primary tracking-tight">
-                How ClaimRadar verifies an official notice.
+                How {brandConfig.siteName} verifies an official notice.
               </h2>
               <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-2xl">
                 Published records link to an official source and are reviewed against that source

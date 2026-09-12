@@ -377,11 +377,11 @@ details[open] .faq-content {
 }
 
 .animate-radar-sweep {
-  animation: radar-sweep 14s linear infinite;
+  animation: radar-sweep 6s linear infinite;
 }
 
 .animate-detection-blip {
-  animation: detection-blip 14s ease-in-out infinite;
+  animation: detection-blip 6s ease-in-out infinite;
 }
 
 /* Progressive Evidence Rail Line Drawing */

@@ -210,7 +210,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
               strokeDasharray="4 4"
             />
 
-            {/* Continuous Rotating 14s Radar Beam (Transform-only, composited) */}
+            {/* Continuous six-second evidence route sweep. */}
             <g
               className="animate-radar-sweep motion-reduce:!animate-none"
               style={{ transformOrigin: '260px 260px' }}
@@ -242,7 +242,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
               return (
                 <g
                   key={node.code}
-                  className="cursor-pointer group/node"
+                  className="pointer-events-none group/node"
                   onClick={() => setSelectedNode(node)}
                 >
                   {/* Outer Focus / Selection Indicator — fill="none" */}
@@ -305,21 +305,36 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
             })}
           </svg>
 
-          <nav aria-label="Monitored official sources" className="sr-only">
-            <p>Inspect source monitoring details.</p>
-            <ul>
-              {MONITORED_NODES.map((node) => (
-                <li key={node.code}>
-                  <button
-                    type="button"
-                    aria-pressed={selectedNode?.code === node.code}
-                    onClick={() => setSelectedNode(node)}
+          <nav aria-label="Monitored official sources" className="absolute inset-0">
+            {MONITORED_NODES.map((node) => {
+              const isSelected = selectedNode?.code === node.code;
+              return (
+                <button
+                  key={node.code}
+                  type="button"
+                  aria-pressed={isSelected}
+                  aria-label={`Inspect ${node.code}: ${node.name}`}
+                  onClick={() => setSelectedNode(node)}
+                  className="group/node absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2"
+                  style={{ left: `${(node.cx / 520) * 100}%`, top: `${(node.cy / 520) * 100}%` }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'flex h-8 w-8 items-center justify-center rounded-full border border-trust-primary/50 bg-surface/60 transition-all duration-fast group-hover/node:border-trust-primary group-hover/node:bg-trust-primary/10 group-focus-visible:opacity-100',
+                      isSelected && 'border-trust-primary bg-trust-primary/15 shadow-sm',
+                    )}
                   >
-                    {node.code}: {node.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    <span
+                      className={cn(
+                        'h-2.5 w-2.5 rounded-full bg-text-primary transition-all duration-fast group-hover/node:bg-trust-primary',
+                        isSelected && 'h-3.5 w-3.5 bg-trust-primary',
+                      )}
+                    />
+                  </span>
+                </button>
+              );
+            })}
           </nav>
 
           {/* Accessible In-Place Inspector Drawer */}
@@ -375,11 +390,12 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
                 Every listing is checked against the source.
               </span>
             </div>
-            <span className="text-text-secondary">5 Sources</span>
+            <span className="text-text-secondary">{MONITORED_NODES.length} Sources</span>
           </div>
           <p className="text-xs text-text-muted leading-relaxed">
-            This shows our verification process. It is not a live activity feed. ClaimRadar does not
-            file claims or collect official filing fees. You act on the official portal.
+            Select a source to inspect its monitoring scope. This is not a live activity feed.
+            ClaimKhoj does not file claims or collect official filing fees. You act on the official
+            portal.
           </p>
         </div>
       </div>

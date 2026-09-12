@@ -74,7 +74,7 @@ const config: Config = {
         rise: 'rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both',
         fade: 'fade 0.45s ease-out both',
         aurora: 'aurora 26s ease-in-out infinite alternate',
-        'radar-sweep': 'radar-sweep 14s linear infinite',
+        'radar-sweep': 'radar-sweep 6s linear infinite',
         'radar-pulse': 'radar-pulse 3s cubic-bezier(0, 0, 0.2, 1) infinite',
         'beacon-pulse': 'beacon-pulse 2.5s ease-in-out infinite',
       },

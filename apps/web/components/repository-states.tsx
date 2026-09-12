@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { TriangleAlert, Bell, Eye, FileText, ShieldCheck } from 'lucide-react';
 import { cn, buttonVariants } from '@claimradar/design-system';
+import { brandConfig } from '@claimradar/config';
 
 export function DemoDataBanner() {
   return (
@@ -35,7 +36,8 @@ export function DataUnavailableNotice({ message }: { message: string }) {
       <h2 className="text-base font-bold text-text-primary">Directory Ingestion Status</h2>
       <p className="mt-2 text-xs leading-relaxed text-text-secondary">{message}</p>
       <p className="mt-3 text-xs text-text-secondary">
-        ClaimRadar strictly serves verified database records. We never invent placeholder entries.
+        {brandConfig.siteName} strictly serves verified database records. We never invent
+        placeholder entries.
       </p>
     </div>
   );
@@ -47,7 +49,7 @@ export function DataUnavailableNotice({ message }: { message: string }) {
  */
 export function EmptyDirectoryNotice({
   title = 'No notice has cleared publication review yet',
-  body = 'ClaimRadar actively monitors notices from official statutory and government authorities (SEBI, RBI, IBBI, TRAI, and PIB). We deliberately leave this directory empty rather than publish speculative or unverified claims.',
+  body = `${brandConfig.siteName} actively monitors notices from official statutory and government authorities (SEBI, RBI, IBBI, TRAI, and PIB). We deliberately leave this directory empty rather than publish speculative or unverified claims.`,
   showActions = true,
 }: {
   title?: string;

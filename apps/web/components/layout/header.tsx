@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn, buttonVariants } from '@claimradar/design-system';
 import { Menu, X, Search } from 'lucide-react';
-import { ClaimRadarBrand } from './brand-mark';
+import { BrandLockup } from './brand-mark';
 
 const navLinks = [
   { href: '/claimables', label: 'Find claims' },
@@ -79,7 +79,7 @@ export function Header() {
         )}
       >
         <div className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <ClaimRadarBrand size="md" />
+          <BrandLockup size="md" />
 
           <nav className="hidden lg:block" aria-label="Main navigation">
             <ul className="flex items-center gap-1">
@@ -184,7 +184,7 @@ export function Header() {
             )}
           >
             <div className="flex items-center justify-between border-b border-border pb-4">
-              <ClaimRadarBrand size="sm" />
+              <BrandLockup size="sm" />
               <button
                 ref={closeButtonRef}
                 type="button"
