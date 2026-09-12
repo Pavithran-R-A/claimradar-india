@@ -20,26 +20,33 @@ describe('Evidence Radar Visual Accessibility & Motion', () => {
     expect(fileContent).not.toContain('tabIndex={0}');
   });
 
-  it('uses a dedicated SVG rotor with an explicit SVG transform box', () => {
+  it('uses native SVG animation so rotation does not depend on CSS SVG transform behavior', () => {
     expect(fileContent).toContain('data-ui="radar-rotor"');
-    expect(fileContent).toContain('radar-sweep-rotor');
-    expect(cssContent).toContain('.radar-sweep-rotor');
-    expect(cssContent).toContain('transform-box: view-box');
-    expect(cssContent).toContain('animation: radar-sweep');
+    expect(fileContent).toContain('<animateTransform');
+    expect(fileContent).toContain('type="rotate"');
+    expect(fileContent).toContain('from="0 260 260"');
+    expect(fileContent).toContain('to="360 260 260"');
+    expect(fileContent).toContain('repeatCount="indefinite"');
+    expect(fileContent).not.toContain('className="radar-sweep-rotor"');
   });
 
   it('keeps the moving radar visually meaningful without claiming live crawl state', () => {
     expect(fileContent).toContain('Now highlighting');
     expect(fileContent).toContain('Animated source overview');
-    expect(fileContent).not.toContain('This is not a live activity feed');
     expect(fileContent).toContain('data-ui="radar-status"');
+    expect(fileContent).toContain('Visual scan, not live crawl status');
   });
 
-  it('respects reduced-motion preferences while allowing the full animation otherwise', () => {
-    expect(fileContent).toContain("window.matchMedia('(prefers-reduced-motion: reduce)')");
+  it('provides an explicit pause and resume control for continuous scan motion', () => {
+    expect(fileContent).toContain('radarRunning');
+    expect(fileContent).toContain('Pause radar animation');
+    expect(fileContent).toContain('Resume radar animation');
+    expect(fileContent).toContain('aria-pressed={!radarRunning}');
+  });
+
+  it('keeps reduced-motion handling for nonessential CSS effects', () => {
     expect(cssContent).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(cssContent).toContain('.radar-sweep-rotor');
-    expect(cssContent).toContain('.radar-status-progress');
+    expect(cssContent).toContain('.animate-detection-blip');
   });
 
   it('ensures Escape key restores the default spotlight', () => {
