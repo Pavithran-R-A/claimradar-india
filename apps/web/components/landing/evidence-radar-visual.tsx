@@ -181,7 +181,6 @@ function RadarCanvas({
   onSelect: (index: number) => void;
   compact?: boolean;
 }) {
-  const selectedNode = MONITORED_NODES[selectedIndex] ?? MONITORED_NODES[DEFAULT_NODE_INDEX]!;
   const gradientId = `claimkhoj-beam-${React.useId().replace(/:/g, '')}`;
 
   return (
