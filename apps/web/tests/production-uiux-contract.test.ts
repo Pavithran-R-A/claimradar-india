@@ -14,21 +14,35 @@ const radar = read('../components/landing/evidence-radar-visual.tsx');
 const css = read('../app/globals.css');
 
 describe('ClaimKhoj production UI/UX contract', () => {
-  it('uses a deliberate hero composition and bounded editorial annotation', () => {
+  it('uses a deliberate reference-width hero composition and bounded editorial annotation', () => {
     expect(page).toContain('data-ui="hero-grid"');
     expect(page).toContain('data-ui="hero-annotation"');
+    expect(page).toContain('max-w-[1760px]');
+    expect(page).toContain('xl:items-start');
+    expect(page).toContain('Scanning official sources for you');
     expect(page).not.toContain('absolute -right-2 -top-8');
+  });
+
+  it('keeps the editorial headline compact enough to preserve the approved desktop density', () => {
+    expect(page).toContain('2xl:whitespace-nowrap');
+    expect(page).toContain('2xl:text-[4.1rem]');
   });
 
   it('keeps search as the primary hero action and stacks safely on narrow screens', () => {
     expect(search).toContain('aria-label="Search ClaimKhoj opportunities"');
     expect(search).toContain('data-ui="hero-search"');
     expect(search).toContain('min-h-[48px]');
+    expect(search).toContain('Search refunds, claims, schemes or your situation');
   });
 
   it('provides dedicated mobile and desktop radar presentations', () => {
     expect(radar).toContain('data-ui="radar-desktop"');
     expect(radar).toContain('data-ui="radar-mobile"');
+  });
+
+  it('uses the wider public navigation shell visible in the approved reference', () => {
+    expect(header).toContain('max-w-[1760px]');
+    expect(footer).toContain('max-w-[1760px]');
   });
 
   it('uses consistent public shell focus and target treatment', () => {
