@@ -64,6 +64,16 @@ describe('ClaimKhoj production UI/UX contract', () => {
     expect(page).not.toContain('absolute right-1 top-5 hidden font-display');
   });
 
+  it('authors the desktop rail through the four checkpoint centers instead of floating past them', () => {
+    expect(page).toContain('const JOURNEY_RAIL_PATH');
+    expect(page).toContain('data-ui="journey-rail-path"');
+    expect(page).toContain('125 14');
+    expect(page).toContain('375 14');
+    expect(page).toContain('625 14');
+    expect(page).toContain('875 14');
+    expect(page).toContain('lg:min-h-7');
+  });
+
   it('keeps exactly one public main landmark and points the skip link to it', () => {
     expect(publicLayout).toContain('<main id="main-content"');
     expect(header).toContain('href="#main-content"');

@@ -56,6 +56,9 @@ const JOURNEY = [
   ['ACT', 'Follow the official route'],
 ] as const;
 
+const JOURNEY_RAIL_PATH =
+  'M10 24 C55 11 90 14 125 14 C205 14 290 34 375 14 C455 2 545 36 625 14 C705 0 795 30 875 14 C925 14 965 20 990 26';
+
 function SourceIcon({ code }: { code: string }) {
   const Icon = SOURCE_MARKS[code as keyof typeof SOURCE_MARKS] ?? FileText;
   return <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />;
@@ -208,7 +211,8 @@ export default async function LandingPage() {
               aria-hidden="true"
             >
               <path
-                d="M10 38 C120 8 180 62 280 38 S450 12 535 38 S700 58 790 36 S920 18 990 42"
+                data-ui="journey-rail-path"
+                d={JOURNEY_RAIL_PATH}
                 fill="none"
                 stroke="#5D94BC"
                 strokeWidth="1.4"
@@ -224,7 +228,7 @@ export default async function LandingPage() {
                 <span className="order-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/45 bg-[#FFF7DD] text-xs font-extrabold text-trust-primary shadow-[0_0_0_5px_rgba(255,255,255,0.95)] lg:h-3 lg:w-3 lg:text-[0px]">
                   {index + 1}
                 </span>
-                <span className="order-1 lg:min-h-[28px]">
+                <span className="order-1 lg:min-h-7">
                   <span className="block text-[0.64rem] font-extrabold tracking-[0.16em] text-trust-primary">
                     {label}
                   </span>

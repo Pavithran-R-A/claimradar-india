@@ -218,20 +218,41 @@ function RadarCanvas({
   radarRunning: boolean;
   compact?: boolean;
 }) {
-  const gradientId = `claimkhoj-beam-${React.useId().replace(/:/g, '')}`;
+  const instanceId = React.useId().replace(/:/g, '');
+  const gradientId = `claimkhoj-beam-${instanceId}`;
+  const atmosphereId = `claimkhoj-atmosphere-${instanceId}`;
+  const hubGlowId = `claimkhoj-hub-glow-${instanceId}`;
 
   return (
     <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[390px]' : 'min-w-0')}>
       <svg viewBox="0 0 520 520" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
           <linearGradient id={gradientId} x1="260" y1="260" x2="480" y2="260" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#F5B940" stopOpacity="0.02" />
-            <stop offset="50%" stopColor="#F5B940" stopOpacity="0.11" />
-            <stop offset="100%" stopColor="#F5B940" stopOpacity="0.42" />
+            <stop offset="0%" stopColor="#F5B940" stopOpacity="0.01" />
+            <stop offset="52%" stopColor="#F5B940" stopOpacity="0.09" />
+            <stop offset="86%" stopColor="#F5B940" stopOpacity="0.24" />
+            <stop offset="100%" stopColor="#F5B940" stopOpacity="0.46" />
           </linearGradient>
+          <radialGradient id={atmosphereId} cx="50%" cy="48%" r="58%">
+            <stop offset="0%" stopColor="#F9E6A7" stopOpacity="0.16" />
+            <stop offset="42%" stopColor="#E8F4FA" stopOpacity="0.28" />
+            <stop offset="78%" stopColor="#F8FCFE" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={hubGlowId} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#F5B940" stopOpacity="0.14" />
+            <stop offset="48%" stopColor="#A8D7E0" stopOpacity="0.09" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
-        <circle cx="260" cy="260" r="220" fill="#FCFEFF" stroke="#8DB4D1" strokeWidth="1" strokeDasharray="5 7" />
+        <g data-ui="radar-atmosphere">
+          <circle cx="260" cy="260" r="220" fill="#FCFEFF" stroke="#8DB4D1" strokeWidth="1" strokeDasharray="5 7" />
+          <circle cx="260" cy="260" r="212" fill={`url(#${atmosphereId})`} />
+          <circle cx="260" cy="260" r="184" fill="none" stroke="#E6F0F5" strokeWidth="9" strokeOpacity="0.34" />
+          <circle cx="260" cy="260" r="118" fill={`url(#${hubGlowId})`} />
+        </g>
+
         {[72, 138, 202].map((radius, index) => (
           <circle
             key={radius}
@@ -240,13 +261,13 @@ function RadarCanvas({
             r={radius}
             fill="none"
             stroke={index === 2 ? '#B8D0E2' : '#D8E5ED'}
-            strokeWidth="1"
+            strokeWidth={index === 0 ? 1.15 : 1}
             strokeOpacity={index === 2 ? 0.85 : 0.95}
           />
         ))}
-        <circle cx="260" cy="260" r="105" fill="#F6FBFE" fillOpacity="0.72" stroke="#CFE0EA" strokeWidth="1" />
-        <line x1="260" y1="40" x2="260" y2="480" stroke="#CADCE7" strokeDasharray="3 5" />
-        <line x1="40" y1="260" x2="480" y2="260" stroke="#CADCE7" strokeDasharray="3 5" />
+        <circle cx="260" cy="260" r="105" fill="#F8FCFE" fillOpacity="0.74" stroke="#CFE0EA" strokeWidth="1" />
+        <line x1="260" y1="40" x2="260" y2="480" stroke="#CADCE7" strokeOpacity="0.78" strokeDasharray="3 5" />
+        <line x1="40" y1="260" x2="480" y2="260" stroke="#CADCE7" strokeOpacity="0.78" strokeDasharray="3 5" />
 
         <g data-ui="radar-rotor">
           {radarRunning ? (
@@ -262,6 +283,7 @@ function RadarCanvas({
           ) : null}
           <path d="M260 260 L480 260 A220 220 0 0 0 415.6 104.4 Z" fill={`url(#${gradientId})`} />
           <line x1="260" y1="260" x2="480" y2="260" stroke="#D99A18" strokeWidth="1.7" strokeLinecap="round" />
+          <circle cx="480" cy="260" r="3.2" fill="#F5B940" stroke="#FFFFFF" strokeWidth="1.5" />
         </g>
 
         {MONITORED_NODES.map((node, index) => {
@@ -274,10 +296,33 @@ function RadarCanvas({
                 x2={node.cx}
                 y2={node.cy}
                 stroke={node.accent}
-                strokeOpacity={isSelected ? 0.32 : 0.13}
-                strokeWidth={isSelected ? 1.4 : 1}
+                strokeOpacity={isSelected ? 0.34 : 0.12}
+                strokeWidth={isSelected ? 1.5 : 1}
                 strokeDasharray="2 4"
               />
+              {isSelected ? (
+                <g data-ui="radar-selected-halo">
+                  <circle
+                    cx={node.cx}
+                    cy={node.cy}
+                    r="38"
+                    fill={node.pale}
+                    fillOpacity="0.58"
+                    stroke={node.accent}
+                    strokeOpacity="0.16"
+                    strokeWidth="1"
+                  />
+                  <circle
+                    cx={node.cx}
+                    cy={node.cy}
+                    r="31"
+                    fill="none"
+                    stroke={node.accent}
+                    strokeOpacity="0.28"
+                    strokeWidth="1"
+                  />
+                </g>
+              ) : null}
               <circle
                 cx={node.cx}
                 cy={node.cy}
@@ -300,7 +345,8 @@ function RadarCanvas({
                 x={node.labelX}
                 y={node.labelY}
                 textAnchor={node.textAnchor}
-                className="select-none fill-trust-primary font-display text-[12px] font-bold"
+                className="select-none font-display text-[12px] font-bold"
+                style={{ fill: isSelected ? node.accent : '#0D2148' }}
               >
                 {node.code}
               </text>
@@ -343,18 +389,16 @@ function RadarCanvas({
         })}
       </div>
 
-      <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-[104px] w-[104px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-[#c9dce7] bg-white/95 text-center shadow-[0_12px_30px_rgba(13,33,72,0.11)] backdrop-blur-sm">
+      <div
+        data-ui="radar-hub"
+        className="pointer-events-none absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-[#c5dbe7] bg-white/95 text-center shadow-[0_14px_34px_rgba(13,33,72,0.12),0_0_0_7px_rgba(255,255,255,0.58)] backdrop-blur-sm"
+      >
         <BrandMark size={34} variant="light" />
         <span className="mt-1 font-display text-sm font-bold text-trust-primary">ClaimKhoj</span>
         <span className="mt-0.5 max-w-[82px] text-[0.42rem] font-bold uppercase tracking-[0.15em] text-text-muted">
           Official source scan
         </span>
       </div>
-
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-bright shadow-[0_0_0_8px_rgba(245,185,64,0.08)]"
-        aria-hidden="true"
-      />
     </div>
   );
 }
