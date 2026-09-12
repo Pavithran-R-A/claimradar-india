@@ -51,12 +51,12 @@ export function InteractiveHeroSearch() {
     <div className="w-full">
       <form
         onSubmit={handleSubmit}
-        className="group relative flex w-full flex-col items-stretch gap-2 rounded-md border border-border bg-surface p-1.5 shadow-xs transition-all duration-ui ease-out hover:border-trust-primary/40 hover:shadow-sm focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/20 focus-within:shadow-sm focus-within:-translate-y-[1px] sm:flex-row"
+        className="group relative flex w-full flex-col items-stretch gap-2 rounded-lg border border-[#cbd8e1] bg-white p-1.5 shadow-[0_10px_28px_rgba(13,33,72,0.045)] transition-all duration-ui ease-out hover:border-trust-primary/35 hover:shadow-[0_13px_32px_rgba(13,33,72,0.07)] focus-within:-translate-y-[1px] focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/15 sm:flex-row"
         aria-busy={isSubmitting}
       >
-        <div className="relative flex-1 flex items-center min-w-0">
+        <div className="relative flex min-w-0 flex-1 items-center">
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 z-10 transition-colors duration-fast"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-4 transition-colors duration-fast"
             style={{
               color: isFocused ? 'rgb(var(--c-trust-primary))' : 'rgb(var(--c-text-muted))',
             }}
@@ -77,7 +77,7 @@ export function InteractiveHeroSearch() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search refunds, claims, schemes or your situation"
             style={{ paddingLeft: '48px', paddingRight: '48px' }}
-            className="h-12 sm:h-14 w-full rounded-md border-0 bg-transparent text-base sm:text-lg text-text-primary placeholder:text-text-muted focus:outline-none"
+            className="h-12 w-full rounded-md border-0 bg-transparent text-base text-text-primary placeholder:text-text-muted focus:outline-none sm:h-14 sm:text-[1.05rem]"
           />
           {query ? (
             <button
@@ -86,13 +86,13 @@ export function InteractiveHeroSearch() {
                 setQuery('');
                 inputRef.current?.focus();
               }}
-              className="search-clear-enter absolute inset-y-0 right-2 my-auto flex h-7 w-7 items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-strong transition-all duration-fast hover:scale-110 active:scale-95"
+              className="search-clear-enter absolute inset-y-0 right-2 my-auto flex h-8 w-8 items-center justify-center rounded-full text-text-muted transition-all duration-fast hover:scale-105 hover:bg-surface-strong hover:text-text-primary active:scale-95"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
             </button>
           ) : (
-            <div className="pointer-events-none absolute inset-y-0 right-3 hidden sm:flex items-center">
+            <div className="pointer-events-none absolute inset-y-0 right-3 hidden items-center sm:flex">
               <kbd className="rounded border border-border bg-surface-strong px-1.5 py-0.5 text-xs font-mono text-text-muted">
                 /
               </kbd>
@@ -114,27 +114,26 @@ export function InteractiveHeroSearch() {
           type="submit"
           variant="default"
           size="default"
-          className="h-12 sm:h-14 px-7 rounded-md text-sm font-bold text-white sm:w-auto shadow-xs transition-all duration-fast shrink-0"
+          className="h-12 shrink-0 rounded-md !bg-[#F5B940] px-7 text-sm font-extrabold !text-[#0D2148] shadow-[0_8px_20px_rgba(217,154,24,0.18)] transition-all duration-fast hover:!bg-[#F0AE2F] hover:shadow-[0_10px_24px_rgba(217,154,24,0.25)] sm:h-14 sm:w-auto"
         >
           <span>{isSubmitting ? 'Searching...' : 'Search Claims'}</span>
-          <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-0.5" />
+          <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" />
         </Button>
       </form>
 
-      {/* Quiet Example Lookups */}
       <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-muted">
-        <span className="text-text-secondary font-medium mr-1">Try:</span>
+        <span className="mr-1 font-medium text-text-secondary">Try:</span>
         {SUGGESTIONS.map((term, idx) => (
           <React.Fragment key={term}>
             <button
               type="button"
               onClick={() => handleLookup(term)}
-              className="inline-flex min-h-[24px] min-w-[24px] items-center justify-center text-text-secondary hover:text-trust-primary hover:underline transition-colors duration-fast cursor-pointer"
+              className="inline-flex min-h-[28px] min-w-[28px] cursor-pointer items-center justify-center text-text-secondary transition-colors duration-fast hover:text-trust-primary hover:underline"
             >
               {term}
             </button>
             {idx < SUGGESTIONS.length - 1 && (
-              <span className="text-border mx-1" aria-hidden>
+              <span className="mx-1 text-border" aria-hidden>
                 ·
               </span>
             )}
