@@ -6,6 +6,8 @@ import {
   Building2,
   FileText,
   Landmark,
+  Pause,
+  Play,
   Radio,
   ShieldCheck,
   type LucideIcon,
@@ -121,7 +123,17 @@ const MONITORED_NODES: AuthorityNode[] = [
 const DEFAULT_NODE_INDEX = 1;
 const SCAN_INTERVAL_MS = 5500;
 
-function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compact?: boolean }) {
+function SourceSpotlight({
+  node,
+  compact = false,
+  radarRunning,
+  onToggleRadar,
+}: {
+  node: AuthorityNode;
+  compact?: boolean;
+  radarRunning: boolean;
+  onToggleRadar: () => void;
+}) {
   const Icon = node.icon;
 
   return (
@@ -132,7 +144,7 @@ function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compa
       aria-label={`${node.code} source highlight`}
       className={cn(
         'relative overflow-hidden rounded-[var(--public-radius-card)] border border-[#d3e1e8] bg-white shadow-[0_14px_34px_rgba(13,33,72,0.075)]',
-        compact ? 'p-4' : 'p-4 xl:p-5',
+        compact ? 'p-4' : 'p-4 xl:p-[1.125rem]',
       )}
     >
       <div className="flex items-start gap-3">
@@ -142,7 +154,7 @@ function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compa
         >
           <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[0.61rem] font-extrabold uppercase tracking-[0.16em] text-[#2B648F]">
             Now highlighting
           </p>
@@ -160,13 +172,36 @@ function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compa
 
       <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#DDECF2]" aria-hidden="true">
         <span
-          key={node.code}
-          className="radar-status-progress block h-full rounded-full bg-[#0F8B8D]"
+          key={`${node.code}-${radarRunning ? 'running' : 'paused'}`}
+          className={cn(
+            'radar-status-progress block h-full rounded-full bg-[#0F8B8D]',
+            !radarRunning && 'radar-status-progress-paused',
+          )}
         />
       </div>
-      <div className="mt-2 text-[0.67rem] leading-4 text-text-muted">
-        <span>Animated source overview</span>
-        <span className="mt-0.5 block truncate text-text-secondary">{node.monitoringType}</span>
+
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <span className="text-[0.67rem] leading-4 text-text-muted">Animated source overview</span>
+        <button
+          type="button"
+          onClick={onToggleRadar}
+          aria-pressed={!radarRunning}
+          aria-label={radarRunning ? 'Pause radar animation' : 'Resume radar animation'}
+          className="public-focus inline-flex min-h-[32px] items-center gap-1 rounded-md px-2 text-[0.67rem] font-semibold text-trust-primary transition-colors hover:bg-surface-strong"
+        >
+          {radarRunning ? (
+            <Pause className="h-3 w-3" aria-hidden="true" />
+          ) : (
+            <Play className="h-3 w-3" aria-hidden="true" />
+          )}
+          {radarRunning ? 'Pause' : 'Play'}
+        </button>
+      </div>
+
+      <p className="mt-0.5 truncate text-[0.66rem] leading-4 text-text-secondary">{node.monitoringType}</p>
+      <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-[0.65rem] leading-4 text-text-muted">
+        <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-trust-primary" aria-hidden="true" />
+        <span>Visual scan, not live crawl status. Published listings are source-verified.</span>
       </div>
     </div>
   );
@@ -175,22 +210,24 @@ function SourceSpotlight({ node, compact = false }: { node: AuthorityNode; compa
 function RadarCanvas({
   selectedIndex,
   onSelect,
+  radarRunning,
   compact = false,
 }: {
   selectedIndex: number;
   onSelect: (index: number) => void;
+  radarRunning: boolean;
   compact?: boolean;
 }) {
   const gradientId = `claimkhoj-beam-${React.useId().replace(/:/g, '')}`;
 
   return (
-    <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[410px]' : 'min-w-0')}>
+    <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[390px]' : 'min-w-0')}>
       <svg viewBox="0 0 520 520" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id={gradientId} x1="260" y1="260" x2="485" y2="260" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#F5B940" stopOpacity="0.04" />
-            <stop offset="55%" stopColor="#F5B940" stopOpacity="0.12" />
-            <stop offset="100%" stopColor="#F5B940" stopOpacity="0.38" />
+          <linearGradient id={gradientId} x1="260" y1="260" x2="480" y2="260" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#F5B940" stopOpacity="0.02" />
+            <stop offset="50%" stopColor="#F5B940" stopOpacity="0.11" />
+            <stop offset="100%" stopColor="#F5B940" stopOpacity="0.42" />
           </linearGradient>
         </defs>
 
@@ -211,9 +248,20 @@ function RadarCanvas({
         <line x1="260" y1="40" x2="260" y2="480" stroke="#CADCE7" strokeDasharray="3 5" />
         <line x1="40" y1="260" x2="480" y2="260" stroke="#CADCE7" strokeDasharray="3 5" />
 
-        <g data-ui="radar-rotor" className="radar-sweep-rotor">
+        <g data-ui="radar-rotor">
+          {radarRunning ? (
+            <animateTransform
+              attributeName="transform"
+              attributeType="XML"
+              type="rotate"
+              from="0 260 260"
+              to="360 260 260"
+              dur="7.5s"
+              repeatCount="indefinite"
+            />
+          ) : null}
           <path d="M260 260 L480 260 A220 220 0 0 0 415.6 104.4 Z" fill={`url(#${gradientId})`} />
-          <line x1="260" y1="260" x2="480" y2="260" stroke="#D99A18" strokeWidth="1.6" strokeLinecap="round" />
+          <line x1="260" y1="260" x2="480" y2="260" stroke="#D99A18" strokeWidth="1.7" strokeLinecap="round" />
         </g>
 
         {MONITORED_NODES.map((node, index) => {
@@ -245,7 +293,7 @@ function RadarCanvas({
                 fill="none"
                 stroke={node.accent}
                 strokeWidth="1.2"
-                className="animate-detection-blip"
+                className={radarRunning ? 'animate-detection-blip' : undefined}
                 style={{ animationDelay: `${node.delaySec}s`, transformOrigin: `${node.cx}px ${node.cy}px` }}
               />
               <text
@@ -313,24 +361,16 @@ function RadarCanvas({
 
 export function EvidenceRadarVisual({ className }: { className?: string }) {
   const [selectedIndex, setSelectedIndex] = React.useState(DEFAULT_NODE_INDEX);
-  const [motionAllowed, setMotionAllowed] = React.useState(true);
+  const [radarRunning, setRadarRunning] = React.useState(true);
   const selectedNode = MONITORED_NODES[selectedIndex] ?? MONITORED_NODES[DEFAULT_NODE_INDEX]!;
 
   React.useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotionPreference = () => setMotionAllowed(!media.matches);
-    syncMotionPreference();
-    media.addEventListener('change', syncMotionPreference);
-    return () => media.removeEventListener('change', syncMotionPreference);
-  }, []);
-
-  React.useEffect(() => {
-    if (!motionAllowed) return undefined;
+    if (!radarRunning) return undefined;
     const timer = window.setTimeout(() => {
       setSelectedIndex((current) => (current + 1) % MONITORED_NODES.length);
     }, SCAN_INTERVAL_MS);
     return () => window.clearTimeout(timer);
-  }, [selectedIndex, motionAllowed]);
+  }, [selectedIndex, radarRunning]);
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -340,34 +380,46 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const toggleRadar = () => setRadarRunning((current) => !current);
+
   return (
     <div
-      className={cn('relative mx-auto w-full max-w-[720px] select-none', className)}
+      className={cn('relative mx-auto w-full max-w-[760px] select-none', className)}
       aria-label="Monitored official sources diagram"
     >
-      <div data-ui="radar-desktop" className="hidden xl:grid xl:grid-cols-[minmax(0,1fr)_200px] xl:items-center xl:gap-4 2xl:grid-cols-[minmax(0,1fr)_220px] 2xl:gap-5">
-        <RadarCanvas selectedIndex={selectedIndex} onSelect={setSelectedIndex} />
-        <div className="relative">
-          <SourceSpotlight node={selectedNode} />
-          <div className="mt-3 flex items-start gap-2 rounded-xl border border-border/80 bg-[#F8FCFD] px-3 py-2.5 text-[0.68rem] leading-4 text-text-muted">
-            <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-trust-primary" aria-hidden="true" />
-            <p>
-              Visual scan preview, not live crawl status. Every published listing is checked against its official source.
-            </p>
-          </div>
-        </div>
+      <div
+        data-ui="radar-desktop"
+        className="hidden xl:grid xl:grid-cols-[minmax(0,1fr)_240px] xl:items-center xl:gap-5"
+      >
+        <RadarCanvas
+          selectedIndex={selectedIndex}
+          onSelect={setSelectedIndex}
+          radarRunning={radarRunning}
+        />
+        <SourceSpotlight
+          node={selectedNode}
+          radarRunning={radarRunning}
+          onToggleRadar={toggleRadar}
+        />
       </div>
 
       <div data-ui="radar-mobile" className="xl:hidden">
         <div className="rounded-[var(--public-radius-card)] border border-border/80 bg-[#FBFDFE] p-2 shadow-[0_12px_32px_rgba(13,33,72,0.05)] sm:p-3">
-          <RadarCanvas selectedIndex={selectedIndex} onSelect={setSelectedIndex} compact />
+          <RadarCanvas
+            selectedIndex={selectedIndex}
+            onSelect={setSelectedIndex}
+            radarRunning={radarRunning}
+            compact
+          />
         </div>
         <div className="mt-3">
-          <SourceSpotlight node={selectedNode} compact />
+          <SourceSpotlight
+            node={selectedNode}
+            compact
+            radarRunning={radarRunning}
+            onToggleRadar={toggleRadar}
+          />
         </div>
-        <p className="mt-2 px-1 text-[0.68rem] leading-4 text-text-muted">
-          Animated source overview, not live crawl status. Select any source node to inspect its monitoring scope.
-        </p>
       </div>
     </div>
   );
