@@ -47,11 +47,11 @@ describe('Evidence Radar Visual Accessibility & Motion', () => {
     expect(fileContent).toContain('DEFAULT_NODE_INDEX');
   });
 
-  it('renders the radar on mobile instead of replacing it with a non-radar list', () => {
+  it('keeps the full radar-plus-status layout for wide screens only and preserves the radar on narrower screens', () => {
     expect(fileContent).toContain('data-ui="radar-desktop"');
     expect(fileContent).toContain('data-ui="radar-mobile"');
-    expect(fileContent).toContain('hidden lg:grid');
-    expect(fileContent).toContain('lg:hidden');
+    expect(fileContent).toContain('hidden xl:grid');
+    expect(fileContent).toContain('xl:hidden');
     expect(fileContent.match(/<RadarCanvas/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
