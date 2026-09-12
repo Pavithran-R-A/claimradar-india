@@ -64,10 +64,12 @@ function SourceIcon({ code }: { code: string }) {
 }
 
 function SectionHeading({
+  id,
   eyebrow,
   title,
   description,
 }: {
+  id?: string;
   eyebrow?: string;
   title: string;
   description?: string;
@@ -79,7 +81,10 @@ function SectionHeading({
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="mt-1 font-display text-3xl font-bold tracking-[-0.02em] text-trust-primary sm:text-[2.15rem]">
+      <h2
+        id={id}
+        className="mt-1 font-display text-3xl font-bold tracking-[-0.02em] text-trust-primary sm:text-[2.15rem]"
+      >
         {title}
       </h2>
       {description ? (
@@ -97,7 +102,7 @@ export default async function LandingPage() {
     .slice(0, 5);
 
   return (
-    <main id="main-content" className="overflow-hidden bg-background">
+    <div className="overflow-hidden bg-background">
       <section aria-labelledby="home-hero-heading" className="relative bg-white">
         <div className="mx-auto max-w-content px-4 pb-9 pt-8 sm:px-6 sm:pb-12 sm:pt-11 lg:px-8 lg:pb-10 lg:pt-14">
           <div
@@ -155,7 +160,7 @@ export default async function LandingPage() {
                 className="pointer-events-none absolute right-5 top-0 hidden items-end gap-2 xl:flex"
                 aria-hidden="true"
               >
-                <p className="max-w-[10rem] text-right font-display text-base italic leading-tight text-trust-primary/72">
+                <p className="max-w-[10rem] text-right font-display text-base italic leading-tight text-trust-primary/70">
                   Checking trusted sources for you
                 </p>
                 <svg viewBox="0 0 72 44" className="h-10 w-16 text-trust-primary/50">
@@ -280,6 +285,7 @@ export default async function LandingPage() {
           <div>
             <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
+                id="latest-opportunities-heading"
                 eyebrow="Recently verified"
                 title="Latest opportunities"
                 description="Recent records from official source families, with direct routes back to the source."
@@ -327,13 +333,12 @@ export default async function LandingPage() {
 
           <div className="border-border lg:border-l lg:pl-12" aria-labelledby="how-it-works-heading">
             <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
-              <div id="how-it-works-heading">
-                <SectionHeading
-                  eyebrow="From record to action"
-                  title={`How ${brandConfig.siteName} works`}
-                  description="A clear path from official records to the next official step."
-                />
-              </div>
+              <SectionHeading
+                id="how-it-works-heading"
+                eyebrow="From record to action"
+                title={`How ${brandConfig.siteName} works`}
+                description="A clear path from official records to the next official step."
+              />
               <Link
                 href="/how-it-works"
                 className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
@@ -408,6 +413,6 @@ export default async function LandingPage() {
           </Link>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
