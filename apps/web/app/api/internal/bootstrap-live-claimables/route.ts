@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getAdminDb } from '@/lib/admin-db';
 
 export const dynamic = 'force-dynamic';
@@ -26,14 +27,26 @@ function slugify(value: string): string {
 
 function parseDeadline(title: string, rawText: string | null): string | null {
   const haystack = `${title}\n${rawText ?? ''}`;
-  const match = haystack.match(/(?:Claims? Deadline|Last date for submission of claims)\s*[:\-]?\s*(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/i);
+  const match = haystack.match(
+    /(?:Claims? Deadline|Last date for submission of claims)\s*[:-]?\s*(\d{1,2})[./-](\d{1,2})[./-](\d{4})/i,
+  );
   if (!match) return null;
   const [, dd, mm, yyyy] = match;
   if (!dd || !mm || !yyyy) return null;
   return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}T23:59:59+05:30`;
 }
 
-function classify(title: string, domain: string) {
+type Classification = {
+  kind: 'sebi_refund' | 'ibbi_creditor';
+  sectorName: string;
+  sectorSlug: string;
+  authority: string;
+  affectedGroup: string;
+  reliefType: string;
+  status: 'potential_claimable';
+};
+
+function classify(title: string, domain: string): Classification | null {
   const normalized = title.toLowerCase();
   if (
     domain.endsWith('sebi.gov.in') &&
@@ -41,14 +54,13 @@ function classify(title: string, domain: string) {
     (normalized.includes('citrus check inns') || normalized.includes('royal twinkle star club'))
   ) {
     return {
-      kind: 'sebi_refund' as const,
+      kind: 'sebi_refund',
       sectorName: 'Investor Refunds',
       sectorSlug: 'investor-refunds',
       authority: 'Securities and Exchange Board of India (SEBI)',
-      affectedGroup:
-        'Investors or depositors covered by the cited SEBI refund public notice.',
+      affectedGroup: 'Investors or depositors covered by the cited SEBI refund public notice.',
       reliefType: 'refund',
-      status: 'potential_claimable' as const,
+      status: 'potential_claimable',
     };
   }
 
@@ -60,23 +72,27 @@ function classify(title: string, domain: string) {
     normalized.includes('claim')
   ) {
     return {
-      kind: 'ibbi_creditor' as const,
+      kind: 'ibbi_creditor',
       sectorName: 'Insolvency & Creditor Claims',
       sectorSlug: 'insolvency-creditor-claims',
       authority: 'Insolvency and Bankruptcy Board of India (IBBI)',
       affectedGroup: 'Creditors of the corporate debtor named in the official announcement.',
       reliefType: 'creditor claim',
-      status: 'potential_claimable' as const,
+      status: 'potential_claimable',
     };
   }
 
   return null;
 }
 
-function companyNameFor(title: string, kind: 'sebi_refund' | 'ibbi_creditor'): string {
+function companyNameFor(title: string, kind: Classification['kind']): string {
   if (kind === 'sebi_refund') return 'Citrus Check Inns / Royal Twinkle Star Club';
   const match = title.match(/(?:Process|Liquidation Process):\s*(.+?)\s*\(Claims? Deadline:/i);
-  return match?.[1]?.trim() || title.replace(/^Public Announcement[^:]*:\s*/i, '').split('(')[0]?.trim() || 'Corporate Debtor';
+  return (
+    match?.[1]?.trim() ||
+    title.replace(/^Public Announcement[^:]*:\s*/i, '').split('(')[0]?.trim() ||
+    'Corporate Debtor'
+  );
 }
 
 type CandidateRow = {
@@ -109,9 +125,7 @@ export async function GET(request: NextRequest) {
     .order('keyword_score', { ascending: false })
     .limit(100);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const candidates = (data ?? []) as unknown as CandidateRow[];
   const selected = candidates
@@ -123,17 +137,16 @@ export async function GET(request: NextRequest) {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null)
     .sort((a, b) => {
-      const aDeadline = parseDeadline(a.doc.title, a.doc.raw_text);
-      const bDeadline = parseDeadline(b.doc.title, b.doc.raw_text);
+      const aDeadline = parseDeadline(a.doc.title ?? '', a.doc.raw_text);
+      const bDeadline = parseDeadline(b.doc.title ?? '', b.doc.raw_text);
       const aMs = aDeadline ? Date.parse(aDeadline) : Number.POSITIVE_INFINITY;
       const bMs = bDeadline ? Date.parse(bDeadline) : Number.POSITIVE_INFINITY;
-      if (aMs !== bMs) return aMs - bMs;
-      return b.candidate.keyword_score - a.candidate.keyword_score;
+      return aMs === bMs ? b.candidate.keyword_score - a.candidate.keyword_score : aMs - bMs;
     })
-    .filter((item, index, all) => {
-      const key = item.doc.canonical_url;
-      return all.findIndex((other) => other.doc.canonical_url === key) === index;
-    })
+    .filter(
+      (item, index, all) =>
+        all.findIndex((other) => other.doc.canonical_url === item.doc.canonical_url) === index,
+    )
     .slice(0, MAX_PUBLISH);
 
   if (selected.length === 0) {
@@ -146,12 +159,13 @@ export async function GET(request: NextRequest) {
 
   const published: Array<{ slug: string; title: string; source: string }> = [];
 
-  for (const item of selected) {
-    const { candidate, doc, classification } = item;
+  for (const { candidate, doc, classification } of selected) {
+    if (!doc.title) continue;
     const now = new Date().toISOString();
-    const companyName = companyNameFor(doc.title!, classification.kind);
+    const companyName = companyNameFor(doc.title, classification.kind);
     const companySlug = slugify(companyName);
-    const deadline = parseDeadline(doc.title!, doc.raw_text);
+    const deadline = parseDeadline(doc.title, doc.raw_text);
+    const isIbbi = classification.kind === 'ibbi_creditor';
 
     const { data: sector, error: sectorError } = await db
       .from('sectors')
@@ -159,17 +173,19 @@ export async function GET(request: NextRequest) {
         {
           name: classification.sectorName,
           slug: classification.sectorSlug,
-          description:
-            classification.kind === 'sebi_refund'
-              ? 'Official investor refund and compensation opportunities.'
-              : 'Creditor claim windows announced through insolvency proceedings.',
+          description: isIbbi
+            ? 'Creditor claim windows announced through insolvency proceedings.'
+            : 'Official investor refund and compensation opportunities.',
         },
         { onConflict: 'slug' },
       )
       .select('id')
       .single();
     if (sectorError || !sector) {
-      return NextResponse.json({ error: sectorError?.message ?? 'Failed to upsert sector' }, { status: 500 });
+      return NextResponse.json(
+        { error: sectorError?.message ?? 'Failed to upsert sector' },
+        { status: 500 },
+      );
     }
 
     const { data: company, error: companyError } = await db
@@ -177,13 +193,12 @@ export async function GET(request: NextRequest) {
       .upsert(
         {
           display_name: companyName,
-          legal_name: classification.kind === 'ibbi_creditor' ? companyName : null,
+          legal_name: isIbbi ? companyName : null,
           slug: companySlug,
           sector_id: sector.id,
-          description:
-            classification.kind === 'sebi_refund'
-              ? 'Entities named in an official SEBI investor refund notice.'
-              : 'Corporate debtor named in an official IBBI creditor claim announcement.',
+          description: isIbbi
+            ? 'Corporate debtor named in an official IBBI creditor claim announcement.'
+            : 'Entities named in an official SEBI investor refund notice.',
           publication_status: 'published',
           updated_at: now,
         },
@@ -192,14 +207,15 @@ export async function GET(request: NextRequest) {
       .select('id')
       .single();
     if (companyError || !company) {
-      return NextResponse.json({ error: companyError?.message ?? 'Failed to upsert company' }, { status: 500 });
+      return NextResponse.json(
+        { error: companyError?.message ?? 'Failed to upsert company' },
+        { status: 500 },
+      );
     }
 
-    const baseSlug = slugify(doc.title!);
-    const claimableSlug = `${baseSlug}-${candidate.id.slice(0, 8)}`;
-    const isIbbI = classification.kind === 'ibbi_creditor';
-    const summary = isIbbI
-      ? `The official IBBI announcement calls on creditors of ${companyName} to submit claims with proof${deadline ? ` by the stated deadline` : ''}. Eligibility, form choice and submission method must be confirmed from the official announcement.`
+    const claimableSlug = `${slugify(doc.title)}-${candidate.id.slice(0, 8)}`;
+    const summary = isIbbi
+      ? `The official IBBI announcement calls on creditors of ${companyName} to submit claims with proof${deadline ? ' by the stated deadline' : ''}. Eligibility, form choice and submission method must be confirmed from the official announcement.`
       : 'SEBI published an official refund notice concerning Citrus Check Inns Limited / Royal Twinkle Star Club Pvt. Ltd. Eligibility and the exact refund procedure must be confirmed from the linked SEBI notice.';
 
     const { data: claimable, error: claimableError } = await db
@@ -217,13 +233,13 @@ export async function GET(request: NextRequest) {
           affected_group: classification.affectedGroup,
           geographic_scope: 'India',
           relief_type: classification.reliefType,
-          relief_description: isIbbI
+          relief_description: isIbbi
             ? 'Submission of a creditor claim in the insolvency or liquidation process.'
             : 'Potential investor refund under the official SEBI public notice.',
-          proof_requirements: isIbbI
+          proof_requirements: isIbbi
             ? ['Applicable IBBI claim form', 'Proof of claim', 'Supporting creditor documents']
             : [],
-          action_required: isIbbI
+          action_required: isIbbi
             ? 'Open the official IBBI announcement and submit the applicable claim form with proof using the stated submission route.'
             : 'Open the official SEBI notice, confirm that you are covered, and follow the refund instructions stated by SEBI.',
           official_claim_url: doc.canonical_url,
@@ -240,9 +256,11 @@ export async function GET(request: NextRequest) {
       )
       .select('id, slug, public_title')
       .single();
-
     if (claimableError || !claimable) {
-      return NextResponse.json({ error: claimableError?.message ?? 'Failed to upsert claimable' }, { status: 500 });
+      return NextResponse.json(
+        { error: claimableError?.message ?? 'Failed to upsert claimable' },
+        { status: 500 },
+      );
     }
 
     const { error: sourceLinkError } = await db.from('claim_sources').upsert(
@@ -258,24 +276,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: sourceLinkError.message }, { status: 500 });
     }
 
+    const evidenceField = deadline ? 'deadline' : 'claimability';
     const { data: existingEvidence } = await db
       .from('claim_evidence')
       .select('id')
       .eq('claimable_id', claimable.id)
       .eq('source_document_id', doc.id)
-      .eq('supports_field', deadline ? 'deadline' : 'claimability')
+      .eq('supports_field', evidenceField)
       .limit(1)
       .maybeSingle();
 
     if (!existingEvidence) {
-      const evidenceText = deadline
-        ? `The official announcement states a creditor claims deadline of ${deadline.slice(0, 10)}.`
-        : 'The official SEBI notice title explicitly identifies a refund process.';
       const { error: evidenceError } = await db.from('claim_evidence').insert({
         claimable_id: claimable.id,
         source_document_id: doc.id,
-        supports_field: deadline ? 'deadline' : 'claimability',
-        evidence_text: evidenceText,
+        supports_field: evidenceField,
+        evidence_text: deadline
+          ? `The official announcement states a creditor claims deadline of ${deadline.slice(0, 10)}.`
+          : 'The official SEBI notice title explicitly identifies a refund process.',
         source_location: doc.title,
         verified: true,
       });
@@ -296,7 +314,6 @@ export async function GET(request: NextRequest) {
       .eq('action', 'publication_approved')
       .limit(1)
       .maybeSingle();
-
     if (!existingEvent) {
       await db.from('publication_events').insert({
         claimable_id: claimable.id,
@@ -317,7 +334,6 @@ export async function GET(request: NextRequest) {
       .eq('action', 'claimable.published')
       .limit(1)
       .maybeSingle();
-
     if (!existingAudit) {
       await db.from('audit_logs').insert({
         actor_id: null,
