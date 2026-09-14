@@ -34,7 +34,7 @@
 
 **Interfaces:**
 - Consumes: `brandConfig.url: string` from `@claimradar/config`.
-- Produces: `isPublicProductionDeployment(): boolean` local helper or equivalent deterministic crawl policy used by `robots()`.
+- Produces: deterministic public-production crawl policy used by `robots()`.
 
 - [ ] **Step 1: Add failing crawl-policy tests**
 
@@ -46,7 +46,7 @@ Read the three dynamic route modules as source contracts and assert they no long
 
 - [ ] **Step 3: Implement crawl policy**
 
-Use Vercel's deployment environment as the primary production signal and retain `APP_ENV=production` as a non-Vercel/explicit fallback. The effective condition should be equivalent to:
+Use Vercel's deployment environment as the primary production signal and retain `APP_ENV=production` as a non-Vercel/explicit fallback:
 
 ```ts
 const isProduction =
@@ -61,12 +61,7 @@ Preview must never become crawlable because `APP_ENV` was copied incorrectly.
 Use `${brandConfig.url}/claimables/${claim.slug}`, `${brandConfig.url}/companies/${slug}`, and `${brandConfig.url}/sectors/${slug}`.
 
 - [ ] **Step 5: Run focused tests**
-
-Run the SEO/crawl contract tests and verify all pass.
-
-- [ ] **Step 6: Commit**
-
-Commit as `fix: make ClaimKhoj production crawlable with canonical origin`.
+- [ ] **Step 6: Commit as `fix: make ClaimKhoj production crawlable with canonical origin`**
 
 ---
 
@@ -86,39 +81,28 @@ Commit as `fix: make ClaimKhoj production crawlable with canonical origin`.
 
 **Interfaces:**
 - Produces `JsonLd` server component accepting `data: object | object[]` and rendering `<script type="application/ld+json">` with `<` escaped as `\u003c`.
-- Extends SEO helpers for `CollectionPage`, `ItemList`, and `DefinedTerm` data without introducing claims not visible on-page.
+- Extends SEO helpers for `CollectionPage`, `ItemList`, and `DefinedTerm` without inventing facts.
 
 - [ ] **Step 1: Write failing JSON-LD safety tests**
 
-Assert the serializer emits valid JSON and escapes `<` so user/database content cannot terminate the script element.
+Assert the serializer emits valid JSON and escapes `<` so database/user content cannot terminate the script element.
 
 - [ ] **Step 2: Write failing route structured-data tests**
 
-Assert site-level Organization/WebSite markup contains ClaimKhoj and `brandConfig.url`; claim pages include WebPage + BreadcrumbList with the official authority represented as data, not as ClaimKhoj's organization identity; directory pages expose CollectionPage/ItemList only from real rows.
+Assert site-level Organization/WebSite markup contains ClaimKhoj and `brandConfig.url`; claim pages include WebPage + BreadcrumbList with official authority/source relationships represented truthfully; directory pages expose CollectionPage/ItemList only from real rows.
 
 - [ ] **Step 3: Implement JSON-LD helpers/component**
 
 Keep the component server-only and dependency-free. Do not add client hydration.
 
-- [ ] **Step 4: Add site-level graph**
-
-Render Organization and WebSite JSON-LD from the root layout, using the approved Vercel origin and ClaimKhoj identity.
-
-- [ ] **Step 5: Add route-level graphs**
-
-Add breadcrumbs and truthful route schemas to the homepage, claim directory/detail, company detail, sector detail, and glossary detail pages.
-
+- [ ] **Step 4: Add site-level Organization and WebSite graph**
+- [ ] **Step 5: Add route-level graphs to homepage, directories, claim/company/sector details, and glossary details**
 - [ ] **Step 6: Improve claim answer-first semantic copy**
 
-Without changing factual database content, ensure the claim dossier exposes visible labels for `What this is`, `Who may qualify`, `Authority`, `Deadline`, `What to do`, `Documents/proof`, `Official source`, and `Last verified` through headings/summary facts already available in `PublishedClaimable`.
+Without changing factual DB values, expose visible answer labels for `What this is`, `Who may qualify`, `Authority`, `Deadline`, `What to do`, `Documents/proof`, `Official source`, and `Last verified` using existing `PublishedClaimable` fields.
 
 - [ ] **Step 7: Run structured-data and route tests**
-
-Verify the new JSON-LD tests and existing page tests pass.
-
-- [ ] **Step 8: Commit**
-
-Commit as `feat: add truthful structured data and answer-first claim semantics`.
+- [ ] **Step 8: Commit as `feat: add truthful structured data and answer-first claim semantics`**
 
 ---
 
@@ -130,36 +114,32 @@ Commit as `feat: add truthful structured data and answer-first claim semantics`.
 - Modify: `apps/web/tests/seo-sitemap.test.ts`
 
 **Interfaces:**
-- Extend `CompanySummary`, `SectorSummary`, and `StateSummary` only if necessary with stable `lastModified` values derived from published claimables.
-- Published claimable sitemap entries use `lastVerifiedAt` or `publishedAt`, not the sitemap-generation clock.
+- Published claimable entries use `lastVerifiedAt` or `publishedAt`, not a shared sitemap-generation timestamp.
+- Taxonomy summaries may carry a derived latest-modified timestamp from their published claimables if required.
 
-- [ ] **Step 1: Write failing sitemap tests for live entities**
+- [ ] **Step 1: Write failing sitemap tests using five published claimables**
 
-Use repository fakes containing five published claimables and assert all five `/claimables/<slug>` URLs appear alongside their company and sector URLs.
+Assert all five `/claimables/<slug>` URLs appear alongside their company and sector URLs.
 
 - [ ] **Step 2: Write failing timestamp test**
 
-Assert claim detail sitemap `lastModified` comes from claim publication/verification data rather than a single `new Date()` shared by every URL.
+Assert dynamic `lastModified` values derive from publication/verification data.
 
 - [ ] **Step 3: Implement truthful timestamps and stable dynamic entries**
 
 Preserve honest omission on repository failure; never fabricate URLs.
 
 - [ ] **Step 4: Run sitemap tests**
-
-Verify exact URL coverage and timestamps.
-
-- [ ] **Step 5: Commit**
-
-Commit as `fix: make sitemap complete and freshness-aware`.
+- [ ] **Step 5: Commit as `fix: make sitemap complete and freshness-aware`**
 
 ---
 
-### Task 4: Optional IndexNow discovery integration
+### Task 4: Safe optional IndexNow integration
 
 **Files:**
 - Create: `apps/web/lib/indexnow.ts`
-- Create: `apps/web/app/[indexNowKey]/route.ts` only if a dynamic root-key route can be safely constrained; otherwise use a static route generated from non-secret public key configuration.
+- Create: `apps/web/app/indexnow-key.txt/route.ts`
+- Modify: `apps/web/app/admin/editorial-actions.ts`
 - Modify: `apps/web/env.ts`
 - Modify: `.env.example`
 - Modify: `.env.staging.example`
@@ -176,22 +156,25 @@ export async function submitIndexNowUrls(urls: string[]): Promise<{
 ```
 
 Rules:
-- no-op when `INDEXNOW_KEY` is absent;
+- `INDEXNOW_KEY` is an environment-configured public protocol verification key, not a privileged database/API secret;
+- no-op when the key is absent;
 - reject URLs whose host differs from `brandConfig.url`;
-- submit only added/updated/deleted URLs supplied by the caller;
-- network failure logs safely and returns `submitted: false` without throwing into publication paths.
+- POST to `https://api.indexnow.org/indexnow` with `host`, `key`, `keyLocation`, and `urlList`;
+- key verification is served at `${brandConfig.url}/indexnow-key.txt` and returns only the key as UTF-8 text;
+- network/4xx failures are logged and return `submitted: false`; they never roll back an editorial publication/archive;
+- submit only the specific URLs changed by the publication action.
 
-- [ ] **Step 1: Write failing host-validation/no-key tests**
-- [ ] **Step 2: Implement environment validation and IndexNow client**
-- [ ] **Step 3: Implement key verification endpoint without leaking any other secret**
-- [ ] **Step 4: Add unit tests for 200/4xx/network-failure behavior**
-- [ ] **Step 5: Commit**
-
-Commit as `feat: add safe optional IndexNow discovery notifications`.
+- [ ] **Step 1: Write failing no-key, wrong-host, success, 4xx, and network-failure tests**
+- [ ] **Step 2: Implement env validation and `submitIndexNowUrls`**
+- [ ] **Step 3: Implement `/indexnow-key.txt` verification route**
+- [ ] **Step 4: After `approvePublication`, query the published claim slug/company/sector and submit the changed public URLs after DB/audit success**
+- [ ] **Step 5: After `archiveClaimable`, submit the archived claim URL after DB/audit success so participating engines can refresh/remove stale results**
+- [ ] **Step 6: Run IndexNow/editorial action tests**
+- [ ] **Step 7: Commit as `feat: add safe IndexNow discovery notifications`**
 
 ---
 
-### Task 5: Customer-live trust copy and public launch state
+### Task 5: Customer-live trust copy and release state
 
 **Files:**
 - Modify: `apps/web/app/(public)/contact/page.tsx`
@@ -202,24 +185,22 @@ Commit as `feat: add safe optional IndexNow discovery notifications`.
 
 **Interfaces:**
 - Preserve nullable configured contact emails.
-- Fallback copy must be truthful and usable without saying the site is "not launched".
+- Fallback copy must remain truthful when no outbound/support inbox is configured.
 
 - [ ] **Step 1: Add failing copy contract**
 
-Assert public pages do not contain `before public launch`, `prior to unrestricted public release`, or retired ClaimRadar canonical-domain language.
+Assert public customer pages no longer say `before public launch`, `prior to unrestricted public release`, or equivalent launch-placeholder text.
 
 - [ ] **Step 2: Update fallback contact/governance copy**
 
-When no email is configured, state that direct email support is not currently offered and direct claim-specific questions to the issuing authority; keep the corrections methodology visible. Do not invent an inbox.
+When email is absent, state that direct email support is not currently offered, tell users to use the official authority for claim-specific questions, and preserve the public corrections methodology. Do not invent an address.
 
 - [ ] **Step 3: Update release documentation**
 
-Record that the public read/discovery product is customer-live on the Vercel origin, while outbound production email, billing, auto-verification, and notifications remain separately disabled/unconfigured.
+Record that the public read/discovery product is customer-live on the Vercel origin while outbound production email, billing, auto-verification, and customer notifications remain independently disabled/unconfigured.
 
 - [ ] **Step 4: Run copy tests**
-- [ ] **Step 5: Commit**
-
-Commit as `docs: mark ClaimKhoj public discovery experience customer-live`.
+- [ ] **Step 5: Commit as `docs: mark ClaimKhoj public discovery experience customer-live`**
 
 ---
 
@@ -230,38 +211,31 @@ Commit as `docs: mark ClaimKhoj public discovery experience customer-live`.
 
 - [ ] **Step 1: Run full repository verification**
 
-Run formatting, lint, typecheck, web tests, inventory acceptance, and production build using the repository's existing scripts.
+Run the repository's format, lint, typecheck, tests, inventory acceptance, security/client-secret contracts, and production build.
 
 - [ ] **Step 2: Open PR and inspect Vercel preview**
 
-Verify preview `robots.txt` remains `Disallow: /`; inspect representative canonicals and JSON-LD.
+Verify preview `/robots.txt` remains `Disallow: /`; inspect representative canonicals and JSON-LD.
 
-- [ ] **Step 3: Verify no secrets/client leakage**
-
-Run existing client secret scan/security contracts; ensure IndexNow key is the only root verification token and is intentionally public per protocol.
-
-- [ ] **Step 4: Merge only after preview build passes**
-
-Use squash merge after review.
-
-- [ ] **Step 5: Verify production endpoints after merge**
+- [ ] **Step 3: Merge only after the preview production build passes**
+- [ ] **Step 4: Verify production endpoints after merge**
 
 Against `https://claimradar-staging.vercel.app` confirm:
 
-- `/` → 200
-- `/claimables` → 200 and shows the real records
-- each current published claim detail → 200
-- `/robots.txt` → public allow policy, not `Disallow: /`
-- `/sitemap.xml` → all current claim/company/sector URLs
-- no canonical contains `claimradar.in`
-- JSON-LD scripts parse successfully
-- no temporary bootstrap endpoint exists
-- Vercel runtime errors remain empty/blocker-free
+- `/` → 200;
+- `/claimables` → 200 and shows real published records;
+- every current claim detail → 200;
+- `/robots.txt` exposes the public production policy, not `Disallow: /`;
+- `/sitemap.xml` includes all current claim/company/sector URLs;
+- no canonical or JSON-LD URL contains `claimradar.in`;
+- JSON-LD scripts parse successfully;
+- no temporary bootstrap endpoint exists;
+- Vercel runtime errors remain blocker-free.
 
-- [ ] **Step 6: Record external webmaster actions distinctly**
+- [ ] **Step 5: Record external webmaster actions distinctly**
 
 Google Search Console and Bing Webmaster Tools property verification/submission cannot be marked complete until those external accounts are connected. Record them as `EXTERNAL_ACCOUNT_ACTION`, not engineering failures.
 
-- [ ] **Step 7: Final commit/report**
+- [ ] **Step 6: Final report**
 
 Update `docs/checkpoints/customer-live-search-release.md` with exact main SHA, deployment ID, endpoint checks, and external-account status.
