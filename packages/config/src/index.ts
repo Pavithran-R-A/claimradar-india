@@ -50,6 +50,19 @@ export const defaultFeatureFlags: FeatureFlags = {
   AUTO_VERIFY_CLAIMABLES: false,
 };
 
+/**
+ * Reusable environment boolean parser.
+ *
+ * Replaces broken `z.coerce.boolean()` which turns `"false"` into `true`.
+ *
+ * Rules:
+ * - "true"  (case-insensitive, trimmed) -> true
+ * - "false" (case-insensitive, trimmed) -> false
+ * - true    -> true
+ * - false   -> false
+ * - undefined / null / "" -> defaultValue
+ * - malformed strings ("0", "1", "yes", "no", "abc") -> fail closed with Zod validation error
+ */
 export const envBoolean = (defaultValue = false) =>
   z.preprocess((value) => {
     if (value === undefined || value === null || value === '') return defaultValue;
@@ -103,5 +116,20 @@ export const colors = {
   info: '#5DB7FF',
   verifiedBackground: 'rgba(40,198,162,0.12)',
   deadlineBackground: 'rgba(244,163,64,0.12)',
-  infoBackground: 'rgba(93,183,255,0.12)',
 } as const;
+
+export const crawlerEnvSchema = z.object({
+  APP_ENV: envAppEnv,
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_SECRET_KEY: z.string().optional(),
+  AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
+  AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),
+  AI_SECOND_PASS_RESERVE: z.coerce.number().default(10),
+  LIVE_ADAPTERS_ENABLED: envBoolean(false),
+  AUTO_VERIFY_CLAIMABLES: envBoolean(false),
+  ENABLE_BILLING: envBoolean(false),
+  NOTIFY_CUSTOMERS_ENABLED: envBoolean(false),
+  CRAWLER_CONCURRENCY: z.coerce.number().default(3),
+});
+
+export type CrawlerEnvConfig = z.infer<typeof crawlerEnvSchema>;
