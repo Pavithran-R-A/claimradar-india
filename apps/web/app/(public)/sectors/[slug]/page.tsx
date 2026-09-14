@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { brandConfig } from '@claimradar/config';
 import { getPublishedClaimables, getPublishedSectorBySlug } from '@/lib/claimables-repository';
 import { ClaimableRow } from '@/components/directory/claimable-card';
 import { Pagination } from '@/components/directory/pagination';
@@ -16,7 +17,6 @@ interface PageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-// Detail content comes from the live publication database.
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${outcome.data.name} Sector — Refund & Claim Records | ClaimKhoj India`,
     description: `Published refund, compensation and claim records in the ${outcome.data.name} sector in India, verified from official sources.`,
     alternates: {
-      canonical: `https://claimradar.in/sectors/${outcome.data.slug}`,
+      canonical: `${brandConfig.url}/sectors/${outcome.data.slug}`,
     },
   };
 }
@@ -64,7 +64,6 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
 
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-6">
         <ol className="flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
           <li>
@@ -94,7 +93,6 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
 
       {outcome.demo && <DemoDataBanner />}
 
-      {/* Header */}
       <header className="max-w-3xl">
         <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
           {sector.name} sector
@@ -105,7 +103,6 @@ export default async function SectorDetailPage({ params, searchParams }: PagePro
         </p>
       </header>
 
-      {/* Published records */}
       <section aria-labelledby="records-heading" className="mt-10">
         <h2 id="records-heading" className="text-xl font-bold tracking-tight text-text-primary">
           Published records{' '}
