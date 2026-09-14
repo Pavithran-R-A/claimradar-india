@@ -1,4 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
+import { brandConfig } from '@claimradar/config';
 import {
   getPublishedClaimableBySlug,
   __setDbClientFactoryForTests,
@@ -21,9 +22,9 @@ describe('SEO & Sitemap Rules Verification', () => {
     expect(outcome.ok).toBe(true);
     if (outcome.ok) {
       expect(outcome.data).not.toBeNull();
-      const canonical = `https://claimradar.in/claimables/${outcome.data?.slug}`;
+      const canonical = `${brandConfig.url}/claimables/${outcome.data?.slug}`;
       expect(canonical).toBe(
-        'https://claimradar.in/claimables/abc-investor-disgorgement-refund-2026',
+        `${brandConfig.url}/claimables/abc-investor-disgorgement-refund-2026`,
       );
     }
   });
