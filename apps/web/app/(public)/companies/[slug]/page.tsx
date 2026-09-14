@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { brandConfig } from '@claimradar/config';
 import { getPublishedClaimables, getPublishedCompanyBySlug } from '@/lib/claimables-repository';
 import { ClaimableRow } from '@/components/directory/claimable-card';
 import { Pagination } from '@/components/directory/pagination';
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${outcome.data.name} — Published Refund & Claim Records | ClaimKhoj India`,
     description: `Published refund, compensation and claim records referencing ${outcome.data.name}, verified from official sources.`,
     alternates: {
-      canonical: `https://claimradar.in/companies/${outcome.data.slug}`,
+      canonical: `${brandConfig.url}/companies/${outcome.data.slug}`,
     },
   };
 }
@@ -64,7 +65,6 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
 
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-6">
         <ol className="flex flex-wrap items-center gap-1.5 text-sm text-text-muted">
           <li>
@@ -94,7 +94,6 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
 
       {outcome.demo && <DemoDataBanner />}
 
-      {/* Header */}
       <header className="rounded-card border border-border bg-surface p-6 shadow-card sm:p-8">
         <div className="flex items-center gap-4">
           <span
@@ -121,7 +120,6 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
         </p>
       </header>
 
-      {/* Published records */}
       <section aria-labelledby="records-heading" className="mt-10">
         <h2 id="records-heading" className="text-xl font-bold tracking-tight text-text-primary">
           Published records{' '}
