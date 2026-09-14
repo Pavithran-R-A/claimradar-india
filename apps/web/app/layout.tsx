@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import { Newsreader } from 'next/font/google';
 import { brandConfig } from '@claimradar/config';
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@claimradar/seo';
+import { JsonLd } from '@/components/seo/json-ld';
 import './globals.css';
 
 export const dynamic = 'force-dynamic';
@@ -32,6 +34,17 @@ export const metadata: Metadata = {
   },
 };
 
+const siteIdentityJsonLd = [
+  buildOrganizationJsonLd({
+    name: brandConfig.siteName,
+    url: brandConfig.url,
+  }),
+  buildWebSiteJsonLd({
+    name: brandConfig.siteName,
+    url: brandConfig.url,
+  }),
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,6 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="theme-light">
       <body className={`${geistSans.variable} ${newsreader.variable} font-sans antialiased`}>
+        <JsonLd data={siteIdentityJsonLd} />
         {children}
       </body>
     </html>
