@@ -20,15 +20,15 @@ export const contactConfig = {
   grievanceEmail: getEnv('NEXT_PUBLIC_GRIEVANCE_EMAIL'),
   pressEmail: getEnv('NEXT_PUBLIC_PRESS_EMAIL'),
   stagingNotice:
-    'Direct support email and formal contact channels will be published before unrestricted public release.',
+    'Direct email support is not currently offered; claim-specific questions should go to the official authority linked from the relevant opportunity.',
 } as const;
 
 const siteUrl = getEnv('NEXT_PUBLIC_SITE_URL') ?? 'https://claimradar-staging.vercel.app';
 
 export const brandConfig = {
   /**
-   * Provisional public identity. Keep this object as the only source of
-   * visible brand naming until official trademark screening is complete.
+   * ClaimKhoj public identity. Keep this object as the single source of
+   * visible brand naming and canonical origin across application surfaces.
    */
   siteName: 'ClaimKhoj',
   shortName: 'ClaimKhoj',
@@ -36,9 +36,6 @@ export const brandConfig = {
   tagline: "Find refunds, benefits & claims you're entitled to.",
   isProvisional: true,
   description: 'Discover refunds, benefits, and claims you may be entitled to in India',
-  // Canonical/OG URLs must follow the environment being served. Until the
-  // final ClaimKhoj production domain is approved, fail safely to staging
-  // instead of advertising the retired ClaimRadar domain.
   url: siteUrl,
   supportEmail: contactConfig.supportEmail,
 } as const;

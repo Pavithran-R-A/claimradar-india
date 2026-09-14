@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { brandConfig } from '@claimradar/config';
+import { buildCollectionPageJsonLd, buildItemListJsonLd } from '@claimradar/seo';
 import {
   applyClaimableFilters,
   getPublishedClaimables,
@@ -14,6 +16,7 @@ import {
 } from '@/components/directory/filters';
 import { MobileFilterDrawer } from '@/components/directory/mobile-filter-drawer';
 import { Pagination } from '@/components/directory/pagination';
+import { JsonLd } from '@/components/seo/json-ld';
 import {
   DataUnavailableNotice,
   DemoDataBanner,
@@ -27,9 +30,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/claimables' },
 };
 
-// Directory content comes from the live publication database.
 export const dynamic = 'force-dynamic';
-
 const PAGE_SIZE = 12;
 
 interface ClaimablesPageProps {
@@ -42,7 +43,6 @@ interface ClaimablesPageProps {
   }>;
 }
 
-/** Page-side sort so ordering is correct across the full result set. */
 function sortClaimables(items: PublishedClaimable[], sort: string): PublishedClaimable[] {
   const list = [...items];
   if (sort === 'deadline') {
@@ -70,18 +70,33 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
   };
   const page = parseInt(raw.page || '1', 10) || 1;
 
-  // Fetch the full published set once, then filter/sort/paginate in-page so
-  // sorting is globally correct (the repository paginates internally).
   const [allOutcome, sectorsOutcome] = await Promise.all([
     getPublishedClaimables({ limit: 500 }),
     getPublishedSectors(),
   ]);
   const sectors = sectorsOutcome.ok ? sectorsOutcome.data : [];
-
   const activeCount = [params.search, params.status, params.sector].filter(Boolean).length;
+
+  const publishedItems = allOutcome.ok && !allOutcome.demo ? allOutcome.data.items : [];
+  const structuredData = [
+    buildCollectionPageJsonLd({
+      name: 'ClaimKhoj Claimables Directory',
+      url: `${brandConfig.url}/claimables`,
+      description: 'Published refund, compensation and claim opportunities verified from official Indian sources.',
+    }),
+    buildItemListJsonLd({
+      name: 'Published ClaimKhoj opportunities',
+      url: `${brandConfig.url}/claimables`,
+      items: publishedItems.map((claim) => ({
+        name: claim.title,
+        url: `${brandConfig.url}/claimables/${claim.slug}`,
+      })),
+    }),
+  ];
 
   return (
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
+      <JsonLd data={structuredData} />
       <header className="max-w-3xl">
         <p className="editorial-kicker">Verified public record</p>
         <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-text-primary">
@@ -94,10 +109,8 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
         </p>
       </header>
 
-      {/* One GET form drives desktop panel and mobile drawer alike. */}
       <form method="GET" action="/claimables" className="mt-8">
         <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
-          {/* Desktop filter panel */}
           <aside className="hidden lg:block" aria-label="Directory filters">
             <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
               <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
@@ -108,7 +121,6 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
           </aside>
 
           <div>
-            {/* Mobile filter trigger + bottom-sheet (renders inside this form) */}
             <div className="mb-4 lg:hidden">
               <MobileFilterDrawer activeCount={activeCount}>
                 <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
@@ -123,12 +135,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
               ) : (
                 <>
                   {allOutcome.demo && <DemoDataBanner />}
-                  <DirectoryResults
-                    items={allOutcome.data.items}
-                    params={params}
-                    page={page}
-                    demo={allOutcome.demo}
-                  />
+                  <DirectoryResults items={allOutcome.data.items} params={params} page={page} demo={allOutcome.demo} />
                 </>
               )}
             </div>
@@ -162,11 +169,9 @@ function DirectoryResults({
     return (
       <EmptyDirectoryNotice
         title={items.length === 0 ? 'No published claimables yet' : 'No records match your filters'}
-        body={
-          items.length === 0
-            ? 'Records appear here as soon as they pass our verification and publication policy. Check back soon.'
-            : 'Try removing a filter or broadening your search. Published records appear here only after they pass the full publication policy.'
-        }
+        body={items.length === 0
+          ? 'Records appear here as soon as they pass our verification and publication policy. Check back soon.'
+          : 'Try removing a filter or broadening your search. Published records appear here only after they pass the full publication policy.'}
       />
     );
   }
@@ -177,28 +182,18 @@ function DirectoryResults({
   return (
     <>
       <p aria-live="polite" className="mb-4 text-sm text-text-muted">
-        Showing{' '}
-        <span className="font-semibold text-text-secondary">
-          {start}–{end}
-        </span>{' '}
+        Showing <span className="font-semibold text-text-secondary">{start}–{end}</span>{' '}
         of <span className="font-semibold text-text-secondary">{pageData.total}</span> published{' '}
         {pageData.total === 1 ? 'record' : 'records'}
       </p>
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {pageData.items.map((claim) => (
-          <ClaimableCard key={claim.id} claim={claim} />
-        ))}
+        {pageData.items.map((claim) => <ClaimableCard key={claim.id} claim={claim} />)}
       </div>
 
       <Pagination
         basePath="/claimables"
-        query={{
-          search: params.search,
-          status: params.status,
-          sector: params.sector,
-          sort: params.sort,
-        }}
+        query={{ search: params.search, status: params.status, sector: params.sector, sort: params.sort }}
         page={pageData.page}
         totalPages={pageData.totalPages}
       />

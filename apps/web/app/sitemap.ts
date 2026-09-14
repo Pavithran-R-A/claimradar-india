@@ -10,13 +10,8 @@ import {
 
 const SITE_URL = brandConfig.url;
 
-/**
- * Genuine, indexable static routes.
- *
- * Deliberately excluded: auth pages, admin, the signed-in app, coming-soon
- * pages (/guides, /updates) and no-genuine-content detail routes. We never
- * list placeholder or demo content here.
- */
+export const dynamic = 'force-dynamic';
+
 const STATIC_ROUTES = [
   '',
   '/how-it-works',
@@ -46,26 +41,29 @@ const STATIC_ROUTES = [
   '/closing-soon',
 ];
 
+const validDate = (value: string | null | undefined): Date | undefined => {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+};
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date();
+  const generatedAt = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((path) => ({
     url: `${SITE_URL}${path}`,
-    lastModified,
+    lastModified: generatedAt,
     changeFrequency: 'weekly',
     priority: path === '' ? 1 : 0.7,
   }));
 
   const glossaryEntries: MetadataRoute.Sitemap = GLOSSARY_TERMS.map((entry) => ({
     url: `${SITE_URL}/glossary/${entry.slug}`,
-    lastModified,
+    lastModified: generatedAt,
     changeFrequency: 'monthly',
     priority: 0.5,
   }));
 
-  // Directory detail routes are only listed when the publication database
-  // actually returns published, non-demo records. When the database is
-  // unreachable or empty these entries are simply omitted — never fabricated.
   const dynamicEntries: MetadataRoute.Sitemap = [];
   try {
     const claimables = await getPublishedClaimables({ limit: 5000 });
@@ -73,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const item of claimables.data.items) {
         dynamicEntries.push({
           url: `${SITE_URL}/claimables/${item.slug}`,
-          lastModified,
+          lastModified: validDate(item.lastVerifiedAt) ?? validDate(item.publishedAt) ?? generatedAt,
           changeFrequency: 'daily',
           priority: 0.9,
         });
@@ -85,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const company of companies.data) {
         dynamicEntries.push({
           url: `${SITE_URL}/companies/${company.slug}`,
-          lastModified,
+          lastModified: generatedAt,
           changeFrequency: 'weekly',
           priority: 0.6,
         });
@@ -97,7 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const sector of sectors.data) {
         dynamicEntries.push({
           url: `${SITE_URL}/sectors/${sector.slug}`,
-          lastModified,
+          lastModified: generatedAt,
           changeFrequency: 'weekly',
           priority: 0.6,
         });
@@ -109,15 +107,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const state of states.data) {
         dynamicEntries.push({
           url: `${SITE_URL}/states/${state.slug}`,
-          lastModified,
+          lastModified: generatedAt,
           changeFrequency: 'weekly',
           priority: 0.5,
         });
       }
     }
   } catch {
-    // If anything unexpected happens while querying, ship only the static and
-    // glossary entries rather than inventing URLs.
+    // Never fabricate dynamic URLs when the publication database is unavailable.
   }
 
   return [...staticEntries, ...glossaryEntries, ...dynamicEntries];

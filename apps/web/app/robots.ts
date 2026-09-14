@@ -3,11 +3,14 @@ import { brandConfig } from '@claimradar/config';
 
 const SITE_URL = brandConfig.url;
 
+const isPublicProductionDeployment = () =>
+  process.env.VERCEL_ENV === 'production' ||
+  (!process.env.VERCEL_ENV && process.env.APP_ENV === 'production');
+
 export default function robots(): MetadataRoute.Robots {
-  // Staging and preview deployments must never be indexed. Only the
-  // production tier (APP_ENV=production) serves a crawlable robots policy;
-  // every other tier (staging, development, unset) disallows everything.
-  if (process.env.APP_ENV !== 'production') {
+  // Only the real production deployment is crawlable. A Vercel Preview must
+  // remain blocked even if APP_ENV was accidentally copied as "production".
+  if (!isPublicProductionDeployment()) {
     return {
       rules: [
         {
