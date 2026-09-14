@@ -73,6 +73,58 @@ export function buildWebPageJsonLd(page: JsonLdWebPage) {
   };
 }
 
+export interface JsonLdCollectionPage extends JsonLdWebPage {}
+
+export function buildCollectionPageJsonLd(page: JsonLdCollectionPage) {
+  return {
+    ...buildWebPageJsonLd(page),
+    '@type': 'CollectionPage',
+  };
+}
+
+export interface JsonLdItemListItem {
+  name: string;
+  url: string;
+}
+
+export interface JsonLdItemList {
+  name: string;
+  url: string;
+  items: JsonLdItemListItem[];
+}
+
+export function buildItemListJsonLd(list: JsonLdItemList) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: list.name,
+    url: list.url,
+    numberOfItems: list.items.length,
+    itemListElement: list.items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
+export interface JsonLdDefinedTerm {
+  name: string;
+  description: string;
+  url: string;
+}
+
+export function buildDefinedTermJsonLd(term: JsonLdDefinedTerm) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTerm',
+    name: term.name,
+    description: term.description,
+    url: term.url,
+  };
+}
+
 export interface BreadcrumbItem {
   name: string;
   url: string;
