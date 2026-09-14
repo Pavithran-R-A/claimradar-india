@@ -20,15 +20,15 @@ export const contactConfig = {
   grievanceEmail: getEnv('NEXT_PUBLIC_GRIEVANCE_EMAIL'),
   pressEmail: getEnv('NEXT_PUBLIC_PRESS_EMAIL'),
   stagingNotice:
-    'Direct support email and formal contact channels will be published before unrestricted public release.',
+    'Direct email support is not currently offered; claim-specific questions should go to the official authority linked from the relevant opportunity.',
 } as const;
 
 const siteUrl = getEnv('NEXT_PUBLIC_SITE_URL') ?? 'https://claimradar-staging.vercel.app';
 
 export const brandConfig = {
   /**
-   * Provisional public identity. Keep this object as the only source of
-   * visible brand naming until official trademark screening is complete.
+   * ClaimKhoj public identity. Keep this object as the single source of
+   * visible brand naming and canonical origin across application surfaces.
    */
   siteName: 'ClaimKhoj',
   shortName: 'ClaimKhoj',
@@ -36,9 +36,6 @@ export const brandConfig = {
   tagline: "Find refunds, benefits & claims you're entitled to.",
   isProvisional: true,
   description: 'Discover refunds, benefits, and claims you may be entitled to in India',
-  // Canonical/OG URLs must follow the environment being served. Until the
-  // final ClaimKhoj production domain is approved, fail safely to staging
-  // instead of advertising the retired ClaimRadar domain.
   url: siteUrl,
   supportEmail: contactConfig.supportEmail,
 } as const;
@@ -53,19 +50,6 @@ export const defaultFeatureFlags: FeatureFlags = {
   AUTO_VERIFY_CLAIMABLES: false,
 };
 
-/**
- * Reusable environment boolean parser.
- *
- * Replaces broken `z.coerce.boolean()` which turns `"false"` into `true`.
- *
- * Rules:
- * - "true"  (case-insensitive, trimmed) -> true
- * - "false" (case-insensitive, trimmed) -> false
- * - true    -> true
- * - false   -> false
- * - undefined / null / "" -> defaultValue
- * - malformed strings ("0", "1", "yes", "no", "abc") -> fail closed with Zod validation error
- */
 export const envBoolean = (defaultValue = false) =>
   z.preprocess((value) => {
     if (value === undefined || value === null || value === '') return defaultValue;
@@ -119,20 +103,5 @@ export const colors = {
   info: '#5DB7FF',
   verifiedBackground: 'rgba(40,198,162,0.12)',
   deadlineBackground: 'rgba(244,163,64,0.12)',
+  infoBackground: 'rgba(93,183,255,0.12)',
 } as const;
-
-export const crawlerEnvSchema = z.object({
-  APP_ENV: envAppEnv,
-  SUPABASE_URL: z.string().url(),
-  SUPABASE_SECRET_KEY: z.string().optional(),
-  AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
-  AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),
-  AI_SECOND_PASS_RESERVE: z.coerce.number().default(10),
-  LIVE_ADAPTERS_ENABLED: envBoolean(false),
-  AUTO_VERIFY_CLAIMABLES: envBoolean(false),
-  ENABLE_BILLING: envBoolean(false),
-  NOTIFY_CUSTOMERS_ENABLED: envBoolean(false),
-  CRAWLER_CONCURRENCY: z.coerce.number().default(3),
-});
-
-export type CrawlerEnvConfig = z.infer<typeof crawlerEnvSchema>;
