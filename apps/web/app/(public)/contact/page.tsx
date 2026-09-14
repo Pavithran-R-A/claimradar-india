@@ -9,11 +9,15 @@ export const metadata = generateLegalMetadata(
 
 export default function ContactPage() {
   return (
-    <LegalPageTemplate title="Contact Us" lastUpdated="August 30, 2026">
-      <p className="text-base">We are here to help. Reach out to us through the channels below.</p>
+    <LegalPageTemplate title="Contact Us" lastUpdated="September 14, 2026">
+      <p className="text-base">
+        ClaimKhoj is a public discovery and verification service. For claim-specific eligibility,
+        filing or deadline questions, always use the official authority linked from the relevant
+        opportunity page.
+      </p>
 
       <h2>General Enquiries</h2>
-      <p>For general questions about the Platform, features, or your account:</p>
+      <p>For general questions about ClaimKhoj, features, or your account:</p>
       {contactConfig.supportEmail ? (
         <p>
           <a
@@ -25,10 +29,11 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Direct support email will be enabled before public launch.
+          Direct email support is not currently offered. For a specific refund, claim or filing,
+          contact the official authority shown on that opportunity page.
         </p>
       )}
-      <p>We review incoming enquiries as soon as practicable during normal editorial operations.</p>
+      <p>We keep public guidance, source links and verification timestamps on each published record.</p>
 
       <h2>Corrections &amp; Error Reports</h2>
       <p>To report incorrect information on the Platform:</p>
@@ -43,7 +48,9 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Dedicated corrections email will be enabled before public launch.
+          A dedicated corrections inbox is not currently configured. Use the public Corrections
+          page to understand our verification, correction and retraction process and retain the
+          official-source URL that supports your report.
         </p>
       )}
       <p>
@@ -59,10 +66,6 @@ export default function ContactPage() {
       </p>
 
       <h2>Grievance &amp; Escalations</h2>
-      <p>
-        Formal grievance contact channels and designated officer details will be published prior to
-        unrestricted public release as part of our governance pre-launch requirements.
-      </p>
       {contactConfig.grievanceEmail ? (
         <p>
           <a
@@ -74,12 +77,13 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Grievance officer contact channel will be published prior to unrestricted public release.
+          A dedicated grievance email is not currently configured. Claim-specific grievances must
+          be directed to the official authority or organisation responsible for the underlying
+          notice or scheme.
         </p>
       )}
 
       <h2>Press &amp; Media</h2>
-      <p>For press enquiries or official communications:</p>
       {contactConfig.pressEmail ? (
         <p>
           <a
@@ -91,7 +95,7 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Press inquiries channel will be published prior to unrestricted public launch.
+          A dedicated press inbox is not currently configured.
         </p>
       )}
 
