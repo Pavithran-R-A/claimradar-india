@@ -13,9 +13,9 @@ test('runtime guards pin staging and the expected project', () => {
   assert.deepEqual(
     buildRuntimeGuards({
       APP_ENV: 'staging',
-      EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse',
+      EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob',
     }),
-    { APP_ENV: 'staging', EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse' },
+    { APP_ENV: 'staging', EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob' },
   );
 });
 
