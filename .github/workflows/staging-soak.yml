@@ -73,7 +73,7 @@ jobs:
         run: pnpm crawler:preflight -- --environment=staging
         env:
           APP_ENV: 'staging'
-          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse'
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
@@ -99,7 +99,7 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           # Staging safety guards — pinned, never sourced from vars/secrets.
           APP_ENV: 'staging'
-          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse'
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob'
           AUTO_VERIFY_CLAIMABLES: 'false'
           ENABLE_BILLING: 'false'
           NOTIFY_CUSTOMERS_ENABLED: 'false'
@@ -242,7 +242,7 @@ jobs:
         working-directory: apps/web
         env:
           APP_ENV: staging
-          EXPECTED_STAGING_SUPABASE_PROJECT_REF: upvsfqufkywlpibbwrse
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: qsshiksnyflwsybjyzob
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
@@ -324,7 +324,7 @@ jobs:
       - name: Run authenticated protected browser QA
         env:
           APP_ENV: staging
-          EXPECTED_STAGING_SUPABASE_PROJECT_REF: upvsfqufkywlpibbwrse
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: qsshiksnyflwsybjyzob
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
