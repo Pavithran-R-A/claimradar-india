@@ -26,3 +26,10 @@ Start a new observation-only 48–72 hour staging soak from the current customer
 ## Acceptance
 
 A qualifying run must attempt at least one source, have all attempted sources succeed, fetch documents, record zero crawl errors, record zero unexpected errors, publish zero records, and retain the locked policy guards.
+
+## Baseline retry after deterministic test repair
+
+- Initial baseline trigger run `37186052828` failed closed before preflight/crawl because the acceptance fixture for record 16 used an expired hard-coded deadline (`2026-09-30`).
+- Runtime classifier behavior was correct: the now-expired fixture was rejected.
+- The fixture is changed to a far-future deterministic deadline so the test continues to exercise the intended active group-refund path.
+- This marker update intentionally retriggers the path-scoped baseline once the test-only repair is merged.
