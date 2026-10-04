@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 
-export const EXPECTED_PROJECT_REF = 'upvsfqufkywlpibbwrse';
+export const EXPECTED_PROJECT_REF = 'qsshiksnyflwsybjyzob';
 
 const requireFromWeb = createRequire(new URL('../apps/web/package.json', import.meta.url));
 
