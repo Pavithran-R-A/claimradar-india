@@ -33,3 +33,11 @@ A qualifying run must attempt at least one source, have all attempted sources su
 - Runtime classifier behavior was correct: the now-expired fixture was rejected.
 - The fixture is changed to a far-future deterministic deadline so the test continues to exercise the intended active group-refund path.
 - This marker update intentionally retriggers the path-scoped baseline once the test-only repair is merged.
+
+## Second baseline retry — validator-window repair
+
+- Retry run `37186245896` again failed closed before preflight/crawl.
+- Root cause: the temporary `2099-09-30` fixture exceeded the production validator's maximum five-year deadline horizon.
+- All synthetic fixtures intended to represent active claim windows are now set to 2030 dates, safely future-dated but still within the five-year validation rule as of this soak start.
+- The intentionally expired 2020 fixture remains unchanged.
+- This marker update intentionally retriggers the fresh baseline after merge.
