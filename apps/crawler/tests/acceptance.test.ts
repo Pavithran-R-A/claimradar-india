@@ -369,7 +369,7 @@ describe('20-Record Acceptance Test', () => {
           relief_description: 'Refund of Rs. 5 crore to all affected consumers',
           action_required: 'Consumers must submit claim within 90 days',
           official_claim_url: 'https://ncdrc.nic.in/claims/test',
-          deadline: '2027-01-31',
+          deadline: '2030-01-31',
           appeal_or_pending_issue: 'No appeal pending',
           procedural_status: ProceduralStatus.Final,
           evidence: [
@@ -444,7 +444,7 @@ describe('20-Record Acceptance Test', () => {
           official_amount: 500000000,
           action_required: 'Investors must submit their claims with proof of investment',
           official_claim_url: 'https://sebi.gov.in/claims/abc-capital',
-          deadline: '2099-09-30',
+          deadline: '2030-09-30',
           appeal_or_pending_issue: 'No appeal pending',
           procedural_status: ProceduralStatus.Final,
           evidence: [
@@ -471,7 +471,7 @@ describe('20-Record Acceptance Test', () => {
             },
             {
               field: 'deadline',
-              excerpt: '30 September 2099',
+              excerpt: '30 September 2030',
               page: null,
               start_offset: 200,
               end_offset: 220,
@@ -613,7 +613,7 @@ describe('20-Record Acceptance Test', () => {
             'Full refund to all affected consumers who purchased defective smartphones',
           action_required: 'Consumers must submit a claim form with proof of purchase',
           official_claim_url: 'https://ncdrc.nic.in/claims/abc-electronics',
-          deadline: '2026-12-31',
+          deadline: '2030-12-31',
           appeal_or_pending_issue: 'No appeal pending',
           procedural_status: ProceduralStatus.Final,
           evidence: [
@@ -641,7 +641,7 @@ describe('20-Record Acceptance Test', () => {
             },
             {
               field: 'deadline',
-              excerpt: '31 December 2026',
+              excerpt: '31 December 2030',
               page: 1,
               start_offset: 300,
               end_offset: 320,
