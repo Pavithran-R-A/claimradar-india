@@ -1,10 +1,10 @@
 {
-  "runtimeFreezeHead": "cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e",
-  "finalSoakBaselineGhaRun": "34509256561",
-  "finalSoakBaselineHead": "cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e",
-  "finalSoakBaselineCrawlRunId": "a32c7356-8254-4390-9a38-fb0a04fec1aa",
-  "finalSoakStartUtc": "2026-09-10T23:12:21Z",
-  "firstPostBaselineScheduledSlot": "2026-09-11T00:17:00.000Z",
+  "runtimeFreezeHead": "faedec687989a5de2b47ed1bff933db04d3975b3",
+  "finalSoakBaselineGhaRun": "37186623270",
+  "finalSoakBaselineHead": "faedec687989a5de2b47ed1bff933db04d3975b3",
+  "finalSoakBaselineCrawlRunId": "517d1604-14bd-4cc3-b57a-88db821da1b4",
+  "finalSoakStartUtc": "2026-10-04T07:49:07.427Z",
+  "firstPostBaselineScheduledSlot": "2026-10-04T12:17:00.000Z",
   "scheduleCron": "17 */6 * * *",
   "scheduleIntervalHours": 6,
   "thresholdHours48": 48,
@@ -27,6 +27,13 @@
       "baselineCrawlRunId": "fce1e5b4-65a3-4e76-a469-6ffc2b7d76e0",
       "baselineStartUtc": "2026-08-31T16:32:47Z",
       "invalidationReason": "Superseded by the frozen main merge candidate and baseline run 34038342122."
+    },
+    {
+      "baselineGhaRun": "34509256561",
+      "baselineHead": "cfcc791c937ce26faeb7c5e6dc1f0bd63541d61e",
+      "baselineCrawlRunId": "a32c7356-8254-4390-9a38-fb0a04fec1aa",
+      "baselineStartUtc": "2026-09-10T23:12:21Z",
+      "invalidationReason": "Superseded by the release owner's requested fresh observation baseline on 2026-10-04. Historical evidence remains valid for its original window."
     }
   ],
   "excludedScheduledRuns": [
