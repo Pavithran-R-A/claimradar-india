@@ -6,7 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 
-export const EXPECTED_PROJECT_REF = 'upvsfqufkywlpibbwrse';
+export const EXPECTED_PROJECT_REF = 'qsshiksnyflwsybjyzob';
 export const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'tablet', width: 768, height: 1024 },
