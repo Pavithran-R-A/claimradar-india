@@ -444,7 +444,7 @@ describe('20-Record Acceptance Test', () => {
           official_amount: 500000000,
           action_required: 'Investors must submit their claims with proof of investment',
           official_claim_url: 'https://sebi.gov.in/claims/abc-capital',
-          deadline: '2026-09-30',
+          deadline: '2099-09-30',
           appeal_or_pending_issue: 'No appeal pending',
           procedural_status: ProceduralStatus.Final,
           evidence: [
@@ -471,7 +471,7 @@ describe('20-Record Acceptance Test', () => {
             },
             {
               field: 'deadline',
-              excerpt: '30 September 2026',
+              excerpt: '30 September 2099',
               page: null,
               start_offset: 200,
               end_offset: 220,
