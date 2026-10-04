@@ -78,7 +78,7 @@ jobs:
         run: pnpm crawler:preflight -- --environment=staging
         env:
           APP_ENV: 'staging'
-          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse'
+          EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SECRET_KEY }}
