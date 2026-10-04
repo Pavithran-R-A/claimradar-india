@@ -41,3 +41,11 @@ A qualifying run must attempt at least one source, have all attempted sources su
 - All synthetic fixtures intended to represent active claim windows are now set to 2030 dates, safely future-dated but still within the five-year validation rule as of this soak start.
 - The intentionally expired 2020 fixture remains unchanged.
 - This marker update intentionally retriggers the fresh baseline after merge.
+
+## Third baseline retry — evidence/source alignment
+
+- Baseline attempt `37186465602` failed closed before preflight/crawl.
+- The active extraction/evidence deadlines had been updated to 2030, but the synthetic source text still stated the old 2026 dates.
+- Evidence verification correctly rejected the mismatch.
+- Synthetic source text is now aligned with its extraction/evidence values; production evidence-verification logic is unchanged.
+- This marker update intentionally retriggers the fresh baseline after merge.
