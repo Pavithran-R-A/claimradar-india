@@ -1,6 +1,13 @@
 name: Staging Soak (48-72h)
 
 on:
+  # One-time fresh-observation bootstrap. This push trigger is path-scoped to the
+  # dedicated marker below, so normal application pushes do not create extra soak runs.
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/checkpoints/fresh-soak-start-2026-10-04.md'
   schedule:
     - cron: '17 */6 * * *' # Every 6 hours at :17 UTC
   workflow_dispatch:
