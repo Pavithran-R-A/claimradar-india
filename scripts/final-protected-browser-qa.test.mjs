@@ -13,13 +13,13 @@ test('protected browser QA pins staging project guards', () => {
   assert.deepEqual(
     buildQaGuards({
       APP_ENV: 'staging',
-      EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'upvsfqufkywlpibbwrse',
-      SUPABASE_URL: 'https://upvsfqufkywlpibbwrse.supabase.co',
+      EXPECTED_STAGING_SUPABASE_PROJECT_REF: 'qsshiksnyflwsybjyzob',
+      SUPABASE_URL: 'https://qsshiksnyflwsybjyzob.supabase.co',
     }),
     {
       appEnv: 'staging',
-      projectRef: 'upvsfqufkywlpibbwrse',
-      url: 'https://upvsfqufkywlpibbwrse.supabase.co',
+      projectRef: 'qsshiksnyflwsybjyzob',
+      url: 'https://qsshiksnyflwsybjyzob.supabase.co',
     },
   );
 });
