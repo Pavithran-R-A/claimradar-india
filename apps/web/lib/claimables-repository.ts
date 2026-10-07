@@ -495,13 +495,25 @@ function defaultDbClientFactory(): DbClient {
     throw new Error('Missing public Supabase URL or publishable key');
   }
 
-  return createClient(supabaseUrl, publishableKey, {
+  const createUntypedClient = createClient as unknown as (
+    url: string,
+    key: string,
+    options: {
+      auth: {
+        autoRefreshToken: boolean;
+        persistSession: boolean;
+        detectSessionInUrl: boolean;
+      };
+    },
+  ) => DbClient;
+
+  return createUntypedClient(supabaseUrl, publishableKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
       detectSessionInUrl: false,
     },
-  }) as DbClient;
+  });
 }
 
 let dbClientFactory: DbClientFactory = defaultDbClientFactory;
