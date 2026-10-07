@@ -330,6 +330,183 @@ export class DatabaseWriter implements IDatabaseWriter {
   }
 }
 
+
+interface ProxyResponse<T> {
+  ok: boolean;
+  result?: T;
+  error?: string;
+}
+
+export class ProxyDatabaseWriter implements IDatabaseWriter {
+  private readonly proxyUrl: string;
+  private readonly workerToken: string;
+
+  constructor(
+    proxyUrl = process.env['CRAWLER_DB_PROXY_URL']?.trim(),
+    workerToken = process.env['CRAWLER_DB_PROXY_TOKEN']?.trim(),
+  ) {
+    if (!proxyUrl || !workerToken) {
+      throw new Error('Crawler database proxy requires CRAWLER_DB_PROXY_URL and CRAWLER_DB_PROXY_TOKEN');
+    }
+    const parsed = new URL(proxyUrl);
+    if (parsed.protocol !== 'https:') {
+      throw new Error('Crawler database proxy URL must use HTTPS');
+    }
+    this.proxyUrl = parsed.toString();
+    this.workerToken = workerToken;
+  }
+
+  private async call<T>(
+    operation: string,
+    args: Record<string, unknown> = {},
+  ): Promise<T> {
+    const response = await fetch(this.proxyUrl, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-claimradar-worker-token': this.workerToken,
+      },
+      body: JSON.stringify({ operation, args }),
+      signal: AbortSignal.timeout(60_000),
+    });
+
+    let payload: ProxyResponse<T>;
+    try {
+      payload = (await response.json()) as ProxyResponse<T>;
+    } catch {
+      throw new Error(
+        `Crawler database proxy returned non-JSON response (HTTP ${response.status})`,
+      );
+    }
+
+    if (!response.ok || !payload.ok) {
+      throw new Error(
+        `Crawler database proxy ${operation} failed (HTTP ${response.status}): ${payload.error ?? 'unknown error'}`,
+      );
+    }
+    if (payload.result === undefined) {
+      throw new Error(`Crawler database proxy ${operation} returned no result`);
+    }
+    return payload.result;
+  }
+
+  async createCrawlRun(status: string, runId?: string): Promise<string> {
+    const result = await this.call<{ id: string }>('createCrawlRun', { status, runId });
+    return result.id;
+  }
+
+  async updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void> {
+    await this.call('updateCrawlRun', { id: runId, updates });
+  }
+
+  async createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string> {
+    const result = await this.call<{ id: string }>('createCrawlRunSource', {
+      runId,
+      sourceId,
+      status,
+    });
+    return result.id;
+  }
+
+  async updateCrawlRunSource(id: string, updates: Partial<CrawlRunSource>): Promise<void> {
+    await this.call('updateCrawlRunSource', { id, updates });
+  }
+
+  async insertCrawlError(
+    runId: string,
+    err: { source_id?: string; error_type: string; error_message: string; url?: string },
+  ): Promise<void> {
+    await this.call('insertCrawlError', { runId, error: err });
+  }
+
+  async insertSourceDocument(
+    doc: Omit<SourceDocument, 'id' | 'created_at' | 'retrieved_at'>,
+  ): Promise<string | null> {
+    const result = await this.call<{ id: string | null }>('insertSourceDocument', {
+      doc: sanitizeSourceDocument(doc as unknown as Record<string, unknown>),
+    });
+    return result.id;
+  }
+
+  async insertCandidateDocument(
+    doc: Omit<CandidateDocument, 'id' | 'created_at'>,
+  ): Promise<string> {
+    const result = await this.call<{ id: string }>('insertCandidateDocument', { doc });
+    return result.id;
+  }
+
+  async updateCandidateDocument(id: string, updates: Partial<CandidateDocument>): Promise<void> {
+    await this.call('updateCandidateDocument', { id, updates });
+  }
+
+  async insertAiRun(run: Omit<AiRun, 'id' | 'created_at'>): Promise<string> {
+    const result = await this.call<{ id: string }>('insertAiRun', { run });
+    return result.id;
+  }
+
+  async insertValidationResult(
+    result: Omit<ValidationResult, 'id' | 'created_at'>,
+  ): Promise<string> {
+    const response = await this.call<{ id: string }>('insertValidationResult', { result });
+    return response.id;
+  }
+
+  async insertPublicationEvent(
+    event: Omit<PublicationEvent, 'id' | 'created_at'>,
+  ): Promise<string> {
+    const result = await this.call<{ id: string }>('insertPublicationEvent', { event });
+    return result.id;
+  }
+
+  async insertSourceHealthEvent(
+    event: Omit<SourceHealthEvent, 'id' | 'checked_at'>,
+  ): Promise<string> {
+    const result = await this.call<{ id: string }>('insertSourceHealthEvent', { event });
+    return result.id;
+  }
+
+  async getEnabledSources(): Promise<Source[]> {
+    const result = await this.call<{ rows: Source[] }>('getEnabledSources');
+    return result.rows;
+  }
+
+  async getSourceDocumentsForDedup(sourceId: string): Promise<SourceDocumentDedupItem[]> {
+    const result = await this.call<{ rows: SourceDocumentDedupItem[] }>(
+      'getSourceDocumentsForDedup',
+      { sourceId },
+    );
+    return result.rows;
+  }
+
+  async assignSourceDocumentToCluster(assignment: ContentClusterAssignment): Promise<string> {
+    const result = await this.call<{ id: string }>('assignSourceDocumentToCluster', {
+      assignment,
+    });
+    return result.id;
+  }
+
+  async getDeferredCandidates(): Promise<CandidateDocument[]> {
+    const result = await this.call<{ rows: CandidateDocument[] }>('getDeferredCandidates');
+    return result.rows;
+  }
+}
+
+export function createLiveDatabaseWriter(): IDatabaseWriter {
+  const proxyUrl = process.env['CRAWLER_DB_PROXY_URL']?.trim();
+  const proxyToken = process.env['CRAWLER_DB_PROXY_TOKEN']?.trim();
+
+  if (proxyUrl || proxyToken) {
+    if (!proxyUrl || !proxyToken) {
+      throw new Error(
+        'Both CRAWLER_DB_PROXY_URL and CRAWLER_DB_PROXY_TOKEN are required when using the crawler database proxy',
+      );
+    }
+    return new ProxyDatabaseWriter(proxyUrl, proxyToken);
+  }
+
+  return new DatabaseWriter();
+}
+
 export class InMemoryDryRunWriter implements IDatabaseWriter {
   public crawlRuns: Map<string, Record<string, unknown>> = new Map();
   public crawlRunSources: Map<string, Record<string, unknown>> = new Map();
