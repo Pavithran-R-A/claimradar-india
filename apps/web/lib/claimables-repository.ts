@@ -20,8 +20,8 @@
  */
 
 import { z } from 'zod';
+import { createClient } from '@supabase/supabase-js';
 import { calculateDeadlineStatus } from '@claimradar/shared-types';
-import { getAdminDb } from './admin-db';
 import { DEMO_CLAIMABLES } from './demo-claimables';
 
 /* -------------------------------------------------------------------------- */
@@ -481,10 +481,27 @@ const CLAIMABLES_SELECT = `
 ` as const;
 
 function defaultDbClientFactory(): DbClient {
-  // getAdminDb() is an intentional typed-boundary (see lib/admin-db.ts);
-  // it throws when Supabase env vars are missing, which the caller converts
-  // into an honest error outcome.
-  return getAdminDb() as DbClient;
+  // Public directory reads intentionally use the publishable Supabase client.
+  // Row-level security is the authoritative publication boundary, so the
+  // public website never needs a service-role key.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
+  const publishableKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !publishableKey) {
+    throw new Error('Missing public Supabase URL or publishable key');
+  }
+
+  return createClient(supabaseUrl, publishableKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  }) as DbClient;
 }
 
 let dbClientFactory: DbClientFactory = defaultDbClientFactory;
