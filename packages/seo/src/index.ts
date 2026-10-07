@@ -73,7 +73,7 @@ export function buildWebPageJsonLd(page: JsonLdWebPage) {
   };
 }
 
-export interface JsonLdCollectionPage extends JsonLdWebPage {}
+export type JsonLdCollectionPage = JsonLdWebPage;
 
 export function buildCollectionPageJsonLd(page: JsonLdCollectionPage) {
   return {
