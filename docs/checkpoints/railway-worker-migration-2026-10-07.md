@@ -74,3 +74,5 @@ The Railway preflight and crawl retained:
 ## Scheduler promotion rule
 
 Railway Cron is not enabled until the migration PR passes repository CI and is merged to `main`. After merge, Railway will be pinned back to `main`, the six-hour cron will be enabled, and a fresh Railway-based observation baseline will be recorded. The old GitHub-scheduled observation window will not be credited across this runtime migration.
+
+CI re-run requested after formatting normalization.
