@@ -36,18 +36,18 @@ Railway deployment `e24bab9e-3196-477f-8400-eb678a5e0310` executed the live stag
 
 Crawl run: `88fd8c31-689a-4abe-8cdf-5b4be54e2a0e`.
 
-| Metric | Result |
-| --- | ---: |
-| Sources | 7/7 succeeded |
-| Documents discovered | 126 |
-| Documents fetched | 126 |
-| Candidates created | 0 |
-| AI calls | 0 |
-| Records published | 0 |
-| Records queued | 0 |
-| Crawl errors | 0 |
-| Unexpected errors | 0 |
-| Duration | 186.252 s |
+| Metric               |        Result |
+| -------------------- | ------------: |
+| Sources              | 7/7 succeeded |
+| Documents discovered |           126 |
+| Documents fetched    |           126 |
+| Candidates created   |             0 |
+| AI calls             |             0 |
+| Records published    |             0 |
+| Records queued       |             0 |
+| Crawl errors         |             0 |
+| Unexpected errors    |             0 |
+| Duration             |     186.252 s |
 
 The portable soak acceptance gate passed after the crawl.
 
