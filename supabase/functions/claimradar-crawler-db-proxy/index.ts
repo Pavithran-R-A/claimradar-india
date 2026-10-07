@@ -82,7 +82,10 @@ function sanitizeJson(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sanitizeJson);
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, sanitizeJson(item)]),
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [
+        key,
+        sanitizeJson(item),
+      ]),
     );
   }
   return value;
@@ -270,7 +273,9 @@ async function executeOperation(
     case 'getSourceDocumentsForDedup': {
       const { data, error } = await db
         .from('source_documents')
-        .select('id, source_id, canonical_url, content_hash, source_identifier, title, published_at');
+        .select(
+          'id, source_id, canonical_url, content_hash, source_identifier, title, published_at',
+        );
       if (error) dbError('GET_SOURCE_DOCUMENTS_FOR_DEDUP', error);
       return { rows: data ?? [] };
     }
@@ -358,9 +363,10 @@ Deno.serve(async (request: Request) => {
     const body = await request.json();
     const input = requireObject(body, 'body');
     const operation = requireString(input.operation, 'operation');
-    const args = input.args && typeof input.args === 'object' && !Array.isArray(input.args)
-      ? input.args as Record<string, unknown>
-      : {};
+    const args =
+      input.args && typeof input.args === 'object' && !Array.isArray(input.args)
+        ? (input.args as Record<string, unknown>)
+        : {};
     const db = getAdminClient();
     const result = await executeOperation(db, operation, args);
     return json({ ok: true, result });

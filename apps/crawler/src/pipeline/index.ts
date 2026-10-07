@@ -24,7 +24,11 @@ import { runAllValidators } from '../validation/runner.js';
 import { computeClaimabilityScore } from '../validation/scorer.js';
 import { decidePublication } from '../publication/policy.js';
 import { extractionSchema } from '@claimradar/claim-schema';
-import { createLiveDatabaseWriter, InMemoryDryRunWriter, type IDatabaseWriter } from './db-writer.js';
+import {
+  createLiveDatabaseWriter,
+  InMemoryDryRunWriter,
+  type IDatabaseWriter,
+} from './db-writer.js';
 import { createLogger, type Logger } from '../observability/logger.js';
 import {
   createEmptySummary,

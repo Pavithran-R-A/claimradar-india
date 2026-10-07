@@ -45,7 +45,9 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
         &larr; Back to Glossary
       </Link>
       <article className="mt-6">
-        <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">{entry.term}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
+          {entry.term}
+        </h1>
         <p className="mt-4 text-base leading-relaxed text-text-primary">{entry.definition}</p>
         <h2 className="mt-8 text-lg font-semibold text-text-primary">Context</h2>
         <p className="mt-2 text-base leading-relaxed text-text-secondary">{entry.context}</p>

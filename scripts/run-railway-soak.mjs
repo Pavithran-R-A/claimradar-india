@@ -21,16 +21,9 @@ function run(label, args) {
   console.log(`[railway-soak] ${label} passed`);
 }
 
-run('staging preflight', [
-  'apps/crawler/dist/index.js',
-  'preflight',
-  '--environment=staging',
-]);
+run('staging preflight', ['apps/crawler/dist/index.js', 'preflight', '--environment=staging']);
 
-run('live staging crawl', [
-  'apps/crawler/dist/index.js',
-  'daily',
-]);
+run('live staging crawl', ['apps/crawler/dist/index.js', 'daily']);
 
 run('soak acceptance gate', [
   'scripts/validate-soak-summary.mjs',

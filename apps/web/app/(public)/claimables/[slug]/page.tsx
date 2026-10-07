@@ -172,7 +172,10 @@ function ClaimableDossier({
           <span>
             Entity:{' '}
             {claim.companySlug ? (
-              <Link href={`/companies/${claim.companySlug}`} className="font-bold text-trust-primary hover:underline">
+              <Link
+                href={`/companies/${claim.companySlug}`}
+                className="font-bold text-trust-primary hover:underline"
+              >
                 {claim.companyName}
               </Link>
             ) : (
@@ -183,7 +186,10 @@ function ClaimableDossier({
           <span>
             Sector:{' '}
             {claim.sectorSlug ? (
-              <Link href={`/sectors/${claim.sectorSlug}`} className="hover:text-trust-primary hover:underline">
+              <Link
+                href={`/sectors/${claim.sectorSlug}`}
+                className="hover:text-trust-primary hover:underline"
+              >
                 {claim.sector}
               </Link>
             ) : (
@@ -193,8 +199,13 @@ function ClaimableDossier({
         </div>
       </header>
 
-      <section aria-labelledby="answer-summary" className="mt-6 rounded-md border border-border bg-surface p-5 shadow-xs">
-        <h2 id="answer-summary" className="text-base font-bold text-text-primary">Quick answer</h2>
+      <section
+        aria-labelledby="answer-summary"
+        className="mt-6 rounded-md border border-border bg-surface p-5 shadow-xs"
+      >
+        <h2 id="answer-summary" className="text-base font-bold text-text-primary">
+          Quick answer
+        </h2>
         <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
           <div>
             <dt className="font-semibold text-text-muted">What this is</dt>
@@ -210,7 +221,9 @@ function ClaimableDossier({
           </div>
           <div>
             <dt className="font-semibold text-text-muted">Deadline</dt>
-            <dd className="mt-1 text-text-secondary">{deadline ?? 'No statutory deadline recorded'}</dd>
+            <dd className="mt-1 text-text-secondary">
+              {deadline ?? 'No statutory deadline recorded'}
+            </dd>
           </div>
           <div>
             <dt className="font-semibold text-text-muted">What to do</dt>
@@ -219,7 +232,9 @@ function ClaimableDossier({
           <div>
             <dt className="font-semibold text-text-muted">Documents / proof</dt>
             <dd className="mt-1 text-text-secondary">
-              {claim.proofRequirements.length > 0 ? claim.proofRequirements.join('; ') : 'Refer to the official source for any required proof.'}
+              {claim.proofRequirements.length > 0
+                ? claim.proofRequirements.join('; ')
+                : 'Refer to the official source for any required proof.'}
             </dd>
           </div>
           <div>
@@ -243,7 +258,10 @@ function ClaimableDossier({
       </div>
 
       {claim.freshnessWarning && (
-        <div role="note" className="mt-6 rounded-md border border-deadline/40 bg-deadline-background p-4 text-xs sm:text-sm">
+        <div
+          role="note"
+          className="mt-6 rounded-md border border-deadline/40 bg-deadline-background p-4 text-xs sm:text-sm"
+        >
           <p className="flex items-center gap-2 font-bold text-text-primary">
             <TriangleAlert aria-hidden className="h-4 w-4 text-deadline" />
             Freshness Advisory
@@ -259,7 +277,8 @@ function ClaimableDossier({
             <p>{claim.affectedGroup}</p>
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            Publication of this record is not a legal determination of eligibility. Official scheme terms decide.
+            Publication of this record is not a legal determination of eligibility. Official scheme
+            terms decide.
           </p>
         </section>
 
@@ -267,11 +286,13 @@ function ClaimableDossier({
           <DossierSectionHeading number="02" title="Relief Stated in Official Record" />
           <div className="rounded-md border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary">
             <p className="font-semibold text-text-primary">
-              {claim.reliefAmount || 'No specific compensation figure is stated in the sources reviewed. Refer to the official order for exact terms.'}
+              {claim.reliefAmount ||
+                'No specific compensation figure is stated in the sources reviewed. Refer to the official order for exact terms.'}
             </p>
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            ClaimKhoj only publishes figures explicitly stated in the regulatory order — never estimates.
+            ClaimKhoj only publishes figures explicitly stated in the regulatory order — never
+            estimates.
           </p>
         </section>
 
@@ -280,15 +301,21 @@ function ClaimableDossier({
           {claim.proofRequirements.length > 0 ? (
             <ul className="space-y-2">
               {claim.proofRequirements.map((req, idx) => (
-                <li key={req} className="flex items-start gap-3 rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
-                  <span className="font-mono text-xs font-bold text-trust-primary mt-0.5">{idx + 1}.</span>
+                <li
+                  key={req}
+                  className="flex items-start gap-3 rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary"
+                >
+                  <span className="font-mono text-xs font-bold text-trust-primary mt-0.5">
+                    {idx + 1}.
+                  </span>
                   <span>{req}</span>
                 </li>
               ))}
             </ul>
           ) : (
             <p className="rounded-md border border-dashed border-border bg-surface p-4 text-xs text-text-muted">
-              No specific proof requirements are recorded in this notice. Refer to the official portal below.
+              No specific proof requirements are recorded in this notice. Refer to the official
+              portal below.
             </p>
           )}
         </section>
@@ -299,17 +326,26 @@ function ClaimableDossier({
             <p>{claim.actionRoute}</p>
             {claim.officialRouteUrl ? (
               <div className="mt-4 pt-4 border-t border-border">
-                <a href={claim.officialRouteUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center gap-2 rounded-md bg-trust-primary px-5 text-sm font-bold text-white transition-colors hover:bg-trust-primary-hover shadow-sm">
+                <a
+                  href={claim.officialRouteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-11 items-center gap-2 rounded-md bg-trust-primary px-5 text-sm font-bold text-white transition-colors hover:bg-trust-primary-hover shadow-sm"
+                >
                   <span>Go to official authority portal</span>
                   <ExternalLink aria-hidden className="h-4 w-4" />
                 </a>
               </div>
             ) : (
-              <p className="mt-3 text-xs text-text-muted">No direct digital filing URL is available. Refer to the official source documents below.</p>
+              <p className="mt-3 text-xs text-text-muted">
+                No direct digital filing URL is available. Refer to the official source documents
+                below.
+              </p>
             )}
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            You submit your claim directly to the company or statutory regulator. ClaimKhoj never collects claim documents or acts as a broker.
+            You submit your claim directly to the company or statutory regulator. ClaimKhoj never
+            collects claim documents or acts as a broker.
           </p>
         </section>
 
@@ -321,14 +357,27 @@ function ClaimableDossier({
             <ul className="space-y-2">
               {claim.officialSources.map((src) => (
                 <li key={`${src.name}-${src.url}`}>
-                  <a href={src.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-4 py-3 transition-colors hover:border-trust-primary/40 hover:bg-surface-strong/40">
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-4 py-3 transition-colors hover:border-trust-primary/40 hover:bg-surface-strong/40"
+                  >
                     <div className="min-w-0">
-                      <span className="block truncate text-sm font-semibold text-text-primary group-hover:text-trust-primary">{src.name}</span>
+                      <span className="block truncate text-sm font-semibold text-text-primary group-hover:text-trust-primary">
+                        {src.name}
+                      </span>
                       {src.publishedAt && (
-                        <span className="text-xs text-text-muted">Dated: <time dateTime={src.publishedAt}>{formatIstDate(src.publishedAt)}</time></span>
+                        <span className="text-xs text-text-muted">
+                          Dated:{' '}
+                          <time dateTime={src.publishedAt}>{formatIstDate(src.publishedAt)}</time>
+                        </span>
                       )}
                     </div>
-                    <ArrowUpRight aria-hidden className="h-4 w-4 shrink-0 text-text-muted group-hover:text-trust-primary" />
+                    <ArrowUpRight
+                      aria-hidden
+                      className="h-4 w-4 shrink-0 text-text-muted group-hover:text-trust-primary"
+                    />
                   </a>
                 </li>
               ))}
@@ -349,7 +398,9 @@ function ClaimableDossier({
 
         {related.length > 0 && (
           <section aria-labelledby="related" className="pt-6 border-t border-border">
-            <h3 id="related" className="text-base font-bold text-text-primary mb-3">Related Opportunities</h3>
+            <h3 id="related" className="text-base font-bold text-text-primary mb-3">
+              Related Opportunities
+            </h3>
             <div className="space-y-3">
               {related.map((item) => (
                 <ClaimableRow key={item.id} claim={item} />
@@ -369,11 +420,15 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
   return (
     <aside className="space-y-5 lg:sticky lg:top-24">
       <div className="rounded-md border border-border bg-surface p-5 shadow-sm">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">Claim Summary</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">
+          Claim Summary
+        </span>
         <dl className="space-y-3.5 text-xs">
           <div>
             <dt className="text-text-muted">Status</dt>
-            <dd className="mt-1"><StatusBadge status={claim.status} /></dd>
+            <dd className="mt-1">
+              <StatusBadge status={claim.status} />
+            </dd>
           </div>
           <div className="border-t border-border pt-3">
             <dt className="text-text-muted">Recorded Deadline</dt>
@@ -381,9 +436,13 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
               {deadline ? (
                 <div>
                   <time dateTime={claim.deadlineDate!}>{deadline}</time>
-                  {phrase && <span className="block text-deadline text-xs font-bold mt-0.5">{phrase}</span>}
+                  {phrase && (
+                    <span className="block text-deadline text-xs font-bold mt-0.5">{phrase}</span>
+                  )}
                 </div>
-              ) : 'No statutory deadline recorded'}
+              ) : (
+                'No statutory deadline recorded'
+              )}
             </dd>
           </div>
           <div className="border-t border-border pt-3">
@@ -397,7 +456,12 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
 
         {claim.officialRouteUrl && (
           <div className="mt-5 pt-4 border-t border-border">
-            <a href={claim.officialRouteUrl} target="_blank" rel="noopener noreferrer" className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-trust-primary px-4 text-xs font-bold text-white transition-colors hover:bg-trust-primary-hover shadow-sm">
+            <a
+              href={claim.officialRouteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-trust-primary px-4 text-xs font-bold text-white transition-colors hover:bg-trust-primary-hover shadow-sm"
+            >
               <span>Submit on official portal</span>
               <ExternalLink aria-hidden className="h-3.5 w-3.5" />
             </a>
@@ -406,7 +470,9 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
       </div>
 
       <div className="rounded-md border border-border bg-surface p-4 text-xs">
-        <span className="font-bold uppercase tracking-wider text-text-muted block mb-2.5 text-xs">Record Provenance</span>
+        <span className="font-bold uppercase tracking-wider text-text-muted block mb-2.5 text-xs">
+          Record Provenance
+        </span>
         <dl className="space-y-2 text-xs">
           <div className="flex justify-between">
             <dt className="text-text-muted">First Published:</dt>
@@ -414,17 +480,24 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
           </div>
           <div className="flex justify-between">
             <dt className="text-text-muted">Last Verified:</dt>
-            <dd className="font-mono text-text-primary">{formatIstDateTime(claim.lastVerifiedAt)}</dd>
+            <dd className="font-mono text-text-primary">
+              {formatIstDateTime(claim.lastVerifiedAt)}
+            </dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-text-muted">Last Source Check:</dt>
-            <dd className="font-mono text-text-primary">{formatIstDateTime(claim.lastCheckedAt)}</dd>
+            <dd className="font-mono text-text-primary">
+              {formatIstDateTime(claim.lastCheckedAt)}
+            </dd>
           </div>
         </dl>
       </div>
 
       <div className="text-center">
-        <Link href="/corrections" className="text-xs text-text-muted hover:text-trust-primary hover:underline transition-colors duration-fast">
+        <Link
+          href="/corrections"
+          className="text-xs text-text-muted hover:text-trust-primary hover:underline transition-colors duration-fast"
+        >
           Found an error? Submit an editorial correction →
         </Link>
       </div>
@@ -436,7 +509,10 @@ function DisclaimerFooter() {
   return (
     <footer className="mt-12 border-t border-border pt-6 text-xs text-text-muted">
       <p>
-        <strong>Legal notice: </strong> ClaimKhoj India is an independent information service. We are not affiliated with any court, tribunal, regulatory body, or corporate entity. We do not guarantee individual claim outcomes or provide legal representation. Always verify all instructions and deadlines on the official authority portal.
+        <strong>Legal notice: </strong> ClaimKhoj India is an independent information service. We
+        are not affiliated with any court, tribunal, regulatory body, or corporate entity. We do not
+        guarantee individual claim outcomes or provide legal representation. Always verify all
+        instructions and deadlines on the official authority portal.
       </p>
     </footer>
   );

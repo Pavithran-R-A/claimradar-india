@@ -330,7 +330,6 @@ export class DatabaseWriter implements IDatabaseWriter {
   }
 }
 
-
 interface ProxyResponse<T> {
   ok: boolean;
   result?: T;
@@ -346,7 +345,9 @@ export class ProxyDatabaseWriter implements IDatabaseWriter {
     workerToken = process.env['CRAWLER_DB_PROXY_TOKEN']?.trim(),
   ) {
     if (!proxyUrl || !workerToken) {
-      throw new Error('Crawler database proxy requires CRAWLER_DB_PROXY_URL and CRAWLER_DB_PROXY_TOKEN');
+      throw new Error(
+        'Crawler database proxy requires CRAWLER_DB_PROXY_URL and CRAWLER_DB_PROXY_TOKEN',
+      );
     }
     const parsed = new URL(proxyUrl);
     if (parsed.protocol !== 'https:') {
@@ -356,10 +357,7 @@ export class ProxyDatabaseWriter implements IDatabaseWriter {
     this.workerToken = workerToken;
   }
 
-  private async call<T>(
-    operation: string,
-    args: Record<string, unknown> = {},
-  ): Promise<T> {
+  private async call<T>(operation: string, args: Record<string, unknown> = {}): Promise<T> {
     const response = await fetch(this.proxyUrl, {
       method: 'POST',
       headers: {

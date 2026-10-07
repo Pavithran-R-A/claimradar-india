@@ -7,8 +7,18 @@ import { cn } from '@claimradar/design-system';
 const STAGES = [
   { number: '1', title: 'Search', description: "Tell us what you're looking for", icon: Search },
   { number: '2', title: 'We scan', description: 'We check official sources', icon: FileSearch },
-  { number: '3', title: 'See matches', description: 'Get relevant opportunities', icon: ListChecks },
-  { number: '4', title: 'Take action', description: 'Follow official steps to claim', icon: UserRound },
+  {
+    number: '3',
+    title: 'See matches',
+    description: 'Get relevant opportunities',
+    icon: ListChecks,
+  },
+  {
+    number: '4',
+    title: 'Take action',
+    description: 'Follow official steps to claim',
+    icon: UserRound,
+  },
 ] as const;
 
 const TONES = [
@@ -76,7 +86,9 @@ export function EvidenceFlowDiagram() {
                 <h3 className="mt-0.5 font-display text-base font-bold leading-tight text-trust-primary sm:text-[1.05rem]">
                   {stage.title}
                 </h3>
-                <p className="mt-1 text-xs leading-4 text-text-secondary sm:text-sm sm:leading-5">{stage.description}</p>
+                <p className="mt-1 text-xs leading-4 text-text-secondary sm:text-sm sm:leading-5">
+                  {stage.description}
+                </p>
               </div>
               {index < STAGES.length - 1 && (
                 <ArrowRight
@@ -89,8 +101,8 @@ export function EvidenceFlowDiagram() {
         })}
       </ol>
       <div className="mt-4 rounded-xl border border-[#d7e6e4] bg-[#EEF8F6] px-4 py-2.5 text-xs leading-5 text-text-secondary sm:text-center">
-        <strong className="text-trust-primary">Built for a more informed India.</strong>{' '}
-        ClaimKhoj helps you discover what may apply, then sends you to the official route.
+        <strong className="text-trust-primary">Built for a more informed India.</strong> ClaimKhoj
+        helps you discover what may apply, then sends you to the official route.
       </div>
     </div>
   );

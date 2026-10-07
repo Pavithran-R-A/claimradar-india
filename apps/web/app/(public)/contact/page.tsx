@@ -33,7 +33,9 @@ export default function ContactPage() {
           contact the official authority shown on that opportunity page.
         </p>
       )}
-      <p>We keep public guidance, source links and verification timestamps on each published record.</p>
+      <p>
+        We keep public guidance, source links and verification timestamps on each published record.
+      </p>
 
       <h2>Corrections &amp; Error Reports</h2>
       <p>To report incorrect information on the Platform:</p>
@@ -48,8 +50,8 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          A dedicated corrections inbox is not currently configured. Use the public Corrections
-          page to understand our verification, correction and retraction process and retain the
+          A dedicated corrections inbox is not currently configured. Use the public Corrections page
+          to understand our verification, correction and retraction process and retain the
           official-source URL that supports your report.
         </p>
       )}
@@ -77,9 +79,9 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          A dedicated grievance email is not currently configured. Claim-specific grievances must
-          be directed to the official authority or organisation responsible for the underlying
-          notice or scheme.
+          A dedicated grievance email is not currently configured. Claim-specific grievances must be
+          directed to the official authority or organisation responsible for the underlying notice
+          or scheme.
         </p>
       )}
 

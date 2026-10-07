@@ -1,7 +1,10 @@
 import fs from 'node:fs';
 
 const summaryFile =
-  process.argv[2] || process.env.CRAWLER_SUMMARY_FILE || process.env.SUMMARY_FILE || 'soak-crawl-summary.json';
+  process.argv[2] ||
+  process.env.CRAWLER_SUMMARY_FILE ||
+  process.env.SUMMARY_FILE ||
+  'soak-crawl-summary.json';
 
 if (!fs.existsSync(summaryFile) || fs.statSync(summaryFile).size === 0) {
   console.error(`SOAK_ACCEPTANCE_FAILED: summary file is missing or empty: ${summaryFile}`);
@@ -19,7 +22,8 @@ if (summary.sourcesSucceeded !== summary.sourcesAttempted) {
     `sourcesSucceeded (${summary.sourcesSucceeded}) must equal sourcesAttempted (${summary.sourcesAttempted})`,
   );
 }
-if (summary.sourcesFailed !== 0) errors.push(`sourcesFailed must be 0 (was ${summary.sourcesFailed})`);
+if (summary.sourcesFailed !== 0)
+  errors.push(`sourcesFailed must be 0 (was ${summary.sourcesFailed})`);
 if (!(summary.documentsDiscovered > 0)) {
   errors.push(`documentsDiscovered must be > 0 (was ${summary.documentsDiscovered})`);
 }

@@ -660,9 +660,7 @@ async function main() {
       console.log(
         `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS (direct)' : 'ℹ️ NOT SET (direct path unused)'}`,
       );
-      console.log(
-        `Crawler DB Proxy:         ${hasProxy ? '✅ PASS' : 'ℹ️ NOT SET'}`,
-      );
+      console.log(`Crawler DB Proxy:         ${hasProxy ? '✅ PASS' : 'ℹ️ NOT SET'}`);
 
       if (hasProxyUrl !== hasProxyToken) {
         console.error(
@@ -694,7 +692,9 @@ async function main() {
       }
 
       if (!hasUrl || (!hasKey && !hasProxy)) {
-        console.log('\n⚠️ PREFLIGHT NOTICE: No complete live database credential path is configured.');
+        console.log(
+          '\n⚠️ PREFLIGHT NOTICE: No complete live database credential path is configured.',
+        );
         console.log('                    Live database ingestion is SKIPPED.');
         process.exit(0);
       }

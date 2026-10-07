@@ -126,7 +126,10 @@ export function InteractiveHeroSearch() {
           className="min-h-[48px] w-full shrink-0 rounded-[var(--public-radius-control)] !bg-[#F5B940] px-7 text-sm font-extrabold !text-[#0D2148] shadow-[0_8px_20px_rgba(217,154,24,0.18)] transition-all duration-fast hover:!bg-[#F0AE2F] hover:shadow-[0_10px_24px_rgba(217,154,24,0.25)] disabled:cursor-wait disabled:opacity-70 sm:min-h-[56px] lg:w-auto lg:rounded-l-none"
         >
           <span>{isSubmitting ? 'Searching…' : 'Search Claims'}</span>
-          <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
+          <ArrowRight
+            className="ml-1.5 h-4 w-4 transition-transform duration-fast group-hover:translate-x-1"
+            aria-hidden="true"
+          />
         </Button>
       </form>
 

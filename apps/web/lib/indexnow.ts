@@ -13,7 +13,8 @@ export async function submitIndexNowUrls(
   const attempted = urls.length;
   if (attempted === 0) return { attempted: 0, submitted: false, reason: 'no_urls' };
 
-  const key = options.key === undefined ? process.env.INDEXNOW_KEY || DEFAULT_INDEXNOW_KEY : options.key;
+  const key =
+    options.key === undefined ? process.env.INDEXNOW_KEY || DEFAULT_INDEXNOW_KEY : options.key;
   if (!key) return { attempted, submitted: false, reason: 'missing_key' };
 
   const origin = new URL(brandConfig.url);
