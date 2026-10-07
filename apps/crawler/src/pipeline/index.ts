@@ -24,7 +24,7 @@ import { runAllValidators } from '../validation/runner.js';
 import { computeClaimabilityScore } from '../validation/scorer.js';
 import { decidePublication } from '../publication/policy.js';
 import { extractionSchema } from '@claimradar/claim-schema';
-import { DatabaseWriter, InMemoryDryRunWriter, type IDatabaseWriter } from './db-writer.js';
+import { createLiveDatabaseWriter, InMemoryDryRunWriter, type IDatabaseWriter } from './db-writer.js';
 import { createLogger, type Logger } from '../observability/logger.js';
 import {
   createEmptySummary,
@@ -744,7 +744,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
 
   // Database / Storage Adapter
   const db: IDatabaseWriter =
-    options.storage ?? (options.dryRun ? new InMemoryDryRunWriter() : new DatabaseWriter());
+    options.storage ?? (options.dryRun ? new InMemoryDryRunWriter() : createLiveDatabaseWriter());
 
   // Create crawl_runs record
   let crawlRunId: string | null = null;
