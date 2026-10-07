@@ -710,7 +710,14 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error('Crawler failed:', error);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    // This is a batch CLI. Some HTTP/PDF dependencies can leave idle handles open
+    // after all awaited work is complete, which prevents cron/container runtimes
+    // from observing a clean process exit.
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('Crawler failed:', error);
+    process.exit(1);
+  });
