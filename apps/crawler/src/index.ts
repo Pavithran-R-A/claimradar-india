@@ -651,12 +651,23 @@ async function main() {
       const hasKey = Boolean(
         env.SUPABASE_SECRET_KEY && env.SUPABASE_SECRET_KEY !== 'dummy-dryrun-secret-key',
       );
+      const hasProxyUrl = Boolean(process.env.CRAWLER_DB_PROXY_URL?.trim());
+      const hasProxyToken = Boolean(process.env.CRAWLER_DB_PROXY_TOKEN?.trim());
+      const hasProxy = hasProxyUrl && hasProxyToken;
       console.log(
         `SUPABASE_URL Declared:    ${hasUrl ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
       );
       console.log(
-        `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS' : '⚠️ SKIP_CREDENTIALS (Not set)'}`,
+        `SUPABASE_SECRET_KEY Set:  ${hasKey ? '✅ PASS (direct)' : 'ℹ️ NOT SET (direct path unused)'}`,
       );
+      console.log(`Crawler DB Proxy:         ${hasProxy ? '✅ PASS' : 'ℹ️ NOT SET'}`);
+
+      if (hasProxyUrl !== hasProxyToken) {
+        console.error(
+          '\n❌ PREFLIGHT REFUSED: CRAWLER_DB_PROXY_URL and CRAWLER_DB_PROXY_TOKEN must be configured together.',
+        );
+        process.exit(1);
+      }
 
       const expectedProjectRef = process.env.EXPECTED_STAGING_SUPABASE_PROJECT_REF?.trim();
       if (environment === 'staging' && expectedProjectRef) {
@@ -680,13 +691,17 @@ async function main() {
         process.exit(1);
       }
 
-      if (!hasUrl || !hasKey) {
-        console.log('\n⚠️ PREFLIGHT NOTICE: Staging credentials not present in environment.');
+      if (!hasUrl || (!hasKey && !hasProxy)) {
+        console.log(
+          '\n⚠️ PREFLIGHT NOTICE: No complete live database credential path is configured.',
+        );
         console.log('                    Live database ingestion is SKIPPED.');
         process.exit(0);
       }
 
-      console.log('\n✅ PREFLIGHT PASSED: Ready for staging ingestion.');
+      console.log(
+        `\n✅ PREFLIGHT PASSED: Ready for staging ingestion via ${hasProxy ? 'authenticated database proxy' : 'direct Supabase key'}.`,
+      );
       break;
     }
     default:
