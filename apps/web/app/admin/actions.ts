@@ -110,7 +110,7 @@ export async function approveCandidate(candidateId: string) {
     .single();
 
   if (fetchError || !candidate) return { error: 'Candidate not found' };
-  if (candidate.publication_decision !== 'pending') {
+  if (!['pending', 'human_review'].includes(candidate.publication_decision)) {
     return { error: `Candidate already ${candidate.publication_decision} — nothing to approve.` };
   }
 
@@ -168,7 +168,7 @@ export async function rejectCandidate(candidateId: string, formData: FormData) {
     .single();
 
   if (fetchError || !candidate) return { error: 'Candidate not found' };
-  if (candidate.publication_decision !== 'pending') {
+  if (!['pending', 'human_review'].includes(candidate.publication_decision)) {
     return { error: `Candidate already ${candidate.publication_decision} — nothing to reject.` };
   }
 
