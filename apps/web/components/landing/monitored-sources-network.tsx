@@ -19,7 +19,7 @@ export const SOURCES: AuthoritySource[] = publicSourceFamilies.map((source) => (
   name: source.name,
   domain: source.domain,
   statutoryRole: source.description,
-  frequency: 'Configured public source',
+  frequency: 'Scheduled every 6 hours',
   noticeTypes: source.scope,
   officialPortal: `https://${source.domain}`,
 }));
@@ -99,7 +99,7 @@ export function MonitoredSourcesNetwork() {
                 </td>
                 <td className="py-3.5 px-4 text-xs text-text-muted hidden lg:table-cell font-mono">
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-trust-primary" />
                     {source.frequency}
                   </span>
                 </td>
@@ -126,7 +126,7 @@ export function MonitoredSourcesNetwork() {
           Each notice links to its official source for review.
         </span>
         <span className="font-mono text-[11px] text-text-secondary">
-          INDEXED FROM OFFICIAL SOURCES
+          COVERAGE CONFIGURATION · LIVE HEALTH MONITORED SEPARATELY
         </span>
       </div>
     </div>
