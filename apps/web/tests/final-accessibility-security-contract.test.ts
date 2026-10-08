@@ -31,8 +31,8 @@ describe('Final accessibility and security contracts', () => {
 
   it('keeps hero suggestion controls at least 24 by 24 CSS pixels', () => {
     const search = read('components', 'landing', 'interactive-hero-search.tsx');
-    expect(search).toContain('min-h-[24px]');
-    expect(search).toContain('min-w-[24px]');
+    expect(search).toContain('min-h-[36px]');
+    expect(search).toContain('min-w-[36px]');
   });
 
   it('keeps radar source controls outside the SVG image tree', () => {
