@@ -198,7 +198,9 @@ function SourceSpotlight({
         </button>
       </div>
 
-      <p className="mt-0.5 truncate text-[0.66rem] leading-4 text-text-secondary">{node.monitoringType}</p>
+      <p className="mt-0.5 truncate text-[0.66rem] leading-4 text-text-secondary">
+        {node.monitoringType}
+      </p>
       <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-[0.65rem] leading-4 text-text-muted">
         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-trust-primary" aria-hidden="true" />
         <span>Visual scan, not live crawl status. Published listings are source-verified.</span>
@@ -224,10 +226,19 @@ function RadarCanvas({
   const hubGlowId = `claimkhoj-hub-glow-${instanceId}`;
 
   return (
-    <div className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[390px]' : 'min-w-0')}>
+    <div
+      className={cn('relative aspect-square w-full', compact ? 'mx-auto max-w-[390px]' : 'min-w-0')}
+    >
       <svg viewBox="0 0 520 520" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id={gradientId} x1="260" y1="260" x2="480" y2="260" gradientUnits="userSpaceOnUse">
+          <linearGradient
+            id={gradientId}
+            x1="260"
+            y1="260"
+            x2="480"
+            y2="260"
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor="#F5B940" stopOpacity="0.01" />
             <stop offset="52%" stopColor="#F5B940" stopOpacity="0.09" />
             <stop offset="86%" stopColor="#F5B940" stopOpacity="0.24" />
@@ -247,9 +258,25 @@ function RadarCanvas({
         </defs>
 
         <g data-ui="radar-atmosphere">
-          <circle cx="260" cy="260" r="220" fill="#FCFEFF" stroke="#8DB4D1" strokeWidth="1" strokeDasharray="5 7" />
+          <circle
+            cx="260"
+            cy="260"
+            r="220"
+            fill="#FCFEFF"
+            stroke="#8DB4D1"
+            strokeWidth="1"
+            strokeDasharray="5 7"
+          />
           <circle cx="260" cy="260" r="212" fill={`url(#${atmosphereId})`} />
-          <circle cx="260" cy="260" r="184" fill="none" stroke="#E6F0F5" strokeWidth="9" strokeOpacity="0.34" />
+          <circle
+            cx="260"
+            cy="260"
+            r="184"
+            fill="none"
+            stroke="#E6F0F5"
+            strokeWidth="9"
+            strokeOpacity="0.34"
+          />
           <circle cx="260" cy="260" r="118" fill={`url(#${hubGlowId})`} />
         </g>
 
@@ -265,9 +292,33 @@ function RadarCanvas({
             strokeOpacity={index === 2 ? 0.85 : 0.95}
           />
         ))}
-        <circle cx="260" cy="260" r="105" fill="#F8FCFE" fillOpacity="0.74" stroke="#CFE0EA" strokeWidth="1" />
-        <line x1="260" y1="40" x2="260" y2="480" stroke="#CADCE7" strokeOpacity="0.78" strokeDasharray="3 5" />
-        <line x1="40" y1="260" x2="480" y2="260" stroke="#CADCE7" strokeOpacity="0.78" strokeDasharray="3 5" />
+        <circle
+          cx="260"
+          cy="260"
+          r="105"
+          fill="#F8FCFE"
+          fillOpacity="0.74"
+          stroke="#CFE0EA"
+          strokeWidth="1"
+        />
+        <line
+          x1="260"
+          y1="40"
+          x2="260"
+          y2="480"
+          stroke="#CADCE7"
+          strokeOpacity="0.78"
+          strokeDasharray="3 5"
+        />
+        <line
+          x1="40"
+          y1="260"
+          x2="480"
+          y2="260"
+          stroke="#CADCE7"
+          strokeOpacity="0.78"
+          strokeDasharray="3 5"
+        />
 
         <g data-ui="radar-rotor">
           {radarRunning ? (
@@ -282,7 +333,15 @@ function RadarCanvas({
             />
           ) : null}
           <path d="M260 260 L480 260 A220 220 0 0 0 415.6 104.4 Z" fill={`url(#${gradientId})`} />
-          <line x1="260" y1="260" x2="480" y2="260" stroke="#D99A18" strokeWidth="1.7" strokeLinecap="round" />
+          <line
+            x1="260"
+            y1="260"
+            x2="480"
+            y2="260"
+            stroke="#D99A18"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
           <circle cx="480" cy="260" r="3.2" fill="#F5B940" stroke="#FFFFFF" strokeWidth="1.5" />
         </g>
 
@@ -339,7 +398,10 @@ function RadarCanvas({
                 stroke={node.accent}
                 strokeWidth="1.2"
                 className={radarRunning ? 'animate-detection-blip' : undefined}
-                style={{ animationDelay: `${node.delaySec}s`, transformOrigin: `${node.cx}px ${node.cy}px` }}
+                style={{
+                  animationDelay: `${node.delaySec}s`,
+                  transformOrigin: `${node.cx}px ${node.cy}px`,
+                }}
               />
               <text
                 x={node.labelX}

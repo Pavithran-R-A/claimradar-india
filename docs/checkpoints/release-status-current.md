@@ -29,12 +29,12 @@ The original release plan required a genuine 48–72 hour staging soak. That dur
 
 A prior frozen runtime produced four consecutive genuine schedule-triggered checkpoints:
 
-| # | GitHub Actions run | Nominal slot (UTC) | Result | Crawl evidence |
-| --- | --- | --- | --- | --- |
-| 1 | `34163605422` | `2026-09-07T18:17:00Z` | PASS | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
-| 2 | `34188114057` | `2026-09-08T00:17:00Z` | PASS | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
-| 3 | `34220598983` | `2026-09-08T06:17:00Z` | PASS | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
-| 4 | `34252651891` | `2026-09-08T12:17:00Z` | PASS | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
+| #   | GitHub Actions run | Nominal slot (UTC)     | Result | Crawl evidence                                                                   |
+| --- | ------------------ | ---------------------- | ------ | -------------------------------------------------------------------------------- |
+| 1   | `34163605422`      | `2026-09-07T18:17:00Z` | PASS   | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
+| 2   | `34188114057`      | `2026-09-08T00:17:00Z` | PASS   | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
+| 3   | `34220598983`      | `2026-09-08T06:17:00Z` | PASS   | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
+| 4   | `34252651891`      | `2026-09-08T12:17:00Z` | PASS   | 7/7 sources; 126 fetched; zero errors; zero unexpected errors; zero publications |
 
 These four runs are evidence of sustained crawler stability across repeated six-hour schedule slots. They cover roughly 18 hours from the first nominal slot to the fourth nominal slot (about 22 hours when the delayed fourth execution is considered).
 

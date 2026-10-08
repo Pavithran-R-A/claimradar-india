@@ -46,12 +46,17 @@ export function Footer() {
             <p className="font-display text-sm italic text-trust-primary/80">
               Better information. Fairer outcomes.
             </p>
-            <p className="mt-0.5 text-[0.68rem] text-text-muted">Independent public information service</p>
+            <p className="mt-0.5 text-[0.68rem] text-text-muted">
+              Independent public information service
+            </p>
           </div>
         </div>
 
         <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3 text-[0.67rem] text-text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>ClaimKhoj points to official sources; claims and filings are completed on official portals.</p>
+          <p>
+            ClaimKhoj points to official sources; claims and filings are completed on official
+            portals.
+          </p>
           <nav aria-label="Legal navigation">
             <ul className="flex flex-wrap gap-x-3 gap-y-1">
               {legalLinks.map((link) => (

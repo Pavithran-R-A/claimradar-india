@@ -376,8 +376,9 @@ async function executeOperation(
         .from('candidate_documents')
         .select('*, source_documents!inner(*, sources(*))')
         .in('ai_extraction_status', ['deferred', 'failed'])
+        .lt('ai_retry_count', 2)
         .order('created_at', { ascending: true })
-        .limit(limit);
+        .limit(Math.min(100, limit * 3));
       if (error) dbError('GET_DEFERRED_CANDIDATE_CONTEXTS', error);
 
       const rows = (data ?? []).map((row) => {
@@ -392,7 +393,15 @@ async function executeOperation(
           source: sourceDocument?.sources ?? null,
         };
       });
-      return { rows };
+      return {
+        rows: rows
+          .filter(
+            (row) =>
+              typeof row.sourceDocument?.raw_text === 'string' &&
+              row.sourceDocument.raw_text.trim().length > 0,
+          )
+          .slice(0, limit),
+      };
     }
 
     default:

@@ -25,7 +25,9 @@ describe('ClaimKhoj structured data', () => {
   });
 
   it('builds site identity on the configured ClaimKhoj origin', () => {
-    expect(buildOrganizationJsonLd({ name: brandConfig.siteName, url: brandConfig.url })).toMatchObject({
+    expect(
+      buildOrganizationJsonLd({ name: brandConfig.siteName, url: brandConfig.url }),
+    ).toMatchObject({
       '@type': 'Organization',
       name: 'ClaimKhoj',
       url: brandConfig.url,
@@ -38,11 +40,29 @@ describe('ClaimKhoj structured data', () => {
   });
 
   it('provides truthful page, breadcrumb, collection, item-list, and glossary schemas', () => {
-    expect(buildWebPageJsonLd({ name: 'Example', url: `${brandConfig.url}/example` })['@type']).toBe('WebPage');
-    expect(buildBreadcrumbListJsonLd([{ name: 'Home', url: brandConfig.url }])['@type']).toBe('BreadcrumbList');
-    expect(buildCollectionPageJsonLd({ name: 'Claims', url: `${brandConfig.url}/claimables` })['@type']).toBe('CollectionPage');
-    expect(buildItemListJsonLd({ name: 'Claims', url: `${brandConfig.url}/claimables`, items: [{ name: 'One', url: `${brandConfig.url}/claimables/one` }] })['@type']).toBe('ItemList');
-    expect(buildDefinedTermJsonLd({ name: 'Claimable', description: 'A published opportunity.', url: `${brandConfig.url}/glossary/claimable` })['@type']).toBe('DefinedTerm');
+    expect(
+      buildWebPageJsonLd({ name: 'Example', url: `${brandConfig.url}/example` })['@type'],
+    ).toBe('WebPage');
+    expect(buildBreadcrumbListJsonLd([{ name: 'Home', url: brandConfig.url }])['@type']).toBe(
+      'BreadcrumbList',
+    );
+    expect(
+      buildCollectionPageJsonLd({ name: 'Claims', url: `${brandConfig.url}/claimables` })['@type'],
+    ).toBe('CollectionPage');
+    expect(
+      buildItemListJsonLd({
+        name: 'Claims',
+        url: `${brandConfig.url}/claimables`,
+        items: [{ name: 'One', url: `${brandConfig.url}/claimables/one` }],
+      })['@type'],
+    ).toBe('ItemList');
+    expect(
+      buildDefinedTermJsonLd({
+        name: 'Claimable',
+        description: 'A published opportunity.',
+        url: `${brandConfig.url}/glossary/claimable`,
+      })['@type'],
+    ).toBe('DefinedTerm');
   });
 
   it('renders site-level and route-level JSON-LD from server components', () => {

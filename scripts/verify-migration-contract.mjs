@@ -9,11 +9,22 @@ const migrations = readdirSync(migrationsDir)
 const expectedVersions = Array.from({ length: 17 }, (_, index) =>
   String(index + 1).padStart(3, '0'),
 );
-const actualVersions = migrations.map((file) => file.slice(0, 3));
+// The original 17 numbered migrations are immutable. Subsequent production
+// migrations use Supabase timestamps and must not break the legacy contract.
+const legacyMigrations = migrations.filter((file) => /^\d{3}_/.test(file));
+const subsequentMigrations = migrations.filter((file) => !/^\d{3}_/.test(file));
+const actualVersions = legacyMigrations.map((file) => file.slice(0, 3));
 const failures = [];
 
-if (migrations.length !== expectedVersions.length) {
-  failures.push(`expected ${expectedVersions.length} migrations, found ${migrations.length}`);
+if (legacyMigrations.length !== expectedVersions.length) {
+  failures.push(
+    `expected ${expectedVersions.length} immutable legacy migrations, found ${legacyMigrations.length}`,
+  );
+}
+for (const file of subsequentMigrations) {
+  if (!/^\d{14}_[a-z0-9_-]+\.sql$/.test(file)) {
+    failures.push(`unrecognized timestamped migration filename: ${file}`);
+  }
 }
 
 expectedVersions.forEach((version, index) => {

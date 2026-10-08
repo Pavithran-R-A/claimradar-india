@@ -12,7 +12,10 @@ export const env = createEnv({
     SUPABASE_URL: z.string().url(),
     SUPABASE_SECRET_KEY: z.string().min(1).optional(),
     DATABASE_URL: z.string().url().optional(),
-    INDEXNOW_KEY: z.string().regex(/^[A-Fa-f0-9]{8,128}$/).optional(),
+    INDEXNOW_KEY: z
+      .string()
+      .regex(/^[A-Fa-f0-9]{8,128}$/)
+      .optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url(),

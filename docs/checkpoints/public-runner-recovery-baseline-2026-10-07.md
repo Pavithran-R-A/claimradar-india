@@ -24,21 +24,22 @@ post-crawl acceptance, and sanitized artifact upload all passed.
 
 ## Crawl result
 
-| Metric | Result |
-| --- | ---: |
-| Sources | 7/7 succeeded |
-| Documents discovered | 126 |
-| Documents fetched | 126 |
-| Duplicates | 122 |
-| Candidates created | 0 |
-| AI calls | 0 |
-| Records published | 0 |
-| Records queued | 0 |
-| Crawl errors | 0 |
-| Unexpected errors | 0 |
-| Duration | 235.036 s |
+| Metric               |        Result |
+| -------------------- | ------------: |
+| Sources              | 7/7 succeeded |
+| Documents discovered |           126 |
+| Documents fetched    |           126 |
+| Duplicates           |           122 |
+| Candidates created   |             0 |
+| AI calls             |             0 |
+| Records published    |             0 |
+| Records queued       |             0 |
+| Crawl errors         |             0 |
+| Unexpected errors    |             0 |
+| Duration             |     235.036 s |
 
 Safety posture remained locked:
+
 - `APP_ENV=staging`
 - `AUTO_VERIFY_CLAIMABLES=false`
 - `ENABLE_BILLING=false`

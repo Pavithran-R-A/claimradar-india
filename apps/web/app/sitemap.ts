@@ -71,7 +71,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const item of claimables.data.items) {
         dynamicEntries.push({
           url: `${SITE_URL}/claimables/${item.slug}`,
-          lastModified: validDate(item.lastVerifiedAt) ?? validDate(item.publishedAt) ?? generatedAt,
+          lastModified:
+            validDate(item.lastVerifiedAt) ?? validDate(item.publishedAt) ?? generatedAt,
           changeFrequency: 'daily',
           priority: 0.9,
         });

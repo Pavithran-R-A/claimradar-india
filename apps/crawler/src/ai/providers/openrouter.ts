@@ -1,4 +1,5 @@
 import { extractionSchema } from '@claimradar/claim-schema';
+import { ClaimableStatus, ProceduralStatus } from '@claimradar/shared-types';
 import type { AIExtractionResult, AIProvider } from '../types.js';
 
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
@@ -9,8 +10,12 @@ export class OpenRouterProvider implements AIProvider {
   constructor(
     private apiKey: string,
     private model: string,
-    private timeoutMs: number = 30_000,
-  ) {}
+    private timeoutMs: number = 60_000,
+  ) {
+    if (this.model !== 'openrouter/free') {
+      throw new Error('FREE_ONLY_MODEL_GUARD: refusing any non-free OpenRouter model');
+    }
+  }
 
   isAvailable(): boolean {
     return this.apiKey.length > 0;
@@ -116,6 +121,25 @@ export class OpenRouterProvider implements AIProvider {
           error: 'Failed to parse JSON from AI output',
           errorCategory: 'invalid_output',
         };
+      }
+
+      // Free router models sometimes put prose into enum fields. Discard only
+      // unsupported status values rather than inventing a normalized status:
+      // all substantive extraction/evidence fields stay under strict validation.
+      if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+        const fields = parsed as Record<string, unknown>;
+        if (
+          typeof fields['claimability_status'] === 'string' &&
+          !Object.values(ClaimableStatus).includes(fields['claimability_status'] as ClaimableStatus)
+        ) {
+          fields['claimability_status'] = null;
+        }
+        if (
+          typeof fields['procedural_status'] === 'string' &&
+          !Object.values(ProceduralStatus).includes(fields['procedural_status'] as ProceduralStatus)
+        ) {
+          fields['procedural_status'] = null;
+        }
       }
 
       const validation = extractionSchema.safeParse(parsed);

@@ -24,10 +24,12 @@
 ### Task 1: Lock the production UI/UX contract with failing tests
 
 **Files:**
+
 - Create: `apps/web/tests/production-uiux-contract.test.ts`
 - Modify if needed: `apps/web/tests/evidence-radar-accessibility.test.ts`
 
 **Interfaces:**
+
 - Consumes: existing public page, header, footer, search, radar, and global CSS source files.
 - Produces: a static source contract that fails until the production-polish structure and accessibility hooks are present.
 
@@ -105,6 +107,7 @@ git commit -m "test: define ClaimKhoj production UI UX contract"
 ### Task 2: Normalize public design tokens and the shared shell
 
 **Files:**
+
 - Modify: `apps/web/app/globals.css`
 - Modify: `apps/web/components/layout/header.tsx`
 - Modify: `apps/web/components/layout/footer.tsx`
@@ -112,6 +115,7 @@ git commit -m "test: define ClaimKhoj production UI UX contract"
 - Test: `apps/web/tests/motion-accessibility.test.ts`
 
 **Interfaces:**
+
 - Consumes: existing ClaimKhoj design tokens and design-system button/link primitives.
 - Produces: consistent public spacing/radius/shadow/focus primitives used by landing and public pages.
 
@@ -174,11 +178,13 @@ git commit -m "feat: polish ClaimKhoj public shell"
 ### Task 3: Make hero search the primary interaction
 
 **Files:**
+
 - Modify: `apps/web/components/landing/interactive-hero-search.tsx`
 - Modify: `apps/web/app/(public)/page.tsx`
 - Test: `apps/web/tests/production-uiux-contract.test.ts`
 
 **Interfaces:**
+
 - Consumes: `router.push('/claimables?...')` behavior and existing All India selector.
 - Produces: responsive primary search control with explicit form label, stable button sizing, and non-cramped suggestions.
 
@@ -225,11 +231,13 @@ git commit -m "feat: elevate ClaimKhoj hero search"
 ### Task 4: Rebuild the hero composition and discovery journey
 
 **Files:**
+
 - Modify: `apps/web/app/(public)/page.tsx`
 - Modify: `apps/web/app/globals.css`
 - Test: `apps/web/tests/production-uiux-contract.test.ts`
 
 **Interfaces:**
+
 - Consumes: `InteractiveHeroSearch`, `EvidenceRadarVisual`, existing ClaimKhoj copy, and `JOURNEY` labels.
 - Produces: balanced hero, contained editorial annotation, responsive four-step journey, and continuous first-screen hierarchy.
 
@@ -281,11 +289,13 @@ git commit -m "feat: complete ClaimKhoj hero composition"
 ### Task 5: Simplify the evidence radar and add a real mobile representation
 
 **Files:**
+
 - Modify: `apps/web/components/landing/evidence-radar-visual.tsx`
 - Modify: `apps/web/tests/evidence-radar-accessibility.test.ts`
 - Test: `apps/web/tests/production-uiux-contract.test.ts`
 
 **Interfaces:**
+
 - Consumes: `MONITORED_NODES`, selected-node state, existing source truth/copy.
 - Produces: desktop radar and mobile source selector sharing one truthful selected-source detail panel.
 
@@ -298,7 +308,9 @@ Do not duplicate source truth. `MONITORED_NODES` remains the sole source for bot
 Wrap the current radial instrument in:
 
 ```tsx
-<div data-ui="radar-desktop" className="hidden sm:block">...</div>
+<div data-ui="radar-desktop" className="hidden sm:block">
+  ...
+</div>
 ```
 
 Reduce non-essential decoration, keep the center ClaimKhoj mark, and preserve keyboard buttons over nodes.
@@ -308,7 +320,9 @@ Reduce non-essential decoration, keep the center ClaimKhoj mark, and preserve ke
 Add:
 
 ```tsx
-<div data-ui="radar-mobile" className="sm:hidden">...</div>
+<div data-ui="radar-mobile" className="sm:hidden">
+  ...
+</div>
 ```
 
 Render the five monitored sources as a horizontally scrollable/compact button row or two-column grid with `aria-pressed`, at least 44px targets, and the same selected-source detail content below.
@@ -341,6 +355,7 @@ git commit -m "feat: simplify ClaimKhoj source radar"
 ### Task 6: Unify below-the-fold hierarchy and trust messaging
 
 **Files:**
+
 - Modify: `apps/web/app/(public)/page.tsx`
 - Modify: `apps/web/components/landing/evidence-flow-diagram.tsx`
 - Modify: `apps/web/components/layout/footer.tsx`
@@ -348,6 +363,7 @@ git commit -m "feat: simplify ClaimKhoj source radar"
 - Test: `apps/web/tests/frontend-truth-integrity.test.ts`
 
 **Interfaces:**
+
 - Consumes: published claimables, public source families, truthful demo/empty states, evidence flow.
 - Produces: consistent section rhythm, source cards, opportunity list, process explanation, trust statement, final CTA.
 
@@ -391,12 +407,14 @@ git commit -m "feat: unify ClaimKhoj public page hierarchy"
 ### Task 7: Browser, responsive, accessibility, and runtime-integrity validation
 
 **Files:**
+
 - Modify only if required by truthful new layout: `scripts/final-route-browser-qa.mjs`
 - Modify only if required: `scripts/ci-browser-smoke.mjs`
 - Modify only if required: relevant visual/accessibility tests under `apps/web/tests/`
 - Add: `docs/checkpoints/claimkhoj-production-uiux-polish-validation.md`
 
 **Interfaces:**
+
 - Consumes: completed public UI implementation.
 - Produces: release-grade evidence without altering operational/runtime semantics.
 
@@ -461,9 +479,11 @@ git commit -m "docs: record ClaimKhoj UI UX validation"
 ### Task 8: Preview and pull request gate
 
 **Files:**
+
 - No production files unless preview review reveals a concrete defect.
 
 **Interfaces:**
+
 - Consumes: fully validated branch.
 - Produces: reviewable Vercel preview and PR; no merge without visual approval.
 

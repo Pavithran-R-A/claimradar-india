@@ -82,7 +82,8 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
     buildCollectionPageJsonLd({
       name: 'ClaimKhoj Claimables Directory',
       url: `${brandConfig.url}/claimables`,
-      description: 'Published refund, compensation and claim opportunities verified from official Indian sources.',
+      description:
+        'Published refund, compensation and claim opportunities verified from official Indian sources.',
     }),
     buildItemListJsonLd({
       name: 'Published ClaimKhoj opportunities',
@@ -135,7 +136,12 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
               ) : (
                 <>
                   {allOutcome.demo && <DemoDataBanner />}
-                  <DirectoryResults items={allOutcome.data.items} params={params} page={page} demo={allOutcome.demo} />
+                  <DirectoryResults
+                    items={allOutcome.data.items}
+                    params={params}
+                    page={page}
+                    demo={allOutcome.demo}
+                  />
                 </>
               )}
             </div>
@@ -169,9 +175,11 @@ function DirectoryResults({
     return (
       <EmptyDirectoryNotice
         title={items.length === 0 ? 'No published claimables yet' : 'No records match your filters'}
-        body={items.length === 0
-          ? 'Records appear here as soon as they pass our verification and publication policy. Check back soon.'
-          : 'Try removing a filter or broadening your search. Published records appear here only after they pass the full publication policy.'}
+        body={
+          items.length === 0
+            ? 'Records appear here as soon as they pass our verification and publication policy. Check back soon.'
+            : 'Try removing a filter or broadening your search. Published records appear here only after they pass the full publication policy.'
+        }
       />
     );
   }
@@ -182,18 +190,28 @@ function DirectoryResults({
   return (
     <>
       <p aria-live="polite" className="mb-4 text-sm text-text-muted">
-        Showing <span className="font-semibold text-text-secondary">{start}–{end}</span>{' '}
+        Showing{' '}
+        <span className="font-semibold text-text-secondary">
+          {start}–{end}
+        </span>{' '}
         of <span className="font-semibold text-text-secondary">{pageData.total}</span> published{' '}
         {pageData.total === 1 ? 'record' : 'records'}
       </p>
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {pageData.items.map((claim) => <ClaimableCard key={claim.id} claim={claim} />)}
+        {pageData.items.map((claim) => (
+          <ClaimableCard key={claim.id} claim={claim} />
+        ))}
       </div>
 
       <Pagination
         basePath="/claimables"
-        query={{ search: params.search, status: params.status, sector: params.sector, sort: params.sort }}
+        query={{
+          search: params.search,
+          status: params.status,
+          sector: params.sector,
+          sort: params.sort,
+        }}
         page={pageData.page}
         totalPages={pageData.totalPages}
       />

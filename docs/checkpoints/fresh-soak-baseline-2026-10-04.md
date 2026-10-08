@@ -20,6 +20,7 @@ Fresh baseline GitHub Actions run `37186623270` completed successfully on exact 
 `faedec687989a5de2b47ed1bff933db04d3975b3`.
 
 The workflow passed:
+
 - workspace build;
 - crawler test suite;
 - staging preflight policy gate;
@@ -29,23 +30,24 @@ The workflow passed:
 
 Crawl `517d1604-14bd-4cc3-b57a-88db821da1b4` produced:
 
-| Metric | Baseline |
-| --- | ---: |
-| Sources | 7/7 succeeded |
-| Documents discovered | 126 |
-| Documents fetched | 126 |
-| Duplicates | 28 |
-| Candidates created | 17 |
-| AI calls | 0 |
-| Records published | 0 |
-| Records queued | 17 |
-| Crawl errors | 0 |
-| Unexpected errors | 0 |
-| Duration | 264.748 s |
+| Metric               |      Baseline |
+| -------------------- | ------------: |
+| Sources              | 7/7 succeeded |
+| Documents discovered |           126 |
+| Documents fetched    |           126 |
+| Duplicates           |            28 |
+| Candidates created   |            17 |
+| AI calls             |             0 |
+| Records published    |             0 |
+| Records queued       |            17 |
+| Crawl errors         |             0 |
+| Unexpected errors    |             0 |
+| Duration             |     264.748 s |
 
 ## Locked safety posture
 
 The successful baseline recorded:
+
 - `APP_ENV=staging`;
 - `AUTO_VERIFY_CLAIMABLES=false`;
 - `ENABLE_BILLING=false`;

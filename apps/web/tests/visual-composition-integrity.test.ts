@@ -6,23 +6,12 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
   const radarPath = path.resolve(__dirname, '../components/landing/evidence-radar-visual.tsx');
   const radarSource = fs.readFileSync(radarPath, 'utf8');
 
-  it('A. EvidenceRadarVisual range circles explicitly declare fill="none" (no black SVG disc)', () => {
-    // Look for circles that have stroke but no fill
-    const circleTags = radarSource.match(/<circle[\s\S]*?\/>/g) || [];
-    expect(circleTags.length).toBeGreaterThan(0);
-
-    for (const tag of circleTags) {
-      if (
-        tag.includes('stroke=') &&
-        !tag.includes('fill="#FFFFFF"') &&
-        !tag.includes('fill="#15171A"') &&
-        !tag.includes('fill="#214E80"') &&
-        !tag.includes('fill={') &&
-        !tag.includes('fill="rgba')
-      ) {
-        expect(tag).toContain('fill="none"');
-      }
-    }
+  it('A. EvidenceRadarVisual explicitly paints its atmosphere without black SVG defaults', () => {
+    const atmosphere = radarSource.split('data-ui="radar-atmosphere">')[1]?.split('</g>')[0];
+    expect(atmosphere).toBeDefined();
+    expect(atmosphere).toContain('fill="#FCFEFF"');
+    expect(atmosphere).toContain('stroke="#8DB4D1"');
+    expect(radarSource).not.toContain('fill="black"');
   });
 
   it('B. Radar outer container does not use aspect-square geometry', () => {
@@ -54,7 +43,11 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
   });
 
   it('E. Reduced motion directives remain enforced on radar and flow diagram', () => {
-    expect(radarSource).toContain('motion-reduce:!animate-none');
+    const cssPath = path.resolve(__dirname, '../app/globals.css');
+    const css = fs.readFileSync(cssPath, 'utf8');
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(css).toContain('.animate-detection-blip,');
+    expect(css).toContain('animation: none !important;');
     const flowPath = path.resolve(__dirname, '../components/landing/evidence-flow-diagram.tsx');
     const flowSource = fs.readFileSync(flowPath, 'utf8');
     expect(flowSource).toContain('prefers-reduced-motion: reduce');

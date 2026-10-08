@@ -370,14 +370,11 @@ async function main() {
       const { createProviderRouter: rqCreateRouter } = await import('./ai/router.js');
       const { AIBudgetManager: RqBudget } = await import('./ai/budget.js');
       const { CircuitBreaker: RqCB } = await import('./ai/circuit-breaker.js');
-      const { createLiveDatabaseWriter: rqCreateDbWriter } = await import(
-        './pipeline/db-writer.js'
-      );
+      const { createLiveDatabaseWriter: rqCreateDbWriter } =
+        await import('./pipeline/db-writer.js');
       const { verifyEvidence: rqVerifyEvidence } = await import('./validation/evidence.js');
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
-      const { computeClaimabilityScore: rqComputeScore } = await import(
-        './validation/scorer.js'
-      );
+      const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
 
       const rqProvider = rqCreateRouter({
@@ -443,17 +440,32 @@ async function main() {
         }
 
         try {
-          const result = await rqExtractor.extract(rawText, 1);
+          // Bound token use on free endpoints. Preserve a source-text prefix and
+          // suffix, but always verify extracted evidence against the full original.
+          // Long PDFs still require human editorial inspection before publication.
+          const aiInput =
+            rawText.length <= 18_000
+              ? rawText
+              : `${rawText.slice(0, 14_000)}\n[Middle omitted for bounded free-model analysis]\n${rawText.slice(-4_000)}`;
+          const result = await rqExtractor.extract(aiInput, 1);
           processed++;
 
           if (!result.extraction || result.errorCategory !== 'none') {
             await rqDbWriter.updateCandidateDocument(candidate.id, {
-              ai_extraction_status: 'failed',
+              ai_extraction_status: ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(
+                result.errorCategory,
+              )
+                ? 'deferred'
+                : 'failed',
               ai_provider: result.provider,
               ai_model: result.model,
               ai_duration_ms: result.durationMs,
               ai_error_category: result.errorCategory,
-              ai_retry_count: (candidate.ai_retry_count ?? 0) + 1,
+              ai_retry_count: ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(
+                result.errorCategory,
+              )
+                ? (candidate.ai_retry_count ?? 0)
+                : (candidate.ai_retry_count ?? 0) + 1,
             });
             await rqDbWriter.insertAiRun({
               candidate_document_id: candidate.id,
@@ -471,6 +483,14 @@ async function main() {
               structured_output: null,
             });
             failed++;
+            if (
+              ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(result.errorCategory)
+            ) {
+              console.error(
+                'Transient free-model failure; stopping this batch without paid fallback.',
+              );
+              break;
+            }
             continue;
           }
 

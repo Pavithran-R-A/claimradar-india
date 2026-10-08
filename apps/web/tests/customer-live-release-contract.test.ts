@@ -17,7 +17,7 @@ describe('ClaimKhoj customer-live release invariants', () => {
     const robots = read('../app/robots.ts');
     expect(sitemap).toContain("export const dynamic = 'force-dynamic'");
     expect(robots).toContain("process.env.VERCEL_ENV === 'production'");
-    expect(robots).toContain("process.env.VERCEL_ENV");
+    expect(robots).toContain('process.env.VERCEL_ENV');
   });
 
   it('keeps IndexNow discovery fail-open and separate from publication safety', () => {

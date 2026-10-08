@@ -365,21 +365,29 @@ export class DatabaseWriter implements IDatabaseWriter {
       .from('candidate_documents')
       .select('*, source_documents!inner(*, sources(*))')
       .in('ai_extraction_status', ['deferred', 'failed'])
+      .lt('ai_retry_count', 2)
       .order('created_at', { ascending: true })
-      .limit(limit);
+      .limit(Math.min(100, limit * 3));
     if (error) throw new Error(`Failed to fetch deferred candidate contexts: ${error.message}`);
 
-    return ((data ?? []) as Array<Record<string, unknown>>).map((row) => {
-      const sourceDocument = row['source_documents'] as SourceDocument & {
-        sources?: Source | null;
-      };
-      const { source_documents: _sourceDocuments, ...candidate } = row;
-      return {
-        candidate: candidate as unknown as CandidateDocument,
-        sourceDocument,
-        source: sourceDocument?.sources ?? null,
-      };
-    });
+    return ((data ?? []) as Array<Record<string, unknown>>)
+      .map((row) => {
+        const sourceDocument = row['source_documents'] as SourceDocument & {
+          sources?: Source | null;
+        };
+        const { source_documents: _sourceDocuments, ...candidate } = row;
+        return {
+          candidate: candidate as unknown as CandidateDocument,
+          sourceDocument,
+          source: sourceDocument?.sources ?? null,
+        };
+      })
+      .filter(
+        (context) =>
+          typeof context.sourceDocument?.raw_text === 'string' &&
+          context.sourceDocument.raw_text.trim().length > 0,
+      )
+      .slice(0, limit);
   }
 }
 
