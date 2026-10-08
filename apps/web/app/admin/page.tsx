@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
       supabase
         .from('candidate_documents')
         .select('id', { count: 'exact', head: true })
-        .eq('publication_decision', 'pending'),
+        .in('publication_decision', ['pending', 'human_review']),
       supabase
         .from('crawl_runs')
         .select('id, status, started_at, completed_at')

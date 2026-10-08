@@ -152,6 +152,33 @@ async function executeOperation(
       return { ok: true };
     }
 
+    case 'markStaleCrawlRuns': {
+      const maxAgeMinutes = Number(args.maxAgeMinutes ?? 60);
+      if (!Number.isFinite(maxAgeMinutes) || maxAgeMinutes < 5 || maxAgeMinutes > 1440) {
+        throw new Error('INVALID_MAX_AGE_MINUTES');
+      }
+      const cutoff = new Date(Date.now() - maxAgeMinutes * 60_000).toISOString();
+      const { data: stale, error: selectError } = await db
+        .from('crawl_runs')
+        .select('id')
+        .eq('status', 'running')
+        .lt('started_at', cutoff);
+      if (selectError) dbError('QUERY_STALE_CRAWL_RUNS', selectError);
+
+      const ids = (stale ?? []).map((row) => row.id as string);
+      if (ids.length === 0) return { count: 0 };
+
+      const { error } = await db
+        .from('crawl_runs')
+        .update({
+          status: 'failed',
+          completed_at: new Date().toISOString(),
+        })
+        .in('id', ids);
+      if (error) dbError('CLOSE_STALE_CRAWL_RUNS', error);
+      return { count: ids.length };
+    }
+
     case 'createCrawlRunSource': {
       const id = crypto.randomUUID();
       const runId = requireString(args.runId, 'runId');
@@ -338,6 +365,34 @@ async function executeOperation(
         .eq('ai_extraction_status', 'deferred');
       if (error) dbError('GET_DEFERRED_CANDIDATES', error);
       return { rows: data ?? [] };
+    }
+
+    case 'getDeferredCandidateContexts': {
+      const limitRaw = Number(args.limit ?? 20);
+      const limit = Number.isFinite(limitRaw)
+        ? Math.max(1, Math.min(50, Math.floor(limitRaw)))
+        : 20;
+      const { data, error } = await db
+        .from('candidate_documents')
+        .select('*, source_documents!inner(*, sources(*))')
+        .in('ai_extraction_status', ['deferred', 'failed'])
+        .order('created_at', { ascending: true })
+        .limit(limit);
+      if (error) dbError('GET_DEFERRED_CANDIDATE_CONTEXTS', error);
+
+      const rows = (data ?? []).map((row) => {
+        const sourceDocument = row.source_documents as Record<string, unknown> & {
+          sources?: Record<string, unknown> | null;
+        };
+        const candidate = { ...row } as Record<string, unknown>;
+        delete candidate.source_documents;
+        return {
+          candidate,
+          sourceDocument,
+          source: sourceDocument?.sources ?? null,
+        };
+      });
+      return { rows };
     }
 
     default:

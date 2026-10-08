@@ -349,33 +349,35 @@ async function main() {
       break;
     }
     case 'retry-queued': {
-      // Retry deferred candidates
-      console.log('Retrying deferred candidates...');
+      // Re-run AI extraction for candidates that were safely deferred while no
+      // provider was configured. This command intentionally does not publish:
+      // AUTO_VERIFY_CLAIMABLES remains authoritative and staging keeps it false.
+      const limitArg = args.find((arg) => arg.startsWith('--limit='));
+      const limitIdx = args.indexOf('--limit');
+      const requestedLimit = limitArg
+        ? Number(limitArg.split('=')[1])
+        : limitIdx >= 0
+          ? Number(args[limitIdx + 1])
+          : 10;
+      const retryLimit = Number.isFinite(requestedLimit)
+        ? Math.max(1, Math.min(40, Math.floor(requestedLimit)))
+        : 10;
+
+      console.log(`Retrying up to ${retryLimit} deferred candidates...`);
 
       const rqEnv = loadCrawlerEnv();
-      const rqSupabase: AnyClient = createAdminClient();
-
-      const { data: deferred, error: defError } = await rqSupabase
-        .from('candidate_documents')
-        .select('*, source_documents(*)')
-        .in('ai_extraction_status', ['deferred', 'failed'])
-        .order('created_at', { ascending: true });
-
-      if (defError || !deferred || deferred.length === 0) {
-        console.log('No deferred candidates found.');
-        break;
-      }
-
-      console.log(`Found ${deferred.length} deferred candidates`);
-
       const { AIExtractor: RqAIExtractor } = await import('./ai/extraction.js');
       const { createProviderRouter: rqCreateRouter } = await import('./ai/router.js');
       const { AIBudgetManager: RqBudget } = await import('./ai/budget.js');
       const { CircuitBreaker: RqCB } = await import('./ai/circuit-breaker.js');
-      const { DatabaseWriter: RqDBWriter } = await import('./pipeline/db-writer.js');
+      const { createLiveDatabaseWriter: rqCreateDbWriter } = await import(
+        './pipeline/db-writer.js'
+      );
       const { verifyEvidence: rqVerifyEvidence } = await import('./validation/evidence.js');
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
-      const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
+      const { computeClaimabilityScore: rqComputeScore } = await import(
+        './validation/scorer.js'
+      );
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
 
       const rqProvider = rqCreateRouter({
@@ -388,95 +390,202 @@ async function main() {
         ...(rqEnv.NVIDIA_API_KEY !== undefined ? { NVIDIA_API_KEY: rqEnv.NVIDIA_API_KEY } : {}),
         ...(rqEnv.NVIDIA_BASE_URL !== undefined ? { NVIDIA_BASE_URL: rqEnv.NVIDIA_BASE_URL } : {}),
       });
+
+      if (!rqProvider.isAvailable() || rqProvider.name === 'noai') {
+        console.error(
+          'No AI provider is configured. Set AI_PROVIDER plus OPENROUTER_API_KEY or NVIDIA_API_KEY before retrying deferred candidates.',
+        );
+        process.exit(2);
+      }
+
       const rqBudget = new RqBudget(
         rqEnv.AI_DAILY_REQUEST_BUDGET,
         rqEnv.AI_SECOND_PASS_RESERVE,
         rqEnv.AI_MAX_ATTEMPTS_PER_DOCUMENT,
       );
-      const rqCircuitBreaker = new RqCB();
-      const rqExtractor = new RqAIExtractor(rqProvider, rqBudget, rqCircuitBreaker);
-      const rqDbWriter = new RqDBWriter();
+      const rqExtractor = new RqAIExtractor(rqProvider, rqBudget, new RqCB());
+      const rqDbWriter = rqCreateDbWriter();
+      const contexts = await rqDbWriter.getDeferredCandidateContexts(retryLimit);
+
+      if (contexts.length === 0) {
+        console.log('No deferred candidates found.');
+        process.exit(0);
+      }
+
+      console.log(`Found ${contexts.length} candidate(s) in this batch`);
 
       let processed = 0;
       let succeeded = 0;
-      let rqFailed = 0;
+      let failed = 0;
+      let notRelevant = 0;
 
-      for (const candidate of deferred) {
+      for (const context of contexts) {
         if (!rqBudget.canProcess()) {
           console.log(
-            `Budget exhausted after processing ${processed} candidates. ${deferred.length - processed} remaining for next run.`,
+            `AI request budget exhausted after ${processed} candidate(s); remaining work stays deferred.`,
           );
           break;
         }
 
-        const rqSourceDoc = (candidate.source_documents ?? {}) as Record<string, unknown>;
-        const rqRawText = rqSourceDoc['raw_text'] as string | undefined;
-        if (!rqRawText) {
-          rqFailed++;
+        const candidate = context.candidate;
+        const sourceDoc = context.sourceDocument;
+        const source = context.source;
+        const rawText = sourceDoc.raw_text;
+
+        if (!rawText) {
+          failed++;
+          await rqDbWriter.updateCandidateDocument(candidate.id, {
+            ai_extraction_status: 'failed',
+            ai_error_category: 'missing_source_text',
+            ai_retry_count: (candidate.ai_retry_count ?? 0) + 1,
+          });
           continue;
         }
 
         try {
-          const rqResult = await rqExtractor.extract(rqRawText, 1);
+          const result = await rqExtractor.extract(rawText, 1);
           processed++;
 
-          if (rqResult.extraction && rqResult.error === null) {
-            const rqEvidenceResult = rqVerifyEvidence(rqResult.extraction, rqRawText);
-            const rqSource = (rqSourceDoc['sources'] ?? {}) as Record<string, unknown>;
-            const rqValidation = rqRunValidators({
-              extraction: rqResult.extraction,
-              sourceText: rqRawText,
-              sourceDomain: (rqSource['domain'] as string) ?? 'unknown',
-              trustLevel: (rqSource['trust_level'] as string) ?? 'unverified',
-              documentDate: (rqSourceDoc['published_at'] as string) ?? null,
-              evidenceVerification: rqEvidenceResult,
-            });
-            const rqScore = rqComputeScore({
-              validationResults: rqValidation,
-              aiConfidence: rqResult.extraction.confidence,
-              sourceTrustLevel: (rqSource['trust_level'] as string) ?? 'unverified',
-              evidenceCount: rqResult.extraction.evidence.length,
-              evidenceVerified: rqEvidenceResult.allVerified,
-            });
-            const rqDecision = rqDecidePub({
-              extraction: rqResult.extraction,
-              validationResults: rqValidation,
-              claimabilityScore: rqScore,
-              sourceDomain: (rqSource['domain'] as string) ?? 'unknown',
-              trustLevel: (rqSource['trust_level'] as string) ?? 'unverified',
-              featureFlags: { AUTO_VERIFY_CLAIMABLES: rqEnv.AUTO_VERIFY_CLAIMABLES },
-            });
-
-            await rqDbWriter.updateCandidateDocument(candidate.id as string, {
-              ai_extraction_status: 'completed',
-              ai_provider: rqResult.provider,
-              ai_model: rqResult.model,
-              ai_extracted_data: rqResult.extraction as unknown as Record<string, unknown>,
-              ai_confidence: Math.round(rqResult.extraction.confidence * 100),
-              validation_status: rqValidation.overallDecision === 'pass' ? 'passed' : 'failed',
-              publication_decision: rqDecision.action,
-            });
-            succeeded++;
-          } else {
-            await rqDbWriter.updateCandidateDocument(candidate.id as string, {
+          if (!result.extraction || result.errorCategory !== 'none') {
+            await rqDbWriter.updateCandidateDocument(candidate.id, {
               ai_extraction_status: 'failed',
-              ai_error_category: rqResult.errorCategory,
-              ai_retry_count: ((candidate.ai_retry_count as number) ?? 0) + 1,
+              ai_provider: result.provider,
+              ai_model: result.model,
+              ai_duration_ms: result.durationMs,
+              ai_error_category: result.errorCategory,
+              ai_retry_count: (candidate.ai_retry_count ?? 0) + 1,
             });
-            rqFailed++;
+            await rqDbWriter.insertAiRun({
+              candidate_document_id: candidate.id,
+              pass_number: 1,
+              provider: result.provider,
+              model: result.model,
+              prompt_version: null,
+              schema_version: null,
+              input_tokens: result.inputTokens,
+              output_tokens: result.outputTokens,
+              duration_ms: result.durationMs,
+              result_status: result.errorCategory,
+              error_category: result.errorCategory,
+              raw_output: result.rawOutput ? { raw: result.rawOutput } : null,
+              structured_output: null,
+            });
+            failed++;
+            continue;
           }
+
+          const extraction = result.extraction;
+          await rqDbWriter.insertAiRun({
+            candidate_document_id: candidate.id,
+            pass_number: 1,
+            provider: result.provider,
+            model: result.model,
+            prompt_version: null,
+            schema_version: null,
+            input_tokens: result.inputTokens,
+            output_tokens: result.outputTokens,
+            duration_ms: result.durationMs,
+            result_status: 'success',
+            error_category: null,
+            raw_output: result.rawOutput ? { raw: result.rawOutput } : null,
+            structured_output: extraction as unknown as Record<string, unknown>,
+          });
+
+          if (!extraction.is_relevant) {
+            await rqDbWriter.updateCandidateDocument(candidate.id, {
+              ai_extraction_status: 'completed',
+              ai_provider: result.provider,
+              ai_model: result.model,
+              ai_extracted_data: extraction as unknown as Record<string, unknown>,
+              ai_confidence: extraction.confidence,
+              ai_duration_ms: result.durationMs,
+              ai_token_count: (result.inputTokens ?? 0) + (result.outputTokens ?? 0),
+              ai_error_category: null,
+              ai_retry_count: candidate.ai_retry_count ?? 0,
+              validation_status: 'skipped',
+              publication_decision: 'not_relevant',
+            });
+            notRelevant++;
+            succeeded++;
+            continue;
+          }
+
+          const evidence = rqVerifyEvidence(extraction, rawText);
+          const validation = rqRunValidators({
+            extraction,
+            sourceText: rawText,
+            sourceDomain: source?.domain ?? 'unknown',
+            trustLevel: source?.trust_level ?? 'unverified',
+            documentDate: sourceDoc.published_at,
+            evidenceVerification: evidence,
+          });
+          const score = rqComputeScore({
+            validationResults: validation,
+            aiConfidence: extraction.confidence,
+            sourceTrustLevel: source?.trust_level ?? 'unverified',
+            evidenceCount: extraction.evidence.length,
+            evidenceVerified: evidence.allVerified,
+          });
+          const decision = rqDecidePub({
+            extraction,
+            validationResults: validation,
+            claimabilityScore: score,
+            sourceDomain: source?.domain ?? 'unknown',
+            trustLevel: source?.trust_level ?? 'unverified',
+            featureFlags: { AUTO_VERIFY_CLAIMABLES: rqEnv.AUTO_VERIFY_CLAIMABLES },
+          });
+
+          await rqDbWriter.updateCandidateDocument(candidate.id, {
+            ai_extraction_status: 'completed',
+            ai_provider: result.provider,
+            ai_model: result.model,
+            ai_extracted_data: extraction as unknown as Record<string, unknown>,
+            ai_confidence: extraction.confidence,
+            ai_duration_ms: result.durationMs,
+            ai_token_count: (result.inputTokens ?? 0) + (result.outputTokens ?? 0),
+            ai_error_category: null,
+            ai_retry_count: candidate.ai_retry_count ?? 0,
+            validation_status: validation.overallDecision,
+            publication_decision: decision.action,
+          });
+
+          for (const validationResult of validation.results) {
+            await rqDbWriter.insertValidationResult({
+              candidate_document_id: candidate.id,
+              validator_name: validationResult.name,
+              passed: validationResult.passed,
+              details: validationResult.details,
+            });
+          }
+
+          await rqDbWriter.insertPublicationEvent({
+            claimable_id: null,
+            candidate_document_id: candidate.id,
+            action: decision.action,
+            previous_status: null,
+            new_status: decision.status,
+            actor_type: 'pipeline',
+            actor_id: null,
+            reason: decision.reasons.join('; '),
+          });
+
+          console.log(
+            `Candidate ${candidate.id}: decision=${decision.action} score=${score} confidence=${extraction.confidence.toFixed(2)}`,
+          );
+          succeeded++;
         } catch (err) {
           console.error(
-            `Error processing candidate ${candidate.id as string}:`,
+            `Error processing candidate ${candidate.id}:`,
             err instanceof Error ? err.message : 'unknown',
           );
-          rqFailed++;
+          failed++;
         }
       }
 
       console.log(
-        `Retry complete: ${succeeded} succeeded, ${rqFailed} failed, ${deferred.length - processed} deferred (budget exhausted)`,
+        `Retry complete: processed=${processed}, succeeded=${succeeded}, notRelevant=${notRelevant}, failed=${failed}, batch=${contexts.length}`,
       );
+      process.exit(failed > 0 ? 1 : 0);
       break;
     }
     case 'crawl-status': {

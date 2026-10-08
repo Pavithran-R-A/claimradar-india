@@ -91,9 +91,16 @@ export interface ContentClusterAssignment {
   title?: string;
 }
 
+export interface DeferredCandidateContext {
+  candidate: CandidateDocument;
+  sourceDocument: SourceDocument;
+  source: Source | null;
+}
+
 export interface IDatabaseWriter {
   createCrawlRun(status: string, runId?: string): Promise<string>;
   updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void>;
+  markStaleCrawlRuns(maxAgeMinutes: number): Promise<number>;
   createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string>;
   updateCrawlRunSource(id: string, updates: Partial<CrawlRunSource>): Promise<void>;
   insertCrawlError(
@@ -113,6 +120,7 @@ export interface IDatabaseWriter {
   getSourceDocumentsForDedup(sourceId: string): Promise<SourceDocumentDedupItem[]>;
   assignSourceDocumentToCluster?(assignment: ContentClusterAssignment): Promise<string>;
   getDeferredCandidates(): Promise<CandidateDocument[]>;
+  getDeferredCandidateContexts(limit?: number): Promise<DeferredCandidateContext[]>;
 }
 
 export class DatabaseWriter implements IDatabaseWriter {
@@ -142,6 +150,29 @@ export class DatabaseWriter implements IDatabaseWriter {
   async updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void> {
     const { error } = await this.db.from('crawl_runs').update(updates).eq('id', runId);
     if (error) throw new Error(`Failed to update crawl_run: ${error.message}`);
+  }
+
+  async markStaleCrawlRuns(maxAgeMinutes: number): Promise<number> {
+    const cutoff = new Date(Date.now() - maxAgeMinutes * 60_000).toISOString();
+    const { data: stale, error: selectError } = await this.db
+      .from('crawl_runs')
+      .select('id')
+      .eq('status', 'running')
+      .lt('started_at', cutoff);
+    if (selectError) throw new Error(`Failed to query stale crawl_runs: ${selectError.message}`);
+
+    const ids = (stale ?? []).map((row: { id: string }) => row.id);
+    if (ids.length === 0) return 0;
+
+    const { error } = await this.db
+      .from('crawl_runs')
+      .update({
+        status: 'failed',
+        completed_at: new Date().toISOString(),
+      })
+      .in('id', ids);
+    if (error) throw new Error(`Failed to close stale crawl_runs: ${error.message}`);
+    return ids.length;
   }
 
   async createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string> {
@@ -328,6 +359,28 @@ export class DatabaseWriter implements IDatabaseWriter {
     if (error) throw new Error(`Failed to fetch deferred candidates: ${error.message}`);
     return (data ?? []) as CandidateDocument[];
   }
+
+  async getDeferredCandidateContexts(limit = 20): Promise<DeferredCandidateContext[]> {
+    const { data, error } = await this.db
+      .from('candidate_documents')
+      .select('*, source_documents!inner(*, sources(*))')
+      .in('ai_extraction_status', ['deferred', 'failed'])
+      .order('created_at', { ascending: true })
+      .limit(limit);
+    if (error) throw new Error(`Failed to fetch deferred candidate contexts: ${error.message}`);
+
+    return ((data ?? []) as Array<Record<string, unknown>>).map((row) => {
+      const sourceDocument = row['source_documents'] as SourceDocument & {
+        sources?: Source | null;
+      };
+      const { source_documents: _sourceDocuments, ...candidate } = row;
+      return {
+        candidate: candidate as unknown as CandidateDocument,
+        sourceDocument,
+        source: sourceDocument?.sources ?? null,
+      };
+    });
+  }
 }
 
 interface ProxyResponse<T> {
@@ -395,6 +448,11 @@ export class ProxyDatabaseWriter implements IDatabaseWriter {
 
   async updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void> {
     await this.call('updateCrawlRun', { id: runId, updates });
+  }
+
+  async markStaleCrawlRuns(maxAgeMinutes: number): Promise<number> {
+    const result = await this.call<{ count: number }>('markStaleCrawlRuns', { maxAgeMinutes });
+    return result.count;
   }
 
   async createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string> {
@@ -487,6 +545,14 @@ export class ProxyDatabaseWriter implements IDatabaseWriter {
     const result = await this.call<{ rows: CandidateDocument[] }>('getDeferredCandidates');
     return result.rows;
   }
+
+  async getDeferredCandidateContexts(limit = 20): Promise<DeferredCandidateContext[]> {
+    const result = await this.call<{ rows: DeferredCandidateContext[] }>(
+      'getDeferredCandidateContexts',
+      { limit },
+    );
+    return result.rows;
+  }
 }
 
 export function createLiveDatabaseWriter(): IDatabaseWriter {
@@ -529,6 +595,10 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
   async updateCrawlRun(runId: string, updates: Partial<CrawlRun>): Promise<void> {
     const existing = this.crawlRuns.get(runId) ?? { id: runId };
     this.crawlRuns.set(runId, { ...existing, ...updates });
+  }
+
+  async markStaleCrawlRuns(_maxAgeMinutes: number): Promise<number> {
+    return 0;
   }
 
   async createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string> {
@@ -665,5 +735,9 @@ export class InMemoryDryRunWriter implements IDatabaseWriter {
     return Array.from(this.candidateDocuments.values()).filter(
       (c) => c['ai_extraction_status'] === 'deferred',
     ) as unknown as CandidateDocument[];
+  }
+
+  async getDeferredCandidateContexts(_limit = 20): Promise<DeferredCandidateContext[]> {
+    return [];
   }
 }

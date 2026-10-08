@@ -750,6 +750,24 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
   const db: IDatabaseWriter =
     options.storage ?? (options.dryRun ? new InMemoryDryRunWriter() : createLiveDatabaseWriter());
 
+  // Close abandoned run rows before opening the next run. Railway cron hard-kills
+  // a crawl that exceeds its wall-clock budget; without this reconciliation a
+  // killed process can leave a permanent status=running row behind.
+  if (!options.dryRun) {
+    try {
+      const closed = await db.markStaleCrawlRuns(30);
+      if (closed > 0) {
+        logger.warn('pipeline', `Closed ${closed} stale crawl run(s) before starting`, {
+          staleRunCount: closed,
+        });
+      }
+    } catch (err) {
+      logger.warn('pipeline', 'Unable to reconcile stale crawl runs', {
+        error: err instanceof Error ? err.message : 'unknown',
+      });
+    }
+  }
+
   // Create crawl_runs record
   let crawlRunId: string | null = null;
   if (!options.dryRun) {

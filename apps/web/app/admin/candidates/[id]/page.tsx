@@ -111,7 +111,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Publication Workflow</h2>
 
-        {candidate.publication_decision === 'pending' && canDecide && (
+        {['pending', 'human_review'].includes(candidate.publication_decision) && canDecide && (
           <div className="mt-3 flex flex-wrap items-start gap-6">
             <ActionButton
               action={approveCandidate.bind(null, candidate.id)}
@@ -153,7 +153,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
           </div>
         )}
 
-        {candidate.publication_decision === 'pending' && !canDecide && (
+        {['pending', 'human_review'].includes(candidate.publication_decision) && !canDecide && (
           <p className="mt-3 text-sm text-text-muted">
             Awaiting an editorial decision (editor or admin role required to approve or reject).
           </p>
