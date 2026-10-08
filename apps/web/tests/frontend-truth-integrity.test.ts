@@ -174,16 +174,16 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const content = fs.readFileSync(radarPath, 'utf8');
 
     const normalized = content.replace(/\s+/g, ' ');
-    expect(normalized).toContain('OFFICIAL SOURCES WE CHECK');
-    expect(normalized).toContain('Every listing is checked against the source.');
+    expect(normalized).toContain('Official source scan');
+    expect(normalized).toContain('Published listings are source-verified.');
     expect(normalized).toContain('Monitored official sources');
     expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
     expect(normalized).toContain(
-      'Select a source to inspect its monitoring scope. This is not a live activity feed.',
+      'Visual scan, not live crawl status.',
     );
     expect(normalized).toContain(
-      'ClaimKhoj does not file claims or collect official filing fees. You act on the official portal.',
+      'Pause radar animation',
     );
 
     // Prohibit tiny text and old AI jargon
@@ -252,8 +252,8 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const pageContent = fs.readFileSync(pagePath, 'utf8');
 
     expect(pageContent).toContain('latest.length > 0');
-    expect(pageContent).toContain('Latest verified opportunities');
-    expect(pageContent).not.toContain('Latest verified opportunities (0)');
+    expect(pageContent).toContain('Latest opportunities');
+    expect(pageContent).not.toContain('Latest opportunities (0)');
 
     const statePath = path.resolve(__dirname, '../components/repository-states.tsx');
     const stateContent = fs.readFileSync(statePath, 'utf8');
