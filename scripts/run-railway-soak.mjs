@@ -45,6 +45,32 @@ const shortStepTimeoutMs = readPositiveMs(
 );
 const crawlTimeoutMs = readPositiveMs('RAILWAY_SOAK_CRAWL_TIMEOUT_MS', DEFAULT_CRAWL_TIMEOUT_MS);
 
+// Four six-hour cron ticks per UTC day. Reserve headroom against OpenRouter's
+// 50/day free-account allowance. No paid provider may ever be used.
+const freeBacklogLimitRaw = Number(process.env.FREE_AI_BACKLOG_LIMIT ?? '0');
+if (
+  !Number.isInteger(freeBacklogLimitRaw) ||
+  freeBacklogLimitRaw < 0 ||
+  freeBacklogLimitRaw > 2
+) {
+  throw new Error('FREE_AI_BACKLOG_LIMIT must be an integer from 0 to 2');
+}
+const freeBacklogLimit = freeBacklogLimitRaw;
+if (freeBacklogLimit > 0) {
+  if (
+    process.env.AI_PROVIDER !== 'openrouter' ||
+    process.env.OPENROUTER_MODEL !== 'openrouter/free' ||
+    !process.env.OPENROUTER_API_KEY
+  ) {
+    throw new Error('FREE_ONLY_GUARD: background AI requires active OpenRouter free routing');
+  }
+  const aiPerInvocation = Number(process.env.AI_DAILY_REQUEST_BUDGET);
+  if (!Number.isInteger(aiPerInvocation) || aiPerInvocation < 3 || aiPerInvocation > 8) {
+    throw new Error('FREE_ONLY_GUARD: per-cron AI budget must be between 3 and 8');
+  }
+}
+
+
 run(
   'staging preflight',
   ['apps/crawler/dist/index.js', 'preflight', '--environment=staging'],
@@ -61,6 +87,33 @@ run(
   ],
   shortStepTimeoutMs,
 );
+
+// The crawl and its acceptance gate remain authoritative. A bounded,
+// best-effort AI backlog sweep is optional and never auto-publishes a claim.
+if (freeBacklogLimit > 0) {
+  console.log(`[railway-soak] free AI backlog: trying up to ${freeBacklogLimit} candidate(s)`);
+  const retry = spawnSync(
+    process.execPath,
+    ['apps/crawler/dist/index.js', 'retry-queued', `--limit=${freeBacklogLimit}`],
+    {
+      env: process.env,
+      stdio: 'inherit',
+      timeout: readPositiveMs('FREE_AI_BACKLOG_TIMEOUT_MS', 4 * 60 * 1000),
+      killSignal: 'SIGTERM',
+    },
+  );
+  if (retry.error || retry.status !== 0) {
+    // The CLI uses exit 1 when any individual extraction fails; failures are
+    // persisted for editorial triage. Preserve the successful crawl gate and
+    // leave retries to a later scheduled run.
+    console.warn(
+      '[railway-soak] free AI backlog incomplete; crawl acceptance is unaffected',
+      retry.error?.message ?? `exit=${retry.status ?? 'unknown'}`,
+    );
+  } else {
+    console.log('[railway-soak] free AI backlog batch completed');
+  }
+}
 
 console.log('[railway-soak] all gates passed');
 
