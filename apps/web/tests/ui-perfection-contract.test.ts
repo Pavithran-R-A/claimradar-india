@@ -28,7 +28,7 @@ describe('UI perfection contracts', () => {
     const sidebar = read('components/app/sidebar.tsx');
     const styles = read('app/globals.css');
 
-    expect(header).toContain('focus-visible:ring-2');
+    expect(header).toContain('public-focus');\n    expect(styles).toContain('.public-focus:focus-visible');
     expect(sidebar).toContain("aria-current={active ? 'page' : undefined}");
     expect(sidebar).toContain('border-trust-primary');
     expect(styles).toContain('@media (prefers-reduced-motion: reduce)');
