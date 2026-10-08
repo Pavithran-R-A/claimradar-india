@@ -20,7 +20,7 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
     providers.push(
       new OpenRouterProvider(
         env.OPENROUTER_API_KEY,
-        env.OPENROUTER_MODEL ?? 'meta-llama/llama-3.1-70b-instruct',
+        env.OPENROUTER_MODEL ?? 'openrouter/free',
       ),
     );
   } else if (env.AI_PROVIDER === 'nvidia' && env.NVIDIA_API_KEY) {
@@ -38,7 +38,7 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
     providers.push(
       new OpenRouterProvider(
         env.OPENROUTER_API_KEY,
-        env.OPENROUTER_MODEL ?? 'meta-llama/llama-3.1-70b-instruct',
+        env.OPENROUTER_MODEL ?? 'openrouter/free',
       ),
     );
   }
