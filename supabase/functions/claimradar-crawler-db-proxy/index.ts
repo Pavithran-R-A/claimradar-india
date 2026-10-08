@@ -377,6 +377,8 @@ async function executeOperation(
         .select('*, source_documents!inner(*, sources(*))')
         .in('ai_extraction_status', ['deferred', 'failed'])
         .lt('ai_retry_count', 2)
+        // Prefer candidates not yet failed by the free model; preserve FIFO within each group.
+        .order('ai_error_category', { ascending: true, nullsFirst: true })
         .order('created_at', { ascending: true })
         .limit(Math.min(100, limit * 3));
       if (error) dbError('GET_DEFERRED_CANDIDATE_CONTEXTS', error);
