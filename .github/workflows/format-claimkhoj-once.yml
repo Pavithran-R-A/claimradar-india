@@ -1,0 +1,40 @@
+name: One-time release formatting repair
+
+on:
+  push:
+    branches:
+      - fix/claimkhoj-free-only-release-20261008
+    paths:
+      - .github/workflows/format-claimkhoj-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          ref: fix/claimkhoj-free-only-release-20261008
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.20.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format entire repo without relaxing formatter gate
+        run: pnpm exec prettier --write .
+      - name: Commit strictly formatting changes to the release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if ! git diff --cached --quiet; then
+            git commit -m "style: satisfy full repository formatting gate"
+            git push origin HEAD:fix/claimkhoj-free-only-release-20261008
+          fi
