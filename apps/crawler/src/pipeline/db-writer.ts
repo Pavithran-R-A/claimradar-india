@@ -382,8 +382,11 @@ export class DatabaseWriter implements IDatabaseWriter {
           source: sourceDocument?.sources ?? null,
         };
       })
-      .filter((context) => typeof context.sourceDocument?.raw_text === 'string' &&
-        context.sourceDocument.raw_text.trim().length > 0)
+      .filter(
+        (context) =>
+          typeof context.sourceDocument?.raw_text === 'string' &&
+          context.sourceDocument.raw_text.trim().length > 0,
+      )
       .slice(0, limit);
   }
 }

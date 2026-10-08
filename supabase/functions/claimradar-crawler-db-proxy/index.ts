@@ -395,9 +395,10 @@ async function executeOperation(
       });
       return {
         rows: rows
-          .filter((row) =>
-            typeof row.sourceDocument?.raw_text === 'string' &&
-            row.sourceDocument.raw_text.trim().length > 0
+          .filter(
+            (row) =>
+              typeof row.sourceDocument?.raw_text === 'string' &&
+              row.sourceDocument.raw_text.trim().length > 0,
           )
           .slice(0, limit),
       };
