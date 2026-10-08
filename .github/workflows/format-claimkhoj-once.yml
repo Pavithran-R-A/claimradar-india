@@ -38,3 +38,5 @@ jobs:
             git commit -m "style: satisfy full repository formatting gate"
             git push origin HEAD:fix/claimkhoj-free-only-release-20261008
           fi
+
+# one-time retry after public UI test syntax repair
