@@ -73,7 +73,9 @@ describe('Evidence Radar Visual Accessibility & Motion', () => {
     const hub = fileContent.indexOf('data-ui="radar-hub"');
     expect(atmosphere).toBeGreaterThan(-1);
     expect(hub).toBeGreaterThan(atmosphere);
-    expect(fileContent).not.toContain('left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-bright');
+    expect(fileContent).not.toContain(
+      'left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-bright',
+    );
   });
 
   it('adds selected-source depth without covering the interactive source buttons', () => {

@@ -153,7 +153,9 @@ export async function approvePublication(claimableId: string) {
   const db = getAdminDb();
   const { data: claimable, error: fetchError } = await db
     .from('claimables')
-    .select('id, status, publication_status, first_published_at, public_title, official_claim_url, deadline, action_required')
+    .select(
+      'id, status, publication_status, first_published_at, public_title, official_claim_url, deadline, action_required',
+    )
     .eq('id', claimableId)
     .single();
   if (fetchError || !claimable) return { error: 'Claimable not found' };
@@ -197,7 +199,9 @@ export async function approvePublication(claimableId: string) {
     .limit(1)
     .maybeSingle();
   if (legalError || latestLegalReview?.decision !== 'clear_to_publish') {
-    return { error: 'A current legal review clearing this claimable is required before publication.' };
+    return {
+      error: 'A current legal review clearing this claimable is required before publication.',
+    };
   }
 
   const now = new Date().toISOString();

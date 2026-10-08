@@ -129,7 +129,10 @@ export default async function LandingPage() {
 
               <div className="enter-seq-4 mt-5 grid max-w-[850px] gap-4 border-t border-border pt-4 sm:grid-cols-3 sm:gap-5">
                 <div className="flex gap-3">
-                  <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
+                  <BadgeCheck
+                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
+                    aria-hidden="true"
+                  />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Official sources</strong>
                     <br />
@@ -137,7 +140,10 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
+                  <Landmark
+                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
+                    aria-hidden="true"
+                  />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Pan-India view</strong>
                     <br />
@@ -145,7 +151,10 @@ export default async function LandingPage() {
                   </p>
                 </div>
                 <div className="flex gap-3">
-                  <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright" aria-hidden="true" />
+                  <Building2
+                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
+                    aria-hidden="true"
+                  />
                   <p className="text-sm leading-5 text-text-secondary">
                     <strong className="text-text-primary">Your next step</strong>
                     <br />
@@ -232,7 +241,9 @@ export default async function LandingPage() {
                   <span className="block text-[0.64rem] font-extrabold tracking-[0.16em] text-trust-primary">
                     {label}
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">{description}</span>
+                  <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">
+                    {description}
+                  </span>
                 </span>
                 <span className="order-3 hidden max-w-[11rem] text-[0.72rem] leading-4 text-text-muted lg:block">
                   {description}
@@ -288,7 +299,9 @@ export default async function LandingPage() {
                       <SourceIcon code={source.shortName} />
                     </span>
                     <span className="min-w-0">
-                      <strong className="block text-sm text-text-primary">{source.shortName}</strong>
+                      <strong className="block text-sm text-text-primary">
+                        {source.shortName}
+                      </strong>
                       <span className="block truncate text-[0.66rem] leading-4 text-text-muted">
                         {source.scope}
                       </span>
@@ -303,7 +316,10 @@ export default async function LandingPage() {
               className="public-focus group inline-flex min-h-[44px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
             >
               View all sources
-              <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1"
+                aria-hidden="true"
+              />
             </Link>
           </div>
         </div>
@@ -328,7 +344,10 @@ export default async function LandingPage() {
                 className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
               >
                 View all
-                <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
             </div>
 
@@ -353,7 +372,10 @@ export default async function LandingPage() {
                         {item.publishedAt ? ` · ${formatIstDate(item.publishedAt)}` : ''}
                       </span>
                     </span>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-text-muted transition-transform duration-fast group-hover:translate-x-1 group-hover:text-trust-primary" aria-hidden="true" />
+                    <ArrowRight
+                      className="h-4 w-4 shrink-0 text-text-muted transition-transform duration-fast group-hover:translate-x-1 group-hover:text-trust-primary"
+                      aria-hidden="true"
+                    />
                   </Link>
                 ))}
               </div>
@@ -364,7 +386,10 @@ export default async function LandingPage() {
             )}
           </div>
 
-          <div className="border-border lg:border-l lg:pl-10" aria-labelledby="how-it-works-heading">
+          <div
+            className="border-border lg:border-l lg:pl-10"
+            aria-labelledby="how-it-works-heading"
+          >
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
                 id="how-it-works-heading"
@@ -377,7 +402,10 @@ export default async function LandingPage() {
                 className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
               >
                 Learn more
-                <ArrowRight className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
             </div>
             <EvidenceFlowDiagram />

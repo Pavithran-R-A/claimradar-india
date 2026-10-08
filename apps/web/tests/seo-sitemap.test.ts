@@ -23,9 +23,7 @@ describe('SEO & Sitemap Rules Verification', () => {
     if (outcome.ok) {
       expect(outcome.data).not.toBeNull();
       const canonical = `${brandConfig.url}/claimables/${outcome.data?.slug}`;
-      expect(canonical).toBe(
-        `${brandConfig.url}/claimables/abc-investor-disgorgement-refund-2026`,
-      );
+      expect(canonical).toBe(`${brandConfig.url}/claimables/abc-investor-disgorgement-refund-2026`);
     }
   });
 

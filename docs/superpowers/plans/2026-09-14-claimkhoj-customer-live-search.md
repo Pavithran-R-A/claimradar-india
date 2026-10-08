@@ -25,6 +25,7 @@
 ### Task 1: Production crawlability and canonical origin contract
 
 **Files:**
+
 - Modify: `apps/web/app/robots.ts`
 - Modify: `apps/web/app/(public)/claimables/[slug]/page.tsx`
 - Modify: `apps/web/app/(public)/companies/[slug]/page.tsx`
@@ -33,6 +34,7 @@
 - Create: `apps/web/tests/customer-live-search-contract.test.ts`
 
 **Interfaces:**
+
 - Consumes: `brandConfig.url: string` from `@claimradar/config`.
 - Produces: deterministic public-production crawl policy used by `robots()`.
 
@@ -68,6 +70,7 @@ Use `${brandConfig.url}/claimables/${claim.slug}`, `${brandConfig.url}/companies
 ### Task 2: Truthful structured data and answer-engine semantics
 
 **Files:**
+
 - Modify: `packages/seo/src/index.ts`
 - Create: `apps/web/components/seo/json-ld.tsx`
 - Modify: `apps/web/app/layout.tsx`
@@ -80,6 +83,7 @@ Use `${brandConfig.url}/claimables/${claim.slug}`, `${brandConfig.url}/companies
 - Create: `apps/web/tests/structured-data.test.ts`
 
 **Interfaces:**
+
 - Produces `JsonLd` server component accepting `data: object | object[]` and rendering `<script type="application/ld+json">` with `<` escaped as `\u003c`.
 - Extends SEO helpers for `CollectionPage`, `ItemList`, and `DefinedTerm` without inventing facts.
 
@@ -109,11 +113,13 @@ Without changing factual DB values, expose visible answer labels for `What this 
 ### Task 3: Dynamic sitemap correctness and freshness
 
 **Files:**
+
 - Modify: `apps/web/app/sitemap.ts`
 - Modify: `apps/web/lib/claimables-repository.ts`
 - Modify: `apps/web/tests/seo-sitemap.test.ts`
 
 **Interfaces:**
+
 - Published claimable entries use `lastVerifiedAt` or `publishedAt`, not a shared sitemap-generation timestamp.
 - Taxonomy summaries may carry a derived latest-modified timestamp from their published claimables if required.
 
@@ -137,6 +143,7 @@ Preserve honest omission on repository failure; never fabricate URLs.
 ### Task 4: Safe optional IndexNow integration
 
 **Files:**
+
 - Create: `apps/web/lib/indexnow.ts`
 - Create: `apps/web/app/indexnow-key.txt/route.ts`
 - Modify: `apps/web/app/admin/editorial-actions.ts`
@@ -156,6 +163,7 @@ export async function submitIndexNowUrls(urls: string[]): Promise<{
 ```
 
 Rules:
+
 - `INDEXNOW_KEY` is an environment-configured public protocol verification key, not a privileged database/API secret;
 - no-op when the key is absent;
 - reject URLs whose host differs from `brandConfig.url`;
@@ -177,6 +185,7 @@ Rules:
 ### Task 5: Customer-live trust copy and release state
 
 **Files:**
+
 - Modify: `apps/web/app/(public)/contact/page.tsx`
 - Modify: `packages/config/src/index.ts`
 - Modify: `docs/checkpoints/release-status-current.md`
@@ -184,6 +193,7 @@ Rules:
 - Create: `apps/web/tests/customer-live-copy.test.ts`
 
 **Interfaces:**
+
 - Preserve nullable configured contact emails.
 - Fallback copy must remain truthful when no outbound/support inbox is configured.
 
@@ -207,6 +217,7 @@ Record that the public read/discovery product is customer-live on the Vercel ori
 ### Task 6: Full verification, preview protection, production release
 
 **Files:**
+
 - No new runtime files unless verification exposes a defect.
 
 - [ ] **Step 1: Run full repository verification**

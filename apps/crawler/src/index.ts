@@ -370,14 +370,11 @@ async function main() {
       const { createProviderRouter: rqCreateRouter } = await import('./ai/router.js');
       const { AIBudgetManager: RqBudget } = await import('./ai/budget.js');
       const { CircuitBreaker: RqCB } = await import('./ai/circuit-breaker.js');
-      const { createLiveDatabaseWriter: rqCreateDbWriter } = await import(
-        './pipeline/db-writer.js'
-      );
+      const { createLiveDatabaseWriter: rqCreateDbWriter } =
+        await import('./pipeline/db-writer.js');
       const { verifyEvidence: rqVerifyEvidence } = await import('./validation/evidence.js');
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
-      const { computeClaimabilityScore: rqComputeScore } = await import(
-        './validation/scorer.js'
-      );
+      const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
 
       const rqProvider = rqCreateRouter({

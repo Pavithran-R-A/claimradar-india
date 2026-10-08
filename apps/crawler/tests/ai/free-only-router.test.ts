@@ -13,22 +13,28 @@ describe('strictly free model policy', () => {
   });
 
   it('does not silently use a paid provider or fallback', () => {
-    expect(() => createProviderRouter({
-      AI_PROVIDER: 'nvidia',
-      NVIDIA_API_KEY: 'test-value-never-used',
-    })).toThrow(/FREE_ONLY_PROVIDER_GUARD/);
-    expect(() => createProviderRouter({
-      AI_PROVIDER: 'openrouter',
-      OPENROUTER_MODEL: 'anthropic/claude-sonnet',
-      OPENROUTER_API_KEY: 'test-value-never-used',
-    })).toThrow(/FREE_ONLY_MODEL_GUARD/);
-    expect(() => new OpenRouterProvider('test-value', 'openai/gpt-4o'))
-      .toThrow(/FREE_ONLY_MODEL_GUARD/);
+    expect(() =>
+      createProviderRouter({
+        AI_PROVIDER: 'nvidia',
+        NVIDIA_API_KEY: 'test-value-never-used',
+      }),
+    ).toThrow(/FREE_ONLY_PROVIDER_GUARD/);
+    expect(() =>
+      createProviderRouter({
+        AI_PROVIDER: 'openrouter',
+        OPENROUTER_MODEL: 'anthropic/claude-sonnet',
+        OPENROUTER_API_KEY: 'test-value-never-used',
+      }),
+    ).toThrow(/FREE_ONLY_MODEL_GUARD/);
+    expect(() => new OpenRouterProvider('test-value', 'openai/gpt-4o')).toThrow(
+      /FREE_ONLY_MODEL_GUARD/,
+    );
   });
 
   it('keeps AI disabled without a configured API key or when explicitly off', () => {
-    expect(createProviderRouter({ AI_PROVIDER: 'none', NVIDIA_API_KEY: 'test-value' }).name)
-      .toBe('noai');
+    expect(createProviderRouter({ AI_PROVIDER: 'none', NVIDIA_API_KEY: 'test-value' }).name).toBe(
+      'noai',
+    );
     expect(createProviderRouter({ AI_PROVIDER: 'openrouter' }).name).toBe('noai');
   });
 });

@@ -43,10 +43,7 @@ const shortStepTimeoutMs = readPositiveMs(
   'RAILWAY_SOAK_SHORT_STEP_TIMEOUT_MS',
   DEFAULT_SHORT_STEP_TIMEOUT_MS,
 );
-const crawlTimeoutMs = readPositiveMs(
-  'RAILWAY_SOAK_CRAWL_TIMEOUT_MS',
-  DEFAULT_CRAWL_TIMEOUT_MS,
-);
+const crawlTimeoutMs = readPositiveMs('RAILWAY_SOAK_CRAWL_TIMEOUT_MS', DEFAULT_CRAWL_TIMEOUT_MS);
 
 run(
   'staging preflight',

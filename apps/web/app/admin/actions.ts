@@ -126,7 +126,10 @@ export async function approveCandidate(candidateId: string) {
     !Array.isArray(extracted?.evidence) ||
     extracted.evidence.length === 0
   ) {
-    return { error: 'Candidate must pass AI extraction, source evidence, and all validation checks before editorial approval.' };
+    return {
+      error:
+        'Candidate must pass AI extraction, source evidence, and all validation checks before editorial approval.',
+    };
   }
 
   const { error } = await db
@@ -308,7 +311,6 @@ export async function promoteCandidate(candidateId: string) {
   if (insertError || !claimable) {
     return { error: insertError?.message ?? 'Failed to create claimable' };
   }
-
 
   // Publication requires an auditable primary official source.
   const { error: sourceLinkError } = await db.from('claim_sources').insert({
