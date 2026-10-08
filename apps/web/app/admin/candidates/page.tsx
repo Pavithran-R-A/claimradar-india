@@ -11,11 +11,19 @@ const AI_OPTIONS = ['', 'pending', 'completed', 'failed', 'skipped', 'deferred']
   value: v,
   label: v || 'All AI',
 }));
-const VALIDATION_OPTIONS = ['', 'pending', 'passed', 'failed', 'skipped'].map((v) => ({
+const VALIDATION_OPTIONS = ['', 'pending', 'pass', 'review', 'reject', 'skipped'].map((v) => ({
   value: v,
   label: v || 'All validation',
 }));
-const DECISION_OPTIONS = ['', 'pending', 'approved', 'rejected', 'deferred'].map((v) => ({
+const DECISION_OPTIONS = [
+  '',
+  'pending',
+  'human_review',
+  'approved',
+  'reject',
+  'rejected',
+  'not_relevant',
+].map((v) => ({
   value: v,
   label: v || 'All decisions',
 }));
