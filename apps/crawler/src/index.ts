@@ -483,8 +483,12 @@ async function main() {
               structured_output: null,
             });
             failed++;
-            if (['timeout', 'rate_limit', 'provider_error', 'auth'].includes(result.errorCategory)) {
-              console.error('Transient free-model failure; stopping this batch without paid fallback.');
+            if (
+              ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(result.errorCategory)
+            ) {
+              console.error(
+                'Transient free-model failure; stopping this batch without paid fallback.',
+              );
               break;
             }
             continue;
