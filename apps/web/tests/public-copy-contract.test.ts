@@ -21,7 +21,7 @@ describe('truthful public copy contracts', () => {
         name: 'Securities and Exchange Board of India',
         domain: 'sebi.gov.in',
         statutoryRole: 'Investor compensation schemes, refund orders, and recovery distributions.',
-        frequency: 'Configured public source',
+        frequency: 'Scheduled every 6 hours',
         noticeTypes: 'Securities notices & refund orders',
         officialPortal: 'https://sebi.gov.in',
       },
@@ -31,7 +31,7 @@ describe('truthful public copy contracts', () => {
         domain: 'rbi.org.in',
         statutoryRole:
           'Banking directives, ombudsman resolutions, and depositor protection guidelines.',
-        frequency: 'Configured public source',
+        frequency: 'Scheduled every 6 hours',
         noticeTypes: 'Banking & ombudsman directives',
         officialPortal: 'https://rbi.org.in',
       },
@@ -41,7 +41,7 @@ describe('truthful public copy contracts', () => {
         domain: 'ibbi.gov.in',
         statutoryRole:
           'Corporate insolvency resolution announcements and creditor claim filing notices.',
-        frequency: 'Configured public source',
+        frequency: 'Scheduled every 6 hours',
         noticeTypes: 'Insolvency creditor claim notices',
         officialPortal: 'https://ibbi.gov.in',
       },
@@ -51,7 +51,7 @@ describe('truthful public copy contracts', () => {
         domain: 'pib.gov.in',
         statutoryRole:
           'Central government compensation packages, press announcements, and ministry notifications.',
-        frequency: 'Configured public source',
+        frequency: 'Scheduled every 6 hours',
         noticeTypes: 'Government compensation press releases',
         officialPortal: 'https://pib.gov.in',
       },
@@ -61,7 +61,7 @@ describe('truthful public copy contracts', () => {
         domain: 'trai.gov.in',
         statutoryRole:
           'Telecom tariff directives, overcharge refunds, and consumer protection notices.',
-        frequency: 'Configured public source',
+        frequency: 'Scheduled every 6 hours',
         noticeTypes: 'Telecom refund & consumer directives',
         officialPortal: 'https://trai.gov.in',
       },
@@ -75,7 +75,7 @@ describe('truthful public copy contracts', () => {
     expect(page).toContain('Find what&apos;s rightfully yours.');
     expect(page).toContain('checks official sources for refunds, benefits, compensation');
     expect(search).toContain('Search refunds, claims, schemes or your situation');
-    expect(page).toContain('Latest verified opportunities');
+    expect(page).toContain('Latest opportunities');
 
     for (const unsupportedClaim of [
       'government gazettes',
@@ -96,7 +96,7 @@ describe('truthful public copy contracts', () => {
     expect(editorial).toContain('Public financial notices');
     expect(editorial).toContain('configured official source families');
     expect(editorial).toContain('official route named in the source record');
-    expect(sources).toContain('INDEXED FROM OFFICIAL SOURCES');
+    expect(sources).toContain('COVERAGE CONFIGURATION · LIVE HEALTH MONITORED SEPARATELY');
 
     for (const unsupportedClaim of [
       'AI-hallucinated',
