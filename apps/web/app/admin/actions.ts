@@ -105,13 +105,28 @@ export async function approveCandidate(candidateId: string) {
   const db = getAdminDb();
   const { data: candidate, error: fetchError } = await db
     .from('candidate_documents')
-    .select('id, publication_decision, validation_status')
+    .select('id, publication_decision, validation_status, ai_extraction_status, ai_extracted_data')
     .eq('id', candidateId)
     .single();
 
   if (fetchError || !candidate) return { error: 'Candidate not found' };
   if (!['pending', 'human_review'].includes(candidate.publication_decision)) {
     return { error: `Candidate already ${candidate.publication_decision} — nothing to approve.` };
+  }
+
+  // Editors may not bypass AI evidence validation by approving a merely
+  // detected/deferred item. Only a fully extracted, validated candidate with
+  // cited evidence may enter the publication workflow.
+  const extracted = candidate.ai_extracted_data as {
+    evidence?: unknown[];
+  } | null;
+  if (
+    candidate.ai_extraction_status !== 'completed' ||
+    candidate.validation_status !== 'pass' ||
+    !Array.isArray(extracted?.evidence) ||
+    extracted.evidence.length === 0
+  ) {
+    return { error: 'Candidate must pass AI extraction, source evidence, and all validation checks before editorial approval.' };
   }
 
   const { error } = await db
@@ -292,6 +307,19 @@ export async function promoteCandidate(candidateId: string) {
 
   if (insertError || !claimable) {
     return { error: insertError?.message ?? 'Failed to create claimable' };
+  }
+
+
+  // Publication requires an auditable primary official source.
+  const { error: sourceLinkError } = await db.from('claim_sources').insert({
+    claimable_id: claimable.id,
+    source_document_id: candidate.source_document_id,
+    source_role: 'primary',
+    is_primary: true,
+  });
+  if (sourceLinkError) {
+    await db.from('claimables').delete().eq('id', claimable.id).eq('publication_status', 'draft');
+    return { error: `Unable to attach official source: ${sourceLinkError.message}` };
   }
 
   await db.from('publication_events').insert({
