@@ -53,7 +53,7 @@ export default async function ReviewsPage({
       const { data, error: queryError } = await db
         .from('candidate_documents')
         .select('id, validation_status, ai_confidence, created_at, source_documents!inner(title)')
-        .eq('publication_decision', 'pending')
+        .in('publication_decision', ['pending', 'human_review'])
         .order('created_at', { ascending: true })
         .limit(50);
       if (queryError) error = queryError.message;
