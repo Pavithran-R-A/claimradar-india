@@ -179,12 +179,8 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     expect(normalized).toContain('Monitored official sources');
     expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
-    expect(normalized).toContain(
-      'Visual scan, not live crawl status.',
-    );
-    expect(normalized).toContain(
-      'Pause radar animation',
-    );
+    expect(normalized).toContain('Visual scan, not live crawl status.');
+    expect(normalized).toContain('Pause radar animation');
 
     // Prohibit tiny text and old AI jargon
     expect(content).not.toContain('text-[11px]');
