@@ -10,7 +10,11 @@ export class OpenRouterProvider implements AIProvider {
     private apiKey: string,
     private model: string,
     private timeoutMs: number = 30_000,
-  ) {}
+  ) {
+    if (this.model !== 'openrouter/free') {
+      throw new Error('FREE_ONLY_MODEL_GUARD: refusing any non-free OpenRouter model');
+    }
+  }
 
   isAvailable(): boolean {
     return this.apiKey.length > 0;
