@@ -39,6 +39,13 @@ export class OpenRouterProvider implements AIProvider {
         },
         body: JSON.stringify({
           model: this.model,
+          provider: {
+            // Do not silently route structured extraction through an endpoint
+            // that ignores the requested response format.
+            require_parameters: true,
+          },
+          response_format: { type: 'json_object' },
+          temperature: 0,
           messages: [
             { role: 'system', content: prompt },
             { role: 'user', content },
