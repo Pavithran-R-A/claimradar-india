@@ -21,7 +21,8 @@ EVIDENCE RULES:
 - If a field has no supporting evidence in the document, set the field to null.
 
 SCHEMA GUIDANCE:
-- is_relevant: true if the document describes a legal/regulatory action that may result in a refund, compensation, or collective relief for a group of people.
+- is_relevant: true only if the document identifies a realistic, actionable refund, compensation or group relief route for members of the public. Set false for concluded payments to named individuals, news about past awards, policy announcements, proposals without an application route, or notices with no publicly available claim process.
+- claimability_status: use exactly one of the allowed enum values shown below. If you cannot ground the choice in evidence, return null. Never return free-form prose in this field.
 - affected_group: the specific group of people affected (e.g. "all customers of Bank X", "investors in Fund Y").
 - relief_type: the type of relief (refund, compensation, settlement, etc.).
 - official_amount: a numeric amount only if explicitly stated.
@@ -58,7 +59,7 @@ Respond with a single JSON object matching this schema:
   "authority": string | null,
   "document_type": string | null,
   "procedural_status": "final" | "interim" | "proposed" | "appealed" | "pending" | "closed" | null,
-  "claimability_status": string | null,
+  "claimability_status": "detected" | "official_update" | "potential_claimable" | "verified_claimable" | "refund_ordered" | "registration_open" | "proposed_settlement" | "collective_case_pending" | "identified_users_only" | "individual_judgment" | "monitoring" | "closed" | "rejected" | "uncertain" | null,
   "affected_group": string | null,
   "geographic_scope": string | null,
   "relevant_period_start": string | null,
