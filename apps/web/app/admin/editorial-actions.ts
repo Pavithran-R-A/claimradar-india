@@ -153,12 +153,51 @@ export async function approvePublication(claimableId: string) {
   const db = getAdminDb();
   const { data: claimable, error: fetchError } = await db
     .from('claimables')
-    .select('id, status, publication_status, first_published_at')
+    .select('id, status, publication_status, first_published_at, public_title, official_claim_url, deadline, action_required')
     .eq('id', claimableId)
     .single();
   if (fetchError || !claimable) return { error: 'Claimable not found' };
   if (claimable.publication_status === 'published') {
     return { error: 'Claimable is already published.' };
+  }
+  if (claimable.publication_status !== 'draft') {
+    return { error: 'Only draft claimables can be published.' };
+  }
+  if (!claimable.public_title || !claimable.official_claim_url || !claimable.action_required) {
+    return { error: 'Publication requires a title, official claim URL, and user action.' };
+  }
+  try {
+    const url = new URL(claimable.official_claim_url);
+    if (url.protocol !== 'https:') {
+      return { error: 'Official claim URL must use HTTPS.' };
+    }
+  } catch {
+    return { error: 'Invalid official claim URL.' };
+  }
+  if (claimable.deadline && Date.parse(claimable.deadline) < Date.now()) {
+    return { error: 'Cannot publish an opportunity with an expired deadline.' };
+  }
+
+  const { data: sourceLink, error: linkError } = await db
+    .from('claim_sources')
+    .select('source_document_id')
+    .eq('claimable_id', claimableId)
+    .eq('is_primary', true)
+    .limit(1)
+    .maybeSingle();
+  if (linkError || !sourceLink) {
+    return { error: 'Publication requires a linked primary official-source document.' };
+  }
+
+  const { data: latestLegalReview, error: legalError } = await db
+    .from('legal_reviews')
+    .select('decision, reviewed_at')
+    .eq('claimable_id', claimableId)
+    .order('reviewed_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (legalError || latestLegalReview?.decision !== 'clear_to_publish') {
+    return { error: 'A current legal review clearing this claimable is required before publication.' };
   }
 
   const now = new Date().toISOString();
