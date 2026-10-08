@@ -48,11 +48,7 @@ const crawlTimeoutMs = readPositiveMs('RAILWAY_SOAK_CRAWL_TIMEOUT_MS', DEFAULT_C
 // Four six-hour cron ticks per UTC day. Reserve headroom against OpenRouter's
 // 50/day free-account allowance. No paid provider may ever be used.
 const freeBacklogLimitRaw = Number(process.env.FREE_AI_BACKLOG_LIMIT ?? '0');
-if (
-  !Number.isInteger(freeBacklogLimitRaw) ||
-  freeBacklogLimitRaw < 0 ||
-  freeBacklogLimitRaw > 2
-) {
+if (!Number.isInteger(freeBacklogLimitRaw) || freeBacklogLimitRaw < 0 || freeBacklogLimitRaw > 2) {
   throw new Error('FREE_AI_BACKLOG_LIMIT must be an integer from 0 to 2');
 }
 const freeBacklogLimit = freeBacklogLimitRaw;
@@ -69,7 +65,6 @@ if (freeBacklogLimit > 0) {
     throw new Error('FREE_ONLY_GUARD: per-cron AI budget must be between 3 and 8');
   }
 }
-
 
 run(
   'staging preflight',
