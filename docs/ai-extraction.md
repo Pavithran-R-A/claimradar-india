@@ -22,7 +22,7 @@ Set the following environment variables:
 # Use OpenRouter
 AI_PROVIDER=openrouter
 OPENROUTER_API_KEY=sk-or-...
-OPENROUTER_MODEL=meta-llama/llama-3.1-70b-instruct   # optional
+OPENROUTER_MODEL=openrouter/free   # optional; zero-cost router, structured-output capable endpoints only
 
 # Use NVIDIA NIM
 AI_PROVIDER=nvidia

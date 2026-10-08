@@ -11,7 +11,7 @@ export const crawlerEnvSchema = z.object({
   CRAWLER_CONTACT_EMAIL: z.string().email().optional(),
   AI_PROVIDER: z.enum(['openrouter', 'nvidia', 'none']).default('none'),
   OPENROUTER_API_KEY: z.string().optional(),
-  OPENROUTER_MODEL: z.string().default('meta-llama/llama-3.1-70b-instruct'),
+  OPENROUTER_MODEL: z.string().default('openrouter/free'),
   NVIDIA_API_KEY: z.string().optional(),
   NVIDIA_BASE_URL: z.string().url().optional(),
   NVIDIA_MODEL: z.string().default('meta/llama-3.1-70b-instruct'),
