@@ -7,7 +7,7 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
   const radarSource = fs.readFileSync(radarPath, 'utf8');
 
   it('A. EvidenceRadarVisual explicitly paints its atmosphere without black SVG defaults', () => {
-    const atmosphere = radarSource.match(/<g data-ui="radar-atmosphere">([\\s\\S]*?)<\\/g>/)?.[1];
+    const atmosphere = radarSource.split('data-ui="radar-atmosphere">')[1]?.split('</g>')[0];
     expect(atmosphere).toBeDefined();
     expect(atmosphere).toContain('fill="#FCFEFF"');
     expect(atmosphere).toContain('stroke="#8DB4D1"');
