@@ -4,6 +4,7 @@
 > application flags for external sends, billing and auto-publication remain off.
 
 ## Domain and DNS
+
 - Canonical domain: `https://claimkhoj.app`; Vercel domains are already verified.
 - Resend sending domain `claimkhoj.app` verified (DKIM, SPF, custom return-path).
 - Keep `www.claimkhoj.app` redirecting to the apex.
@@ -14,6 +15,7 @@
 ## Supabase Auth (hosted dashboard action still required)
 
 Auth → URL Configuration:
+
 - Site URL: `https://claimkhoj.app`
 - Exact allowed callback: `https://claimkhoj.app/auth/callback`
 - The application also uses `next=/onboarding` and `next=/reset-password` query parameters.
@@ -21,6 +23,7 @@ Auth → URL Configuration:
 - Do not allow wildcards for unrelated external hosts.
 
 Auth → SMTP Settings:
+
 - Enable custom SMTP.
 - SMTP Host: `smtp.resend.com`; Port: `465` (SSL/TLS).
 - Username: `resend`; Password: domain-limited Resend sending-only API key
@@ -35,6 +38,7 @@ Auth → SMTP Settings:
   including expiry and already-used links, before approving launch.
 
 ## Claim notifications
+
 - Resend templates: `claimkhoj_verified_opportunity`,
   `claimkhoj_deadline_reminder`, `claimkhoj_weekly_digest`.
 - The application supports dispatching published new matches after an
@@ -50,6 +54,7 @@ Auth → SMTP Settings:
 - Billing and automatic publication remain disabled.
 
 ## Security & product readiness
+
 - Supabase Security Advisor warnings: authenticated SECURITY DEFINER onboarding
   function and leaked-password protection. Review compensating controls,
   permissions and plan limits, do not silently dismiss the findings.
