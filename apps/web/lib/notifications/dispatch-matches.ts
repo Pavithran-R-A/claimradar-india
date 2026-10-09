@@ -16,7 +16,9 @@ export function isRealAlertDeliveryConfigured(env: NodeJS.ProcessEnv = process.e
     env.NOTIFY_CUSTOMERS_ENABLED === 'true' &&
     env.EMAIL_PROVIDER === 'resend' &&
     Boolean(env.RESEND_API_KEY) &&
-    Boolean(env.UNSUBSCRIBE_SECRET)
+    Boolean(env.UNSUBSCRIBE_SECRET) &&
+    // Never send production links while the deployment still advertises staging.
+    env.NEXT_PUBLIC_SITE_URL === 'https://claimkhoj.app'
   );
 }
 
