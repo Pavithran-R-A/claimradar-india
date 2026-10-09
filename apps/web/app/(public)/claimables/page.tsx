@@ -17,6 +17,8 @@ import {
 import { MobileFilterDrawer } from '@/components/directory/mobile-filter-drawer';
 import { Pagination } from '@/components/directory/pagination';
 import { JsonLd } from '@/components/seo/json-ld';
+import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { sortClaimablesByPreference, type ClaimPreference } from '@/lib/claimable-preferences';
 import {
   DataUnavailableNotice,
   DemoDataBanner,
@@ -43,7 +45,7 @@ interface ClaimablesPageProps {
   }>;
 }
 
-function sortClaimables(items: PublishedClaimable[], sort: string): PublishedClaimable[] {
+function sortClaimables(items: PublishedClaimable[], sort: string, prefs: ClaimPreference): PublishedClaimable[] {
   const list = [...items];
   if (sort === 'deadline') {
     list.sort((a, b) => {
@@ -55,9 +57,31 @@ function sortClaimables(items: PublishedClaimable[], sort: string): PublishedCla
   } else if (sort === 'title') {
     list.sort((a, b) => a.title.localeCompare(b.title));
   } else {
-    list.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+    return sortClaimablesByPreference(list, prefs);
   }
   return list;
+}
+
+/** Viewer preferences are optional ranking hints, never access controls or filters. */
+async function getViewerPreferences(): Promise<ClaimPreference> {
+  const empty: ClaimPreference = { companies: [], sectors: [] };
+  try {
+    const supabase = await getSupabaseServerClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) return empty;
+    const { data, error } = await supabase
+      .from('user_onboarding_responses')
+      .select('companies_used, sectors_used')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (error || !data) return empty;
+    return {
+      companies: Array.isArray(data.companies_used) ? data.companies_used : [],
+      sectors: Array.isArray(data.sectors_used) ? data.sectors_used : [],
+    };
+  } catch {
+    return empty; // Public directory remains available even if personalization fails.
+  }
 }
 
 export default async function ClaimablesPage({ searchParams }: ClaimablesPageProps) {
@@ -74,6 +98,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
     getPublishedClaimables({ limit: 500 }),
     getPublishedSectors(),
   ]);
+  const viewerPreferences = await getViewerPreferences();
   const sectors = sectorsOutcome.ok ? sectorsOutcome.data : [];
   const activeCount = [params.search, params.status, params.sector].filter(Boolean).length;
 
@@ -141,6 +166,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
                     params={params}
                     page={page}
                     demo={allOutcome.demo}
+                    preferences={viewerPreferences}
                   />
                 </>
               )}
@@ -157,18 +183,20 @@ function DirectoryResults({
   params,
   page,
   demo,
+  preferences,
 }: {
   items: PublishedClaimable[];
   params: DirectoryParams;
   page: number;
   demo: boolean;
+  preferences: ClaimPreference;
 }) {
   const filtered = applyClaimableFilters(items, {
     search: params.search,
     status: params.status,
     sectorSlug: params.sector,
   });
-  const sorted = sortClaimables(filtered, params.sort ?? 'newest');
+  const sorted = sortClaimables(filtered, params.sort ?? 'newest', preferences);
   const pageData = paginateClaimables(sorted, page, PAGE_SIZE);
 
   if (filtered.length === 0) {
