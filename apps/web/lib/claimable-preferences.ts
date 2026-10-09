@@ -1,29 +1,30 @@
 /**
- * Personalization may change presentation order, never directory membership.
- * Only exact case-insensitive company/sector names contribute to ranking.
+ * Personalization changes presentation order only, never directory membership.
  */
 export interface ClaimPreference {
   companies: readonly string[];
   sectors: readonly string[];
 }
 
-export function sortClaimablesByPreference<
-  T extends {
-    companyName: string;
-    sector: string;
-    publishedAt: string;
-  },
->(items: readonly T[], preferences: ClaimPreference): T[] {
-  const companies = new Set(
-    preferences.companies.map((v) => v.trim().toLocaleLowerCase('en-IN')),
-  );
-  const sectors = new Set(
-    preferences.sectors.map((v) => v.trim().toLocaleLowerCase('en-IN')),
-  );
-  const rank = (item: T) =>
-    (companies.has(item.companyName.trim().toLocaleLowerCase('en-IN')) ? 2 : 0) +
-    (sectors.has(item.sector.trim().toLocaleLowerCase('en-IN')) ? 1 : 0);
-  return [...items].sort(
-    (a, b) => rank(b) - rank(a) || Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
-  );
+interface RankedClaim {
+  companyName: string;
+  sector: string;
+  publishedAt: string;
+}
+
+export function sortClaimablesByPreference<T extends RankedClaim>(
+  items: readonly T[],
+  preferences: ClaimPreference,
+): T[] {
+  const normalize = (value: string) => value.trim().toLowerCase();
+  const companies = new Set(preferences.companies.map(normalize));
+  const sectors = new Set(preferences.sectors.map(normalize));
+  const rank = (item: T): number =>
+    Number(companies.has(normalize(item.companyName))) * 2 +
+    Number(sectors.has(normalize(item.sector)));
+  return [...items].sort((a, b) => {
+    const priority = rank(b) - rank(a);
+    if (priority !== 0) return priority;
+    return Date.parse(b.publishedAt) - Date.parse(a.publishedAt);
+  });
 }
