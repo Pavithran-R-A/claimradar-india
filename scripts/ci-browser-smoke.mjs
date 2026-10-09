@@ -14,10 +14,18 @@ const routes = [
   '/sources',
   '/login',
   '/register',
+  '/pricing',
 ];
 const viewports = [
-  { name: 'desktop', width: 1440, height: 900 },
+  { name: 'small-mobile', width: 360, height: 800 },
   { name: 'mobile', width: 390, height: 844 },
+  { name: 'large-mobile', width: 414, height: 896 },
+  { name: 'tablet', width: 768, height: 1024 },
+  { name: 'tablet-landscape', width: 1024, height: 768 },
+  { name: 'compact-laptop', width: 1280, height: 720 },
+  { name: 'laptop-1366', width: 1366, height: 768 },
+  { name: 'laptop-1536', width: 1536, height: 864 },
+  { name: 'desktop', width: 1920, height: 1080 },
 ];
 
 async function waitForServer(url) {
@@ -73,6 +81,12 @@ try {
       }
       if (state.overflow) failures.push(`${viewport.name} ${route}: horizontal overflow`);
       if (state.errorPage) failures.push(`${viewport.name} ${route}: error page text`);
+      if (route === '/pricing') {
+        const content = await page.locator('body').innerText();
+        if (/mock preview|next_public_enable_billing|upgrade to plus|₹149\/mo/i.test(content)) {
+          failures.push(`${viewport.name} ${route}: unavailable billing plan advertised`);
+        }
+      }
     }
 
     if (consoleErrors.length > 0) {
@@ -90,7 +104,7 @@ try {
     failures.forEach((failure) => console.error(`- ${failure}`));
     process.exitCode = 1;
   } else {
-    console.log(`Browser smoke passed: ${routes.length} routes across two viewports.`);
+    console.log(`Browser smoke passed: ${routes.length} routes across ${viewports.length} viewports.`);
   }
 } finally {
   server.kill();
