@@ -376,6 +376,7 @@ async function main() {
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
       const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
+      const { shouldHaltFreeBacklog } = await import('./ai/free-backlog-policy.js');
 
       const rqProvider = rqCreateRouter({
         AI_PROVIDER: rqEnv.AI_PROVIDER,
@@ -483,14 +484,15 @@ async function main() {
               structured_output: null,
             });
             failed++;
-            if (
-              ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(result.errorCategory)
-            ) {
+            if (shouldHaltFreeBacklog(result.errorCategory)) {
               console.error(
-                'Transient free-model failure; stopping this batch without paid fallback.',
+                'Free-account limit, authentication or provider availability blocks this batch; halting without paid fallback.',
               );
               break;
             }
+            console.warn(
+              `Free-only extraction ${result.errorCategory}; moving to next queued candidate within the hard batch limit.`,
+            );
             continue;
           }
 
