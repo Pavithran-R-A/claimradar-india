@@ -9,7 +9,10 @@ const items = [
 
 describe('personalized public directory ordering', () => {
   it('prioritizes preferred companies and sectors without hiding any published record', () => {
-    const ordered = sortClaimablesByPreference(items, { companies: ['airtel'], sectors: ['banking'] });
+    const ordered = sortClaimablesByPreference(items, {
+      companies: ['airtel'],
+      sectors: ['banking'],
+    });
     expect(ordered).toHaveLength(items.length);
     expect(ordered.map((x) => x.companyName)).toEqual(['Airtel', 'SBI', 'Other']);
     expect(ordered).toEqual(expect.arrayContaining(items));
