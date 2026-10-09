@@ -35,7 +35,7 @@ function PlanCard({ plan, enabled }: { plan: BillingPlan; enabled: boolean }) {
       <div className="mt-auto">
         <Button variant={plan.tier === 'free' ? 'outline' : 'default'} disabled className="w-full">
           <Lock className="mr-2 h-4 w-4" aria-hidden />
-          {enabled ? 'Checkout coming soon' : 'Billing not enabled'}
+          {plan.tier === 'free' ? 'Current free plan' : enabled ? 'Checkout coming soon' : 'Not available'}
         </Button>
       </div>
     </Card>
@@ -65,7 +65,7 @@ export default async function BillingPage() {
           <EmptyState
             icon={<Lock className="h-8 w-8" aria-hidden />}
             title="Billing is not enabled"
-            description="Paid plans are switched off for now (NEXT_PUBLIC_ENABLE_BILLING is false). Everything you use today is free, and no payment details are ever collected."
+            description="ClaimKhoj is currently free. No payment details are requested or collected. Paid subscriptions are not available."
           />
         </Card>
       ) : (
@@ -75,8 +75,8 @@ export default async function BillingPage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {plans.map((plan) => (
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        {plans.filter((plan) => billingEnabled || plan.tier === 'free').map((plan) => (
           <PlanCard key={plan.id} plan={plan} enabled={billingEnabled} />
         ))}
       </div>
