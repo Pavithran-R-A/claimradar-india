@@ -115,7 +115,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Stat tiles */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stats.map((stat) => (
           <Link
             key={stat.label}
@@ -227,7 +227,7 @@ export default async function DashboardPage() {
               className="py-8"
               icon={<Building2 className="h-8 w-8" aria-hidden />}
               title="Nothing watched yet"
-              description="Watch companies and sectors you have bought from and we will surface anything new involving them."
+              description="Your matching preferences are saved. A watchlist is separate: follow specific companies or sectors here to track their updates."
             />
           ) : (
             <div className="space-y-4">

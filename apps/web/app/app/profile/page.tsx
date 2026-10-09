@@ -28,7 +28,7 @@ export default async function ProfilePage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {/* Account */}
         <Card>
           <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-text-primary">
@@ -38,11 +38,15 @@ export default async function ProfilePage() {
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-text-muted">Email</dt>
-              <dd className="truncate font-medium text-text-primary">{user.email ?? '—'}</dd>
+              <dd className="min-w-0 break-all text-right font-medium text-text-primary">
+                {user.email ?? '—'}
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-text-muted">Display name</dt>
-              <dd className="font-medium text-text-primary">{profile.display_name ?? 'Not set'}</dd>
+              <dd className="min-w-0 break-words text-right font-medium text-text-primary">
+                {profile.display_name ?? 'Not set'}
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-text-muted">Email verified</dt>

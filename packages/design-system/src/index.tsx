@@ -198,7 +198,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-md border transition-all duration-fast',
+          'rounded-lg border p-5 transition-all duration-fast',
           variant === 'default' && 'bg-surface border-border shadow-card',
           variant === 'elevated' && 'bg-surface border-border shadow-lift',
           variant === 'sunken' && 'bg-background-elevated border-border/60 shadow-none',
@@ -502,7 +502,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-xl border border-border bg-surface p-8 sm:p-12 text-center shadow-sm',
+        'flex flex-col items-center justify-center rounded-lg p-5 text-center sm:p-7',
         className,
       )}
       {...props}
