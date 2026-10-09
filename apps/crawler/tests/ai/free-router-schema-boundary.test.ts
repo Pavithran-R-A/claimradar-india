@@ -37,25 +37,26 @@ describe('free router schema boundary', () => {
   });
 
   it('accepts an evidence-faithful null currency while still rejecting invented amounts', async () => {
-    const mockFetch = vi.fn(async () =>
-      new Response(
-        JSON.stringify({
-          choices: [
-            {
-              message: {
-                content: JSON.stringify({
-                  is_relevant: false,
-                  official_amount: null,
-                  amount_currency: null,
-                  confidence: 0.6,
-                  evidence: [],
-                }),
+    const mockFetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    is_relevant: false,
+                    official_amount: null,
+                    amount_currency: null,
+                    confidence: 0.6,
+                    evidence: [],
+                  }),
+                },
               },
-            },
-          ],
-        }),
-        { status: 200 },
-      ),
+            ],
+          }),
+          { status: 200 },
+        ),
     );
     vi.stubGlobal('fetch', mockFetch);
     const provider = new OpenRouterProvider('dummy-token', 'openrouter/free');

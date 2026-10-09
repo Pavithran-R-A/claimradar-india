@@ -101,10 +101,7 @@ describe('ClaimKhoj real-email production gates', () => {
       link: '/\\\\evil.example/steal',
     });
     expect(result.ok).toBe(true);
-    const [, request] = mockedFetch.mock.calls[0] as [
-      string,
-      { body: string },
-    ];
+    const [, request] = mockedFetch.mock.calls[0] as [string, { body: string }];
     const payload = JSON.parse(request.body);
     expect(payload).not.toHaveProperty('template');
     expect(payload.text).toBe('Review the verified source.');
