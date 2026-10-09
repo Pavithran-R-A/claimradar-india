@@ -4,20 +4,12 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { safeNextPath } from '@/lib/app-auth';
-import { brandConfig } from '@claimradar/config';
+import { buildAuthCallbackUrl } from '@/lib/auth-redirect';
 
 const credentialsSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().min(1, 'Password is required.'),
 });
-
-/** The customer-facing origin must never default to localhost on hosted deployments. */
-function authCallbackUrl(next: '/onboarding' | '/reset-password'): string {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? brandConfig.url;
-  const url = new URL('/auth/callback', base);
-  url.searchParams.set('next', next);
-  return url.toString();
-}
 
 const emailSchema = z.object({
   email: z.string().trim().email('Enter a valid email address.'),
@@ -63,7 +55,7 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: authCallbackUrl('/onboarding'),
+      emailRedirectTo: buildAuthCallbackUrl('/onboarding'),
     },
   });
 
@@ -91,7 +83,7 @@ export async function resetPassword(formData: FormData) {
 
   const supabase = await getSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: authCallbackUrl('/reset-password'),
+    redirectTo: buildAuthCallbackUrl('/reset-password'),
   });
 
   if (error) {
@@ -147,7 +139,7 @@ export async function resendVerification(formData: FormData) {
     type: 'signup',
     email: parsed.data.email,
     options: {
-      emailRedirectTo: authCallbackUrl('/onboarding'),
+      emailRedirectTo: buildAuthCallbackUrl('/onboarding'),
     },
   });
 
