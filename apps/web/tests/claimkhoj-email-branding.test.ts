@@ -26,7 +26,7 @@ describe('ClaimKhoj branded authentication emails', () => {
       expect(template).toContain('role="presentation"');
       expect(template).toContain('href="{{ .ConfirmationURL }}"');
       expect(template).toContain('{{ .ConfirmationURL }}');
-      expect(template).toContain('ClaimKhoj never asks');
+      expect(template).toMatch(/ClaimKhoj\s+never\s+asks/);
       expect(template).not.toContain('claimradar-staging.vercel.app');
       expect(template).not.toContain('http://');
       expect(template).not.toContain('<script');
