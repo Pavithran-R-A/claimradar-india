@@ -18,7 +18,10 @@ import { MobileFilterDrawer } from '@/components/directory/mobile-filter-drawer'
 import { Pagination } from '@/components/directory/pagination';
 import { JsonLd } from '@/components/seo/json-ld';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
-import { sortClaimablesByPreference, type ClaimPreference } from '@/lib/claimable-preferences';
+import {
+  sortClaimablesByPreference,
+  type ClaimPreference,
+} from '@/lib/claimable-preferences';
 import {
   DataUnavailableNotice,
   DemoDataBanner,
@@ -45,7 +48,11 @@ interface ClaimablesPageProps {
   }>;
 }
 
-function sortClaimables(items: PublishedClaimable[], sort: string, prefs: ClaimPreference): PublishedClaimable[] {
+function sortClaimables(
+  items: PublishedClaimable[],
+  sort: string,
+  prefs: ClaimPreference,
+): PublishedClaimable[] {
   const list = [...items];
   if (sort === 'deadline') {
     list.sort((a, b) => {
@@ -67,7 +74,10 @@ async function getViewerPreferences(): Promise<ClaimPreference> {
   const empty: ClaimPreference = { companies: [], sectors: [] };
   try {
     const supabase = await getSupabaseServerClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) return empty;
     const { data, error } = await supabase
       .from('user_onboarding_responses')
