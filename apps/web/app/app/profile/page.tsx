@@ -28,7 +28,7 @@ export default async function ProfilePage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 gap-4 2xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {/* Account */}
         <Card>
           <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-text-primary">
