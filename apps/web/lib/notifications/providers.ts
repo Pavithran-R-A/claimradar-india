@@ -83,10 +83,15 @@ export class ResendEmailProvider implements NotificationProvider {
         ? createHash('sha256').update(`${message.userId}:${message.dedupKey}:email`).digest('hex')
         : null;
       const base = this.options.siteUrl ?? 'https://claimkhoj.app';
-      const safeLink =
-        message.link?.startsWith('/') && !message.link.startsWith('//')
-          ? new URL(message.link, base).toString()
+      // WHATWG URLs treat backslashes as slashes. Reject any link that
+      // resolves outside the configured first-party origin.
+      const requestedLink = message.link;
+      const resolvedLink =
+        requestedLink?.startsWith('/') && !requestedLink.startsWith('//')
+          ? new URL(requestedLink, base)
           : null;
+      const safeLink =
+        resolvedLink?.origin === new URL(base).origin ? resolvedLink.toString() : null;
       const template =
         message.type === 'new_match' && safeLink
           ? {

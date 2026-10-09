@@ -36,6 +36,36 @@ describe('free router schema boundary', () => {
     expect(outcome.extraction?.procedural_status).toBeNull();
   });
 
+  it('accepts an evidence-faithful null currency while still rejecting invented amounts', async () => {
+    const mockFetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    is_relevant: false,
+                    official_amount: null,
+                    amount_currency: null,
+                    confidence: 0.6,
+                    evidence: [],
+                  }),
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+    );
+    vi.stubGlobal('fetch', mockFetch);
+    const provider = new OpenRouterProvider('dummy-token', 'openrouter/free');
+    const outcome = await provider.extract('document without a currency', 'strict prompt');
+    expect(outcome.errorCategory).toBe('none');
+    expect(outcome.extraction?.official_amount).toBeNull();
+    expect(outcome.extraction?.amount_currency).toBeNull();
+  });
+
   it('still rejects malformed material fields instead of claiming extraction passed', async () => {
     vi.stubGlobal(
       'fetch',

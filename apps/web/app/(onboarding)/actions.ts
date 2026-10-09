@@ -58,7 +58,7 @@ export async function completeOnboarding(formData: FormData): Promise<Onboarding
 
   const emailEnabled = input.notificationPreference === 'email';
   const browserEnabled = input.notificationPreference === 'in_app';
-  await supabase.from('notification_preferences').upsert(
+  const { error: preferencesError } = await supabase.from('notification_preferences').upsert(
     {
       user_id: user.id,
       email_enabled: emailEnabled,
@@ -68,14 +68,26 @@ export async function completeOnboarding(formData: FormData): Promise<Onboarding
     },
     { onConflict: 'user_id' },
   );
+  if (preferencesError) {
+    console.error('[onboarding] notification preferences could not be persisted', {
+      code: preferencesError.code,
+    });
+    return { ok: false, error: 'Could not save notification preferences. Please retry.' };
+  }
 
   // Immutable consent audit trail for processing onboarding data.
-  await supabase.from('consent_events').insert({
+  const { error: consentError } = await supabase.from('consent_events').insert({
     user_id: user.id,
     consent_type: 'onboarding_data_processing',
     granted: true,
     details: { source: 'onboarding_flow' },
   });
+  if (consentError) {
+    console.error('[onboarding] consent audit could not be persisted', {
+      code: consentError.code,
+    });
+    return { ok: false, error: 'Could not record setup consent. Please retry.' };
+  }
 
   // The self-scoped SECURITY DEFINER function enforces authenticated ownership,
   // verified email and saved answers, without depending on a web service-role key.

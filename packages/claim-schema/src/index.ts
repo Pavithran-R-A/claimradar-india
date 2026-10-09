@@ -29,7 +29,9 @@ export const extractionSchema = z.object({
   relief_type: z.string().nullable().optional(),
   relief_description: z.string().nullable().optional(),
   official_amount: z.number().nullable().optional(),
-  amount_currency: z.string().default('INR'),
+  // Missing currencies must remain unknown — inventing INR violates evidence-first extraction.
+  // Free JSON models correctly return null for fields absent from the source.
+  amount_currency: z.string().nullable().optional(),
   proof_requirements: z.array(z.string()).nullable().optional(),
   action_required: z.string().nullable().optional(),
   official_claim_url: z.string().nullable().optional(),
