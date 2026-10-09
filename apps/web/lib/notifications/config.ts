@@ -17,9 +17,11 @@ export interface NotificationConfig {
   emailFrom: string;
   siteUrl: string | null;
   unsubscribeSecret: string | null;
+  /** Explicit production release switch; defaults to OFF in actual environment. */
+  externalDeliveryEnabled?: boolean;
 }
 
-export const DEFAULT_EMAIL_FROM = 'notifications@claimradar.in';
+export const DEFAULT_EMAIL_FROM = 'ClaimKhoj <alerts@claimkhoj.app>';
 
 /** Unknown EMAIL_PROVIDER values fall back to the safe console provider. */
 function parseEmailProviderKind(raw: string | undefined): EmailProviderKind {
@@ -37,5 +39,6 @@ export function notificationConfigFromEnv(
     emailFrom: env.EMAIL_FROM ?? DEFAULT_EMAIL_FROM,
     siteUrl: env.NEXT_PUBLIC_SITE_URL ?? null,
     unsubscribeSecret: env.UNSUBSCRIBE_SECRET ?? null,
+    externalDeliveryEnabled: env.NOTIFY_CUSTOMERS_ENABLED === 'true',
   };
 }
