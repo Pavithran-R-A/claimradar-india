@@ -11,6 +11,7 @@
  * Provider selection is env-driven: EMAIL_PROVIDER=console is the default.
  */
 
+import { createHash } from 'node:crypto';
 import type { NotificationChannel, ProviderSendResult, RenderedMessage } from './types';
 import type { NotificationConfig } from './config';
 import { isProductionEmailAllowed } from './safety';
@@ -37,7 +38,7 @@ export class ConsoleEmailProvider implements NotificationProvider {
   readonly channel = 'email' as const;
   readonly sendsExternally = false;
 
-  constructor(private readonly from: string = 'notifications@claimradar.in') {}
+  constructor(private readonly from: string = 'ClaimKhoj <alerts@claimkhoj.app>') {}
 
   async send(message: RenderedMessage): Promise<ProviderSendResult> {
     const lines = [
@@ -65,7 +66,9 @@ export class ResendEmailProvider implements NotificationProvider {
   readonly channel = 'email' as const;
   readonly sendsExternally = true;
 
-  constructor(private readonly options: { apiKey: string; from: string }) {}
+  constructor(
+    private readonly options: { apiKey: string; from: string; siteUrl?: string | null },
+  ) {}
 
   async send(message: RenderedMessage): Promise<ProviderSendResult> {
     if (!message.toEmail) {
@@ -75,17 +78,39 @@ export class ResendEmailProvider implements NotificationProvider {
       const body = message.unsubscribeUrl
         ? `${message.body}\n\n---\nUnsubscribe: ${message.unsubscribeUrl}`
         : message.body;
+      // A deterministic key prevents duplicate delivery after transient retries.
+      const idempotencyKey = message.dedupKey
+        ? createHash('sha256').update(`${message.userId}:${message.dedupKey}:email`).digest('hex')
+        : null;
+      const base = this.options.siteUrl ?? 'https://claimkhoj.app';
+      const safeLink =
+        message.link?.startsWith('/') && !message.link.startsWith('//')
+          ? new URL(message.link, base).toString()
+          : null;
+      const template =
+        message.type === 'new_match' && safeLink
+          ? {
+              id: 'claimkhoj_verified_opportunity',
+              variables: {
+                CLAIM_TITLE: message.subject,
+                ISSUING_AUTHORITY: 'Official-source listing',
+                CLAIM_URL: safeLink,
+                PREFERENCES_URL: message.unsubscribeUrl ?? `${base}/app/settings`,
+              },
+            }
+          : null;
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${this.options.apiKey}`,
           'Content-Type': 'application/json',
+          ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
         },
         body: JSON.stringify({
           from: this.options.from,
           to: [message.toEmail],
           subject: message.subject,
-          text: body,
+          ...(template ? { template } : { subject: message.subject, text: body }),
         }),
       });
       if (!response.ok) {
@@ -114,9 +139,14 @@ export function selectEmailProvider(config: NotificationConfig): NotificationPro
   if (
     config.emailProvider === 'resend' &&
     config.resendApiKey &&
-    isProductionEmailAllowed(config.appEnv)
+    isProductionEmailAllowed(config.appEnv) &&
+    config.externalDeliveryEnabled !== false
   ) {
-    return new ResendEmailProvider({ apiKey: config.resendApiKey, from: config.emailFrom });
+    return new ResendEmailProvider({
+      apiKey: config.resendApiKey,
+      from: config.emailFrom,
+      siteUrl: config.siteUrl,
+    });
   }
   return new ConsoleEmailProvider(config.emailFrom);
 }
