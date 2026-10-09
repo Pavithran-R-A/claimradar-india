@@ -71,7 +71,7 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-background-elevated lg:flex">
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-border bg-background-elevated lg:flex xl:w-60 2xl:w-64">
         <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
           <BrandMark size={28} variant="default" animated={false} />
           <div className="leading-tight">
@@ -90,7 +90,7 @@ export function AppSidebar({ siteName, unreadNotifications }: AppSidebarProps) {
       {/* Mobile horizontal nav */}
       <nav
         aria-label="Product navigation"
-        className="sticky top-0 z-20 flex min-w-0 max-w-full gap-1 overflow-x-auto border-b border-border bg-background-elevated px-3 py-2 lg:hidden"
+        className="sticky top-0 z-20 flex min-w-0 max-w-full gap-1 overflow-x-auto overscroll-x-contain border-b border-border bg-background-elevated px-3 py-2 lg:hidden"
       >
         {NAV_ITEMS.map((item) => {
           const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
