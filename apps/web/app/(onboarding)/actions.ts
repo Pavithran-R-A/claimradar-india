@@ -3,7 +3,6 @@
 import { redirect } from 'next/navigation';
 import { getUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
-import { getAdminDb } from '@/lib/admin-db';
 import { runMatchingForUser } from '@/lib/matching-runner';
 import { onboardingSchema } from '@/lib/schemas';
 
@@ -78,13 +77,13 @@ export async function completeOnboarding(formData: FormData): Promise<Onboarding
     details: { source: 'onboarding_flow' },
   });
 
-  // Hardened profile RLS intentionally blocks authenticated role-state writes.
-  // This server-side completion write uses the trusted admin path instead.
-  const { error: profileError } = await getAdminDb()
-    .from('profiles')
-    .update({ onboarding_completed: true })
-    .eq('id', user.id);
-  if (profileError) {
+  // The self-scoped SECURITY DEFINER function enforces authenticated ownership,
+  // verified email and saved answers, without depending on a web service-role key.
+  const { data: completed, error: profileError } = await supabase.rpc('complete_my_onboarding');
+  if (profileError || completed !== true) {
+    console.error('[onboarding] secure completion failed', {
+      code: profileError?.code ?? 'precondition_failed',
+    });
     return { ok: false, error: 'Could not finish setup. Please try again.' };
   }
 

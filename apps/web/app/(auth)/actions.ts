@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { safeNextPath } from '@/lib/app-auth';
+import { buildAuthCallbackUrl } from '@/lib/auth-redirect';
 
 const credentialsSchema = z.object({
   email: z.string().trim().email(),
@@ -54,7 +55,7 @@ export async function signUp(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/onboarding`,
+      emailRedirectTo: buildAuthCallbackUrl('/onboarding'),
     },
   });
 
@@ -82,7 +83,7 @@ export async function resetPassword(formData: FormData) {
 
   const supabase = await getSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/reset-password`,
+    redirectTo: buildAuthCallbackUrl('/reset-password'),
   });
 
   if (error) {
@@ -138,7 +139,7 @@ export async function resendVerification(formData: FormData) {
     type: 'signup',
     email: parsed.data.email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/callback?next=/onboarding`,
+      emailRedirectTo: buildAuthCallbackUrl('/onboarding'),
     },
   });
 
