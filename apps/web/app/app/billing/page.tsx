@@ -35,7 +35,11 @@ function PlanCard({ plan, enabled }: { plan: BillingPlan; enabled: boolean }) {
       <div className="mt-auto">
         <Button variant={plan.tier === 'free' ? 'outline' : 'default'} disabled className="w-full">
           <Lock className="mr-2 h-4 w-4" aria-hidden />
-          {plan.tier === 'free' ? 'Current free plan' : enabled ? 'Checkout coming soon' : 'Not available'}
+          {plan.tier === 'free'
+            ? 'Current free plan'
+            : enabled
+              ? 'Checkout coming soon'
+              : 'Not available'}
         </Button>
       </div>
     </Card>
@@ -76,9 +80,11 @@ export default async function BillingPage() {
       )}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {plans.filter((plan) => billingEnabled || plan.tier === 'free').map((plan) => (
-          <PlanCard key={plan.id} plan={plan} enabled={billingEnabled} />
-        ))}
+        {plans
+          .filter((plan) => billingEnabled || plan.tier === 'free')
+          .map((plan) => (
+            <PlanCard key={plan.id} plan={plan} enabled={billingEnabled} />
+          ))}
       </div>
 
       <p className="text-xs text-text-muted">

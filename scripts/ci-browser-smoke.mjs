@@ -104,7 +104,9 @@ try {
     failures.forEach((failure) => console.error(`- ${failure}`));
     process.exitCode = 1;
   } else {
-    console.log(`Browser smoke passed: ${routes.length} routes across ${viewports.length} viewports.`);
+    console.log(
+      `Browser smoke passed: ${routes.length} routes across ${viewports.length} viewports.`,
+    );
   }
 } finally {
   server.kill();

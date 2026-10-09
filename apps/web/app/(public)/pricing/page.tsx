@@ -20,7 +20,9 @@ export default function PricingPage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <header className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-bold uppercase tracking-wide text-trust-primary">Clear pricing</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-trust-primary">
+          Clear pricing
+        </p>
         <h1 className="mt-3 text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
           ClaimKhoj is free during beta
         </h1>
