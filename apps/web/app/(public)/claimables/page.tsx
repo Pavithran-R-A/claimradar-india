@@ -18,10 +18,7 @@ import { MobileFilterDrawer } from '@/components/directory/mobile-filter-drawer'
 import { Pagination } from '@/components/directory/pagination';
 import { JsonLd } from '@/components/seo/json-ld';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
-import {
-  sortClaimablesByPreference,
-  type ClaimPreference,
-} from '@/lib/claimable-preferences';
+import { sortClaimablesByPreference, type ClaimPreference } from '@/lib/claimable-preferences';
 import {
   DataUnavailableNotice,
   DemoDataBanner,
