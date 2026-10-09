@@ -79,7 +79,7 @@ export default async function BillingPage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      <div className="grid max-w-3xl grid-cols-1 gap-4">
         {plans
           .filter((plan) => billingEnabled || plan.tier === 'free')
           .map((plan) => (
