@@ -79,9 +79,7 @@ export async function completeOnboarding(formData: FormData): Promise<Onboarding
 
   // The self-scoped SECURITY DEFINER function enforces authenticated ownership,
   // verified email and saved answers, without depending on a web service-role key.
-  const { data: completed, error: profileError } = await supabase.rpc(
-    'complete_my_onboarding',
-  );
+  const { data: completed, error: profileError } = await supabase.rpc('complete_my_onboarding');
   if (profileError || completed !== true) {
     console.error('[onboarding] secure completion failed', {
       code: profileError?.code ?? 'precondition_failed',
