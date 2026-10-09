@@ -6,10 +6,10 @@ const read = (relativePath: string) =>
   fs.readFileSync(path.resolve(__dirname, relativePath), 'utf8');
 
 describe('ClaimKhoj customer-live release invariants', () => {
-  it('keeps the canonical Vercel origin as the default public identity', () => {
+  it('uses the verified ClaimKhoj domain as the default public identity', () => {
     const config = read('../../../packages/config/src/index.ts');
-    expect(config).toContain("'https://claimradar-staging.vercel.app'");
-    expect(config).not.toContain("'https://claimradar.in'");
+    expect(config).toContain("'https://claimkhoj.app'");
+    expect(config).not.toContain("'https://claimradar-staging.vercel.app'");
   });
 
   it('keeps the production sitemap dynamic and the preview crawl policy explicit', () => {
