@@ -45,13 +45,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppSidebar siteName={brandConfig.siteName} unreadNotifications={unreadNotifications} />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex min-h-16 items-center justify-between gap-4 border-b border-border bg-background-elevated px-4 py-3 sm:px-6">
-          <p className="truncate text-sm text-text-secondary">
+          <p className="min-w-0 truncate text-xs text-text-secondary sm:text-sm">
             Signed in as <span className="font-medium text-text-primary">{user.email}</span>
             {displayName ? <span className="text-text-muted"> · {displayName}</span> : null}
           </p>
           <SignOutButton />
         </header>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-5 xl:p-7">{children}</main>
       </div>
     </div>
   );
