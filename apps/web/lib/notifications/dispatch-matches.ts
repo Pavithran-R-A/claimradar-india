@@ -10,9 +10,7 @@ import { notificationConfigFromEnv } from '@/lib/notifications/config';
 import { SupabaseNotificationStore } from '@/lib/notifications/store';
 import { buildDedupKey } from '@/lib/notifications/safety';
 
-export function isRealAlertDeliveryConfigured(
-  env: NodeJS.ProcessEnv = process.env,
-): boolean {
+export function isRealAlertDeliveryConfigured(env: NodeJS.ProcessEnv = process.env): boolean {
   return (
     env.APP_ENV === 'production' &&
     env.NOTIFY_CUSTOMERS_ENABLED === 'true' &&
@@ -60,7 +58,10 @@ export async function deliverPendingMatchesForUser(
   const { data: candidates, error: claimablesError } = await db
     .from('claimables')
     .select('id, public_title, slug, publication_status')
-    .in('id', matches.map((row) => row.claimable_id))
+    .in(
+      'id',
+      matches.map((row) => row.claimable_id),
+    )
     .eq('publication_status', 'published');
   if (claimablesError) throw new Error('alert_claimables_load_failed');
 

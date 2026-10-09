@@ -19,9 +19,9 @@ describe('ClaimKhoj real-email production gates', () => {
 
   it('fails closed for staging, disabled delivery, missing key and missing opt-out signing', () => {
     expect(isRealAlertDeliveryConfigured({ ...baseEnv, APP_ENV: 'staging' })).toBe(false);
-    expect(
-      isRealAlertDeliveryConfigured({ ...baseEnv, NOTIFY_CUSTOMERS_ENABLED: 'false' }),
-    ).toBe(false);
+    expect(isRealAlertDeliveryConfigured({ ...baseEnv, NOTIFY_CUSTOMERS_ENABLED: 'false' })).toBe(
+      false,
+    );
     expect(isRealAlertDeliveryConfigured({ ...baseEnv, RESEND_API_KEY: '' })).toBe(false);
     expect(isRealAlertDeliveryConfigured({ ...baseEnv, UNSUBSCRIBE_SECRET: '' })).toBe(false);
     expect(isRealAlertDeliveryConfigured(baseEnv)).toBe(true);
@@ -70,9 +70,7 @@ describe('ClaimKhoj real-email production gates', () => {
     expect(body.template.variables.CLAIM_URL).toBe(
       'https://claimkhoj.app/claimables/verified-claim',
     );
-    expect(body.template.variables.PREFERENCES_URL).toBe(
-      'https://claimkhoj.app/app/settings',
-    );
+    expect(body.template.variables.PREFERENCES_URL).toBe('https://claimkhoj.app/app/settings');
     expect(body).not.toHaveProperty('html');
   });
 
