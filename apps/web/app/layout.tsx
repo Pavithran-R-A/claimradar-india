@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist } from 'next/font/google';
 import { Newsreader } from 'next/font/google';
 import { brandConfig } from '@claimradar/config';
@@ -27,12 +27,13 @@ export const metadata: Metadata = {
   applicationName: brandConfig.siteName,
   metadataBase: new URL(brandConfig.url),
   manifest: '/manifest.webmanifest',
-  themeColor: '#0D2148',
   icons: {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
     apple: [{ url: '/apple-icon.svg', type: 'image/svg+xml' }],
   },
 };
+
+export const viewport: Viewport = { themeColor: '#0D2148' };
 
 const siteIdentityJsonLd = [
   buildOrganizationJsonLd({
