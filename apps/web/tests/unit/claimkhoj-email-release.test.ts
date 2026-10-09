@@ -9,6 +9,7 @@ afterEach(() => {
 
 describe('ClaimKhoj real-email production gates', () => {
   const baseEnv = {
+    NODE_ENV: 'test' as const,
     APP_ENV: 'production',
     NOTIFY_CUSTOMERS_ENABLED: 'true',
     EMAIL_PROVIDER: 'resend',
