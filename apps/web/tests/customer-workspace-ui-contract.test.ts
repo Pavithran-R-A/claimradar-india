@@ -35,6 +35,6 @@ describe('Customer-facing UI release guardrails', () => {
   it('does not expose internal Next.js metadata deprecation warnings', () => {
     const layout = source('../app/layout.tsx');
     expect(layout).toContain('export const viewport: Viewport');
-    expect(layout).not.toMatch(/metadata:[\s\S]*themeColor:/);
+    expect(layout.split('export const viewport: Viewport')[0]).not.toContain('themeColor:');
   });
 });
