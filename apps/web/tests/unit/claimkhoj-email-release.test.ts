@@ -25,6 +25,12 @@ describe('ClaimKhoj real-email production gates', () => {
     );
     expect(isRealAlertDeliveryConfigured({ ...baseEnv, RESEND_API_KEY: '' })).toBe(false);
     expect(isRealAlertDeliveryConfigured({ ...baseEnv, UNSUBSCRIBE_SECRET: '' })).toBe(false);
+    expect(
+      isRealAlertDeliveryConfigured({
+        ...baseEnv,
+        NEXT_PUBLIC_SITE_URL: 'https://claimradar-staging.vercel.app',
+      }),
+    ).toBe(false);
     expect(isRealAlertDeliveryConfigured(baseEnv)).toBe(true);
   });
 
@@ -73,6 +79,35 @@ describe('ClaimKhoj real-email production gates', () => {
     );
     expect(body.template.variables.PREFERENCES_URL).toBe('https://claimkhoj.app/app/settings');
     expect(body).not.toHaveProperty('html');
+  });
+
+  it('does not place a cross-origin link in an official claim email template', async () => {
+    const mockedFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: 'email-124' }),
+    });
+    vi.stubGlobal('fetch', mockedFetch);
+    const provider = new ResendEmailProvider({
+      apiKey: 're_test_not_real',
+      from: 'ClaimKhoj <alerts@claimkhoj.app>',
+      siteUrl: 'https://claimkhoj.app',
+    });
+    const result = await provider.send({
+      userId: 'customer-1',
+      toEmail: 'example@example.com',
+      type: 'new_match',
+      subject: 'Potential match',
+      body: 'Review the verified source.',
+      link: '/\\\\evil.example/steal',
+    });
+    expect(result.ok).toBe(true);
+    const [, request] = mockedFetch.mock.calls[0] as [
+      string,
+      { body: string },
+    ];
+    const payload = JSON.parse(request.body);
+    expect(payload).not.toHaveProperty('template');
+    expect(payload.text).toBe('Review the verified source.');
   });
 
   it('rejects a network failure without fabricating delivery', async () => {
