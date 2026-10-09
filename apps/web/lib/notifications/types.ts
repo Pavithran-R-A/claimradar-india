@@ -126,6 +126,8 @@ export interface RenderedMessage {
   claimableId?: string | null;
   link?: string | null;
   unsubscribeUrl?: string | null;
+  /** Stable event identifier for Resend's 24-hour idempotency protection. */
+  dedupKey?: string;
 }
 
 export interface ProviderSendResult {
