@@ -227,7 +227,7 @@ export default async function DashboardPage() {
               className="py-8"
               icon={<Building2 className="h-8 w-8" aria-hidden />}
               title="Nothing watched yet"
-              description="Watch companies and sectors you have bought from and we will surface anything new involving them."
+              description="Your matching preferences are saved. A watchlist is separate: follow specific companies or sectors here to track their updates."
             />
           ) : (
             <div className="space-y-4">
