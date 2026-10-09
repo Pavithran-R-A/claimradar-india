@@ -6,6 +6,7 @@ import { getUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { FREE_TIER_LIMITS } from '@/lib/entitlements';
 import { runMatchingForUser } from '@/lib/matching-runner';
+import { deliverPendingMatchesForUser } from '@/lib/notifications/dispatch-matches';
 import {
   createTrackerSchema,
   deleteTrackerSchema,
@@ -335,6 +336,14 @@ export async function refreshMatches(): Promise<ActionResult> {
       return { ok: false, error: 'Complete onboarding first to compute matches.' };
     }
     return { ok: false, error: 'Matching is temporarily unavailable. Please try again later.' };
+  }
+
+  // Notifications cannot block an otherwise successful matching refresh.
+  // The dispatcher fails closed outside explicitly enabled production.
+  try {
+    await deliverPendingMatchesForUser(userId);
+  } catch {
+    console.warn('[matches] notification dispatch deferred');
   }
 
   revalidatePath('/app/matches');

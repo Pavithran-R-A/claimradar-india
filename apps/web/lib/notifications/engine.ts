@@ -199,7 +199,10 @@ export async function deliverNotification(
       let provider = options.emailProvider ?? selectEmailProvider({ ...config, appEnv });
       // Defence in depth: an external-sending provider can never run outside
       // production, regardless of configuration mistakes.
-      if (provider.sendsExternally && !isProductionEmailAllowed(appEnv)) {
+      if (
+        provider.sendsExternally &&
+        (!isProductionEmailAllowed(appEnv) || config.externalDeliveryEnabled === false)
+      ) {
         provider = new ConsoleEmailProvider(config.emailFrom);
       }
 
@@ -212,6 +215,7 @@ export async function deliverNotification(
         claimableId: notification.claimableId ?? null,
         link,
         unsubscribeUrl,
+        dedupKey: notification.dedupKey,
       };
 
       try {

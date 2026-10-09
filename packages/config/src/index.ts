@@ -23,7 +23,7 @@ export const contactConfig = {
     'Direct email support is not currently offered; claim-specific questions should go to the official authority linked from the relevant opportunity.',
 } as const;
 
-const siteUrl = getEnv('NEXT_PUBLIC_SITE_URL') ?? 'https://claimradar-staging.vercel.app';
+const siteUrl = getEnv('NEXT_PUBLIC_SITE_URL') ?? 'https://claimkhoj.app';
 
 export const brandConfig = {
   /**
