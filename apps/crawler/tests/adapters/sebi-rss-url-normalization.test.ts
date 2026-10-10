@@ -15,14 +15,11 @@ describe('SEBI RSS item URL normalization', () => {
 
   it('does not alter already valid SEBI links or query strings', () => {
     expect(normalizeSebiRssLink(fixed)).toBe(fixed);
-    expect(normalizeSebiRssLink(`${fixed}?version=2&lang=en`)).toBe(
-      `${fixed}?version=2&lang=en`,
-    );
+    expect(normalizeSebiRssLink(`${fixed}?version=2&lang=en`)).toBe(`${fixed}?version=2&lang=en`);
   });
 
   it('fixes repeated same-host origins but never rewrites a foreign host or insecure transport', () => {
-    const triple =
-      'https://www.sebi.gov.in/https://sebi.gov.in/https://www.sebi.gov.in/notice.pdf';
+    const triple = 'https://www.sebi.gov.in/https://sebi.gov.in/https://www.sebi.gov.in/notice.pdf';
     expect(normalizeSebiRssLink(triple)).toBe('https://www.sebi.gov.in/notice.pdf');
     const foreign = 'https://example.org/https://www.sebi.gov.in/notice.pdf';
     expect(normalizeSebiRssLink(foreign)).toBe(foreign);
