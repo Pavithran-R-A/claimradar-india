@@ -18,11 +18,11 @@ export function normalizeSebiRssLink(rawLink: string): string {
     return rawLink;
   }
 
-  if (url.protocol !== 'https:' || !/^(?:www\\.)?sebi\\.gov\\.in$/i.test(url.hostname)) {
+  if (url.protocol !== 'https:' || !/^(?:www[.])?sebi[.]gov[.]in$/i.test(url.hostname)) {
     return rawLink;
   }
 
-  const duplicateOrigin = /^\\/https?:\\/\\/(?:www\\.)?sebi\\.gov\\.in(?=\\/|$)/i;
+  const duplicateOrigin = /^[/]https?:[/][/](?:www[.])?sebi[.]gov[.]in(?=[/]|$)/i;
   if (!duplicateOrigin.test(url.pathname)) return rawLink;
 
   let pathname = url.pathname;
