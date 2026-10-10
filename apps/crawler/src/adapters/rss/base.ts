@@ -9,6 +9,7 @@ import type {
 } from '../types.js';
 import { parseRssItem } from '../../extraction/rss.js';
 import { extractHtmlContent } from '../../extraction/html.js';
+import { extractPdfText } from '../../extraction/pdf.js';
 import { HttpClient } from '../../http/client.js';
 import { sha256 } from '../../http/hash.js';
 import type { CloudflareRelayConfig } from '../../http/types.js';
@@ -80,19 +81,69 @@ export class BaseRssAdapter implements SourceAdapter {
         url: document.url,
         method: 'GET',
         timeoutMs: context.timeoutMs,
-        allowedMimeTypes: ['text/html', 'application/xhtml+xml', 'text/xml', 'application/xml'],
+        allowedMimeTypes: [
+          'text/html',
+          'application/xhtml+xml',
+          'text/xml',
+          'application/xml',
+          'application/pdf',
+        ],
       },
       this.source.rateLimit,
     );
 
-    const html = result.body.toString('utf-8');
-    const extracted = extractHtmlContent(html, document.url);
     const sourceText =
       typeof document.metadata?.['sourceText'] === 'string'
         ? document.metadata['sourceText']
         : typeof document.metadata?.['rssFullText'] === 'string'
           ? document.metadata['rssFullText']
           : undefined;
+    // Official RSS feeds can point straight to a PDF, not just an HTML detail page.
+    // Never decode PDF bytes as UTF-8 HTML: extract source-backed text and retain
+    // any scan/extraction warnings for later editorial review.
+    const isPdf =
+      result.contentType?.split(';')[0]?.trim().toLowerCase() === 'application/pdf' ||
+      /[.]pdf(?:[?#]|$)/i.test(document.url);
+    if (isPdf) {
+      const pdf = await extractPdfText(result.body);
+      const pdfText = pdf.pages
+        .map((page) => page.text)
+        .filter(Boolean)
+        .join('\\n\\n')
+        .trim();
+      const content = [sourceText, pdfText].filter((part) => Boolean(part?.trim())).join('\\n\\n');
+      return {
+        url: document.url,
+        content,
+        contentType: result.contentType ?? 'application/pdf',
+        contentHash: sourceText ? sha256(content) : result.contentHash,
+        etag: result.etag,
+        lastModified: result.lastModified,
+        fetchedAt: new Date(),
+        metadata: {
+          ...document.metadata,
+          wasCached: result.wasCached,
+          title: document.title ?? pdf.metadata['title'],
+          publishedAt: document.publishedAt,
+          pageCount: pdf.pageCount,
+          warnings: pdf.warnings,
+          ...(pdf.isScanned || pdf.pageCount === 0
+            ? {
+                ocr_required: true,
+                ocr_reason:
+                  pdf.pageCount === 0
+                    ? 'PDF cannot be extracted; inspect document and source'
+                    : 'PDF may contain scanned text; manual verification required',
+              }
+            : {}),
+          transport: result.transport,
+          ...pdf.metadata,
+        },
+      };
+    }
+
+    const html = result.body.toString('utf-8');
+    const extracted = extractHtmlContent(html, document.url);
     const contentParts = [sourceText, extracted.text].filter((part): part is string =>
       Boolean(part && part.trim()),
     );
