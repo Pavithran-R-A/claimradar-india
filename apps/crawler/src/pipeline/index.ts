@@ -239,7 +239,18 @@ async function processSource(params: {
         const dedupResult = checkDuplicate(dedupInput, existingDocs);
         const isCrossSourceProvenanceMatch =
           dedupResult.isDuplicate && dedupResult.crossSourceMatch;
-        if (dedupResult.isDuplicate && !isCrossSourceProvenanceMatch) {
+        // A SEBI URL may already exist as title-only HTML. Once the official
+        // attached PDF is readable, retain a new evidence-backed version.
+        // A matching content hash still deduplicates this upgrade on later runs.
+        const isOfficialPdfEvidenceUpgrade =
+          sourceDef.adapterType === 'sebi-public-notices' &&
+          fetched.metadata['evidenceComplete'] === true &&
+          dedupResult.matchedStrategy === 'canonical_url';
+        if (
+          dedupResult.isDuplicate &&
+          !isCrossSourceProvenanceMatch &&
+          !isOfficialPdfEvidenceUpgrade
+        ) {
           stats.duplicates++;
           summary.documentsDuplicate++;
           logger.debug('dedup', `Duplicate skipped: ${doc.url}`, {
@@ -285,6 +296,19 @@ async function processSource(params: {
             contentHash: fetched.contentHash,
             ...(doc.title !== undefined ? { title: doc.title } : {}),
           });
+        }
+
+        // Do not classify SEBI's title-only HTML as a verified refund notice.
+        // Its underlying attachment must be read and retained first.
+        if (
+          sourceDef.adapterType === 'sebi-public-notices' &&
+          fetched.metadata['evidenceComplete'] !== true
+        ) {
+          logger.warn('extraction', 'SEBI notice lacks readable official PDF evidence', {
+            sourceId: source.id,
+            documentId: sourceDocId,
+          });
+          continue;
         }
 
         // Keyword scoring
