@@ -10,6 +10,7 @@ import {
 } from '@/lib/claimables-repository';
 import { ClaimableCard } from '@/components/directory/claimable-card';
 import { OfficialNoticesPreview } from '@/components/directory/official-notices-preview';
+import { OfficialRecoveryRoutes } from '@/components/directory/official-recovery-routes';
 import {
   ActiveFilterChips,
   FilterFields,
@@ -27,9 +28,9 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Claimables Directory — Published Refund & Compensation Records | ClaimKhoj India',
+  title: 'Find Refunds, Unclaimed Money & Claim Opportunities | ClaimKhoj India',
   description:
-    'Search and filter published refund, compensation and claim opportunities verified from official Indian sources. Filter by status and sector, sort by deadline.',
+    'Find official recovery routes for bank deposits, insurance, dividends, tax refunds, EPF and consumer disputes, plus independently reviewed refund notices.',
   alternates: { canonical: '/claimables' },
 };
 
@@ -132,60 +133,98 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       <JsonLd data={structuredData} />
       <header className="max-w-3xl">
-        <p className="editorial-kicker">Verified public record</p>
+        <p className="editorial-kicker">India money recovery guide</p>
         <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-text-primary">
-          Claimables Directory
+          Find refunds and unclaimed money
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-text-secondary sm:text-base">
-          Published refund, compensation and claim opportunities verified against official sources.
-          Only records that pass our publication policy are listed — eligibility is always
-          determined by the official scheme, never by us.
+          Start with the official route for your situation. Below, you can also review government
+          refund notices and any independently approved ClaimKhoj claim opportunities. ClaimKhoj
+          cannot determine your eligibility, and claims are completed on official portals.
         </p>
       </header>
 
-      <form method="GET" action="/claimables" className="mt-8">
-        <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
-          <aside className="hidden lg:block" aria-label="Directory filters">
-            <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
-              <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
-              <div className="space-y-4">
-                <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
-              </div>
-            </div>
-          </aside>
+      <OfficialRecoveryRoutes />
 
-          <div>
-            <div className="mb-4 lg:hidden">
-              <MobileFilterDrawer activeCount={activeCount}>
-                <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
-              </MobileFilterDrawer>
+      {!allOutcome.ok ? (
+        <div className="mt-9">
+          <DataUnavailableNotice message={allOutcome.error} />
+        </div>
+      ) : !allOutcome.demo && allOutcome.data.items.length === 0 ? (
+        <div className="mt-10">
+          <form method="GET" action="/claimables" className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label
+                htmlFor="monitored-notice-search"
+                className="mb-2 block text-sm font-semibold text-text-primary"
+              >
+                Search monitored government refund notices
+              </label>
+              <input
+                id="monitored-notice-search"
+                name="search"
+                type="search"
+                defaultValue={params.search ?? ''}
+                placeholder="Search by company or refund matter"
+                className="h-11 w-full rounded-field border border-border bg-surface px-3 text-sm text-text-primary"
+              />
             </div>
-
-            <ActiveFilterChips params={params} sectors={sectors} />
-
-            <div className="mt-6">
-              {!allOutcome.ok ? (
-                <DataUnavailableNotice message={allOutcome.error} />
-              ) : (
-                <>
-                  {allOutcome.demo && <DemoDataBanner />}
-                  {!allOutcome.demo && allOutcome.data.items.length === 0 ? (
-                    <OfficialNoticesPreview search={params.search ?? ''} />
-                  ) : (
-                    <DirectoryResults
-                      items={allOutcome.data.items}
-                      params={params}
-                      page={page}
-                      demo={allOutcome.demo}
-                      preferences={viewerPreferences}
-                    />
-                  )}
-                </>
-              )}
-            </div>
+            <button
+              type="submit"
+              className="h-11 rounded-field bg-trust-primary px-5 text-sm font-semibold text-white hover:bg-trust-primary-hover"
+            >
+              Search notices
+            </button>
+          </form>
+          <div className="mt-5">
+            <OfficialNoticesPreview search={params.search ?? ''} />
           </div>
         </div>
-      </form>
+      ) : (
+          <form method="GET" action="/claimables" className="mt-8">
+            <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
+              <aside className="hidden lg:block" aria-label="Directory filters">
+                <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
+                  <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
+                  <div className="space-y-4">
+                    <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
+                  </div>
+                </div>
+              </aside>
+    
+              <div>
+                <div className="mb-4 lg:hidden">
+                  <MobileFilterDrawer activeCount={activeCount}>
+                    <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
+                  </MobileFilterDrawer>
+                </div>
+    
+                <ActiveFilterChips params={params} sectors={sectors} />
+    
+                <div className="mt-6">
+                  {!allOutcome.ok ? (
+                    <DataUnavailableNotice message={allOutcome.error} />
+                  ) : (
+                    <>
+                      {allOutcome.demo && <DemoDataBanner />}
+                      {!allOutcome.demo && allOutcome.data.items.length === 0 ? (
+                        <OfficialNoticesPreview search={params.search ?? ''} />
+                      ) : (
+                        <DirectoryResults
+                          items={allOutcome.data.items}
+                          params={params}
+                          page={page}
+                          demo={allOutcome.demo}
+                          preferences={viewerPreferences}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
+      )}
     </div>
   );
 }
