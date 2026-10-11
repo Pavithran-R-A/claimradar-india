@@ -1,7 +1,4 @@
-import {
-  officialRecoveryRoutes,
-  type RecoveryRouteKind,
-} from '@/lib/official-recovery-routes';
+import { officialRecoveryRoutes, type RecoveryRouteKind } from '@/lib/official-recovery-routes';
 
 const labels: Record<RecoveryRouteKind, string> = {
   'Search for unclaimed money': 'Search existing money',
@@ -24,8 +21,8 @@ export function OfficialRecoveryRoutes() {
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">
           Select a recovery route to search or apply on the relevant official website. These
-          services are different from ClaimKhoj-approved claim opportunities. We cannot see
-          your account balances or determine your eligibility from these links.
+          services are different from ClaimKhoj-approved claim opportunities. We cannot see your
+          account balances or determine your eligibility from these links.
         </p>
       </div>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -40,9 +37,7 @@ export function OfficialRecoveryRoutes() {
             <h3 className="mt-2 text-base font-semibold leading-snug text-text-primary">
               {route.title}
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-              {route.description}
-            </p>
+            <p className="mt-2 text-sm leading-relaxed text-text-secondary">{route.description}</p>
             <p className="mt-3 text-xs leading-relaxed text-text-secondary">
               <span className="font-semibold">Next:</span> {route.nextStep}
             </p>
@@ -62,9 +57,8 @@ export function OfficialRecoveryRoutes() {
         ))}
       </div>
       <p className="mt-4 text-xs leading-relaxed text-text-secondary">
-        ClaimKhoj is an independent information service, not a government portal. Finding a
-        service is not evidence that money is owed to you. Never share your OTP or passwords
-        with ClaimKhoj.
+        ClaimKhoj is an independent information service, not a government portal. Finding a service
+        is not evidence that money is owed to you. Never share your OTP or passwords with ClaimKhoj.
       </p>
     </section>
   );
