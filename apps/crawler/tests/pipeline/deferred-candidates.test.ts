@@ -61,7 +61,10 @@ function writerWithRows(rows: CandidateRow[]) {
           name === 'neq' && column === 'source_documents.raw_text' && value === '',
       );
       const filtered = excludeBlankText
-        ? rows.filter((row) => row.source_documents.raw_text !== null && row.source_documents.raw_text !== '')
+        ? rows.filter(
+            (row) =>
+              row.source_documents.raw_text !== null && row.source_documents.raw_text !== '',
+          )
         : rows;
       return { data: filtered.slice(0, value), error: null };
     },
@@ -95,7 +98,10 @@ describe('deferred AI backlog selection', () => {
   });
 
   it('still excludes missing source text and keeps the queue empty when nothing can be read', async () => {
-    const { writer } = writerWithRows([makeRow('missing', null, 0), makeRow('empty', '', 1)]);
+    const { writer } = writerWithRows([
+      makeRow('missing', null, 0),
+      makeRow('empty', '', 1),
+    ]);
     expect(await writer.getDeferredCandidateContexts(2)).toEqual([]);
   });
 });
