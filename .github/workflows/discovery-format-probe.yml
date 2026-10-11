@@ -1,0 +1,21 @@
+name: Temporary Discovery Format Probe
+on:
+  push:
+    branches: [feat/india-money-recovery-pathways-20261011]
+    paths:
+      - .github/workflows/discovery-format-probe.yml
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: pnpm install --frozen-lockfile
+      - run: |
+          pnpm exec prettier --write 'apps/web/app/(public)/claimables/page.tsx' apps/web/components/directory/official-recovery-routes.tsx apps/web/lib/official-recovery-routes.ts
+          git diff -- 'apps/web/app/(public)/claimables/page.tsx' apps/web/components/directory/official-recovery-routes.tsx apps/web/lib/official-recovery-routes.ts
