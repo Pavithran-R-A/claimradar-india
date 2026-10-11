@@ -83,13 +83,34 @@ async function getMonitoredRefundNotices(): Promise<OfficialNotice[]> {
 }
 
 /**
+ * Verified original authority URLs, not eligible-claim records.
+ * This tiny reference set prevents a live DB read error from making a
+ * government-notice discovery UI disappear altogether. Both sources were
+ * verified against their own public government pages on 11 October 2026.
+ * No eligibility/open-window assertion is implied by these links.
+ */
+const OFFICIAL_NOTICE_REFERENCE_LINKS: readonly OfficialNotice[] = [
+  {
+    title: 'Citrus Check Inns and Royal Twinkle Star Club refund — Phase II (SEBI notice, Sep 2026)',
+    url: 'https://www.sebi.gov.in/media-and-notifications/public-notices/sep-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_104402.html',
+    authority: 'Securities and Exchange Board of India (SEBI)',
+  },
+  {
+    title: 'CRCS-Sahara refund portal — official government press notice',
+    url: 'https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2308015',
+    authority: 'Press Information Bureau (PIB)',
+  },
+];
+
+/**
  * Raw source notices are NOT eligible claims and must never be placed inside
  * getPublishedClaimables or marked verified. This is only a transparent path
  * to the original government publications during the editorial review period.
  */
 export async function OfficialNoticesPreview() {
-  const notices = await getMonitoredRefundNotices();
-  if (notices.length === 0) return null;
+  const liveNotices = await getMonitoredRefundNotices();
+  const usingReferenceLinks = liveNotices.length === 0;
+  const notices = usingReferenceLinks ? OFFICIAL_NOTICE_REFERENCE_LINKS : liveNotices;
 
   return (
     <section
@@ -104,6 +125,12 @@ export async function OfficialNoticesPreview() {
         opportunities. Eligibility, deadlines and whether applications remain open have not yet been
         verified by ClaimKhoj. Check each authority&apos;s original publication before acting.
       </p>
+      {usingReferenceLinks && (
+        <p className="mt-3 text-xs text-text-secondary">
+          The live notice feed could not be loaded. Showing direct official-source links checked on
+          11 October 2026 for reference only; no claim is confirmed to be open or eligible.
+        </p>
+      )}
       <ul className="mt-4 divide-y divide-border">
         {notices.map((notice) => (
           <li key={notice.url} className="py-3">
