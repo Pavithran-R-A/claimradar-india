@@ -73,8 +73,8 @@ export default function OpenGraphImage() {
           {brandConfig.tagline}
         </div>
       </div>
-      <div style={{ color: '#4A5B74', fontSize: 24 }}>
-        {brandConfig.descriptor} · Independent consumer information service
+      <div style={{ color: '#4A5B74', display: 'flex', fontSize: 24 }}>
+        {`${brandConfig.descriptor} · Independent consumer information service`}
       </div>
     </div>,
     size,
