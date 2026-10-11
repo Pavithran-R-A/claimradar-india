@@ -3,7 +3,8 @@
  * None of these portals proves the visitor is owed money or that any particular
  * compensation scheme is open. They must NEVER enter published claimables.
  */
-export type RecoveryRouteKind = 'Search for unclaimed money' | 'Claim or track your money' | 'Report a dispute';
+export type RecoveryRouteKind =
+  'Search for unclaimed money' | 'Claim or track your money' | 'Report a dispute';
 
 export interface RecoveryRoute {
   id: string;
@@ -40,7 +41,8 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
   {
     id: 'insurance',
     title: 'Unclaimed insurance payouts',
-    description: 'Look for policy proceeds that may remain unpaid to a policyholder or beneficiary.',
+    description:
+      'Look for policy proceeds that may remain unpaid to a policyholder or beneficiary.',
     agency: 'Insurance Regulatory and Development Authority of India',
     kind: 'Search for unclaimed money',
     nextStep: 'Use IRDAI links to insurers and enquire with the insurance company.',
@@ -93,7 +95,8 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
     description: 'A listed company or SEBI-regulated intermediary has not resolved your issue?',
     agency: 'Securities and Exchange Board of India · SCORES',
     kind: 'Report a dispute',
-    nextStep: 'Raise the issue with the entity first, then use SCORES if the issue remains unresolved.',
+    nextStep:
+      'Raise the issue with the entity first, then use SCORES if the issue remains unresolved.',
     url: 'https://scores.sebi.gov.in/',
     linkLabel: 'Open SEBI SCORES',
   },
