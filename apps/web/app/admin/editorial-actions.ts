@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { getAdminDb } from '@/lib/admin-db';
+import { isPubliclyPublishable } from '@/lib/claimables-repository';
 import { writeAuditLog } from './_lib/audit';
 import { CLAIMABLE_STATUSES } from './_lib/constants';
 import { getActionActor, unauthorized, ADMINS_ONLY, EDITORIAL, LEGAL } from './_lib/roles';
@@ -164,6 +165,14 @@ export async function approvePublication(claimableId: string) {
   }
   if (claimable.publication_status !== 'draft') {
     return { error: 'Only draft claimables can be published.' };
+  }
+  // Without a public-safe status the update would succeed in the DB while
+  // the public directory silently filters the just-published record out.
+  if (!isPubliclyPublishable(claimable.status, 'published')) {
+    return {
+      error:
+        'Choose an eligible public status (official_update, potential_claimable or verified_claimable) before approval.',
+    };
   }
   if (!claimable.public_title || !claimable.official_claim_url || !claimable.action_required) {
     return { error: 'Publication requires a title, official claim URL, and user action.' };
