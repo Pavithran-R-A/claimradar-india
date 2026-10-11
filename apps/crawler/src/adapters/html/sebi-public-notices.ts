@@ -7,7 +7,47 @@ import type {
   SourceHealthResult,
 } from '../types.js';
 import { extractHtmlContent } from '../../extraction/html.js';
+import { extractPdfText } from '../../extraction/pdf.js';
+import { sha256 } from '../../http/hash.js';
+import * as cheerio from 'cheerio';
 import { HttpClient } from '../../http/client.js';
+
+/**
+ * SEBI notice pages put the signed source PDF in an iframe viewer, often as
+ * /web/?file=https://www.sebi.gov.in/sebi_data/attachdocs/...pdf.
+ * It is not an <a href="...pdf">, so ordinary HTML extraction misses it.
+ * Restrict evidence fetches to SEBI's own attachment directory.
+ */
+export function findOfficialSebiNoticePdf(html: string, pageUrl: string): string | null {
+  const $ = cheerio.load(html);
+  const selectors = [
+    'iframe[src]',
+    'embed[src]',
+    'object[data]',
+    '[data-original-tag="iframe"][src]',
+  ].join(', ');
+
+  for (const element of $(selectors).toArray()) {
+    const raw = $(element).attr('src') ?? $(element).attr('data');
+    if (!raw) continue;
+    try {
+      const viewer = new URL(raw, pageUrl);
+      const wrapped = viewer.pathname === '/web/' ? viewer.searchParams.get('file') : null;
+      const target = new URL(wrapped ?? viewer.href, viewer.href);
+      if (
+        target.protocol === 'https:' &&
+        /^(?:www\\.)?sebi\\.gov\\.in$/i.test(target.hostname) &&
+        target.pathname.startsWith('/sebi_data/attachdocs/') &&
+        target.pathname.toLowerCase().endsWith('.pdf')
+      ) {
+        return target.href;
+      }
+    } catch {
+      // Ignore malformed or external viewer URLs; never fetch arbitrary targets.
+    }
+  }
+  return null;
+}
 
 export class SebiPublicNoticesAdapter implements SourceAdapter {
   public readonly sourceKey: string;
@@ -115,24 +155,71 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
 
     const html = result.body.toString('utf-8');
     const extracted = extractHtmlContent(html, document.url);
+    const baseText = extracted.text || document.title || 'SEBI Notice';
+    const officialPdfUrl = findOfficialSebiNoticePdf(html, document.url);
+    let evidenceText = '';
+    let pdfPages = 0;
+    let pdfError: string | null = null;
+
+    if (officialPdfUrl) {
+      try {
+        const attachment = await client.fetch(
+          {
+            url: officialPdfUrl,
+            method: 'GET',
+            timeoutMs: context.timeoutMs,
+            allowedMimeTypes: ['application/pdf'],
+            maxBodySize: 10 * 1024 * 1024,
+          },
+          this.source.rateLimit,
+        );
+        if (attachment.body.length === 0) {
+          pdfError = 'pdf_response_empty';
+        } else {
+          const pdf = await extractPdfText(attachment.body);
+          pdfPages = pdf.pageCount;
+          evidenceText = pdf.pages.map((page) => page.text).filter(Boolean).join('\\n').trim();
+          if (pdf.isScanned || evidenceText.length < 100) {
+            evidenceText = '';
+            pdfError = 'pdf_text_unavailable';
+          }
+        }
+      } catch (error) {
+        // Never pass a title-only notice off as validated source evidence.
+        pdfError = error instanceof Error ? error.name : 'pdf_fetch_failed';
+      }
+    }
+
+    const content = evidenceText
+      ? `${baseText}\\n\\nOfficial SEBI notice PDF: ${officialPdfUrl}\\n${evidenceText}`
+      : baseText;
+    const dateLabel = cheerio.load(html)('.date_value h5').first().text().trim();
+    const labelDate = /^[A-Za-z]{3} \\d{1,2}, \\d{4}$/.test(dateLabel)
+      ? new Date(dateLabel)
+      : null;
+    const publishedAt =
+      document.publishedAt ??
+      extracted.dates[0] ??
+      (labelDate && !Number.isNaN(labelDate.getTime()) ? labelDate.toISOString() : undefined);
 
     return {
       url: document.url,
-      content: extracted.text || document.title || 'SEBI Notice',
+      content,
       contentType: result.contentType ?? 'text/html',
-      contentHash: result.contentHash,
+      // Hash the actual extracted evidence, not just the HTML viewer wrapper.
+      contentHash: evidenceText ? sha256(Buffer.from(content)) : result.contentHash,
       etag: result.etag,
       lastModified: result.lastModified,
       fetchedAt: new Date(),
       metadata: {
         title: extracted.title ?? document.title,
-        ...(document.publishedAt !== undefined
-          ? { publishedAt: document.publishedAt }
-          : extracted.dates[0]
-            ? { publishedAt: extracted.dates[0] }
-            : {}),
+        ...(publishedAt ? { publishedAt } : {}),
         dates: extracted.dates,
-        pdfLinks: extracted.pdfLinks,
+        pdfLinks: officialPdfUrl ? [officialPdfUrl] : extracted.pdfLinks,
+        officialPdfUrl,
+        pdfPageCount: pdfPages,
+        evidenceComplete: evidenceText.length >= 100,
+        ...(pdfError ? { pdfError } : {}),
       },
     };
   }
