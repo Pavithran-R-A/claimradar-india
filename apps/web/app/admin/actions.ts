@@ -278,6 +278,10 @@ export async function promoteCandidate(candidateId: string) {
     sourceDoc?.title ??
     `Claimable candidate ${candidateId.slice(0, 8)}`;
   const slug = `${slugify(publicTitle)}-${candidateId.slice(0, 8)}`;
+  const rawConfidence = num(candidate.ai_confidence) ?? 0;
+  const confidencePercent = Math.round(
+    Math.max(0, Math.min(100, rawConfidence <= 1 ? rawConfidence * 100 : rawConfidence)),
+  );
 
   const { data: claimable, error: insertError } = await db
     .from('claimables')
@@ -295,13 +299,14 @@ export async function promoteCandidate(candidateId: string) {
       relief_type: str(ext.relief_type),
       relief_description: str(ext.relief_description),
       official_amount: num(ext.official_amount),
-      amount_currency: str(ext.amount_currency) ?? 'INR',
+      amount_currency: str(ext.amount_currency),
       proof_requirements: Array.isArray(ext.proof_requirements) ? ext.proof_requirements : [],
       action_required: str(ext.action_required),
       official_claim_url: str(ext.official_claim_url),
       deadline: str(ext.deadline),
-      claimability_score: Math.round((num(candidate.ai_confidence) ?? 0) * 100),
-      confidence: Math.round((num(candidate.ai_confidence) ?? 0) * 100),
+      // Confidence is not a deterministic claimability score; leave that unknown.
+      claimability_score: null,
+      confidence: confidencePercent,
       publication_status: 'draft',
       updated_at: new Date().toISOString(),
     })
