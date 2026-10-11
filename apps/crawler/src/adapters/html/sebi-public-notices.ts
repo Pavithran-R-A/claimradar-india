@@ -36,7 +36,7 @@ export function findOfficialSebiNoticePdf(html: string, pageUrl: string): string
       const target = new URL(wrapped ?? viewer.href, viewer.href);
       if (
         target.protocol === 'https:' &&
-        /^(?:www\\.)?sebi\\.gov\\.in$/i.test(target.hostname) &&
+        /^(?:www\.)?sebi\.gov\.in$/i.test(target.hostname) &&
         target.pathname.startsWith('/sebi_data/attachdocs/') &&
         target.pathname.toLowerCase().endsWith('.pdf')
       ) {
@@ -178,7 +178,7 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
         } else {
           const pdf = await extractPdfText(attachment.body);
           pdfPages = pdf.pageCount;
-          evidenceText = pdf.pages.map((page) => page.text).filter(Boolean).join('\\n').trim();
+          evidenceText = pdf.pages.map((page) => page.text).filter(Boolean).join('\n').trim();
           if (pdf.isScanned || evidenceText.length < 100) {
             evidenceText = '';
             pdfError = 'pdf_text_unavailable';
@@ -194,7 +194,7 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
       ? `${baseText}\\n\\nOfficial SEBI notice PDF: ${officialPdfUrl}\\n${evidenceText}`
       : baseText;
     const dateLabel = cheerio.load(html)('.date_value h5').first().text().trim();
-    const labelDate = /^[A-Za-z]{3} \\d{1,2}, \\d{4}$/.test(dateLabel)
+    const labelDate = /^[A-Za-z]{3} \d{1,2}, \d{4}$/.test(dateLabel)
       ? new Date(dateLabel)
       : null;
     const publishedAt =
