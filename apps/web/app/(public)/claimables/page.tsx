@@ -152,7 +152,11 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
         </div>
       ) : !allOutcome.demo && allOutcome.data.items.length === 0 ? (
         <div className="mt-10">
-          <form method="GET" action="/claimables" className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <form
+            method="GET"
+            action="/claimables"
+            className="flex flex-col gap-3 sm:flex-row sm:items-end"
+          >
             <div className="flex-1">
               <label
                 htmlFor="monitored-notice-search"
@@ -181,39 +185,39 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
           </div>
         </div>
       ) : (
-          <form method="GET" action="/claimables" className="mt-8">
-            <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
-              <aside className="hidden lg:block" aria-label="Directory filters">
-                <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
-                  <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
-                  <div className="space-y-4">
-                    <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
-                  </div>
-                </div>
-              </aside>
-    
-              <div>
-                <div className="mb-4 lg:hidden">
-                  <MobileFilterDrawer activeCount={activeCount}>
-                    <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
-                  </MobileFilterDrawer>
-                </div>
-    
-                <ActiveFilterChips params={params} sectors={sectors} />
-    
-                <div className="mt-6">
-                  {allOutcome.demo && <DemoDataBanner />}
-                  <DirectoryResults
-                    items={allOutcome.data.items}
-                    params={params}
-                    page={page}
-                    demo={allOutcome.demo}
-                    preferences={viewerPreferences}
-                  />
+        <form method="GET" action="/claimables" className="mt-8">
+          <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
+            <aside className="hidden lg:block" aria-label="Directory filters">
+              <div className="sticky top-24 rounded-md border border-border border-l-2 border-l-trust-primary bg-surface p-5 shadow-xs">
+                <h2 className="mb-4 text-sm font-semibold text-text-primary">Filters</h2>
+                <div className="space-y-4">
+                  <FilterFields idPrefix="desktop" params={params} sectors={sectors} />
                 </div>
               </div>
+            </aside>
+
+            <div>
+              <div className="mb-4 lg:hidden">
+                <MobileFilterDrawer activeCount={activeCount}>
+                  <FilterFields idPrefix="mobile" params={params} sectors={sectors} />
+                </MobileFilterDrawer>
+              </div>
+
+              <ActiveFilterChips params={params} sectors={sectors} />
+
+              <div className="mt-6">
+                {allOutcome.demo && <DemoDataBanner />}
+                <DirectoryResults
+                  items={allOutcome.data.items}
+                  params={params}
+                  page={page}
+                  demo={allOutcome.demo}
+                  preferences={viewerPreferences}
+                />
+              </div>
             </div>
-          </form>
+          </div>
+        </form>
       )}
     </div>
   );
