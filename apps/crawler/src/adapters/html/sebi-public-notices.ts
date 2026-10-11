@@ -191,7 +191,7 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
     }
 
     const content = evidenceText
-      ? `${baseText}\\n\\nOfficial SEBI notice PDF: ${officialPdfUrl}\\n${evidenceText}`
+      ? `${baseText}\n\nOfficial SEBI notice PDF: ${officialPdfUrl}\n${evidenceText}`
       : baseText;
     const dateLabel = cheerio.load(html)('.date_value h5').first().text().trim();
     const labelDate = /^[A-Za-z]{3} \d{1,2}, \d{4}$/.test(dateLabel)
