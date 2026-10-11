@@ -78,8 +78,8 @@ export async function OfficialNoticesPreview() {
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-text-secondary">
         These are links to original government notices, NOT published or verified ClaimKhoj
-        opportunities. Eligibility, deadlines and whether applications remain open have not yet
-        been verified by ClaimKhoj. Check each authority&apos;s original publication before acting.
+        opportunities. Eligibility, deadlines and whether applications remain open have not yet been
+        verified by ClaimKhoj. Check each authority&apos;s original publication before acting.
       </p>
       <ul className="mt-4 divide-y divide-border">
         {notices.map((notice) => (
