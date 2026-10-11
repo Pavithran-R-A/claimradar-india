@@ -13,6 +13,8 @@ const PUBLIC_SOURCE_HOSTS = new Set([
   'rbi.org.in',
   'www.ibbi.gov.in',
   'ibbi.gov.in',
+  'pib.gov.in',
+  'www.pib.gov.in',
 ]);
 
 function safeOfficialUrl(value: unknown): string | null {
