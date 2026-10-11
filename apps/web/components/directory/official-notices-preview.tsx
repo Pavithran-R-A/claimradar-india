@@ -4,7 +4,8 @@ import { rankNotices, type SourceNoticeRow } from '@/lib/official-notice-ranking
 const referenceNotices: SourceNoticeRow[] = [
   {
     title: 'Citrus Check Inns and Royal Twinkle Star Club Phase-II refund notice',
-    canonical_url: 'https://www.sebi.gov.in/media-and-notifications/public-notices/sep-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_104402.html',
+    canonical_url:
+      'https://www.sebi.gov.in/media-and-notifications/public-notices/sep-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_104402.html',
     published_at: '2026-09-10T00:00:00.000Z',
   },
   {
@@ -66,8 +67,8 @@ export async function OfficialNoticesPreview({ search = '' }: { search?: string 
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-secondary">
           ClaimKhoj has not yet approved any claimable listings. These are original government
-          notices for reference, not confirmed eligibility or open applications. Always check
-          the authority's website before taking action.
+          notices for reference, not confirmed eligibility or open applications. Always check the
+          authority's website before taking action.
         </p>
       </div>
       {offline && (
@@ -96,7 +97,9 @@ export async function OfficialNoticesPreview({ search = '' }: { search?: string 
               </a>
               <p className="mt-1 text-xs leading-relaxed text-text-secondary">
                 {notice.authority}
-                {displayDate(notice.publishedAt) ? ' · Notice dated ' + displayDate(notice.publishedAt) : ''}
+                {displayDate(notice.publishedAt)
+                  ? ' · Notice dated ' + displayDate(notice.publishedAt)
+                  : ''}
                 {' · Not independently approved'}
               </p>
             </article>
@@ -104,8 +107,8 @@ export async function OfficialNoticesPreview({ search = '' }: { search?: string 
         )}
       </div>
       <p className="mt-3 border-t border-border pt-4 text-xs leading-relaxed text-text-secondary">
-        Latest notice per refund matter is shown. Older updates are grouped to avoid
-        misleading duplicate opportunities. Status and eligibility require official confirmation.
+        Latest notice per refund matter is shown. Older updates are grouped to avoid misleading
+        duplicate opportunities. Status and eligibility require official confirmation.
       </p>
     </section>
   );
