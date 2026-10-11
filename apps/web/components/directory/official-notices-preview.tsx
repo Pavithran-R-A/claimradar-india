@@ -30,31 +30,54 @@ function safeOfficialUrl(value: unknown): string | null {
   }
 }
 
+const OFFICIAL_SOURCE_NAMES: Readonly<Record<string, string>> = {
+  'www.sebi.gov.in': 'Securities and Exchange Board of India (SEBI)',
+  'sebi.gov.in': 'Securities and Exchange Board of India (SEBI)',
+  'www.rbi.org.in': 'Reserve Bank of India (RBI)',
+  'rbi.org.in': 'Reserve Bank of India (RBI)',
+  'www.ibbi.gov.in': 'Insolvency and Bankruptcy Board of India (IBBI)',
+  'ibbi.gov.in': 'Insolvency and Bankruptcy Board of India (IBBI)',
+  'pib.gov.in': 'Press Information Bureau (PIB)',
+  'www.pib.gov.in': 'Press Information Bureau (PIB)',
+};
+
 async function getMonitoredRefundNotices(): Promise<OfficialNotice[]> {
   try {
     const db = getAdminDb();
     const { data, error } = await db
       .from('source_documents')
-      .select('title,canonical_url,sources!inner(name,trust_level)')
-      .eq('sources.trust_level', 'official')
+      // Avoid a joined-relationship failure hiding all genuine official notices.
+      // The approved HTTPS government-host allowlist below is authoritative.
+      .select('title,canonical_url')
       .ilike('title', '%refund%')
       .order('created_at', { ascending: false })
-      .limit(24);
-    if (error) return [];
+      .limit(60);
+    if (error) {
+      console.error('Official notice directory query failed', { code: error.code ?? 'unknown' });
+      return [];
+    }
 
     const notices: OfficialNotice[] = [];
     const seen = new Set<string>();
     for (const row of data ?? []) {
       const url = safeOfficialUrl(row.canonical_url);
       const title = typeof row.title === 'string' ? row.title.trim() : '';
-      const authority = typeof row.sources?.name === 'string' ? row.sources.name : '';
+      const authority = url ? OFFICIAL_SOURCE_NAMES[new URL(url).hostname.toLowerCase()] : null;
       if (!url || title.length < 10 || !authority || seen.has(url)) continue;
       seen.add(url);
       notices.push({ title, url, authority });
       if (notices.length >= 5) break;
     }
+    if (notices.length === 0) {
+      console.warn('No official refund notices passed strict source link filters', {
+        rowsReturned: (data ?? []).length,
+      });
+    }
     return notices;
-  } catch {
+  } catch (error) {
+    console.error('Official notice directory lookup failed', {
+      errorName: error instanceof Error ? error.name : 'unknown',
+    });
     return [];
   }
 }
