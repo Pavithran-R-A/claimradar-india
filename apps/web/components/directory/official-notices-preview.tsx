@@ -41,6 +41,26 @@ const OFFICIAL_SOURCE_NAMES: Readonly<Record<string, string>> = {
   'www.pib.gov.in': 'Press Information Bureau (PIB)',
 };
 
+function classifyQueryFailure(error: { message?: unknown }): string {
+  const message = typeof error.message === 'string' ? error.message.toLowerCase() : '';
+  if (/invalid api key|invalid jwt|unauthorized|401/.test(message)) return 'authentication';
+  if (/permission denied|row-level|rls|403/.test(message)) return 'authorization';
+  if (/not found|does not exist|schema cache|42p01|pgrst205/.test(message)) {
+    return 'schema_or_table';
+  }
+  if (/fetch failed|timeout|network|connection|abort/.test(message)) return 'network';
+  return 'unclassified';
+}
+
+function noticeDbEnvironmentParity(): { serverUrlMatchesPublic: boolean; hasBothUrls: boolean } {
+  const serverUrl = process.env.SUPABASE_URL;
+  const publicUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return {
+    serverUrlMatchesPublic: !!serverUrl && !!publicUrl && serverUrl === publicUrl,
+    hasBothUrls: !!serverUrl && !!publicUrl,
+  };
+}
+
 async function getMonitoredRefundNotices(): Promise<OfficialNotice[]> {
   try {
     const db = getAdminDb();
@@ -53,7 +73,11 @@ async function getMonitoredRefundNotices(): Promise<OfficialNotice[]> {
       .order('created_at', { ascending: false })
       .limit(60);
     if (error) {
-      console.error('Official notice directory query failed', { code: error.code ?? 'unknown' });
+      console.error('Official notice directory query failed', {
+        code: error.code ?? 'unknown',
+        category: classifyQueryFailure(error),
+        ...noticeDbEnvironmentParity(),
+      });
       return [];
     }
 
