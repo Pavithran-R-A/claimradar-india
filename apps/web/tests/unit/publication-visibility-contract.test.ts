@@ -13,7 +13,10 @@ describe('editorial approval and public directory parity', () => {
   });
 
   it('requires editorial approval to enforce the exact public visibility gate', () => {
-    const source = readFileSync(new URL('../../app/admin/editorial-actions.ts', import.meta.url), 'utf8');
+    const source = readFileSync(
+      new URL('../../app/admin/editorial-actions.ts', import.meta.url),
+      'utf8',
+    );
     expect(source).toContain("if (!isPubliclyPublishable(claimable.status, 'published'))");
   });
 
