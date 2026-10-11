@@ -1,0 +1,42 @@
+import { describe, expect, it } from 'vitest';
+import { officialRecoveryRoutes } from '../../lib/official-recovery-routes';
+
+describe('public official recovery route catalog', () => {
+  const routes = officialRecoveryRoutes();
+
+  it('covers eight distinct common consumer-money problems rather than two notices', () => {
+    expect(routes).toHaveLength(8);
+    expect(new Set(routes.map((route) => route.id)).size).toBe(8);
+    expect(routes.map((route) => route.id)).toEqual(
+      expect.arrayContaining([
+        'bank-deposits',
+        'shares-dividends',
+        'insurance',
+        'epf',
+        'tax-refund',
+        'sahara',
+        'consumer-dispute',
+        'securities-dispute',
+      ]),
+    );
+  });
+
+  it('only links to HTTPS authority domains and explicitly describes how to proceed', () => {
+    for (const route of routes) {
+      expect(new URL(route.url).protocol).toBe('https:');
+      expect(route.description.length).toBeGreaterThan(20);
+      expect(route.nextStep.length).toBeGreaterThan(30);
+      expect(route.agency.length).toBeGreaterThan(8);
+    }
+  });
+
+  it('distinguishes search portals and complaint mechanisms from actual cash claims', () => {
+    const kinds = routes.map((route) => route.kind);
+    expect(kinds).toContain('Search for unclaimed money');
+    expect(kinds).toContain('Claim or track your money');
+    expect(kinds).toContain('Report a dispute');
+    expect(routes.find((route) => route.id === 'consumer-dispute')?.nextStep).toContain(
+      'does not guarantee compensation',
+    );
+  });
+});
