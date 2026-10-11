@@ -178,7 +178,11 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
         } else {
           const pdf = await extractPdfText(attachment.body);
           pdfPages = pdf.pageCount;
-          evidenceText = pdf.pages.map((page) => page.text).filter(Boolean).join('\n').trim();
+          evidenceText = pdf.pages
+            .map((page) => page.text)
+            .filter(Boolean)
+            .join('\n')
+            .trim();
           if (pdf.isScanned || evidenceText.length < 100) {
             evidenceText = '';
             pdfError = 'pdf_text_unavailable';
