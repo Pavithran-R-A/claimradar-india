@@ -169,15 +169,16 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
               ) : (
                 <>
                   {allOutcome.demo && <DemoDataBanner />}
-                  <DirectoryResults
-                    items={allOutcome.data.items}
-                    params={params}
-                    page={page}
-                    demo={allOutcome.demo}
-                    preferences={viewerPreferences}
-                  />
-                  {!allOutcome.demo && allOutcome.data.items.length === 0 && (
-                    <OfficialNoticesPreview />
+                  {!allOutcome.demo && allOutcome.data.items.length === 0 ? (
+                    <OfficialNoticesPreview search={params.search ?? ''} />
+                  ) : (
+                    <DirectoryResults
+                      items={allOutcome.data.items}
+                      params={params}
+                      page={page}
+                      demo={allOutcome.demo}
+                      preferences={viewerPreferences}
+                    />
                   )}
                 </>
               )}
