@@ -7,7 +7,7 @@ const selectionImplementations = [
 ];
 
 describe('deferred AI backlog query contract', () => {
-  it.each(selectionImplementations)('filters empty joined source text before limiting in %s', (path) => {
+  it.each(selectionImplementations)('filters source text before limit in %s', (path) => {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8');
     const queryStart = source.indexOf(".select('*, source_documents!inner(*, sources(*))')");
     const textFilter = source.indexOf(".neq('source_documents.raw_text', '')", queryStart);
