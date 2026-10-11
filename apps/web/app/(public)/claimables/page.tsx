@@ -170,7 +170,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
                 <>
                   {allOutcome.demo && <DemoDataBanner />}
                   {!allOutcome.demo && allOutcome.data.items.length === 0 ? (
-                    <OfficialNoticesPreview search={params.search} />
+                    <OfficialNoticesPreview search={params.search ?? ''} />
                   ) : (
                     <DirectoryResults
                       items={allOutcome.data.items}
