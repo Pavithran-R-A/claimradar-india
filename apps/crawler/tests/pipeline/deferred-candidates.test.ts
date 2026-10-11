@@ -11,8 +11,14 @@ describe('deferred AI backlog query contract', () => {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8');
     const queryStart = source.indexOf(".select('*, source_documents!inner(*, sources(*))')");
     const textFilter = source.indexOf(".neq('source_documents.raw_text', '')", queryStart);
-    const priorityScore = source.indexOf(".order('keyword_score', { ascending: false })", textFilter);
-    const priorityRecency = source.indexOf(".order('created_at', { ascending: false })", priorityScore);
+    const priorityScore = source.indexOf(
+      ".order('keyword_score', { ascending: false })",
+      textFilter,
+    );
+    const priorityRecency = source.indexOf(
+      ".order('created_at', { ascending: false })",
+      priorityScore,
+    );
     const queryLimit = source.indexOf('.limit(', priorityRecency);
 
     expect(queryStart).toBeGreaterThanOrEqual(0);
