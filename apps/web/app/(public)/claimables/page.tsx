@@ -9,6 +9,7 @@ import {
   type PublishedClaimable,
 } from '@/lib/claimables-repository';
 import { ClaimableCard } from '@/components/directory/claimable-card';
+import { OfficialNoticesPreview } from '@/components/directory/official-notices-preview';
 import {
   ActiveFilterChips,
   FilterFields,
@@ -175,6 +176,9 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
                     demo={allOutcome.demo}
                     preferences={viewerPreferences}
                   />
+                  {!allOutcome.demo && allOutcome.data.items.length === 0 && (
+                    <OfficialNoticesPreview />
+                  )}
                 </>
               )}
             </div>
