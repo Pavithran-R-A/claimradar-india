@@ -379,9 +379,10 @@ async function executeOperation(
         .lt('ai_retry_count', 2)
         // Filter joined source text before limiting, so empty old PDFs do not starve retries.
         .neq('source_documents.raw_text', '')
-        // Prefer candidates not yet failed by the free model; preserve FIFO within each group.
-        .order('ai_error_category', { ascending: true, nullsFirst: true })
-        .order('created_at', { ascending: true })
+        // Prioritize fresh high-signal notices before stale routine notices.
+        // No extra AI calls: this only reorders the existing bounded batch.
+        .order('keyword_score', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(Math.min(100, limit * 3));
       if (error) dbError('GET_DEFERRED_CANDIDATE_CONTEXTS', error);
 
