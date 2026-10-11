@@ -1,0 +1,21 @@
+name: Temporary PR59 Format Probe
+on:
+  push:
+    branches: [feat/official-notice-preview-20261011]
+    paths:
+      - .github/workflows/pr59-format-probe.yml
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: pnpm install --frozen-lockfile
+      - run: |
+          pnpm exec prettier --write apps/web/components/directory/official-notices-preview.tsx
+          git diff -- apps/web/components/directory/official-notices-preview.tsx
