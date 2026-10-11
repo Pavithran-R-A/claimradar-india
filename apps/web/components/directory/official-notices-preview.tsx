@@ -91,7 +91,8 @@ async function getMonitoredRefundNotices(): Promise<OfficialNotice[]> {
  */
 const OFFICIAL_NOTICE_REFERENCE_LINKS: readonly OfficialNotice[] = [
   {
-    title: 'Citrus Check Inns and Royal Twinkle Star Club refund — Phase II (SEBI notice, Sep 2026)',
+    title:
+      'Citrus Check Inns and Royal Twinkle Star Club refund — Phase II (SEBI notice, Sep 2026)',
     url: 'https://www.sebi.gov.in/media-and-notifications/public-notices/sep-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_104402.html',
     authority: 'Securities and Exchange Board of India (SEBI)',
   },
