@@ -202,24 +202,14 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
                 <ActiveFilterChips params={params} sectors={sectors} />
     
                 <div className="mt-6">
-                  {!allOutcome.ok ? (
-                    <DataUnavailableNotice message={allOutcome.error} />
-                  ) : (
-                    <>
-                      {allOutcome.demo && <DemoDataBanner />}
-                      {!allOutcome.demo && allOutcome.data.items.length === 0 ? (
-                        <OfficialNoticesPreview search={params.search ?? ''} />
-                      ) : (
-                        <DirectoryResults
-                          items={allOutcome.data.items}
-                          params={params}
-                          page={page}
-                          demo={allOutcome.demo}
-                          preferences={viewerPreferences}
-                        />
-                      )}
-                    </>
-                  )}
+                  {allOutcome.demo && <DemoDataBanner />}
+                  <DirectoryResults
+                    items={allOutcome.data.items}
+                    params={params}
+                    page={page}
+                    demo={allOutcome.demo}
+                    preferences={viewerPreferences}
+                  />
                 </div>
               </div>
             </div>
