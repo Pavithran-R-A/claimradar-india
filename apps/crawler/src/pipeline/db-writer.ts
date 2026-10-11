@@ -369,9 +369,10 @@ export class DatabaseWriter implements IDatabaseWriter {
       // Exclude missing/empty source text in PostgREST BEFORE the bounded limit.
       // Otherwise old PDF records with no extracted text can starve the AI queue.
       .neq('source_documents.raw_text', '')
-      // Prefer candidates not yet failed by the free model; preserve FIFO within each group.
-      .order('ai_error_category', { ascending: true, nullsFirst: true })
-      .order('created_at', { ascending: true })
+      // Prioritize fresh high-signal notices before stale routine notices.
+      // No extra AI calls: this only reorders the existing bounded batch.
+      .order('keyword_score', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(Math.min(100, limit * 3));
     if (error) throw new Error(`Failed to fetch deferred candidate contexts: ${error.message}`);
 
