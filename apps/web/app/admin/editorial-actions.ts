@@ -4,7 +4,10 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { getAdminDb } from '@/lib/admin-db';
 import { isPubliclyPublishable } from '@/lib/claimables-repository';
-import { isLegalClearanceCurrent, isPublicationDeadlineExpired } from '@/lib/editorial-publication-safety';
+import {
+  isLegalClearanceCurrent,
+  isPublicationDeadlineExpired,
+} from '@/lib/editorial-publication-safety';
 import { writeAuditLog } from './_lib/audit';
 import { CLAIMABLE_STATUSES } from './_lib/constants';
 import { getActionActor, unauthorized, ADMINS_ONLY, EDITORIAL, LEGAL } from './_lib/roles';
@@ -217,8 +220,7 @@ export async function approvePublication(claimableId: string) {
     )
   ) {
     return {
-      error:
-        'A new legal clearance after the last content edit is required before publication.',
+      error: 'A new legal clearance after the last content edit is required before publication.',
     };
   }
 
