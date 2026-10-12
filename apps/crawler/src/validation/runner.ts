@@ -30,6 +30,7 @@ export function runAllValidators(params: {
   trustLevel: string;
   documentDate: string | null;
   evidenceVerification: { allVerified: boolean; results: EvidenceVerification[] };
+  redactedFields?: readonly string[];
 }): ValidationRunResult {
   const { extraction, sourceDomain, trustLevel, documentDate, evidenceVerification } = params;
 
@@ -46,6 +47,16 @@ export function runAllValidators(params: {
     claimUrlSupportValidator(evidenceVerification.results),
     sourceFreshnessValidator(documentDate),
   ];
+
+  if (params.redactedFields?.length) {
+    results.push({
+      name: 'unsupported_optional_ai_fields',
+      passed: false,
+      severity: 'warn',
+      reason: 'Unbacked optional AI values removed; accountable human review required',
+      details: { fields: [...params.redactedFields] },
+    });
+  }
 
   const blockingFailures = results.filter((r) => !r.passed && r.severity === 'block');
   const warnings = results.filter((r) => !r.passed && r.severity === 'warn');

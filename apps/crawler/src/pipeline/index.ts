@@ -20,6 +20,7 @@ import { createProviderRouter } from '../ai/router.js';
 import { AIBudgetManager } from '../ai/budget.js';
 import { CircuitBreaker } from '../ai/circuit-breaker.js';
 import { verifyEvidence } from '../validation/evidence.js';
+import { redactUnsupportedOptionalEvidence } from '../validation/redact-unsupported.js';
 import { runAllValidators } from '../validation/runner.js';
 import { computeClaimabilityScore } from '../validation/scorer.js';
 import { decidePublication } from '../publication/policy.js';
@@ -479,7 +480,18 @@ async function processSource(params: {
           }
         }
 
-        // Evidence verification
+        // Verify source quotations before trusting any AI field. Unsupported
+        // optional values are removed with an auditable human-review warning;
+        // material claim terms still fail closed in the evidence validator.
+        const initialEvidence = verifyEvidence(extraction, rawText);
+        const redaction = redactUnsupportedOptionalEvidence(extraction, initialEvidence.results);
+        extraction = redaction.extraction;
+        if (redaction.redactedFields.length > 0) {
+          logger.warn('validation', 'Unsupported optional AI fields redacted for review', {
+            candidateId,
+            fields: redaction.redactedFields,
+          });
+        }
         const evidenceResult = verifyEvidence(extraction, rawText);
 
         // Run validators
@@ -490,6 +502,7 @@ async function processSource(params: {
           trustLevel: source.trust_level,
           documentDate: doc.publishedAt ?? null,
           evidenceVerification: evidenceResult,
+          redactedFields: redaction.redactedFields,
         });
 
         // Compute claimability score

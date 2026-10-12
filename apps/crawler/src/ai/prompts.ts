@@ -5,7 +5,7 @@ const BASE_INSTRUCTIONS = `You are a legal document analysis system for ClaimRad
 CRITICAL RULES — follow these without exception:
 - Return null for any field where information is absent or uncertain.
 - NEVER create a claim URL that does not exist in the document.
-- NEVER invent an amount that is not explicitly stated in the document.
+- NEVER invent an amount or currency not explicitly stated in the document.
 - NEVER invent a deadline that is not explicitly stated in the document.
 - NEVER convert an allegation into a finding.
 - NEVER convert an individual award into group relief.
@@ -19,6 +19,8 @@ EVIDENCE RULES:
 - The "field" property must name the extraction field it supports.
 - Do not fabricate evidence excerpts.
 - If a field has no supporting evidence in the document, set the field to null.
+- Do not infer a currency from the location of a regulator; only return currency if explicitly supported.
+- Do not set procedural_status to pending merely because a refund submission window remains open. Use null unless a procedural legal status is explicitly supported.
 
 SCHEMA GUIDANCE:
 - is_relevant: true only if the document identifies a realistic, actionable refund, compensation or group relief route for members of the public. Set false for concluded payments to named individuals, news about past awards, policy announcements, proposals without an application route, or notices with no publicly available claim process.
@@ -67,7 +69,7 @@ Respond with a single JSON object matching this schema:
   "relief_type": string | null,
   "relief_description": string | null,
   "official_amount": number | null,
-  "amount_currency": "INR",
+  "amount_currency": string | null,
   "proof_requirements": string[] | null,
   "action_required": string | null,
   "official_claim_url": string | null,
