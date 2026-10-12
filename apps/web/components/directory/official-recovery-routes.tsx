@@ -1,4 +1,12 @@
-import { officialRecoveryRoutes, type RecoveryRouteKind } from '@/lib/official-recovery-routes';
+'use client';
+
+import { useState } from 'react';
+import type { RecoveryRouteKind } from '@/lib/official-recovery-routes';
+import {
+  RECOVERY_INTENT_CHOICES,
+  routesForIntent,
+  type RecoveryIntent,
+} from '@/lib/recovery-intent';
 
 const labels: Record<RecoveryRouteKind, string> = {
   'Search for unclaimed money': 'Search existing money',
@@ -7,7 +15,10 @@ const labels: Record<RecoveryRouteKind, string> = {
 };
 
 export function OfficialRecoveryRoutes() {
-  const routes = officialRecoveryRoutes();
+  // This selection lives only in browser memory. No names, PAN, Aadhaar,
+  // bank account information, or answers are transmitted or stored.
+  const [intent, setIntent] = useState<RecoveryIntent>('all');
+  const routes = routesForIntent(intent);
 
   return (
     <section aria-labelledby="recovery-pathways-title" className="mt-9">
@@ -23,6 +34,33 @@ export function OfficialRecoveryRoutes() {
           Select a recovery route to search or apply on the relevant official website. These
           services are different from ClaimKhoj-approved claim opportunities. We cannot see your
           account balances or determine your eligibility from these links.
+        </p>
+      </div>
+      <div className="mt-5 rounded-md border border-border bg-surface-secondary p-4">
+        <p className="text-sm font-semibold text-text-primary">
+          What best describes your situation?
+        </p>
+        <div role="group" aria-label="Choose the kind of recovery help you need" className="mt-3 flex flex-wrap gap-2">
+          {RECOVERY_INTENT_CHOICES.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setIntent(option.id)}
+              aria-pressed={intent === option.id}
+              title={option.description}
+              className={
+                intent === option.id
+                  ? 'min-h-10 rounded-md bg-trust-primary px-3 py-2 text-xs font-semibold text-white'
+                  : 'min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-xs font-semibold text-text-primary hover:bg-surface-secondary'
+              }
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <p aria-live="polite" className="mt-3 text-xs text-text-secondary">
+          Showing {routes.length} relevant official {routes.length === 1 ? 'route' : 'routes'}.
+          These are suggestions, not eligibility decisions.
         </p>
       </div>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
