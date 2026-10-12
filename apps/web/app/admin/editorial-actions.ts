@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { getAdminDb } from '@/lib/admin-db';
 import { isPubliclyPublishable } from '@/lib/claimables-repository';
+import { isLegalClearanceCurrent, isPublicationDeadlineExpired } from '@/lib/editorial-publication-safety';
 import { writeAuditLog } from './_lib/audit';
 import { CLAIMABLE_STATUSES } from './_lib/constants';
 import { getActionActor, unauthorized, ADMINS_ONLY, EDITORIAL, LEGAL } from './_lib/roles';
@@ -155,7 +156,7 @@ export async function approvePublication(claimableId: string) {
   const { data: claimable, error: fetchError } = await db
     .from('claimables')
     .select(
-      'id, status, publication_status, first_published_at, public_title, official_claim_url, deadline, action_required',
+      'id, status, publication_status, first_published_at, public_title, official_claim_url, deadline, action_required, updated_at',
     )
     .eq('id', claimableId)
     .single();
@@ -185,8 +186,8 @@ export async function approvePublication(claimableId: string) {
   } catch {
     return { error: 'Invalid official claim URL.' };
   }
-  if (claimable.deadline && Date.parse(claimable.deadline) < Date.now()) {
-    return { error: 'Cannot publish an opportunity with an expired deadline.' };
+  if (isPublicationDeadlineExpired(claimable.deadline)) {
+    return { error: 'Cannot publish an opportunity with an expired or invalid deadline.' };
   }
 
   const { data: sourceLink, error: linkError } = await db
@@ -207,14 +208,23 @@ export async function approvePublication(claimableId: string) {
     .order('reviewed_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (legalError || latestLegalReview?.decision !== 'clear_to_publish') {
+  if (
+    legalError ||
+    !isLegalClearanceCurrent(
+      latestLegalReview?.decision,
+      latestLegalReview?.reviewed_at,
+      claimable.updated_at,
+    )
+  ) {
     return {
-      error: 'A current legal review clearing this claimable is required before publication.',
+      error:
+        'A new legal clearance after the last content edit is required before publication.',
     };
   }
 
   const now = new Date().toISOString();
-  const { error } = await db
+  // Refuse to publish if another editor changed the approved draft after our read.
+  const { data: publishedRows, error } = await db
     .from('claimables')
     .update({
       publication_status: 'published',
@@ -222,8 +232,14 @@ export async function approvePublication(claimableId: string) {
       last_verified_at: now,
       updated_at: now,
     })
-    .eq('id', claimableId);
+    .eq('id', claimableId)
+    .eq('publication_status', 'draft')
+    .eq('updated_at', claimable.updated_at)
+    .select('id');
   if (error) return { error: error.message };
+  if (!publishedRows?.length) {
+    return { error: 'This draft changed during approval. Reopen it and repeat legal review.' };
+  }
 
   await db.from('publication_events').insert({
     claimable_id: claimableId,
