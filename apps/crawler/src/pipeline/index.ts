@@ -484,10 +484,7 @@ async function processSource(params: {
         // optional values are removed with an auditable human-review warning;
         // material claim terms still fail closed in the evidence validator.
         const initialEvidence = verifyEvidence(extraction, rawText);
-        const redaction = redactUnsupportedOptionalEvidence(
-          extraction,
-          initialEvidence.results,
-        );
+        const redaction = redactUnsupportedOptionalEvidence(extraction, initialEvidence.results);
         extraction = redaction.extraction;
         if (redaction.redactedFields.length > 0) {
           logger.warn('validation', 'Unsupported optional AI fields redacted for review', {
