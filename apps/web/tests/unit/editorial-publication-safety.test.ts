@@ -30,9 +30,9 @@ describe('post-edit legal review freshness', () => {
       true,
     );
     expect(isLegalClearanceCurrent('clear_to_publish', editedAt, editedAt)).toBe(true);
-    expect(
-      isLegalClearanceCurrent('clear_to_publish', '2026-10-12T13:55:00Z', editedAt),
-    ).toBe(false);
+    expect(isLegalClearanceCurrent('clear_to_publish', '2026-10-12T13:55:00Z', editedAt)).toBe(
+      false,
+    );
   });
   it('refuses negative, missing, or unparsable reviews', () => {
     expect(isLegalClearanceCurrent('blocked', '2026-10-12T15:00:00Z', editedAt)).toBe(false);
