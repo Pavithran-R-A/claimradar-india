@@ -40,7 +40,11 @@ export function OfficialRecoveryRoutes() {
         <p className="text-sm font-semibold text-text-primary">
           What best describes your situation?
         </p>
-        <div role="group" aria-label="Choose the kind of recovery help you need" className="mt-3 flex flex-wrap gap-2">
+        <div
+          role="group"
+          aria-label="Choose the kind of recovery help you need"
+          className="mt-3 flex flex-wrap gap-2"
+        >
           {RECOVERY_INTENT_CHOICES.map((option) => (
             <button
               key={option.id}
