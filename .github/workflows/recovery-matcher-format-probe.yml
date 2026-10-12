@@ -1,0 +1,21 @@
+name: Temporary Recovery Matcher Format Probe
+on:
+  push:
+    branches: [feat/privacy-safe-recovery-matcher-20261012]
+    paths:
+      - .github/workflows/recovery-matcher-format-probe.yml
+permissions:
+  contents: read
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: pnpm install --frozen-lockfile
+      - run: |
+          pnpm exec prettier --write apps/web/lib/recovery-intent.ts apps/web/components/directory/official-recovery-routes.tsx apps/web/tests/unit/recovery-intent.test.ts
+          git diff -- apps/web/lib/recovery-intent.ts apps/web/components/directory/official-recovery-routes.tsx apps/web/tests/unit/recovery-intent.test.ts
