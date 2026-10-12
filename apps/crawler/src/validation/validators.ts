@@ -232,6 +232,22 @@ export function appealOrStayValidator(extraction: Extraction): ValidatorResult {
   };
 }
 
+/**
+ * Calendar-only Indian notice deadlines are inclusive through the local day.
+ * JavaScript's Date('YYYY-MM-DD') instead denotes 00:00 UTC, and incorrectly
+ * treats most of the last submission day as already expired.
+ */
+function indiaToday(now: Date): string {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).formatToParts(now);
+  const value = (key: string) => parts.find((part) => part.type === key)?.value ?? '';
+  return `${value('year')}-${value('month')}-${value('day')}`;
+}
+
 // 8. Deadline — must be parseable, future, and ≤5 years
 export function deadlineValidator(extraction: Extraction): ValidatorResult {
   if (!extraction.deadline) {
@@ -241,6 +257,54 @@ export function deadlineValidator(extraction: Extraction): ValidatorResult {
       severity: 'block',
       reason: 'No deadline specified — skipped',
       details: {},
+    };
+  }
+
+  const dateOnly = /^\\d{4}-\\d{2}-\\d{2}$/.test(extraction.deadline);
+  if (dateOnly) {
+    const parsedDay = new Date(extraction.deadline + 'T00:00:00.000Z');
+    if (
+      Number.isNaN(parsedDay.getTime()) ||
+      parsedDay.toISOString().slice(0, 10) !== extraction.deadline
+    ) {
+      return {
+        name: 'deadline',
+        passed: false,
+        severity: 'block',
+        reason: `Unparseable deadline: "${extraction.deadline}"`,
+        details: { deadline: extraction.deadline },
+      };
+    }
+
+    const today = indiaToday(new Date());
+    const upper = new Date(today + 'T00:00:00.000Z');
+    upper.setUTCFullYear(upper.getUTCFullYear() + 5);
+    const maxDate = upper.toISOString().slice(0, 10);
+
+    if (extraction.deadline < today) {
+      return {
+        name: 'deadline',
+        passed: false,
+        severity: 'block',
+        reason: `Deadline has expired: ${extraction.deadline}`,
+        details: { deadline: extraction.deadline, expired: true },
+      };
+    }
+    if (extraction.deadline > maxDate) {
+      return {
+        name: 'deadline',
+        passed: false,
+        severity: 'block',
+        reason: `Deadline is more than 5 years away: ${extraction.deadline}`,
+        details: { deadline: extraction.deadline },
+      };
+    }
+    return {
+      name: 'deadline',
+      passed: true,
+      severity: 'block',
+      reason: 'Deadline date is valid through its full day in India',
+      details: { deadline: extraction.deadline },
     };
   }
 
