@@ -44,7 +44,7 @@ export function runAllValidators(params: {
     appealOrStayValidator(extraction),
     deadlineValidator(extraction),
     amountSupportValidator(evidenceVerification.results, extraction.official_amount),
-    claimUrlSupportValidator(evidenceVerification.results),
+    claimUrlSupportValidator(evidenceVerification.results, extraction.official_claim_url),
     sourceFreshnessValidator(documentDate),
   ];
 
