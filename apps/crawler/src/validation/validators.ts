@@ -388,12 +388,12 @@ export function claimUrlSupportValidator(
     try {
       const parsed = new URL(claimUrl);
       const host = parsed.hostname.toLowerCase();
-      const page = parsed.pathname.toLowerCase().replace(/\\/+$/, '');
+      const page = parsed.pathname.toLowerCase();
       // IBBI Form A creditor claims are submitted to the named resolution
       // professional; the central downloads directory is not a filing portal.
       isGenericInformationDirectory =
         (host === 'ibbi.gov.in' || host === 'www.ibbi.gov.in') &&
-        page === '/home/downloads';
+        (page === '/home/downloads' || page === '/home/downloads/');
     } catch {
       // Broken or unsupported URLs still require an explicit evidence check.
     }
