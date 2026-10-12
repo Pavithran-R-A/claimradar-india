@@ -1,0 +1,21 @@
+name: Temporary Evidence Format Probe
+on:
+  push:
+    branches: [fix/evidence-and-deadline-20261012]
+    paths:
+      - .github/workflows/evidence-format-probe.yml
+permissions:
+  contents: read
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: pnpm install --frozen-lockfile
+      - run: |
+          pnpm exec prettier --write apps/crawler/src/validation/redact-unsupported.ts apps/crawler/src/validation/validators.ts apps/crawler/src/validation/runner.ts apps/crawler/src/pipeline/index.ts apps/crawler/src/ai/prompts.ts apps/crawler/tests/validation/india-deadline-and-evidence.test.ts
+          git diff -- apps/crawler/src/validation/redact-unsupported.ts apps/crawler/src/validation/validators.ts apps/crawler/src/validation/runner.ts apps/crawler/src/pipeline/index.ts apps/crawler/src/ai/prompts.ts apps/crawler/tests/validation/india-deadline-and-evidence.test.ts
