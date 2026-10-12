@@ -195,6 +195,32 @@ describe('Validators — 10 Scenarios', () => {
       expect(result.details.hasAmount).toBe(false);
     });
 
+    it('claim_url_support_validator: flags IBBI general downloads as not a direct filing route', () => {
+      const evidenceResults = createEvidenceVerifications([
+        { field: 'official_claim_url', found: true },
+      ]);
+      const result = claimUrlSupportValidator(
+        evidenceResults,
+        'https://www.ibbi.gov.in/home/downloads',
+      );
+      expect(result.passed).toBe(false);
+      expect(result.severity).toBe('info');
+      expect(result.details.isGenericInformationDirectory).toBe(true);
+      expect(result.reason).toContain('not a creditor filing route');
+    });
+
+    it('claim_url_support_validator: retains source-backed specific filing links', () => {
+      const evidenceResults = createEvidenceVerifications([
+        { field: 'official_claim_url', found: true },
+      ]);
+      const result = claimUrlSupportValidator(
+        evidenceResults,
+        'https://www.ibbi.gov.in/specific-claim-case',
+      );
+      expect(result.passed).toBe(true);
+      expect(result.details.isGenericInformationDirectory).toBe(false);
+    });
+
     it('claim_url_support_validator: passes when URL has evidence', () => {
       const evidenceResults = createEvidenceVerifications([
         { field: 'official_claim_url', found: true },

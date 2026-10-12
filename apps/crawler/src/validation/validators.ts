@@ -378,14 +378,43 @@ export function amountSupportValidator(
 }
 
 // 10. Claim URL support — official_claim_url must exist in source
-export function claimUrlSupportValidator(evidenceResults: EvidenceVerification[]): ValidatorResult {
+export function claimUrlSupportValidator(
+  evidenceResults: EvidenceVerification[],
+  claimUrl: string | null | undefined = null,
+): ValidatorResult {
   const urlEvidence = evidenceResults.find((r) => r.field === 'official_claim_url' && r.found);
+  let isGenericInformationDirectory = false;
+  if (claimUrl) {
+    try {
+      const parsed = new URL(claimUrl);
+      const host = parsed.hostname.toLowerCase();
+      const page = parsed.pathname.toLowerCase();
+      // IBBI Form A creditor claims are submitted to the named resolution
+      // professional; the central downloads directory is not a filing portal.
+      isGenericInformationDirectory =
+        (host === 'ibbi.gov.in' || host === 'www.ibbi.gov.in') &&
+        (page === '/home/downloads' || page === '/home/downloads/');
+    } catch {
+      // Broken or unsupported URLs still require an explicit evidence check.
+    }
+  }
+
   return {
     name: 'claim_url_support',
-    passed: !!urlEvidence,
-    severity: 'warn',
-    reason: urlEvidence ? 'Claim URL has evidence backing' : 'Claim URL has no verified evidence',
-    details: { hasUrlEvidence: !!urlEvidence },
+    passed: !!urlEvidence && !isGenericInformationDirectory,
+    // Generic reference URLs have valid official evidence, but must NEVER
+    // qualify for unattended publication. Info keeps an otherwise valid
+    // candidate in the staffed queue; allPassed=false prevents auto-publish.
+    severity: isGenericInformationDirectory ? 'info' : 'warn',
+    reason: isGenericInformationDirectory
+      ? 'IBBI downloads is an information directory, not a creditor filing route; verify Form A claim submission instructions with the resolution professional.'
+      : urlEvidence
+        ? 'Claim URL has evidence backing'
+        : 'Claim URL has no verified evidence',
+    details: {
+      hasUrlEvidence: !!urlEvidence,
+      isGenericInformationDirectory,
+    },
   };
 }
 
