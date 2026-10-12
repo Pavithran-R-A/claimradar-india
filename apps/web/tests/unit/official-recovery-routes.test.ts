@@ -30,6 +30,13 @@ describe('public official recovery route catalog', () => {
     }
   });
 
+  it('keeps IEPF shares and dividends on the authority portal instead of a generic redirect', () => {
+    const iepf = routes.find((route) => route.id === 'shares-dividends');
+    expect(iepf?.url).toBe('https://www.iepf.gov.in/content/iepf/global/master/Home/Home.html');
+    expect(iepf?.nextStep).toContain('MCA Services');
+    expect(iepf?.linkLabel).toContain('IEPF Authority');
+  });
+
   it('distinguishes search portals and complaint mechanisms from actual cash claims', () => {
     const kinds = routes.map((route) => route.kind);
     expect(kinds).toContain('Search for unclaimed money');

@@ -34,9 +34,10 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
     description: 'Recover company dividends or shares transferred to the IEPF.',
     agency: 'Investor Education and Protection Fund Authority',
     kind: 'Claim or track your money',
-    nextStep: 'Check the official IEPF-5 claim process and company verification requirements.',
-    url: 'https://services.india.gov.in/service/detail/iepf-forms-by-investor-education-and-protection-fund-authority',
-    linkLabel: 'View government IEPF service',
+    nextStep:
+      'Read the IEPF-5 instructions; file the webform through MCA Services → IEPF Services on the MCA portal.',
+    url: 'https://www.iepf.gov.in/content/iepf/global/master/Home/Home.html',
+    linkLabel: 'Open IEPF Authority',
   },
   {
     id: 'insurance',
@@ -106,7 +107,7 @@ export function officialRecoveryRoutes(): readonly RecoveryRoute[] {
   // Only HTTPS links to recognized government/authority hosts are presented.
   const domains = new Set([
     'udgam.rbi.org.in',
-    'services.india.gov.in',
+    'www.iepf.gov.in',
     'bimabharosa.irdai.gov.in',
     'unifiedportal-mem.epfindia.gov.in',
     'www.incometax.gov.in',
