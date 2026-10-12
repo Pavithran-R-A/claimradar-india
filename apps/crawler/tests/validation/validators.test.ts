@@ -199,7 +199,10 @@ describe('Validators — 10 Scenarios', () => {
       const evidenceResults = createEvidenceVerifications([
         { field: 'official_claim_url', found: true },
       ]);
-      const result = claimUrlSupportValidator(evidenceResults, 'https://www.ibbi.gov.in/home/downloads');
+      const result = claimUrlSupportValidator(
+        evidenceResults,
+        'https://www.ibbi.gov.in/home/downloads',
+      );
       expect(result.passed).toBe(false);
       expect(result.severity).toBe('info');
       expect(result.details.isGenericInformationDirectory).toBe(true);
@@ -210,7 +213,10 @@ describe('Validators — 10 Scenarios', () => {
       const evidenceResults = createEvidenceVerifications([
         { field: 'official_claim_url', found: true },
       ]);
-      const result = claimUrlSupportValidator(evidenceResults, 'https://www.ibbi.gov.in/specific-claim-case');
+      const result = claimUrlSupportValidator(
+        evidenceResults,
+        'https://www.ibbi.gov.in/specific-claim-case',
+      );
       expect(result.passed).toBe(true);
       expect(result.details.isGenericInformationDirectory).toBe(false);
     });
