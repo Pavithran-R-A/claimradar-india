@@ -1,7 +1,10 @@
 import { calculateDeadlineStatus } from '@claimradar/shared-types';
 
 /** A dated notice closes after the FULL final local calendar day, not at 00:00 UTC. */
-export function isPublicationDeadlineExpired(deadline: string | null, now: Date = new Date()): boolean {
+export function isPublicationDeadlineExpired(
+  deadline: string | null,
+  now: Date = new Date(),
+): boolean {
   if (!deadline) return false;
   if (/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
     const parsed = new Date(deadline + 'T00:00:00.000Z');
