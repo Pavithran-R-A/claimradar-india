@@ -260,7 +260,7 @@ export function deadlineValidator(extraction: Extraction): ValidatorResult {
     };
   }
 
-  const dateOnly = /^\\d{4}-\\d{2}-\\d{2}$/.test(extraction.deadline);
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(extraction.deadline);
   if (dateOnly) {
     const parsedDay = new Date(extraction.deadline + 'T00:00:00.000Z');
     if (
