@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { getAdminDb } from '@/lib/admin-db';
 import { isPubliclyPublishable } from '@/lib/claimables-repository';
+import { isKnownNonFilingInformationUrl } from '@/lib/official-filing-route';
 import {
   isLegalClearanceCurrent,
   isPublicationDeadlineExpired,
@@ -189,6 +190,13 @@ export async function approvePublication(claimableId: string) {
   } catch {
     return { error: 'Invalid official claim URL.' };
   }
+  if (isKnownNonFilingInformationUrl(claimable.official_claim_url)) {
+    return {
+      error:
+        'The supplied IBBI downloads URL is a general information page, not a claim-filing destination. Update the route and complete fresh legal review.',
+    };
+  }
+
   if (isPublicationDeadlineExpired(claimable.deadline)) {
     return { error: 'Cannot publish an opportunity with an expired or invalid deadline.' };
   }

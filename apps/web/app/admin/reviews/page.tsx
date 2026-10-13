@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
+import { isLegalClearanceCurrent } from '@/lib/editorial-publication-safety';
 import { requireRoles } from '@/lib/auth';
 import { EDITORIAL, EDITORIAL_AND_LEGAL } from '../_lib/roles';
 import { ErrorBanner, FilterChips, PageHeader, formatDateTime, statusVariant } from '../_lib/ui';
@@ -35,7 +36,7 @@ export default async function ReviewsPage({
     public_title: string;
     status: string;
     updated_at: string;
-    legal_reviews: { id: string }[];
+    legal_reviews: { decision: string; reviewed_at: string }[];
   }> = [];
   let openAssignments: Array<{
     id: string;
@@ -54,21 +55,29 @@ export default async function ReviewsPage({
         .from('candidate_documents')
         .select('id, validation_status, ai_confidence, created_at, source_documents!inner(title)')
         .in('publication_decision', ['pending', 'human_review'])
-        .order('created_at', { ascending: true })
+        .order('validation_status', { ascending: true })
+        .order('created_at', { ascending: false })
         .limit(50);
       if (queryError) error = queryError.message;
       else pendingCandidates = (data ?? []) as typeof pendingCandidates;
     } else if (queue === 'legal') {
       const { data, error: queryError } = await db
         .from('claimables')
-        .select('id, public_title, status, updated_at, legal_reviews(id)')
+        .select('id, public_title, status, updated_at, legal_reviews(decision, reviewed_at)')
         .eq('publication_status', 'draft')
         .order('updated_at', { ascending: false })
         .limit(100);
       if (queryError) error = queryError.message;
       else {
         const rows = (data ?? []) as typeof awaitingLegal;
-        awaitingLegal = rows.filter((r) => (r.legal_reviews ?? []).length === 0);
+        // A review older than the latest content edit is NOT clearance.
+        // Keep revised drafts in the queue until a fresh legal decision exists.
+        awaitingLegal = rows.filter((r) => {
+          const latest = [...(r.legal_reviews ?? [])].sort((a, b) =>
+            b.reviewed_at.localeCompare(a.reviewed_at),
+          )[0];
+          return !isLegalClearanceCurrent(latest?.decision, latest?.reviewed_at, r.updated_at);
+        });
       }
     } else if (queue === 'assignments' && isEditorial) {
       const { data, error: queryError } = await db
@@ -94,7 +103,10 @@ export default async function ReviewsPage({
 
   return (
     <div>
-      <PageHeader title="Review Queue" subtitle="Everything awaiting human review, by queue" />
+      <PageHeader
+        title="Review Queue"
+        subtitle="Ready-to-review candidates first; current legal clearance is required after edits"
+      />
 
       <div className="mt-4">
         <FilterChips

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getAdminDb } from '@/lib/admin-db';
+import { isKnownNonFilingInformationUrl } from '@/lib/official-filing-route';
 import { requireRole } from '@/lib/auth';
 import { writeAuditLog } from './_lib/audit';
 import { getActionActor, unauthorized, EDITORIAL } from './_lib/roles';
@@ -119,6 +120,7 @@ export async function approveCandidate(candidateId: string) {
   // cited evidence may enter the publication workflow.
   const extracted = candidate.ai_extracted_data as {
     evidence?: unknown[];
+    official_claim_url?: string | null;
   } | null;
   if (
     candidate.ai_extraction_status !== 'completed' ||
@@ -129,6 +131,13 @@ export async function approveCandidate(candidateId: string) {
     return {
       error:
         'Candidate must pass AI extraction, source evidence, and all validation checks before editorial approval.',
+    };
+  }
+
+  if (isKnownNonFilingInformationUrl(extracted?.official_claim_url)) {
+    return {
+      error:
+        'This candidate links to a general IBBI downloads page, not a verified filing route. Confirm the official Form A instructions and correct the extracted route through the auditable review workflow first.',
     };
   }
 
