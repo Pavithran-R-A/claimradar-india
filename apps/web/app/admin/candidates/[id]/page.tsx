@@ -113,13 +113,21 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
 
         {['pending', 'human_review'].includes(candidate.publication_decision) && canDecide && (
           <div className="mt-3 flex flex-wrap items-start gap-6">
-            <ActionButton
-              action={approveCandidate.bind(null, candidate.id)}
-              label="Approve candidate"
-              pendingLabel="Approving…"
-              confirmLabel="Approve"
-              confirmMessage="Approving marks this candidate as eligible for promotion to a claimable draft. Nothing becomes public yet, but the decision is recorded in the audit log."
-            />
+            {candidate.validation_status === 'pass' &&
+            candidate.ai_extraction_status === 'completed' ? (
+              <ActionButton
+                action={approveCandidate.bind(null, candidate.id)}
+                label="Approve candidate"
+                pendingLabel="Approving…"
+                confirmLabel="Approve"
+                confirmMessage="Approving marks this candidate as eligible for promotion to a claimable draft. Nothing becomes public yet, but the decision is recorded in the audit log."
+              />
+            ) : (
+              <p className="max-w-sm text-sm text-text-secondary" role="status">
+                Approval is unavailable until extraction and source-evidence validation pass.
+                Review the validation failures below before trying again.
+              </p>
+            )
             <ActionForm
               action={rejectCandidate.bind(null, candidate.id)}
               submitLabel="Reject candidate"
