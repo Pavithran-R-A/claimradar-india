@@ -76,11 +76,7 @@ export default async function ReviewsPage({
           const latest = [...(r.legal_reviews ?? [])].sort((a, b) =>
             b.reviewed_at.localeCompare(a.reviewed_at),
           )[0];
-          return !isLegalClearanceCurrent(
-            latest?.decision,
-            latest?.reviewed_at,
-            r.updated_at,
-          );
+          return !isLegalClearanceCurrent(latest?.decision, latest?.reviewed_at, r.updated_at);
         });
       }
     } else if (queue === 'assignments' && isEditorial) {
@@ -107,7 +103,10 @@ export default async function ReviewsPage({
 
   return (
     <div>
-      <PageHeader title="Review Queue" subtitle="Ready-to-review candidates first; current legal clearance is required after edits" />
+      <PageHeader
+        title="Review Queue"
+        subtitle="Ready-to-review candidates first; current legal clearance is required after edits"
+      />
 
       <div className="mt-4">
         <FilterChips
