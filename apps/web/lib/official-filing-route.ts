@@ -11,10 +11,7 @@ export function isKnownNonFilingInformationUrl(value: string | null | undefined)
     const url = new URL(value);
     const host = url.hostname.toLowerCase();
     const path = url.pathname.toLowerCase().replace(/\/+$/, '');
-    return (
-      (host === 'ibbi.gov.in' || host === 'www.ibbi.gov.in') &&
-      path === '/home/downloads'
-    );
+    return (host === 'ibbi.gov.in' || host === 'www.ibbi.gov.in') && path === '/home/downloads';
   } catch {
     return false;
   }
