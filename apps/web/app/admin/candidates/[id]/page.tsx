@@ -124,8 +124,8 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
               />
             ) : (
               <p className="max-w-sm text-sm text-text-secondary" role="status">
-                Approval is unavailable until extraction and source-evidence validation pass.
-                Review the validation failures below before trying again.
+                Approval is unavailable until extraction and source-evidence validation pass. Review
+                the validation failures below before trying again.
               </p>
             )}
             <ActionForm
