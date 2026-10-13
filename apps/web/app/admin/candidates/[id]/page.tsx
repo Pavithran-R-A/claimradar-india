@@ -127,7 +127,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
                 Approval is unavailable until extraction and source-evidence validation pass.
                 Review the validation failures below before trying again.
               </p>
-            )
+            )}
             <ActionForm
               action={rejectCandidate.bind(null, candidate.id)}
               submitLabel="Reject candidate"
