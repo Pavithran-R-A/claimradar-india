@@ -5,9 +5,9 @@ describe('public-safe claim filing destinations', () => {
   it('blocks both versions of the IBBI generic downloads directory', () => {
     expect(isKnownNonFilingInformationUrl('https://www.ibbi.gov.in/home/downloads')).toBe(true);
     expect(isKnownNonFilingInformationUrl('https://ibbi.gov.in/home/downloads/')).toBe(true);
-    expect(
-      isKnownNonFilingInformationUrl('https://www.ibbi.gov.in/home/downloads?ref=claim'),
-    ).toBe(true);
+    expect(isKnownNonFilingInformationUrl('https://www.ibbi.gov.in/home/downloads?ref=claim')).toBe(
+      true,
+    );
   });
 
   it('does not treat every official IBBI reference document as the generic downloads page', () => {
