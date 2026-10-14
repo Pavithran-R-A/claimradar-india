@@ -60,12 +60,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Format check
-        run: |
-          pnpm exec prettier --write apps/web/lib/recovery-intent.ts
-          echo "::group::Formatter-only diff for diagnosis"
-          git diff -- apps/web/lib/recovery-intent.ts
-          echo "::endgroup::"
-          pnpm format
+        run: pnpm format
 
       - name: Lint
         run: pnpm lint
