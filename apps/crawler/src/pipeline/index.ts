@@ -40,6 +40,7 @@ import {
 import { initSentry, captureError } from '../observability/sentry.js';
 import { createAlertSink } from '../observability/alerts.js';
 import { classifyFetchError } from '../observability/failure-categories.js';
+import { FetchError } from '../http/types.js';
 
 export class StagingPolicyViolationError extends Error {
   readonly violations: string[];
@@ -159,6 +160,7 @@ interface SourceStats {
   duplicates: number;
   candidates: number;
   errors: number;
+  oversizedDocumentsSkipped: number;
 }
 
 async function processSource(params: {
@@ -183,6 +185,7 @@ async function processSource(params: {
     duplicates: 0,
     candidates: 0,
     errors: 0,
+    oversizedDocumentsSkipped: 0,
   };
   let firstDocumentError: string | null = null;
   let firstDocumentErrorCause: unknown = null;
@@ -500,7 +503,7 @@ async function processSource(params: {
           sourceText: rawText,
           sourceDomain: source.domain,
           trustLevel: source.trust_level,
-          documentDate: doc.publishedAt ?? null,
+          documentDate: publishedAt ?? null,
           evidenceVerification: evidenceResult,
           redactedFields: redaction.redactedFields,
         });
@@ -598,6 +601,30 @@ async function processSource(params: {
           decision: pubDecision.action,
         });
       } catch (docError) {
+        // A size-exceeded FetchError is the HTTP client's security guard doing its
+        // job. Never raise the 50 MiB limit just to make the crawl green.
+        // Log and persist the excluded URL, but allow the other documents in
+        // the source to continue. This is NOT a successfully fetched document.
+        if (docError instanceof FetchError && docError.category === 'size_exceeded') {
+          summary.expectedLimitationCount++;
+          summary.documentsSkippedOversize++;
+          summary.errorCount++;
+          stats.oversizedDocumentsSkipped++;
+          logger.warn('document', `Oversized source document safely skipped: ${doc.url}`, {
+            sourceId: source.id,
+            error: docError.message,
+            category: docError.category,
+          });
+          if (!options.dryRun) {
+            await db.insertCrawlError(runId, {
+              source_id: source.id,
+              error_type: 'document_size_limit_skipped',
+              error_message: docError.message,
+              url: doc.url,
+            });
+          }
+          continue;
+        }
         const errMsg = docError instanceof Error ? docError.message : 'unknown';
         const isExpectedLimitation =
           getSourceRegistryId(source) === 'pib-rss' &&
@@ -676,6 +703,13 @@ async function processSource(params: {
         status: 'succeeded',
         ...stats,
       });
+      if (stats.oversizedDocumentsSkipped > 0) {
+        logger.warn(
+          'source',
+          `Source processed with ${stats.oversizedDocumentsSkipped} oversized document(s) excluded`,
+          { sourceId: source.id, ...stats },
+        );
+      }
       logger.info('source', `Source completed: ${source.name}`, {
         sourceId: source.id,
         ...stats,
