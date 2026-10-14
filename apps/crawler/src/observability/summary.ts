@@ -13,6 +13,7 @@ export interface SourceSummary {
   duplicates: number;
   candidates: number;
   errors: number;
+  oversizedDocumentsSkipped: number;
 }
 
 export interface EffectivePolicyGuards {
@@ -35,6 +36,8 @@ export interface CrawlSummary {
   documentsFetched: number;
   documentsUnchanged: number;
   documentsDuplicate: number;
+  /** Explicitly excluded files exceeding the safe HTTP body limit (not fetched). */
+  documentsSkippedOversize: number;
   candidatesCreated: number;
   aiCallsUsed: number;
   aiCallsFailed: number;
@@ -63,6 +66,7 @@ export function createEmptySummary(runId: string): CrawlSummary {
     documentsFetched: 0,
     documentsUnchanged: 0,
     documentsDuplicate: 0,
+    documentsSkippedOversize: 0,
     candidatesCreated: 0,
     aiCallsUsed: 0,
     aiCallsFailed: 0,
@@ -87,7 +91,7 @@ export function formatSummaryText(s: CrawlSummary): string {
     `Duration:      ${(s.durationMs / 1000).toFixed(1)}s`,
     `Sources:       ${s.sourcesSucceeded}/${s.sourcesAttempted} succeeded, ${s.sourcesFailed} failed`,
     `Documents:     ${s.documentsDiscovered} discovered, ${s.documentsFetched} fetched`,
-    `               ${s.documentsUnchanged} unchanged, ${s.documentsDuplicate} duplicates`,
+    `               ${s.documentsUnchanged} unchanged, ${s.documentsDuplicate} duplicates, ${s.documentsSkippedOversize} safely skipped oversized documents`,
     `Candidates:    ${s.candidatesCreated} created`,
     `AI calls:      ${s.aiCallsUsed} used, ${s.aiCallsFailed} failed`,
     `Publications:  ${s.recordsPublished} published, ${s.recordsQueued} queued, ${s.recordsRejected} rejected`,
@@ -97,7 +101,8 @@ export function formatSummaryText(s: CrawlSummary): string {
       (p) =>
         `  ${p.sourceId.padEnd(12)} ${p.status === 'succeeded' ? 'OK  ' : 'FAIL'} ` +
         `discovered=${p.discovered} fetched=${p.fetched} unchanged=${p.unchanged} ` +
-        `duplicates=${p.duplicates} candidates=${p.candidates} errors=${p.errors}`,
+        `duplicates=${p.duplicates} candidates=${p.candidates} errors=${p.errors} ` +
+        `oversized_skipped=${p.oversizedDocumentsSkipped}`,
     ),
   ];
   return lines.join('\n');
