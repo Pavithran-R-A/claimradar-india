@@ -113,50 +113,14 @@ jobs:
           fi
           pnpm crawler:daily $DRY_FLAG
 
+      # Use the same fail-closed acceptance contract as Railway. The audit
+      # error total can include expected restrictions, but unexpected failures
+      # and unclassified errors must still fail this scheduled gate.
       - name: Post-crawl soak acceptance gate
         shell: bash
         env:
           SUMMARY_FILE: ${{ github.workspace }}/soak-crawl-summary.json
-        run: |
-          if [ ! -s "$SUMMARY_FILE" ]; then
-            echo "::error::Soak crawl summary file is missing or empty at $SUMMARY_FILE"
-            exit 1
-          fi
-
-          node -e "
-            const fs = require('node:fs');
-            const summary = JSON.parse(fs.readFileSync(process.env.SUMMARY_FILE, 'utf-8'));
-            console.log('Validating soak crawl summary invariants:');
-            console.log(JSON.stringify(summary, null, 2));
-
-            const errors = [];
-            if (!(summary.sourcesAttempted > 0)) errors.push('sourcesAttempted must be > 0 (was ' + summary.sourcesAttempted + ')');
-            if (summary.sourcesSucceeded !== summary.sourcesAttempted) errors.push('sourcesSucceeded (' + summary.sourcesSucceeded + ') must equal sourcesAttempted (' + summary.sourcesAttempted + ')');
-            if (summary.sourcesFailed !== 0) errors.push('sourcesFailed must be 0 (was ' + summary.sourcesFailed + ')');
-            if (!(summary.documentsDiscovered > 0)) errors.push('documentsDiscovered must be > 0 (was ' + summary.documentsDiscovered + ')');
-            if (!(summary.documentsFetched > 0)) errors.push('documentsFetched must be > 0 (was ' + summary.documentsFetched + ')');
-            if (summary.errorCount !== 0) errors.push('errorCount must be 0 (was ' + summary.errorCount + ')');
-            if (summary.unexpectedErrorCount !== 0) errors.push('unexpectedErrorCount must be 0 (was ' + summary.unexpectedErrorCount + ')');
-            if (summary.recordsPublished !== 0) errors.push('recordsPublished must be 0 in staging (was ' + summary.recordsPublished + ')');
-
-            const g = summary.effectivePolicyGuards;
-            if (!g) {
-              errors.push('effectivePolicyGuards snapshot missing from summary');
-            } else {
-              if (g.APP_ENV !== 'staging') errors.push('effectivePolicyGuards.APP_ENV must be staging (was ' + g.APP_ENV + ')');
-              if (g.AUTO_VERIFY_CLAIMABLES !== false) errors.push('effectivePolicyGuards.AUTO_VERIFY_CLAIMABLES must be false');
-              if (g.ENABLE_BILLING !== false) errors.push('effectivePolicyGuards.ENABLE_BILLING must be false');
-              if (g.NOTIFY_CUSTOMERS_ENABLED !== false) errors.push('effectivePolicyGuards.NOTIFY_CUSTOMERS_ENABLED must be false');
-              if (g.LIVE_ADAPTERS_ENABLED !== true) errors.push('effectivePolicyGuards.LIVE_ADAPTERS_ENABLED must be true');
-            }
-
-            if (errors.length > 0) {
-              console.error('❌ SOAK ACCEPTANCE GATE FAILED:');
-              errors.forEach(e => console.error('  - ' + e));
-              process.exit(1);
-            }
-            console.log('✅ SOAK ACCEPTANCE GATE PASSED: all invariants satisfied.');
-          "
+        run: node scripts/validate-soak-summary.mjs "$SUMMARY_FILE"
 
       - name: Publish sanitized soak job summary
         if: always()
