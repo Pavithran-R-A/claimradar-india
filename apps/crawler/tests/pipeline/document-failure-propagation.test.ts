@@ -80,7 +80,8 @@ describe('pipeline document failure propagation', () => {
       errors: 1,
     });
   });
-  it('safely skips a >50 MiB official PDF while preserving evidence of incomplete coverage', async () => {
+
+  it('auditably skips oversized PDF without failing the source', async () => {
     const source: SourceDefinition = {
       id: 'ibbi-public-announcements',
       name: 'IBBI announcements',
@@ -173,5 +174,4 @@ describe('pipeline document failure propagation', () => {
     expect(summary.sourcesFailed).toBe(1);
     expect(isFatalCrawlSummary(summary)).toBe(true);
   });
-
 });
