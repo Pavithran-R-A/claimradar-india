@@ -4,6 +4,7 @@
  * Wires adapters → extraction → dedup → scoring → AI → validation → publication.
  */
 
+import { crawlRunCompletionStatus } from '../observability/crawl-run-status.js';
 import { randomUUID } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import * as path from 'node:path';
@@ -976,7 +977,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
 
   if (crawlRunId && !options.dryRun) {
     await db.updateCrawlRun(crawlRunId, {
-      status: summary.errorCount > 0 ? 'completed_with_errors' : 'completed',
+      status: crawlRunCompletionStatus(summary),
       completed_at: summary.completedAt.toISOString(),
       sources_attempted: summary.sourcesAttempted,
       sources_succeeded: summary.sourcesSucceeded,
