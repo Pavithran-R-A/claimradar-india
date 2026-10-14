@@ -86,7 +86,10 @@ describe('Railway and GitHub soak summary acceptance', () => {
 
     const unsafe = execute({
       ...validSummary(),
-      effectivePolicyGuards: { ...validSummary().effectivePolicyGuards, AUTO_VERIFY_CLAIMABLES: true },
+      effectivePolicyGuards: {
+        ...validSummary().effectivePolicyGuards,
+        AUTO_VERIFY_CLAIMABLES: true,
+      },
     });
     expect(unsafe.status).toBe(1);
     expect(unsafe.stderr).toContain('AUTO_VERIFY_CLAIMABLES must be false');
