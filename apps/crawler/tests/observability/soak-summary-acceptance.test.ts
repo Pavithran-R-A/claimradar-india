@@ -1,10 +1,11 @@
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { resolve, join } from 'node:path';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-const gate = resolve(process.cwd(), '../../scripts/validate-soak-summary.mjs');
+const gate = fileURLToPath(new URL('../../../../scripts/validate-soak-summary.mjs', import.meta.url));
 
 const validSummary = () => ({
   runId: 'soak-regression',
