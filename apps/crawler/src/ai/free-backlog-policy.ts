@@ -31,9 +31,7 @@ export function freeBacklogFailureState(
   previousRetryCount: number,
 ): { ai_extraction_status: 'deferred' | 'failed'; ai_retry_count: number } {
   const prior =
-    Number.isSafeInteger(previousRetryCount) && previousRetryCount >= 0
-      ? previousRetryCount
-      : 0;
+    Number.isSafeInteger(previousRetryCount) && previousRetryCount >= 0 ? previousRetryCount : 0;
   const sentRequest = error !== 'budget_exceeded' && error !== 'no_provider';
   const ai_retry_count = sentRequest ? Math.min(2, prior + 1) : prior;
   const transient = [
