@@ -30,7 +30,25 @@ if (!(summary.documentsDiscovered > 0)) {
 if (!(summary.documentsFetched > 0)) {
   errors.push(`documentsFetched must be > 0 (was ${summary.documentsFetched})`);
 }
-if (summary.errorCount !== 0) errors.push(`errorCount must be 0 (was ${summary.errorCount})`);
+// errorCount is an audit total, including known expected source limitations.
+// Do not fail an otherwise successful crawl just for a safely skipped oversized
+// PDF or an explicitly classified access restriction. Still fail closed when
+// unexpected errors exist or the counts cannot be reconciled.
+for (const field of ['errorCount', 'expectedLimitationCount', 'unexpectedErrorCount']) {
+  if (!Number.isSafeInteger(summary[field]) || summary[field] < 0) {
+    errors.push(`${field} must be a non-negative integer (was ${summary[field]})`);
+  }
+}
+if (
+  ['errorCount', 'expectedLimitationCount', 'unexpectedErrorCount'].every(
+    (field) => Number.isSafeInteger(summary[field]) && summary[field] >= 0,
+  ) &&
+  summary.errorCount !== summary.expectedLimitationCount + summary.unexpectedErrorCount
+) {
+  errors.push(
+    `errorCount (${summary.errorCount}) must equal classified expected (${summary.expectedLimitationCount}) + unexpected (${summary.unexpectedErrorCount}) errors`,
+  );
+}
 if (summary.unexpectedErrorCount !== 0) {
   errors.push(`unexpectedErrorCount must be 0 (was ${summary.unexpectedErrorCount})`);
 }
@@ -72,6 +90,7 @@ console.log(
     documentsFetched: summary.documentsFetched,
     recordsPublished: summary.recordsPublished,
     errorCount: summary.errorCount,
+    expectedLimitationCount: summary.expectedLimitationCount,
     unexpectedErrorCount: summary.unexpectedErrorCount,
   }),
 );
