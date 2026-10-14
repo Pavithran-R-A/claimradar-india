@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { RECOVERY_INTENT_CHOICES, routesForIntent } from '../../lib/recovery-intent';
+import {
+  RECOVERY_INTENT_CHOICES,
+  matchingRoutesForSearch,
+  routesForIntent,
+} from '../../lib/recovery-intent';
 
 describe('private and deterministic official recovery route guidance', () => {
   it('shows all eight available authority routes when no choice has been made', () => {
@@ -38,5 +42,33 @@ describe('private and deterministic official recovery route guidance', () => {
         expect(route.linkLabel.length).toBeGreaterThan(5);
       }
     }
+  });
+
+  it('matches homepage searches to relevant government recovery routes', () => {
+    expect(matchingRoutesForSearch('all', 'RBI').map((route) => route.id)).toEqual([
+      'bank-deposits',
+    ]);
+    expect(matchingRoutesForSearch('all', 'SEBI recovery').map((route) => route.id)).toEqual([
+      'securities-dispute',
+    ]);
+    expect(matchingRoutesForSearch('all', 'EPFO account').map((route) => route.id)).toContain(
+      'epf',
+    );
+    expect(matchingRoutesForSearch('all', 'telecom refund').map((route) => route.id)).toContain(
+      'consumer-dispute',
+    );
+  });
+
+  it('preserves customer-selected intent filtering when searching', () => {
+    expect(matchingRoutesForSearch('dispute', 'RBI')).toHaveLength(0);
+    expect(matchingRoutesForSearch('dispute', 'SEBI').map((route) => route.id)).toEqual([
+      'securities-dispute',
+    ]);
+  });
+
+  it('does not invent matching official routes when nothing matches', () => {
+    expect(matchingRoutesForSearch('all', 'qzxv blorf nonword')).toHaveLength(0);
+    expect(matchingRoutesForSearch('all', '')).toHaveLength(8);
+    expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(8);
   });
 });

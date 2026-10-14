@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { RecoveryRouteKind } from '@/lib/official-recovery-routes';
 import {
   RECOVERY_INTENT_CHOICES,
+  matchingRoutesForSearch,
   routesForIntent,
   type RecoveryIntent,
 } from '@/lib/recovery-intent';
@@ -14,11 +15,14 @@ const labels: Record<RecoveryRouteKind, string> = {
   'Report a dispute': 'Consumer redress',
 };
 
-export function OfficialRecoveryRoutes() {
+export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
   // This selection lives only in browser memory. No names, PAN, Aadhaar,
   // bank account information, or answers are transmitted or stored.
   const [intent, setIntent] = useState<RecoveryIntent>('all');
-  const routes = routesForIntent(intent);
+  const matchedRoutes = matchingRoutesForSearch(intent, search);
+  const hasDirectMatch = matchedRoutes.length > 0;
+  const routes = hasDirectMatch ? matchedRoutes : routesForIntent(intent);
+  const searched = search.trim().length > 0;
 
   return (
     <section aria-labelledby="recovery-pathways-title" className="mt-9">
@@ -63,7 +67,11 @@ export function OfficialRecoveryRoutes() {
           ))}
         </div>
         <p aria-live="polite" className="mt-3 text-xs text-text-secondary">
-          Showing {routes.length} relevant official {routes.length === 1 ? 'route' : 'routes'}.
+          {searched
+            ? hasDirectMatch
+              ? `Showing ${routes.length} suggested official ${routes.length === 1 ? 'route' : 'routes'} for your search.`
+              : 'No direct official route match for your search; showing other available pathways.'
+            : `Showing ${routes.length} relevant official ${routes.length === 1 ? 'route' : 'routes'}.`}{' '}
           These are suggestions, not eligibility decisions.
         </p>
       </div>
