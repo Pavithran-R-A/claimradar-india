@@ -11,7 +11,8 @@ function mockResponse(body: unknown, status: number) {
 }
 
 describe('OpenRouter free-only failure classification', () => {
-  const run = () => new OpenRouterProvider('test-key', 'openrouter/free').extract('source', 'prompt');
+  const run = () =>
+    new OpenRouterProvider('test-key', 'openrouter/free').extract('source', 'prompt');
 
   it('preserves invalid-request diagnostics without exposing upstream text', async () => {
     mockResponse(
@@ -32,10 +33,7 @@ describe('OpenRouter free-only failure classification', () => {
   });
 
   it('handles provider failures inside an HTTP 200 response', async () => {
-    mockResponse(
-      { error: { code: 429, metadata: { error_type: 'rate_limit_exceeded' } } },
-      200,
-    );
+    mockResponse({ error: { code: 429, metadata: { error_type: 'rate_limit_exceeded' } } }, 200);
     const result = await run();
     expect(result.errorCategory).toBe('rate_limit');
     expect(result.error).toBe('OpenRouter HTTP 429 (rate_limit_exceeded)');
