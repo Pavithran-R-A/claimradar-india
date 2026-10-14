@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-const gate = fileURLToPath(new URL('../../../../scripts/validate-soak-summary.mjs', import.meta.url));
+const gate = fileURLToPath(
+  new URL('../../../../scripts/validate-soak-summary.mjs', import.meta.url),
+);
 
 const validSummary = () => ({
   runId: 'soak-regression',
