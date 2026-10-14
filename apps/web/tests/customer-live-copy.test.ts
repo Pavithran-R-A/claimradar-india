@@ -24,7 +24,7 @@ describe('ClaimKhoj customer-live copy', () => {
     expect(faq).toContain('Plus is not currently available');
     expect(faq).toContain('direct submission channel is not currently configured');
     expect(faq).toContain('automated outbound email alerts are not currently offered');
-    expect(about).toContain('Paid subscriptions, checkout');
+    expect(about).toMatch(/Paid subscriptions,\s+checkout/);
     expect(policy).toContain('No paid subscriptions');
     expect(refunds).toContain('not offering or');
   });
