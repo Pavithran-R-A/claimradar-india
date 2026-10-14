@@ -144,7 +144,7 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
         </p>
       </header>
 
-      <OfficialRecoveryRoutes />
+      <OfficialRecoveryRoutes search={params.search ?? ''} />
 
       {!allOutcome.ok ? (
         <div className="mt-9">
