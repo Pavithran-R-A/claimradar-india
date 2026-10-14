@@ -55,9 +55,9 @@ describe('scheduled crawl terminal status', () => {
   });
 
   it('treats zero work, inconsistent counts and invalid counters as errors', () => {
-    expect(crawlRunCompletionStatus({ ...baseline(), sourcesAttempted: 0, sourcesSucceeded: 0 })).toBe(
-      'completed_with_errors',
-    );
+    expect(
+      crawlRunCompletionStatus({ ...baseline(), sourcesAttempted: 0, sourcesSucceeded: 0 }),
+    ).toBe('completed_with_errors');
     expect(crawlRunCompletionStatus({ ...baseline(), sourcesSucceeded: 6 })).toBe(
       'completed_with_errors',
     );
