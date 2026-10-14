@@ -94,8 +94,8 @@ export default function FaqPage() {
       <div className="mt-12 rounded-lg border border-border bg-surface p-8 text-center">
         <h2 className="text-lg font-semibold text-text-primary">Still have questions?</h2>
         <p className="mt-2 text-sm text-text-secondary">
-          Our contact page lists the currently available channels. Direct platform support is not yet
-          configured; for a specific claim, contact the linked official authority.
+          Our contact page lists the currently available channels. Direct platform support is not
+          yet configured; for a specific claim, contact the linked official authority.
         </p>
         <Link
           href="/contact"
