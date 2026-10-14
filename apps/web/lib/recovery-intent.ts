@@ -42,3 +42,67 @@ export function routesForIntent(intent: RecoveryIntent): readonly RecoveryRoute[
   const matching = new Set(ROUTE_IDS[intent]);
   return routes.filter((route) => matching.has(route.id));
 }
+
+const SEARCH_SYNONYMS: Readonly<Record<string, readonly string[]>> = {
+  'bank-deposits': ['rbi', 'udgam', 'fixed deposit', 'fd', 'bank account', 'dormant'],
+  'shares-dividends': ['iepf', 'shares', 'stocks', 'dividend', 'investor'],
+  insurance: ['irdai', 'insurance', 'policy', 'premium'],
+  epf: ['epfo', 'pf', 'provident fund', 'pension', 'uan'],
+  'tax-refund': ['income tax', 'itr', 'tds', 'refund reissue'],
+  sahara: ['crcs', 'cooperative', 'deposit', 'sahara'],
+  'consumer-dispute': ['shopping', 'merchant', 'airline', 'telecom', 'service', 'complaint'],
+  'securities-dispute': ['sebi', 'scores', 'broker', 'stock', 'investment', 'securities'],
+};
+
+const GENERIC_SEARCH_TERMS = new Set([
+  'a',
+  'an',
+  'and',
+  'for',
+  'from',
+  'in',
+  'my',
+  'of',
+  'or',
+  'the',
+  'to',
+  'claim',
+  'claims',
+  'money',
+  'recovery',
+  'recover',
+]);
+
+function normaliseSearch(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+/**
+ * Match a public search to useful official pathways without claiming the
+ * user qualifies for payment. Returning zero allows the UI to distinguish
+ * "no relevant route" from the unfiltered list, without fabricating results.
+ */
+export function matchingRoutesForSearch(
+  intent: RecoveryIntent,
+  search: string,
+): readonly RecoveryRoute[] {
+  const routes = routesForIntent(intent);
+  const terms = normaliseSearch(search)
+    .split(' ')
+    .filter((term) => term.length >= 3 && !GENERIC_SEARCH_TERMS.has(term));
+  if (terms.length === 0) return routes;
+
+  return routes.filter((route) => {
+    const searchable = normaliseSearch(
+      [
+        route.title,
+        route.description,
+        route.agency,
+        route.nextStep,
+        route.linkLabel,
+        ...(SEARCH_SYNONYMS[route.id] ?? []),
+      ].join(' '),
+    );
+    return terms.some((term) => searchable.includes(term));
+  });
+}
