@@ -5,20 +5,28 @@ import type { AIExtractionResult, AIProvider } from '../types.js';
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
 // Only stable metadata is retained. Raw upstream messages can contain source text.
-function safeFailure(status: number, input: unknown): Pick<AIExtractionResult, 'error' | 'errorCategory'> {
-  const obj = input && typeof input === 'object' ? input as Record<string, unknown> : {};
-  const e = obj.error && typeof obj.error === 'object' ? obj.error as Record<string, unknown> : {};
-  const m = e.metadata && typeof e.metadata === 'object' ? e.metadata as Record<string, unknown> : {};
+function safeFailure(
+  status: number,
+  input: unknown,
+): Pick<AIExtractionResult, 'error' | 'errorCategory'> {
+  const obj = input && typeof input === 'object' ? (input as Record<string, unknown>) : {};
+  const e =
+    obj.error && typeof obj.error === 'object' ? (obj.error as Record<string, unknown>) : {};
+  const m =
+    e.metadata && typeof e.metadata === 'object' ? (e.metadata as Record<string, unknown>) : {};
   const t = m.error_type;
   const type = typeof t === 'string' && /^[a-z][a-z0-9_]{0,63}$/.test(t) ? t : null;
   const code = typeof e.code === 'number' && e.code >= 400 && e.code <= 599 ? e.code : status;
   const errorCategory: AIExtractionResult['errorCategory'] =
-    code === 429 || type === 'rate_limit_exceeded' ? 'rate_limit'
-      : [401, 402, 403].includes(code) || type === 'authentication' ? 'auth'
-      : [408, 504].includes(code) || type === 'timeout' ? 'timeout' : 'provider_error';
+    code === 429 || type === 'rate_limit_exceeded'
+      ? 'rate_limit'
+      : [401, 402, 403].includes(code) || type === 'authentication'
+        ? 'auth'
+        : [408, 504].includes(code) || type === 'timeout'
+          ? 'timeout'
+          : 'provider_error';
   return { error: `OpenRouter HTTP ${code}${type ? ` (${type})` : ''}`, errorCategory };
 }
-
 
 export class OpenRouterProvider implements AIProvider {
   readonly name = 'openrouter';
@@ -77,7 +85,11 @@ export class OpenRouterProvider implements AIProvider {
 
       if (!response.ok) {
         let errorBody: unknown = null;
-        try { errorBody = await response.json(); } catch { /* No unsafe raw logging. */ }
+        try {
+          errorBody = await response.json();
+        } catch {
+          /* No unsafe raw logging. */
+        }
         return {
           ...baseResult,
           durationMs: Date.now() - start,
@@ -87,7 +99,11 @@ export class OpenRouterProvider implements AIProvider {
 
       const data = (await response.json()) as {
         error?: unknown;
-        choices?: Array<{ message?: { content?: string }; error?: unknown; finish_reason?: string }>;
+        choices?: Array<{
+          message?: { content?: string };
+          error?: unknown;
+          finish_reason?: string;
+        }>;
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
       const embeddedError = data.error ?? data.choices?.[0]?.error;
