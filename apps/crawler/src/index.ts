@@ -376,7 +376,8 @@ async function main() {
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
       const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
-      const { shouldHaltFreeBacklog, freeBacklogFailureState } = await import('./ai/free-backlog-policy.js');
+      const { shouldHaltFreeBacklog, freeBacklogFailureState } =
+        await import('./ai/free-backlog-policy.js');
 
       const rqProvider = rqCreateRouter({
         AI_PROVIDER: rqEnv.AI_PROVIDER,
@@ -453,10 +454,7 @@ async function main() {
 
           if (!result.extraction || result.errorCategory !== 'none') {
             await rqDbWriter.updateCandidateDocument(candidate.id, {
-              ...freeBacklogFailureState(
-                result.errorCategory,
-                candidate.ai_retry_count ?? 0,
-              ),
+              ...freeBacklogFailureState(result.errorCategory, candidate.ai_retry_count ?? 0),
               ai_provider: result.provider,
               ai_model: result.model,
               ai_duration_ms: result.durationMs,
