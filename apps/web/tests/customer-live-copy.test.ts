@@ -13,6 +13,22 @@ describe('ClaimKhoj customer-live copy', () => {
     expect(contact).not.toMatch(/pre-launch/i);
   });
 
+  it('does not advertise unavailable subscriptions or automated alerts', () => {
+    const faq = read('../app/(public)/faq/page.tsx');
+    const about = read('../app/(public)/about/page.tsx');
+    const policy = read('../app/(public)/subscription-policy/page.tsx');
+    const refunds = read('../app/(public)/refund-policy/page.tsx');
+    for (const page of [faq, about, policy, refunds]) {
+      expect(page).not.toMatch(/₹149|₹999|Plus subscribers|automatically renew/i);
+    }
+    expect(faq).toContain('Plus is not currently available');
+    expect(faq).toContain('direct submission channel is not currently configured');
+    expect(faq).toContain('automated outbound email alerts are not currently offered');
+    expect(about).toMatch(/Paid subscriptions,\s+checkout/);
+    expect(policy).toContain('No paid subscriptions');
+    expect(refunds).toContain('not offering or');
+  });
+
   it('does not invent a support inbox when none is configured', () => {
     const contact = read('../app/(public)/contact/page.tsx');
     expect(contact).toContain('Direct email support is not currently offered');

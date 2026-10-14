@@ -71,10 +71,10 @@ export default function AboutPage() {
 
       <h2>Revenue Model</h2>
       <p>
-        ClaimKhoj is funded through optional paid subscriptions (ClaimKhoj Plus). The core platform
-        — browsing all published claimables, searching, viewing sources and deadlines — is free for
-        everyone. Plus subscribers get additional features like unlimited watchlists, real-time
-        alerts and detailed source breakdowns.
+        ClaimKhoj is currently a free public information service in beta. Paid subscriptions,
+        checkout, and automated customer email alerts are not available. We may introduce optional
+        paid features in the future, but we will publish their terms and pricing before taking
+        payment.
       </p>
       <p>
         We do not accept advertising from companies featured on the Platform. We do not earn

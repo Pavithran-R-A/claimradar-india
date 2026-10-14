@@ -7,65 +7,26 @@ export const metadata = generateLegalMetadata(
 
 export default function RefundPolicyPage() {
   return (
-    <LegalPageTemplate title="Refund Policy" lastUpdated="July 27, 2026">
-      <h2>1. Overview</h2>
+    <LegalPageTemplate title="Refund Policy" lastUpdated="October 14, 2026">
+      <h2>1. No Paid Subscriptions at Present</h2>
       <p>
-        This Refund Policy applies to paid subscriptions on ClaimKhoj India. The Platform itself is
-        a free information service; paid subscriptions unlock additional features such as unlimited
-        watchlists, real-time alerts, and detailed source breakdowns.
+        ClaimKhoj currently offers a free public information service. We are not offering or
+        processing paid subscriptions, so there are no active ClaimKhoj subscription charges to
+        refund under this policy.
       </p>
 
-      <h2>2. Monthly Subscriptions</h2>
+      <h2>2. Suspected Charges or Impersonation</h2>
       <p>
-        For monthly subscriptions, you may cancel at any time before your next billing date. Upon
-        cancellation, you retain access to paid features until the end of your current billing
-        period. No partial refunds are issued for unused portions of a monthly billing cycle.
+        If someone asks you to pay to access ClaimKhoj or claims to have charged you on our behalf,
+        do not share OTPs, bank passwords, or payment credentials. Review the charge with your
+        payment provider and use the currently available channels on our Contact page.
       </p>
 
-      <h2>3. Annual Subscriptions</h2>
+      <h2>3. Future Changes</h2>
       <p>
-        For annual subscriptions, you may request a prorated refund within the first 30 days of the
-        subscription term if you are not satisfied with the service. After the 30-day window, no
-        refunds are issued, but you retain access until the end of the annual term.
-      </p>
-
-      <h2>4. How to Request a Refund</h2>
-      <p>
-        To request a refund, contact us through our{' '}
-        <a
-          href="/contact"
-          className="text-trust-primary hover:text-trust-primary-hover underline font-semibold"
-        >
-          Contact page
-        </a>{' '}
-        with your account email, subscription plan, and reason for the refund request.
-      </p>
-
-      <h2>5. Refund Processing</h2>
-      <p>
-        Approved refunds are processed back to the original payment method. Depending on your bank
-        or payment provider, it may take 5–10 business days for the refund to appear in your
-        account.
-      </p>
-
-      <h2>6. Exceptions</h2>
-      <p>Refunds are not available for:</p>
-      <ul>
-        <li>Usage-based charges or one-time purchases (if any are introduced)</li>
-        <li>Subscriptions cancelled after the applicable refund window</li>
-        <li>Accounts that have violated our Acceptable Use Policy</li>
-      </ul>
-
-      <h2>7. Billing Errors</h2>
-      <p>
-        If you notice an incorrect charge, contact us within 30 days of the charge date. We will
-        investigate and issue a correction or refund as appropriate.
-      </p>
-
-      <h2>8. Changes to This Policy</h2>
-      <p>
-        We may update this Refund Policy from time to time. Changes take effect upon publication on
-        this page. We encourage you to review this policy periodically.
+        If paid subscriptions are introduced, their cancellation, charge dispute, and refund terms
+        will be made available before checkout. Refunds or eligibility under third-party official
+        government schemes are determined by their respective authorities, not by ClaimKhoj.
       </p>
     </LegalPageTemplate>
   );
