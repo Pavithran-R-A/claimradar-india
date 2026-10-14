@@ -45,22 +45,22 @@ const faqItems = [
   {
     question: 'What does the free plan include?',
     answer:
-      'The free plan gives you access to browse all published claimables, search by company or sector, view deadlines and source links, and set up a basic watchlist for one company with weekly email digests. The core platform is free forever.',
+      'You can explore official recovery routes, source notices, and any independently verified claimable listings for free. Account features such as watchlists may be available, but automated outbound email alerts are not currently offered.',
   },
   {
     question: 'What does ClaimKhoj Plus include?',
     answer:
-      'Plus subscribers get unlimited watchlists, real-time email and push alerts for new opportunities matching their watchlist, priority access to closing-soon alerts, detailed source breakdowns showing extraction confidence, and the ability to export listing data. Plus costs ₹149 per month or ₹999 per year (saving 44%).',
+      'ClaimKhoj Plus is not currently available to purchase. The service is free during beta. Paid subscriptions, checkout and paid alert services are disabled; any future offering will be disclosed before taking payment.',
   },
   {
     question: 'How do I report an error or outdated information?',
     answer:
-      'Visit our Corrections page to submit the listing URL, a description of the error, and a link or citation to the authentic official source. Our editorial team reviews all correction requests against the underlying official order.',
+      'Our Corrections page explains source verification and retraction, but a direct submission channel is not currently configured. See the Contact page for available channels. For filing or deadline questions, use the linked official authority.',
   },
   {
     question: 'Can I cancel my subscription at any time?',
     answer:
-      'Yes. You can cancel your ClaimKhoj Plus subscription at any time from your account settings. You will retain access to Plus features until the end of your current billing period. For annual subscriptions, prorated refunds are available within the first 30 days. See our Refund Policy for details.',
+      'ClaimKhoj is not accepting paid subscriptions, so there is no current paid ClaimKhoj plan to cancel. If billing is introduced later, cancellation and refund terms will be published before checkout.',
   },
   {
     question: 'What are status classifications?',
@@ -94,14 +94,14 @@ export default function FaqPage() {
       <div className="mt-12 rounded-lg border border-border bg-surface p-8 text-center">
         <h2 className="text-lg font-semibold text-text-primary">Still have questions?</h2>
         <p className="mt-2 text-sm text-text-secondary">
-          Our team is here to help. Reach out through our contact page and we will review your
-          question.
+          Our contact page lists the currently available channels. Direct platform support is not yet
+          configured; for a specific claim, contact the linked official authority.
         </p>
         <Link
           href="/contact"
           className="mt-4 inline-flex items-center rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primary/90"
         >
-          Contact us
+          View contact information
         </Link>
       </div>
     </div>
