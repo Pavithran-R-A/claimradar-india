@@ -376,7 +376,7 @@ async function main() {
       const { runAllValidators: rqRunValidators } = await import('./validation/runner.js');
       const { computeClaimabilityScore: rqComputeScore } = await import('./validation/scorer.js');
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
-      const { shouldHaltFreeBacklog } = await import('./ai/free-backlog-policy.js');
+      const { shouldHaltFreeBacklog, freeBacklogFailureState } = await import('./ai/free-backlog-policy.js');
 
       const rqProvider = rqCreateRouter({
         AI_PROVIDER: rqEnv.AI_PROVIDER,
@@ -453,20 +453,14 @@ async function main() {
 
           if (!result.extraction || result.errorCategory !== 'none') {
             await rqDbWriter.updateCandidateDocument(candidate.id, {
-              ai_extraction_status: ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(
+              ...freeBacklogFailureState(
                 result.errorCategory,
-              )
-                ? 'deferred'
-                : 'failed',
+                candidate.ai_retry_count ?? 0,
+              ),
               ai_provider: result.provider,
               ai_model: result.model,
               ai_duration_ms: result.durationMs,
               ai_error_category: result.errorCategory,
-              ai_retry_count: ['timeout', 'rate_limit', 'provider_error', 'auth'].includes(
-                result.errorCategory,
-              )
-                ? (candidate.ai_retry_count ?? 0)
-                : (candidate.ai_retry_count ?? 0) + 1,
             });
             await rqDbWriter.insertAiRun({
               candidate_document_id: candidate.id,
