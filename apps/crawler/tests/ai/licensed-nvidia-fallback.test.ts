@@ -51,9 +51,7 @@ describe('licensed NVIDIA fallback safety', () => {
     expect(() => createProviderRouter({ ...env, NVIDIA_FALLBACK_LIMIT: 20 })).toThrow(
       /NVIDIA_FALLBACK_BUDGET_GUARD/,
     );
-    expect(() => createProviderRouter({ ...env, NVIDIA_API_KEY: '' })).toThrow(
-      /NVIDIA_KEY_GUARD/,
-    );
+    expect(() => createProviderRouter({ ...env, NVIDIA_API_KEY: '' })).toThrow(/NVIDIA_KEY_GUARD/);
     expect(createProviderRouter(env).name).toBe('openrouter+nvidia');
   });
 
