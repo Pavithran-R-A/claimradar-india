@@ -98,7 +98,11 @@ export class NvidiaNimProvider implements AIProvider {
 
       const data = (await response.json()) as {
         error?: unknown;
-        choices?: Array<{ message?: { content?: string }; error?: unknown; finish_reason?: string }>;
+        choices?: Array<{
+          message?: { content?: string };
+          error?: unknown;
+          finish_reason?: string;
+        }>;
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
 
