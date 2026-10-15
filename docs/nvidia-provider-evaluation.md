@@ -20,6 +20,16 @@ Use only synthetic public-like notices with fictional entities and no real priva
 
 Verified 2026-10-15: the account returned 81 models via GET /v1/models. Old `meta/llama-3.1-8b-instruct` and `nvidia/nemotron-3-nano-30b-a3b` were absent and returned HTTP 410. `nvidia/nemotron-3.5-lightning-30b-a3b` returned HTTP 200. In one synthetic four-field extraction (not a full claim schema benchmark), `chat_template_kwargs.enable_thinking=false` combined with `response_format={type:json_object}` produced correctly parsed JSON, the correct fictional deadline and a refusal to assert official verification, in approximately 1.44 seconds with 85 generated tokens. The prior 230-token default-thinking response did not pass the JSON check. Never extrapolate this single synthetic test to production accuracy, quota or license entitlement.
 
+## Larger synthetic safety checks (2026-10-15)
+
+A separate **non-production** test used the full set of ClaimKhoj extraction fields, a nonexistent cooperative, no genuine refund route or amount, and an explicitly unverified source.
+
+- Nemotron 3.5 Lightning: HTTP 200, approximately 8.1 seconds, finish reason `stop`, 280 completion tokens. JSON had the required typed fields, no invented amount or URL, and evidence snippets existed in the input. **However, it incorrectly returned `is_relevant=true` for a plainly fictional nonclaimable notice.**
+- Google Gemma 4 31B: the same fixture did not complete within the 35-second test timeout.
+- Therefore, **the provider has NOT passed claimability-accuracy acceptance** and must not be enabled for production real-world notices solely on the basis of the smaller JSON test.
+
+A later authorized rollout needs representative negative/positive fixtures, exact-match evidence tests, adversarial/no-relief samples, live model-availability checks, no-PHI/PII evaluation compliance, measured classification accuracy and human/legal publication gates.
+
 ## Production rollout prerequisites
 
 An NVIDIA key alone is **not** a production license. Obtain and document the applicable commercial entitlement/authorization before configuring the model to process any real ClaimKhoj source text. Verify the current model's terms and the data processing agreement. Do not toggle these variables just to bypass free-model throughput limits.
