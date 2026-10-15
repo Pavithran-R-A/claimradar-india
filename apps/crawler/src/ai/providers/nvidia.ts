@@ -42,7 +42,11 @@ export class NvidiaNimProvider implements AIProvider {
           model: this.model,
           stream: false,
           temperature: 0.1,
-          max_tokens: 1024,
+          max_tokens: 1536,
+          // Catalog-verified for Nemotron 3.5 Lightning: prevent hidden reasoning
+          // from exhausting the output budget before JSON is generated.
+          chat_template_kwargs: { enable_thinking: false },
+          response_format: { type: 'json_object' },
           messages: [
             { role: 'system', content: prompt },
             { role: 'user', content },
@@ -51,6 +55,14 @@ export class NvidiaNimProvider implements AIProvider {
         signal: AbortSignal.timeout(this.timeoutMs),
       });
 
+      if (response.status === 410) {
+        return {
+          ...baseResult,
+          durationMs: Date.now() - start,
+          error: 'NVIDIA model or hosted route unavailable (HTTP 410)',
+          errorCategory: 'provider_error',
+        };
+      }
       if (response.status === 429) {
         return {
           ...baseResult,
@@ -85,9 +97,28 @@ export class NvidiaNimProvider implements AIProvider {
       }
 
       const data = (await response.json()) as {
-        choices?: Array<{ message?: { content?: string } }>;
+        error?: unknown;
+        choices?: Array<{ message?: { content?: string }; error?: unknown; finish_reason?: string }>;
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
+
+      if (data.error || data.choices?.[0]?.error) {
+        return {
+          ...baseResult,
+          durationMs: Date.now() - start,
+          error: 'NVIDIA provider returned a structured error',
+          errorCategory: 'provider_error',
+        };
+      }
+
+      if (data.choices?.[0]?.finish_reason === 'length') {
+        return {
+          ...baseResult,
+          durationMs: Date.now() - start,
+          error: 'NVIDIA output exhausted its token budget',
+          errorCategory: 'invalid_output',
+        };
+      }
 
       const rawOutput = data.choices?.[0]?.message?.content ?? null;
       const inputTokens = data.usage?.prompt_tokens ?? null;
