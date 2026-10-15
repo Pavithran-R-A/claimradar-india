@@ -60,12 +60,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Format check
-        run: |
-          pnpm exec prettier --write apps/crawler/src/ai/providers/nvidia.ts apps/crawler/tests/ai/nvidia-catalog-json.test.ts
-          echo "::group::Formatter-only diff for diagnosis"
-          git diff -- apps/crawler/src/ai/providers/nvidia.ts apps/crawler/tests/ai/nvidia-catalog-json.test.ts
-          echo "::endgroup::"
-          pnpm format
+        run: pnpm format
 
       - name: Lint
         run: pnpm lint
