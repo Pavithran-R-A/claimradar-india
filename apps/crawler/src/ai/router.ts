@@ -33,9 +33,7 @@ const ALLOWED_NVIDIA_MODELS = new Set([
 export function createProviderRouter(env: RouterEnv): AIProvider {
   if (env.AI_PROVIDER === 'none') return new NoAiProvider();
 
-  if (
-    !['openrouter', 'openrouter+nvidia'].includes(env.AI_PROVIDER)
-  ) {
+  if (!['openrouter', 'openrouter+nvidia'].includes(env.AI_PROVIDER)) {
     throw new Error('FREE_ONLY_PROVIDER_GUARD: unknown or unauthorized provider');
   }
 
