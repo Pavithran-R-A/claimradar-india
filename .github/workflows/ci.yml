@@ -60,7 +60,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Format check
-        run: pnpm format
+        run: |
+          pnpm exec prettier --write apps/crawler/src/ai/providers/bounded-fallback.ts apps/crawler/src/ai/router.ts apps/crawler/tests/ai/licensed-nvidia-fallback.test.ts docs/ai-extraction.md
+          echo "::group::Formatter-only diff for diagnosis"
+          git diff -- apps/crawler/src/ai/providers/bounded-fallback.ts apps/crawler/src/ai/router.ts apps/crawler/tests/ai/licensed-nvidia-fallback.test.ts docs/ai-extraction.md
+          echo "::endgroup::"
+          pnpm format
 
       - name: Lint
         run: pnpm lint
