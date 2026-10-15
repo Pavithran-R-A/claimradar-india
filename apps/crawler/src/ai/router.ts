@@ -66,7 +66,7 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
   }
 
   const nvidia = new NvidiaNimProvider(env.NVIDIA_API_KEY, model, baseUrl);
-  if (!openrouter.isAvailable()) {
+  if (!env.OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_KEY_GUARD: dual-provider mode requires OpenRouter');
   }
   return new BoundedFallbackProvider(openrouter, nvidia, env.NVIDIA_FALLBACK_LIMIT ?? 1);
