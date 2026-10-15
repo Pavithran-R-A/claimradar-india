@@ -34,7 +34,7 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
   if (env.AI_PROVIDER === 'none') return new NoAiProvider();
 
   if (
-    !['openrouter', 'nvidia', 'openrouter+nvidia'].includes(env.AI_PROVIDER)
+    !['openrouter', 'openrouter+nvidia'].includes(env.AI_PROVIDER)
   ) {
     throw new Error('FREE_ONLY_PROVIDER_GUARD: unknown or unauthorized provider');
   }
@@ -66,7 +66,6 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
   }
 
   const nvidia = new NvidiaNimProvider(env.NVIDIA_API_KEY, model, baseUrl);
-  if (env.AI_PROVIDER === 'nvidia') return nvidia;
   if (!openrouter.isAvailable()) {
     throw new Error('OPENROUTER_KEY_GUARD: dual-provider mode requires OpenRouter');
   }
