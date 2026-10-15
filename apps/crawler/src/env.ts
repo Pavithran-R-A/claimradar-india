@@ -14,7 +14,7 @@ export const crawlerEnvSchema = z.object({
   OPENROUTER_MODEL: z.string().default('openrouter/free'),
   NVIDIA_API_KEY: z.string().optional(),
   NVIDIA_BASE_URL: z.string().url().optional(),
-  NVIDIA_MODEL: z.string().default('meta/llama-3.1-8b-instruct'),
+  NVIDIA_MODEL: z.string().default('nvidia/nemotron-3.5-lightning-30b-a3b'),
   NVIDIA_PRODUCTION_AUTHORIZED: envBoolean(false),
   NVIDIA_FALLBACK_LIMIT: z.coerce.number().int().min(1).max(2).default(1),
   AI_DAILY_REQUEST_BUDGET: z.coerce.number().default(40),

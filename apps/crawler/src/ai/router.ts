@@ -17,10 +17,7 @@ interface RouterEnv {
 }
 
 const NVIDIA_ENDPOINT = 'https://integrate.api.nvidia.com';
-const ALLOWED_NVIDIA_MODELS = new Set([
-  'meta/llama-3.1-8b-instruct',
-  'meta/llama-3.1-70b-instruct',
-]);
+const ALLOWED_NVIDIA_MODELS = new Set(['nvidia/nemotron-3.5-lightning-30b-a3b']);
 
 /**
  * OpenRouter free remains the default customer-processing service.
@@ -58,7 +55,7 @@ export function createProviderRouter(env: RouterEnv): AIProvider {
     throw new Error('NVIDIA_ENDPOINT_GUARD: refuse unapproved credential destinations');
   }
 
-  const model = env.NVIDIA_MODEL ?? 'meta/llama-3.1-8b-instruct';
+  const model = env.NVIDIA_MODEL ?? 'nvidia/nemotron-3.5-lightning-30b-a3b';
   if (!ALLOWED_NVIDIA_MODELS.has(model)) {
     throw new Error('NVIDIA_MODEL_GUARD: model must be explicitly approved');
   }
