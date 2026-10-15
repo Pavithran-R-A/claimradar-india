@@ -5,11 +5,12 @@ import { createProviderRouter } from '../../src/ai/router.js';
 afterEach(() => vi.unstubAllGlobals());
 
 const testModel = 'nvidia/nemotron-3.5-lightning-30b-a3b';
-const provider = () => new NvidiaNimProvider('synthetic-test-only', testModel, 'https://integrate.api.nvidia.com');
+const provider = () =>
+  new NvidiaNimProvider('synthetic-test-only', testModel, 'https://integrate.api.nvidia.com');
 const extraction = { is_relevant: false, evidence: [], confidence: 0.8 };
 
 function response(body: unknown, status = 200) {
-  const mock = vi.fn(async (_url: string, options: RequestInit) => {
+  const mock = vi.fn(async (_url: string, _options: RequestInit) => {
     return new Response(JSON.stringify(body), { status });
   });
   vi.stubGlobal('fetch', mock);
@@ -46,7 +47,9 @@ describe('NVIDIA catalog-verified JSON integration', () => {
   });
 
   it('rejects an incomplete reasoning-length response even if JSON appears valid', async () => {
-    response({ choices: [{ finish_reason: 'length', message: { content: JSON.stringify(extraction) } }] });
+    response({
+      choices: [{ finish_reason: 'length', message: { content: JSON.stringify(extraction) } }],
+    });
     const result = await provider().extract('fictional-only', 'extract safely');
     expect(result.extraction).toBeNull();
     expect(result.errorCategory).toBe('invalid_output');
@@ -61,9 +64,15 @@ describe('NVIDIA catalog-verified JSON integration', () => {
 
   it('rejects malformed JSON and output missing mandatory evidence fields', async () => {
     response({ choices: [{ message: { content: 'not JSON' } }] });
-    expect((await provider().extract('fictional-only', 'extract safely')).errorCategory).toBe('invalid_output');
-    response({ choices: [{ message: { content: JSON.stringify({ is_relevant: true, confidence: 0.9 }) } }] });
-    expect((await provider().extract('fictional-only', 'extract safely')).errorCategory).toBe('invalid_output');
+    expect((await provider().extract('fictional-only', 'extract safely')).errorCategory).toBe(
+      'invalid_output',
+    );
+    response({
+      choices: [{ message: { content: JSON.stringify({ is_relevant: true, confidence: 0.9 }) } }],
+    });
+    expect((await provider().extract('fictional-only', 'extract safely')).errorCategory).toBe(
+      'invalid_output',
+    );
   });
 
   it('allows only the catalog-verified model after independent production authorization', () => {
@@ -74,9 +83,9 @@ describe('NVIDIA catalog-verified JSON integration', () => {
       NVIDIA_PRODUCTION_AUTHORIZED: true,
     };
     expect(createProviderRouter(config).name).toBe('openrouter+nvidia');
-    expect(() => createProviderRouter({ ...config, NVIDIA_MODEL: 'meta/llama-3.1-8b-instruct' })).toThrow(
-      /NVIDIA_MODEL_GUARD/,
-    );
+    expect(() =>
+      createProviderRouter({ ...config, NVIDIA_MODEL: 'meta/llama-3.1-8b-instruct' }),
+    ).toThrow(/NVIDIA_MODEL_GUARD/);
     expect(() => createProviderRouter({ ...config, NVIDIA_PRODUCTION_AUTHORIZED: false })).toThrow(
       /NVIDIA_LICENSE_GUARD/,
     );
