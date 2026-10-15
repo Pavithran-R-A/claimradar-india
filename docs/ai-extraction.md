@@ -6,39 +6,26 @@ The AI extraction system converts raw regulatory/legal documents into structured
 
 ## Provider Abstraction
 
-Three providers implement the `AIProvider` interface:
+Extraction providers implement the `AIProvider` interface:
 
-| Provider             | File                         | Backend                                                    |
-| -------------------- | ---------------------------- | ---------------------------------------------------------- |
-| `OpenRouterProvider` | `ai/providers/openrouter.ts` | OpenRouter API (meta-llama/llama-3.1-70b-instruct default) |
-| `NvidiaNimProvider`  | `ai/providers/nvidia.ts`     | NVIDIA NIM API (meta/llama-3.1-70b-instruct default)       |
-| `NoAiProvider`       | `ai/providers/noai.ts`       | No-op fallback — returns deferred status                   |
+| Provider                  | File                               | Usage                                                         |
+| ------------------------- | ---------------------------------- | ------------------------------------------------------------- |
+| `OpenRouterProvider`      | `ai/providers/openrouter.ts`       | Primary `openrouter/free` inference                           |
+| `NvidiaNimProvider`       | `ai/providers/nvidia.ts`           | Only as an explicitly **licensed**, capped fallback           |
+| `NoAiProvider`            | `ai/providers/noai.ts`             | Deferred processing; no inference                             |
+| `BoundedFallbackProvider` | `ai/providers/bounded-fallback.ts` | OpenRouter primary; max 1–2 licensed NVIDIA calls per process |
 
-### Switching Providers
+The default and currently authorized production provider is OpenRouter free routing.
+A stored NVIDIA developer key **never** causes automatic fallback. NVIDIA
+Developer Program endpoints are for evaluation only; real customer-source
+processing requires independently documented production entitlement and an
+explicit operator decision. See [NVIDIA evaluation and rollout safeguards](nvidia-provider-evaluation.md).
 
-Set the following environment variables:
-
-```bash
-# Use OpenRouter
-AI_PROVIDER=openrouter
-OPENROUTER_API_KEY=sk-or-...
-OPENROUTER_MODEL=openrouter/free   # optional; zero-cost router, structured-output capable endpoints only
-
-# Use NVIDIA NIM
-AI_PROVIDER=nvidia
-NVIDIA_API_KEY=nvapi-...
-NVIDIA_BASE_URL=https://integrate.api.nvidia.com      # optional
-NVIDIA_MODEL=meta/llama-3.1-70b-instruct              # optional
-
-# No AI (all documents deferred)
-AI_PROVIDER=none
-```
-
-The `createProviderRouter()` function builds a fallback chain:
-
-1. Primary provider based on `AI_PROVIDER`
-2. Any other configured provider as fallback
-3. `NoAiProvider` if nothing is configured
+In the licensed mode, `AI_PROVIDER=openrouter+nvidia` and
+`NVIDIA_PRODUCTION_AUTHORIZED=true` must be set explicitly, with both provider
+keys and `NVIDIA_FALLBACK_LIMIT=1` (or 2). The fallback only occurs after
+OpenRouter timeout, rate-limit or provider errors. Unknown providers and models
+fail closed, and no automatic publication or billing is enabled.
 
 ## Two-Pass Extraction
 

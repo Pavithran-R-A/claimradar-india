@@ -40,6 +40,9 @@ export class NvidiaNimProvider implements AIProvider {
         },
         body: JSON.stringify({
           model: this.model,
+          stream: false,
+          temperature: 0.1,
+          max_tokens: 1024,
           messages: [
             { role: 'system', content: prompt },
             { role: 'user', content },
@@ -56,7 +59,7 @@ export class NvidiaNimProvider implements AIProvider {
           errorCategory: 'rate_limit',
         };
       }
-      if (response.status === 401 || response.status === 403) {
+      if ([401, 402, 403].includes(response.status)) {
         return {
           ...baseResult,
           durationMs: Date.now() - start,
@@ -139,7 +142,12 @@ export class NvidiaNimProvider implements AIProvider {
     } catch (err) {
       const errorCategory =
         err instanceof DOMException && err.name === 'TimeoutError' ? 'timeout' : 'provider_error';
-      return { ...baseResult, durationMs: Date.now() - start, error: String(err), errorCategory };
+      return {
+        ...baseResult,
+        durationMs: Date.now() - start,
+        error: 'NVIDIA request failed',
+        errorCategory,
+      };
     }
   }
 
