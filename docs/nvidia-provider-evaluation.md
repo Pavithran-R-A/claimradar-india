@@ -18,6 +18,8 @@ Use only synthetic public-like notices with fictional entities and no real priva
 4. Compare those metrics to OpenRouter on the same safe fixture before considering a rollout.
 5. Remove the temporary evaluator after confirming its results.
 
+Verified 2026-10-15: the account returned 81 models via GET /v1/models. Old `meta/llama-3.1-8b-instruct` and `nvidia/nemotron-3-nano-30b-a3b` were absent and returned HTTP 410. `nvidia/nemotron-3.5-lightning-30b-a3b` returned HTTP 200. In one synthetic four-field extraction (not a full claim schema benchmark), `chat_template_kwargs.enable_thinking=false` combined with `response_format={type:json_object}` produced correctly parsed JSON, the correct fictional deadline and a refusal to assert official verification, in approximately 1.44 seconds with 85 generated tokens. The prior 230-token default-thinking response did not pass the JSON check. Never extrapolate this single synthetic test to production accuracy, quota or license entitlement.
+
 ## Production rollout prerequisites
 
 An NVIDIA key alone is **not** a production license. Obtain and document the applicable commercial entitlement/authorization before configuring the model to process any real ClaimKhoj source text. Verify the current model's terms and the data processing agreement. Do not toggle these variables just to bypass free-model throughput limits.
@@ -29,7 +31,7 @@ AI_PROVIDER=openrouter+nvidia
 OPENROUTER_MODEL=openrouter/free
 NVIDIA_PRODUCTION_AUTHORIZED=true
 NVIDIA_API_KEY=<secure-Railway-secret>
-NVIDIA_MODEL=meta/llama-3.1-8b-instruct
+NVIDIA_MODEL=nvidia/nemotron-3.5-lightning-30b-a3b
 NVIDIA_BASE_URL=https://integrate.api.nvidia.com
 NVIDIA_FALLBACK_LIMIT=1
 ```
