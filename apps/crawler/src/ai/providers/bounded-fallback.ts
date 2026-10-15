@@ -14,7 +14,11 @@ export class BoundedFallbackProvider implements AIProvider {
     private readonly fallback: AIProvider,
     private readonly maxFallbackRequests: number,
   ) {
-    if (!Number.isSafeInteger(maxFallbackRequests) || maxFallbackRequests < 1 || maxFallbackRequests > 2) {
+    if (
+      !Number.isSafeInteger(maxFallbackRequests) ||
+      maxFallbackRequests < 1 ||
+      maxFallbackRequests > 2
+    ) {
       throw new Error('NVIDIA_FALLBACK_BUDGET_GUARD: limit must be 1 or 2');
     }
   }
@@ -26,7 +30,11 @@ export class BoundedFallbackProvider implements AIProvider {
   async extract(content: string, prompt: string): Promise<AIExtractionResult> {
     const result = await this.primary.extract(content, prompt);
     const retryable = ['rate_limit', 'timeout', 'provider_error'].includes(result.errorCategory);
-    if (!retryable || !this.fallback.isAvailable() || this.fallbackRequests >= this.maxFallbackRequests) {
+    if (
+      !retryable ||
+      !this.fallback.isAvailable() ||
+      this.fallbackRequests >= this.maxFallbackRequests
+    ) {
       return result;
     }
 
