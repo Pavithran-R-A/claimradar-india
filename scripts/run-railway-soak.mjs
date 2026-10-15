@@ -53,8 +53,13 @@ if (!Number.isInteger(freeBacklogLimitRaw) || freeBacklogLimitRaw < 0 || freeBac
 }
 const freeBacklogLimit = freeBacklogLimitRaw;
 if (freeBacklogLimit > 0) {
+  const licensedDual =
+    process.env.AI_PROVIDER === 'openrouter+nvidia' &&
+    process.env.NVIDIA_PRODUCTION_AUTHORIZED === 'true' &&
+    Boolean(process.env.NVIDIA_API_KEY) &&
+    [1, 2].includes(Number(process.env.NVIDIA_FALLBACK_LIMIT ?? '1'));
   if (
-    process.env.AI_PROVIDER !== 'openrouter' ||
+    (process.env.AI_PROVIDER !== 'openrouter' && !licensedDual) ||
     process.env.OPENROUTER_MODEL !== 'openrouter/free' ||
     !process.env.OPENROUTER_API_KEY
   ) {
