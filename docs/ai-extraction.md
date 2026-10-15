@@ -8,11 +8,11 @@ The AI extraction system converts raw regulatory/legal documents into structured
 
 Extraction providers implement the `AIProvider` interface:
 
-| Provider | File | Usage |
-| --- | --- | --- |
-| `OpenRouterProvider` | `ai/providers/openrouter.ts` | Primary `openrouter/free` inference |
-| `NvidiaNimProvider` | `ai/providers/nvidia.ts` | Only as an explicitly **licensed**, capped fallback |
-| `NoAiProvider` | `ai/providers/noai.ts` | Deferred processing; no inference |
+| Provider                  | File                               | Usage                                                         |
+| ------------------------- | ---------------------------------- | ------------------------------------------------------------- |
+| `OpenRouterProvider`      | `ai/providers/openrouter.ts`       | Primary `openrouter/free` inference                           |
+| `NvidiaNimProvider`       | `ai/providers/nvidia.ts`           | Only as an explicitly **licensed**, capped fallback           |
+| `NoAiProvider`            | `ai/providers/noai.ts`             | Deferred processing; no inference                             |
 | `BoundedFallbackProvider` | `ai/providers/bounded-fallback.ts` | OpenRouter primary; max 1–2 licensed NVIDIA calls per process |
 
 The default and currently authorized production provider is OpenRouter free routing.
