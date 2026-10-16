@@ -329,3 +329,26 @@ When `SENTRY_DSN` is configured, source-level errors are captured via `captureEr
 - **Hosted steps (scheduled runs, environment secrets)**: NOT_EXECUTED — no git remote configured yet, so no GitHub-hosted run has happened. The workflow YAML is audited for correctness; see `docs/deployment-readiness.md` for the exact blocker list.
 
 > Docker/WSL2 note: local Supabase steps are `BLOCKED_LOCAL_ENVIRONMENT` on machines without WSL2 (Docker Desktop's WSL2 backend returns 500 on `/info`). See `docs/checkpoints/qoder-local-live-source-idempotency.md`.
+
+## Railway scheduled-worker timeout recovery (October 2026)
+
+The 2026-10-16 00:19 UTC scheduled Railway job spent over 15 minutes
+fetching official sources (including slow IBBI PDFs) and was terminated by
+the old `900000` ms child-process timeout. The latest GitHub Daily Crawl on the
+same source set subsequently succeeded, proving the failure was intermittent
+but not guaranteeing the next Railway execution.
+
+The soak runner now defaults to **25 minutes** for its crawl subprocess;
+`RAILWAY_SOAK_CRAWL_TIMEOUT_MS=1500000` is the current production override.
+Values must be an integer in the **15–30 minute** range. A hard bound prevents
+jobs being configured to run across the next six-hour cron tick. Preflight,
+soak acceptance and optional free-only AI backlog retain separate budgets.
+
+On an actual timeout, the runner **must fail** and leave the failed run in
+its audit trail: never fabricate a success, silently skip a failed source,
+reset the AI budget, or publish records. Operators should inspect the relevant
+Railway deployment logs for slow source/PDF processing and verify that
+`crawl_runs` has a subsequent independently completed 7/7 execution.
+
+Verification: `node --test scripts/railway-crawl-budget.test.mjs` in CI,
+followed by a real scheduled Railway run that reports all source gates green.
