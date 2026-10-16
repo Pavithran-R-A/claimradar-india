@@ -174,7 +174,8 @@ export class DatabaseWriter implements IDatabaseWriter {
       })
       .in('crawl_run_id', ids)
       .eq('status', 'running');
-    if (sourceError) throw new Error(`Failed to close stale crawl_run_sources: ${sourceError.message}`);
+    if (sourceError)
+      throw new Error(`Failed to close stale crawl_run_sources: ${sourceError.message}`);
 
     const runningIds = (stale ?? [])
       .filter((row: { status: string }) => row.status === 'running')
