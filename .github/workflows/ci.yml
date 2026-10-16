@@ -62,12 +62,6 @@ jobs:
       - name: Format check
         run: pnpm format
 
-      - name: Diagnose exact Prettier diff
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/crawler/src/pipeline/db-writer.ts apps/crawler/src/pipeline/stale-crawl-reconciliation.test.ts
-          git diff -- apps/crawler/src/pipeline/db-writer.ts apps/crawler/src/pipeline/stale-crawl-reconciliation.test.ts
-
       - name: Lint
         run: pnpm lint
 
