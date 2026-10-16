@@ -20,7 +20,17 @@ test('bounded 15–30 minute range preserves a six-hour cron interval', () => {
 });
 
 test('rejects accidental tiny, infinite, nonsensical and unbounded values', () => {
-  for (const value of ['1', '899999', '1800001', '-1', 'NaN', 'Infinity', '1.5', '360000000', 'garbage']) {
+  for (const value of [
+    '1',
+    '899999',
+    '1800001',
+    '-1',
+    'NaN',
+    'Infinity',
+    '1.5',
+    '360000000',
+    'garbage',
+  ]) {
     assert.throws(
       () => resolveRailwayCrawlTimeoutMs(value),
       /RAILWAY_SOAK_CRAWL_TIMEOUT_MS/,
