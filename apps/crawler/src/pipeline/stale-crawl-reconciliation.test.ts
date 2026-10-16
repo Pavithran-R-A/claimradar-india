@@ -4,11 +4,7 @@ import { DatabaseWriter } from './db-writer.js';
 
 type Row = Record<string, unknown>;
 
-function createDb(
-  runs: Row[],
-  children: Row[],
-  options: { failSourceUpdate?: boolean } = {},
-) {
+function createDb(runs: Row[], children: Row[], options: { failSourceUpdate?: boolean } = {}) {
   const tables: Record<string, Row[]> = {
     crawl_runs: runs,
     crawl_run_sources: children,
@@ -74,12 +70,7 @@ describe('stale crawl reconciliation', () => {
     const writer = new DatabaseWriter(createDb(runs, children) as never);
     expect(await writer.markStaleCrawlRuns(30)).toBe(1);
     expect(runs.map((row) => row.status)).toEqual(['failed', 'failed', 'running']);
-    expect(children.map((row) => row.status)).toEqual([
-      'failed',
-      'completed',
-      'failed',
-      'running',
-    ]);
+    expect(children.map((row) => row.status)).toEqual(['failed', 'completed', 'failed', 'running']);
     expect(children[0]?.completed_at).toBeTruthy();
     expect(children[0]?.error_message).toContain('Interrupted');
     expect(children[1]?.completed_at).toBeUndefined();
@@ -93,9 +84,7 @@ describe('stale crawl reconciliation', () => {
     const runs: Row[] = [
       { id: 'interrupted', status: 'running', started_at: '2026-10-01T00:00:00.000Z' },
     ];
-    const children: Row[] = [
-      { id: 'source', crawl_run_id: 'interrupted', status: 'running' },
-    ];
+    const children: Row[] = [{ id: 'source', crawl_run_id: 'interrupted', status: 'running' }];
     const writer = new DatabaseWriter(
       createDb(runs, children, { failSourceUpdate: true }) as never,
     );
@@ -108,12 +97,15 @@ describe('stale crawl reconciliation', () => {
 
   it('keeps edge-proxy reconciliation and the direct writer contract aligned', () => {
     const proxy = readFileSync(
-      new URL('../../../../supabase/functions/claimradar-crawler-db-proxy/index.ts', import.meta.url),
+      new URL(
+        '../../../../supabase/functions/claimradar-crawler-db-proxy/index.ts',
+        import.meta.url,
+      ),
       'utf8',
     );
-    const block = proxy.split("case 'markStaleCrawlRuns': {")[1]?.split(
-      "case 'createCrawlRunSource': {",
-    )[0];
+    const block = proxy
+      .split("case 'markStaleCrawlRuns': {")[1]
+      ?.split("case 'createCrawlRunSource': {")[0];
     expect(block).toContain(".in('status', ['running', 'failed'])");
     expect(block).toContain(".from('crawl_run_sources')");
     expect(block).toContain(".eq('status', 'running')");
