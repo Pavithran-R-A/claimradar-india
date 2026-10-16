@@ -160,23 +160,38 @@ async function executeOperation(
       const cutoff = new Date(Date.now() - maxAgeMinutes * 60_000).toISOString();
       const { data: stale, error: selectError } = await db
         .from('crawl_runs')
-        .select('id')
-        .eq('status', 'running')
+        .select('id, status')
+        .in('status', ['running', 'failed'])
         .lt('started_at', cutoff);
       if (selectError) dbError('QUERY_STALE_CRAWL_RUNS', selectError);
 
       const ids = (stale ?? []).map((row) => row.id as string);
       if (ids.length === 0) return { count: 0 };
 
-      const { error } = await db
-        .from('crawl_runs')
+      const completedAt = new Date().toISOString();
+      const { error: sourceError } = await db
+        .from('crawl_run_sources')
         .update({
           status: 'failed',
-          completed_at: new Date().toISOString(),
+          completed_at: completedAt,
+          error_message: 'Interrupted before source completion; stale or failed parent crawl.',
         })
-        .in('id', ids);
+        .in('crawl_run_id', ids)
+        .eq('status', 'running');
+      if (sourceError) dbError('CLOSE_STALE_CRAWL_RUN_SOURCES', sourceError);
+
+      const runningIds = (stale ?? [])
+        .filter((row) => row.status === 'running')
+        .map((row) => row.id as string);
+      if (runningIds.length === 0) return { count: 0 };
+
+      const { error } = await db
+        .from('crawl_runs')
+        .update({ status: 'failed', completed_at: completedAt })
+        .in('id', runningIds)
+        .eq('status', 'running');
       if (error) dbError('CLOSE_STALE_CRAWL_RUNS', error);
-      return { count: ids.length };
+      return { count: runningIds.length };
     }
 
     case 'createCrawlRunSource': {
