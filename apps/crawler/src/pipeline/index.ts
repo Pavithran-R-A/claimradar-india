@@ -834,9 +834,10 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
         });
       }
     } catch (err) {
-      logger.warn('pipeline', 'Unable to reconcile stale crawl runs', {
+      logger.error('pipeline', 'Unable to reconcile stale crawl runs; refusing ingestion', {
         error: err instanceof Error ? err.message : 'unknown',
       });
+      throw err;
     }
   }
 

@@ -28,6 +28,7 @@ describe('Storage & Dry-Run Architecture Tests', () => {
 
   it('2. Live run with missing credentials should throw or record pipeline failure', async () => {
     const mockStorage: IDatabaseWriter = {
+      markStaleCrawlRuns: async () => 0,
       createCrawlRun: async () => {
         throw new Error('Supabase client error: missing credentials');
       },
@@ -58,6 +59,7 @@ describe('Storage & Dry-Run Architecture Tests', () => {
 
   it('3. Live run with unreachable Supabase should fail and record error count', async () => {
     const unreachableStorage: IDatabaseWriter = {
+      markStaleCrawlRuns: async () => 0,
       createCrawlRun: async () => 'run-1',
       updateCrawlRun: async () => {},
       createCrawlRunSource: async () => 'run-src-1',
