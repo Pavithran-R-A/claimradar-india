@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
+import { resolveRailwayCrawlTimeoutMs } from './railway-crawl-budget.mjs';
 
-const DEFAULT_CRAWL_TIMEOUT_MS = 15 * 60 * 1000;
 const DEFAULT_SHORT_STEP_TIMEOUT_MS = 60 * 1000;
 
 function readPositiveMs(name, fallback) {
@@ -43,7 +43,7 @@ const shortStepTimeoutMs = readPositiveMs(
   'RAILWAY_SOAK_SHORT_STEP_TIMEOUT_MS',
   DEFAULT_SHORT_STEP_TIMEOUT_MS,
 );
-const crawlTimeoutMs = readPositiveMs('RAILWAY_SOAK_CRAWL_TIMEOUT_MS', DEFAULT_CRAWL_TIMEOUT_MS);
+const crawlTimeoutMs = resolveRailwayCrawlTimeoutMs(process.env.RAILWAY_SOAK_CRAWL_TIMEOUT_MS);
 
 // Four six-hour cron ticks per UTC day. Reserve headroom against OpenRouter's
 // 50/day free-account allowance. No paid provider may ever be used.
