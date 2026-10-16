@@ -156,23 +156,38 @@ export class DatabaseWriter implements IDatabaseWriter {
     const cutoff = new Date(Date.now() - maxAgeMinutes * 60_000).toISOString();
     const { data: stale, error: selectError } = await this.db
       .from('crawl_runs')
-      .select('id')
-      .eq('status', 'running')
+      .select('id, status')
+      .in('status', ['running', 'failed'])
       .lt('started_at', cutoff);
     if (selectError) throw new Error(`Failed to query stale crawl_runs: ${selectError.message}`);
 
     const ids = (stale ?? []).map((row: { id: string }) => row.id);
     if (ids.length === 0) return 0;
 
-    const { error } = await this.db
-      .from('crawl_runs')
+    const completedAt = new Date().toISOString();
+    const { error: sourceError } = await this.db
+      .from('crawl_run_sources')
       .update({
         status: 'failed',
-        completed_at: new Date().toISOString(),
+        completed_at: completedAt,
+        error_message: 'Interrupted before source completion; stale or failed parent crawl.',
       })
-      .in('id', ids);
+      .in('crawl_run_id', ids)
+      .eq('status', 'running');
+    if (sourceError) throw new Error(`Failed to close stale crawl_run_sources: ${sourceError.message}`);
+
+    const runningIds = (stale ?? [])
+      .filter((row: { status: string }) => row.status === 'running')
+      .map((row: { id: string }) => row.id);
+    if (runningIds.length === 0) return 0;
+
+    const { error } = await this.db
+      .from('crawl_runs')
+      .update({ status: 'failed', completed_at: completedAt })
+      .in('id', runningIds)
+      .eq('status', 'running');
     if (error) throw new Error(`Failed to close stale crawl_runs: ${error.message}`);
-    return ids.length;
+    return runningIds.length;
   }
 
   async createCrawlRunSource(runId: string, sourceId: string, status: string): Promise<string> {
