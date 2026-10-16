@@ -1,9 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import {
-  DEFAULT_CRAWL_TIMEOUT_MS,
-  resolveRailwayCrawlTimeoutMs,
-} from './railway-crawl-budget.mjs';
+import { DEFAULT_CRAWL_TIMEOUT_MS, resolveRailwayCrawlTimeoutMs } from './railway-crawl-budget.mjs';
 
 test('default crawl budget allows intermittent official-source latency', () => {
   assert.equal(resolveRailwayCrawlTimeoutMs(undefined), 25 * 60 * 1000);
