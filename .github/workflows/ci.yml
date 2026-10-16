@@ -65,6 +65,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Railway crawl budget regression
+        run: node --test scripts/railway-crawl-budget.test.mjs
+
       - name: Migration contract
         run: pnpm verify:migrations
 
