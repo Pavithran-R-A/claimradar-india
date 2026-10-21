@@ -47,3 +47,26 @@ export function freeBacklogFailureState(
     ai_retry_count,
   };
 }
+
+/**
+ * Give scarce free-router extraction slots to non-IBBI notices first.
+ * This is a scheduling preference ONLY. Corporate-creditor notices remain
+ * available after other classes are exhausted; nothing is rejected, verified,
+ * published, or excluded from mandatory editorial review here.
+ *
+ * Preserve the database order (score then freshness) within each group.
+ */
+export function prioritizeConsumerBacklog<
+  T extends { source: { adapter_name: string } | null },
+>(contexts: T[]): T[] {
+  const consumer: T[] = [];
+  const creditor: T[] = [];
+  for (const context of contexts) {
+    if (context.source?.adapter_name === 'ibbi-public-announcement') {
+      creditor.push(context);
+    } else {
+      consumer.push(context);
+    }
+  }
+  return [...consumer, ...creditor];
+}
