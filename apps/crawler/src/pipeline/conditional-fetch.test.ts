@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import type { SourceDefinition } from '@claimradar/source-registry';
-import { HttpClient } from '../http/client.js';
+import type { HttpClient } from '../http/client.js';
 import { IbbiPublicAnnouncementAdapter } from '../adapters/html/ibbi.js';
 import { DatabaseWriter, type SourceDocumentDedupItem } from './db-writer.js';
 import { withIbbiConditionalHeaders } from './conditional-fetch.js';
