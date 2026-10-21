@@ -126,6 +126,14 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
         url: document.url,
         method: 'GET',
         timeoutMs: context.timeoutMs,
+        headers: {
+          ...(document.conditionalHeaders?.etag
+            ? { 'If-None-Match': document.conditionalHeaders.etag }
+            : {}),
+          ...(document.conditionalHeaders?.lastModified
+            ? { 'If-Modified-Since': document.conditionalHeaders.lastModified }
+            : {}),
+        },
         allowedMimeTypes: [
           'text/html',
           'application/xhtml+xml',
@@ -136,6 +144,26 @@ export class IbbiPublicAnnouncementAdapter implements SourceAdapter {
       },
       this.source.rateLimit,
     );
+
+    // A 304 has no PDF body. Return the cache marker before invoking the PDF
+    // parser: the pipeline has already retained and reviewed the prior bytes.
+    if (result.wasCached) {
+      return {
+        url: document.url,
+        content: '',
+        contentType: result.contentType ?? 'application/pdf',
+        contentHash: result.contentHash,
+        etag: result.etag,
+        lastModified: result.lastModified,
+        fetchedAt: new Date(),
+        metadata: {
+          ...document.metadata,
+          wasCached: true,
+          title: document.title,
+          publishedAt: document.publishedAt,
+        },
+      };
+    }
 
     const isPdf =
       document.url.toLowerCase().endsWith('.pdf') || result.contentType?.includes('pdf');

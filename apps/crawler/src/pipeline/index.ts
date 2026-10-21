@@ -14,6 +14,7 @@ import type { CrawlContext } from '../adapters/types.js';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type { Source, ClaimableStatus } from '@claimradar/database';
 import { checkDuplicate } from '../deduplication/index.js';
+import { withIbbiConditionalHeaders } from './conditional-fetch.js';
 import type { ExistingDocument } from '../deduplication/index.js';
 import { scoreDocument } from '../scoring/classifier.js';
 import { AIExtractor } from '../ai/extraction.js';
@@ -219,8 +220,15 @@ async function processSource(params: {
     // 3. Process each discovered document
     for (const doc of discovered) {
       try {
-        // Fetch
-        const fetched = await adapter.fetchDocument(doc, context);
+        // Revalidate unchanged official IBBI PDFs instead of downloading and
+        // parsing the same retained PDF body on every six-hour cron tick.
+        const requestDocument = withIbbiConditionalHeaders(
+          doc,
+          sourceDef.adapterType,
+          source.id,
+          existingDocs,
+        );
+        const fetched = await adapter.fetchDocument(requestDocument, context);
         stats.fetched++;
         summary.documentsFetched++;
         const publishedAt = resolvePublishedAt(doc, fetched.metadata);
