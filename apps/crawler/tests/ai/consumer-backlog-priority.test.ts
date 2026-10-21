@@ -4,7 +4,10 @@ import { prioritizeConsumerBacklog } from '../../src/ai/free-backlog-policy.js';
 import { DatabaseWriter } from '../../src/pipeline/db-writer.js';
 
 describe('consumer-first free AI retry queue', () => {
-  const creditor = { source: { adapter_name: 'ibbi-public-announcement' }, candidate: { id: 'ibbi' } };
+  const creditor = {
+    source: { adapter_name: 'ibbi-public-announcement' },
+    candidate: { id: 'ibbi' },
+  };
   const consumer = { source: { adapter_name: 'rss-rbi' }, candidate: { id: 'rbi' } };
   const other = { source: null, candidate: { id: 'unknown' } };
 
@@ -46,11 +49,21 @@ describe('consumer-first free AI retry queue', () => {
       sourceDoc('consumer', 'rss-rbi'),
     ];
     const query = {
-      select() { return query; },
-      in() { return query; },
-      lt() { return query; },
-      neq() { return query; },
-      order() { return query; },
+      select() {
+        return query;
+      },
+      in() {
+        return query;
+      },
+      lt() {
+        return query;
+      },
+      neq() {
+        return query;
+      },
+      order() {
+        return query;
+      },
       limit(limit: number) {
         expect(limit).toBe(100);
         return Promise.resolve({ data: rows, error: null });
@@ -77,7 +90,7 @@ describe('consumer-first free AI retry queue', () => {
     );
     const operation = code
       .split("case 'getDeferredCandidateContexts': {")[1]
-      ?.split("default:", 1)[0];
+      ?.split('default:', 1)[0];
     expect(operation).toContain('.limit(100)');
     expect(operation).toContain("adapter_name !== 'ibbi-public-announcement'");
     expect(operation).toContain("adapter_name === 'ibbi-public-announcement'");
