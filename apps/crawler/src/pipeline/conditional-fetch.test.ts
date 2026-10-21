@@ -6,12 +6,12 @@ import { IbbiPublicAnnouncementAdapter } from '../adapters/html/ibbi.js';
 import { DatabaseWriter, type SourceDocumentDedupItem } from './db-writer.js';
 import { withIbbiConditionalHeaders } from './conditional-fetch.js';
 
-const URL = 'https://ibbi.gov.in/uploads/announcement/notice.pdf';
-const document = { url: URL, title: 'Notice (Claims Deadline: 30-11-2026)' };
+const PDF_URL = 'https://ibbi.gov.in/uploads/announcement/notice.pdf';
+const document = { url: PDF_URL, title: 'Notice (Claims Deadline: 30-11-2026)' };
 const previous: SourceDocumentDedupItem = {
   id: 'doc-1',
   source_id: 'ibbi-source',
-  canonical_url: URL,
+  canonical_url: PDF_URL,
   title: document.title,
   content_hash: 'known-hash',
   source_identifier: null,
