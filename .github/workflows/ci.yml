@@ -62,6 +62,12 @@ jobs:
       - name: Format check
         run: pnpm format
 
+      - name: Diagnose exact Prettier changes (temporary)
+        if: failure()
+        run: |
+          pnpm exec prettier --write apps/crawler/src/ai/providers/openrouter.ts apps/crawler/tests/ai/openrouter-response-errors.test.ts
+          git diff -- apps/crawler/src/ai/providers/openrouter.ts apps/crawler/tests/ai/openrouter-response-errors.test.ts
+
       - name: Lint
         run: pnpm lint
 
