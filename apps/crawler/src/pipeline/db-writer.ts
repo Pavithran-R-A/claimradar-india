@@ -6,6 +6,7 @@
  */
 
 import { createAdminClient } from '@claimradar/database';
+import { prioritizeConsumerBacklog } from '../ai/free-backlog-policy.js';
 import type { SourceDefinition } from '@claimradar/source-registry';
 import type {
   CrawlRun,
@@ -404,10 +405,12 @@ export class DatabaseWriter implements IDatabaseWriter {
       // No extra AI calls: this only reorders the existing bounded batch.
       .order('keyword_score', { ascending: false })
       .order('created_at', { ascending: false })
-      .limit(Math.min(100, limit * 3));
+      // Score-only top-three window starves consumer cases behind IBBI.
+      // Query at most 100 records; outgoing AI calls remain capped by limit.
+      .limit(100);
     if (error) throw new Error(`Failed to fetch deferred candidate contexts: ${error.message}`);
 
-    return ((data ?? []) as Array<Record<string, unknown>>)
+    const contexts = ((data ?? []) as Array<Record<string, unknown>>)
       .map((row) => {
         const sourceDocument = row['source_documents'] as SourceDocument & {
           sources?: Source | null;
@@ -423,8 +426,8 @@ export class DatabaseWriter implements IDatabaseWriter {
         (context) =>
           typeof context.sourceDocument?.raw_text === 'string' &&
           context.sourceDocument.raw_text.trim().length > 0,
-      )
-      .slice(0, limit);
+      );
+    return prioritizeConsumerBacklog(contexts).slice(0, limit);
   }
 }
 
