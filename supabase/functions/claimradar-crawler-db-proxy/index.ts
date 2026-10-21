@@ -313,13 +313,24 @@ async function executeOperation(
     }
 
     case 'getSourceDocumentsForDedup': {
-      const { data, error } = await db
-        .from('source_documents')
-        .select(
-          'id, source_id, canonical_url, content_hash, source_identifier, title, published_at',
-        );
-      if (error) dbError('GET_SOURCE_DOCUMENTS_FOR_DEDUP', error);
-      return { rows: data ?? [] };
+      // Read all pages: default PostgREST limits otherwise hide historical
+      // records and cause duplicate inserts and unnecessary refetches.
+      const pageSize = 1000;
+      const rows: Record<string, unknown>[] = [];
+      for (let page = 0; page < 100; page += 1) {
+        const { data, error } = await db
+          .from('source_documents')
+          .select(
+            'id, source_id, canonical_url, content_hash, source_identifier, title, published_at, etag, last_modified',
+          )
+          .order('id', { ascending: true })
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+        if (error) dbError('GET_SOURCE_DOCUMENTS_FOR_DEDUP', error);
+        const batch = data ?? [];
+        rows.push(...batch);
+        if (batch.length < pageSize) return { rows };
+      }
+      throw new Error('SOURCE_DOCUMENT_DEDUP_PAGINATION_LIMIT');
     }
 
     case 'assignSourceDocumentToCluster': {
