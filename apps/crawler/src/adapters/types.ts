@@ -16,6 +16,8 @@ export interface DiscoveredDocument {
   sourceIdentifier?: string;
   description?: string;
   linkedDocumentUrl?: string;
+  // Internal HTTP revalidation hints; never persisted as notice evidence.
+  conditionalHeaders?: { etag?: string; lastModified?: string };
   metadata?: Record<string, unknown>;
 }
 
