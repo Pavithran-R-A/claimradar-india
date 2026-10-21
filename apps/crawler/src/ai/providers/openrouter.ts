@@ -17,7 +17,6 @@ function safeRoutedModel(value: unknown, fallback: string): string {
   return value;
 }
 
-
 // Only stable metadata is retained. Raw upstream messages can contain source text.
 function safeFailure(
   status: number,
