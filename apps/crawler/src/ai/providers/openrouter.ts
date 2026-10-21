@@ -4,6 +4,20 @@ import type { AIExtractionResult, AIProvider } from '../types.js';
 
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
+/** Persist only safe, bounded routing metadata, never upstream messages. */
+function safeRoutedModel(value: unknown, fallback: string): string {
+  if (
+    typeof value !== 'string' ||
+    value.length > 128 ||
+    !/^[a-zA-Z0-9][a-zA-Z0-9_./:-]*$/.test(value) ||
+    !value.includes('/')
+  ) {
+    return fallback;
+  }
+  return value;
+}
+
+
 // Only stable metadata is retained. Raw upstream messages can contain source text.
 function safeFailure(
   status: number,
@@ -98,6 +112,7 @@ export class OpenRouterProvider implements AIProvider {
       }
 
       const data = (await response.json()) as {
+        model?: unknown;
         error?: unknown;
         choices?: Array<{
           message?: { content?: string };
@@ -106,12 +121,25 @@ export class OpenRouterProvider implements AIProvider {
         }>;
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
+      const routedModel = safeRoutedModel(data.model, this.model);
       const embeddedError = data.error ?? data.choices?.[0]?.error;
       if (embeddedError || data.choices?.[0]?.finish_reason === 'error') {
         return {
           ...baseResult,
+          model: routedModel,
           durationMs: Date.now() - start,
           ...safeFailure(200, { error: embeddedError }),
+        };
+      }
+
+      // A truncated finish is not valid claim evidence, even if its JSON parses.
+      if (data.choices?.[0]?.finish_reason === 'length') {
+        return {
+          ...baseResult,
+          model: routedModel,
+          durationMs: Date.now() - start,
+          error: 'OpenRouter response truncated',
+          errorCategory: 'invalid_output',
         };
       }
 
@@ -122,6 +150,7 @@ export class OpenRouterProvider implements AIProvider {
       if (!rawOutput) {
         return {
           ...baseResult,
+          model: routedModel,
           durationMs: Date.now() - start,
           error: 'Empty response from provider',
           errorCategory: 'provider_error',
@@ -132,6 +161,7 @@ export class OpenRouterProvider implements AIProvider {
       if (!parsed) {
         return {
           ...baseResult,
+          model: routedModel,
           rawOutput,
           durationMs: Date.now() - start,
           inputTokens,
@@ -164,6 +194,7 @@ export class OpenRouterProvider implements AIProvider {
       if (!validation.success) {
         return {
           ...baseResult,
+          model: routedModel,
           rawOutput,
           durationMs: Date.now() - start,
           inputTokens,
@@ -177,7 +208,7 @@ export class OpenRouterProvider implements AIProvider {
         extraction: validation.data,
         rawOutput,
         provider: this.name,
-        model: this.model,
+        model: routedModel,
         inputTokens,
         outputTokens,
         durationMs: Date.now() - start,
