@@ -32,25 +32,32 @@ describe('conditional IBBI PDF revalidation', () => {
       etag: '"etag-v1"',
       lastModified: 'Wed, 21 Oct 2026 10:00:09 GMT',
     });
-    expect(withIbbiConditionalHeaders(
-      { ...document, title: 'Notice (Claims Deadline: 01-12-2026)' },
-      'ibbi-public-announcement',
-      'ibbi-source',
-      [previous],
-    ).conditionalHeaders).toBeUndefined();
-    expect(withIbbiConditionalHeaders(
-      document, 'sebi-public-notices', 'ibbi-source', [previous],
-    ).conditionalHeaders).toBeUndefined();
-    expect(withIbbiConditionalHeaders(
-      document, 'ibbi-public-announcement', 'other-source', [previous],
-    ).conditionalHeaders).toBeUndefined();
+    expect(
+      withIbbiConditionalHeaders(
+        { ...document, title: 'Notice (Claims Deadline: 01-12-2026)' },
+        'ibbi-public-announcement',
+        'ibbi-source',
+        [previous],
+      ).conditionalHeaders,
+    ).toBeUndefined();
+    expect(
+      withIbbiConditionalHeaders(document, 'sebi-public-notices', 'ibbi-source', [previous])
+        .conditionalHeaders,
+    ).toBeUndefined();
+    expect(
+      withIbbiConditionalHeaders(document, 'ibbi-public-announcement', 'other-source', [previous])
+        .conditionalHeaders,
+    ).toBeUndefined();
   });
 
   it('blocks unsafe persisted header values', () => {
-    const result = withIbbiConditionalHeaders(
-      document, 'ibbi-public-announcement', 'ibbi-source',
-      [{ ...previous, etag: 'bad' + String.fromCharCode(13, 10) + 'Injection: yes', last_modified: null }],
-    );
+    const result = withIbbiConditionalHeaders(document, 'ibbi-public-announcement', 'ibbi-source', [
+      {
+        ...previous,
+        etag: 'bad' + String.fromCharCode(13, 10) + 'Injection: yes',
+        last_modified: null,
+      },
+    ]);
     expect(result.conditionalHeaders).toBeUndefined();
   });
 
@@ -70,7 +77,8 @@ describe('conditional IBBI PDF revalidation', () => {
       }
     }
     const source = {
-      id: 'ibbi-source', adapterType: 'ibbi-public-announcement',
+      id: 'ibbi-source',
+      adapterType: 'ibbi-public-announcement',
       rateLimit: { requestsPerMinute: 10 },
     } as SourceDefinition;
     const adapter = new StubAdapter(source);
@@ -127,10 +135,14 @@ describe('conditional IBBI PDF revalidation', () => {
 
   it('preserves pagination on the deployed proxy source', () => {
     const source = readFileSync(
-      new URL('../../../../supabase/functions/claimradar-crawler-db-proxy/index.ts', import.meta.url),
+      new URL(
+        '../../../../supabase/functions/claimradar-crawler-db-proxy/index.ts',
+        import.meta.url,
+      ),
       'utf8',
     );
-    const operation = source.split("case 'getSourceDocumentsForDedup': {")[1]
+    const operation = source
+      .split("case 'getSourceDocumentsForDedup': {")[1]
       ?.split("case 'assignSourceDocumentToCluster': {")[0];
     expect(operation).toContain(".order('id', { ascending: true })");
     expect(operation).toContain('.range(page * pageSize, (page + 1) * pageSize - 1)');
