@@ -56,9 +56,9 @@ export function freeBacklogFailureState(
  *
  * Preserve the database order (score then freshness) within each group.
  */
-export function prioritizeConsumerBacklog<
-  T extends { source: { adapter_name: string } | null },
->(contexts: T[]): T[] {
+export function prioritizeConsumerBacklog<T extends { source: { adapter_name: string } | null }>(
+  contexts: T[],
+): T[] {
   const consumer: T[] = [];
   const creditor: T[] = [];
   for (const context of contexts) {
