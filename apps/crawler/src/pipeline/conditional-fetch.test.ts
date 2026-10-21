@@ -49,7 +49,7 @@ describe('conditional IBBI PDF revalidation', () => {
   it('blocks unsafe persisted header values', () => {
     const result = withIbbiConditionalHeaders(
       document, 'ibbi-public-announcement', 'ibbi-source',
-      [{ ...previous, etag: 'bad\\r\\nInjection: yes', last_modified: null }],
+      [{ ...previous, etag: 'bad' + String.fromCharCode(13, 10) + 'Injection: yes', last_modified: null }],
     );
     expect(result.conditionalHeaders).toBeUndefined();
   });
