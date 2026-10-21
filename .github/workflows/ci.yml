@@ -62,6 +62,12 @@ jobs:
       - name: Format check
         run: pnpm format
 
+      - name: Diagnose exact Prettier changes (temporary)
+        if: failure()
+        run: |
+          pnpm exec prettier --write apps/crawler/src/ai/free-backlog-policy.ts apps/crawler/tests/ai/consumer-backlog-priority.test.ts
+          git diff -- apps/crawler/src/ai/free-backlog-policy.ts apps/crawler/tests/ai/consumer-backlog-priority.test.ts
+
       - name: Lint
         run: pnpm lint
 
