@@ -93,4 +93,64 @@ describe('OpenRouter free-only failure classification', () => {
     expect(result.errorCategory).toBe('none');
     expect(result.extraction?.is_relevant).toBe(false);
   });
+
+  it('records the actual free model used without exposing provider messages', async () => {
+    mockResponse(
+      {
+        model: 'free-example/model-7b:free',
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({ is_relevant: false, confidence: 0.5, evidence: [] }),
+            },
+          },
+        ],
+      },
+      200,
+    );
+    const result = await run();
+    expect(result.errorCategory).toBe('none');
+    expect(result.model).toBe('free-example/model-7b:free');
+  });
+
+  it('ignores untrusted model metadata rather than persisting arbitrary text', async () => {
+    mockResponse(
+      {
+        model: 'private content\\nsecret',
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({ is_relevant: false, confidence: 0.5, evidence: [] }),
+            },
+          },
+        ],
+      },
+      200,
+    );
+    const result = await run();
+    expect(result.model).toBe('openrouter/free');
+  });
+
+  it('fails closed if the free-model response ended because of length', async () => {
+    mockResponse(
+      {
+        model: 'example/free',
+        choices: [
+          {
+            finish_reason: 'length',
+            message: {
+              content: JSON.stringify({ is_relevant: false, confidence: 0.5, evidence: [] }),
+            },
+          },
+        ],
+      },
+      200,
+    );
+    const result = await run();
+    expect(result.errorCategory).toBe('invalid_output');
+    expect(result.extraction).toBeNull();
+    expect(result.error).toBe('OpenRouter response truncated');
+    expect(result.model).toBe('example/free');
+  });
+
 });
