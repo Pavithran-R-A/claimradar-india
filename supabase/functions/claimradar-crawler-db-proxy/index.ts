@@ -409,7 +409,10 @@ async function executeOperation(
         // No extra AI calls: this only reorders the existing bounded batch.
         .order('keyword_score', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(Math.min(100, limit * 3));
+        // Enlarge the bounded selection window so consumer remedies do not
+        // disappear behind recent high-scoring corporate-creditor notices.
+        // This does NOT increase outgoing AI requests (still capped by limit).
+        .limit(100);
       if (error) dbError('GET_DEFERRED_CANDIDATE_CONTEXTS', error);
 
       const rows = (data ?? []).map((row) => {
@@ -424,15 +427,19 @@ async function executeOperation(
           source: sourceDocument?.sources ?? null,
         };
       });
-      return {
-        rows: rows
-          .filter(
-            (row) =>
-              typeof row.sourceDocument?.raw_text === 'string' &&
-              row.sourceDocument.raw_text.trim().length > 0,
-          )
-          .slice(0, limit),
-      };
+      const eligible = rows.filter(
+        (row) =>
+          typeof row.sourceDocument?.raw_text === 'string' &&
+          row.sourceDocument.raw_text.trim().length > 0,
+      );
+      // Same policy as direct writer: stable partition, never discard a creditor.
+      const nonCreditors = eligible.filter(
+        (row) => row.source?.adapter_name !== 'ibbi-public-announcement',
+      );
+      const creditors = eligible.filter(
+        (row) => row.source?.adapter_name === 'ibbi-public-announcement',
+      );
+      return { rows: [...nonCreditors, ...creditors].slice(0, limit) };
     }
 
     default:
