@@ -151,4 +151,5 @@ describe('OpenRouter free-only failure classification', () => {
     expect(result.extraction).toBeNull();
     expect(result.error).toBe('OpenRouter response truncated');
     expect(result.model).toBe('example/free');
-  })});
+  });
+});
