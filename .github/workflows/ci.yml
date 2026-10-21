@@ -62,6 +62,12 @@ jobs:
       - name: Format check
         run: pnpm format
 
+      - name: Capture precise formatter changes (temporary diagnostics)
+        if: failure()
+        run: |
+          pnpm exec prettier --write apps/crawler/src/pipeline/conditional-fetch.test.ts
+          git diff -- apps/crawler/src/pipeline/conditional-fetch.test.ts
+
       - name: Lint
         run: pnpm lint
 
