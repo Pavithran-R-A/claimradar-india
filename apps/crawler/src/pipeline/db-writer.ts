@@ -81,6 +81,8 @@ export interface SourceDocumentDedupItem {
   source_identifier: string | null;
   title: string | null;
   published_at: string | null;
+  etag?: string | null;
+  last_modified?: string | null;
 }
 
 export interface ContentClusterAssignment {
@@ -306,11 +308,24 @@ export class DatabaseWriter implements IDatabaseWriter {
   }
 
   async getSourceDocumentsForDedup(_sourceId: string): Promise<SourceDocumentDedupItem[]> {
-    const { data, error } = await this.db
-      .from('source_documents')
-      .select('id, source_id, canonical_url, content_hash, source_identifier, title, published_at');
-    if (error) throw new Error(`Failed to fetch source_documents for dedup: ${error.message}`);
-    return data ?? [];
+    // Include cross-source rows for provenance matching. A single unpaginated
+    // select silently truncates at Supabase's default 1,000-row API limit.
+    const pageSize = 1000;
+    const rows: SourceDocumentDedupItem[] = [];
+    for (let page = 0; page < 100; page += 1) {
+      const { data, error } = await this.db
+        .from('source_documents')
+        .select(
+          'id, source_id, canonical_url, content_hash, source_identifier, title, published_at, etag, last_modified',
+        )
+        .order('id', { ascending: true })
+        .range(page * pageSize, (page + 1) * pageSize - 1);
+      if (error) throw new Error(`Failed to fetch source_documents for dedup: ${error.message}`);
+      const batch = (data ?? []) as SourceDocumentDedupItem[];
+      rows.push(...batch);
+      if (batch.length < pageSize) return rows;
+    }
+    throw new Error('Source document dedup pagination exceeded 100 pages');
   }
 
   async assignSourceDocumentToCluster(assignment: ContentClusterAssignment): Promise<string> {
