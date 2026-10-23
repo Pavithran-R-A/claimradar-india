@@ -4,11 +4,12 @@ import { officialRecoveryRoutes } from '../../lib/official-recovery-routes';
 describe('public official recovery route catalog', () => {
   const routes = officialRecoveryRoutes();
 
-  it('covers eight distinct common consumer-money problems rather than two notices', () => {
-    expect(routes).toHaveLength(8);
-    expect(new Set(routes.map((route) => route.id)).size).toBe(8);
+  it('covers nine official recovery routes including the verified DFS gateway', () => {
+    expect(routes).toHaveLength(9);
+    expect(new Set(routes.map((route) => route.id)).size).toBe(9);
     expect(routes.map((route) => route.id)).toEqual(
       expect.arrayContaining([
+        'unclaimed-assets-gateway',
         'bank-deposits',
         'shares-dividends',
         'insurance',
@@ -35,6 +36,14 @@ describe('public official recovery route catalog', () => {
     expect(iepf?.url).toBe('https://www.iepf.gov.in/content/iepf/global/master/Home/Home.html');
     expect(iepf?.nextStep).toContain('MCA Services');
     expect(iepf?.linkLabel).toContain('IEPF Authority');
+  });
+
+  it('links the finance ministry gateway without implying compensation or eligibility', () => {
+    const gateway = routes.find((route) => route.id === 'unclaimed-assets-gateway');
+    expect(gateway?.url).toBe('https://www.unclaimedassetsportal.in/');
+    expect(gateway?.kind).toBe('Search for unclaimed money');
+    expect(gateway?.nextStep).toContain('not proof of eligibility or payment');
+    expect(gateway?.agency).toContain('Department of Financial Services');
   });
 
   it('distinguishes search portals and complaint mechanisms from actual cash claims', () => {
