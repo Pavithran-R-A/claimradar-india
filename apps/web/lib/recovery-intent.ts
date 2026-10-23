@@ -44,7 +44,14 @@ export function routesForIntent(intent: RecoveryIntent): readonly RecoveryRoute[
 }
 
 const SEARCH_SYNONYMS: Readonly<Record<string, readonly string[]>> = {
-  'unclaimed-assets-gateway': ['unclaimed assets', 'forgotten funds', 'dividends', 'mutual fund', 'money portal', 'financial assets'],
+  'unclaimed-assets-gateway': [
+    'unclaimed assets',
+    'forgotten funds',
+    'dividends',
+    'mutual fund',
+    'money portal',
+    'financial assets',
+  ],
   'bank-deposits': ['rbi', 'udgam', 'fixed deposit', 'fd', 'bank account', 'dormant'],
   'shares-dividends': ['iepf', 'shares', 'stocks', 'dividend', 'investor'],
   insurance: ['irdai', 'insurance', 'policy', 'premium'],
