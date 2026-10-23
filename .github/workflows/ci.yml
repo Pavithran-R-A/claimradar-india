@@ -62,12 +62,6 @@ jobs:
       - name: Format check
         run: pnpm format
 
-      - name: Capture exact gateway formatter changes (temporary)
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/web/lib/official-recovery-routes.ts apps/web/lib/recovery-intent.ts apps/web/tests/unit/recovery-intent.test.ts
-          git diff -- apps/web/lib/official-recovery-routes.ts apps/web/lib/recovery-intent.ts apps/web/tests/unit/recovery-intent.test.ts
-
       - name: Lint
         run: pnpm lint
 
