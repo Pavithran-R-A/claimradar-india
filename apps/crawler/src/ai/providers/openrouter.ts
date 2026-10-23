@@ -217,7 +217,13 @@ export class OpenRouterProvider implements AIProvider {
     } catch (err) {
       const errorCategory =
         err instanceof DOMException && err.name === 'TimeoutError' ? 'timeout' : 'provider_error';
-      return { ...baseResult, durationMs: Date.now() - start, error: String(err), errorCategory };
+      // Fetch exceptions can include request headers or response fragments.
+      // Never retain their original text in telemetry or database records.
+      const error =
+        errorCategory === 'timeout'
+          ? 'OpenRouter request timed out'
+          : 'OpenRouter network request failed';
+      return { ...baseResult, durationMs: Date.now() - start, error, errorCategory };
     }
   }
 

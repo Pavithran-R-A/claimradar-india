@@ -43,6 +43,7 @@ import { initSentry, captureError } from '../observability/sentry.js';
 import { createAlertSink } from '../observability/alerts.js';
 import { classifyFetchError } from '../observability/failure-categories.js';
 import { FetchError } from '../http/types.js';
+import { safeProviderErrorMetadata } from '../ai/safe-failure-diagnostics.js';
 
 export class StagingPolicyViolationError extends Error {
   readonly violations: string[];
@@ -405,7 +406,7 @@ async function processSource(params: {
               duration_ms: aiResult.durationMs,
               result_status: aiResult.errorCategory,
               error_category: aiResult.errorCategory,
-              raw_output: null,
+              raw_output: safeProviderErrorMetadata(aiResult.provider, aiResult.error),
               structured_output: null,
             });
           }
