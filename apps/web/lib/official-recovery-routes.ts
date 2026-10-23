@@ -19,6 +19,17 @@ export interface RecoveryRoute {
 
 export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
   {
+    id: 'unclaimed-assets-gateway',
+    title: 'Search multiple types of unclaimed assets',
+    description: 'Unsure whether forgotten money is in a bank, insurer, mutual fund, or shares?',
+    agency: 'Department of Financial Services · Ministry of Finance',
+    kind: 'Search for unclaimed money',
+    nextStep:
+      'Use the government-backed landing portal to find the appropriate official search service; a result is not proof of eligibility or payment.',
+    url: 'https://www.unclaimedassetsportal.in/',
+    linkLabel: 'Open financial assets search gateway',
+  },
+  {
     id: 'bank-deposits',
     title: 'Unclaimed bank deposits',
     description: 'Think an old bank account or fixed deposit was forgotten?',
@@ -106,6 +117,7 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
 export function officialRecoveryRoutes(): readonly RecoveryRoute[] {
   // Only HTTPS links to recognized government/authority hosts are presented.
   const domains = new Set([
+    'www.unclaimedassetsportal.in',
     'udgam.rbi.org.in',
     'www.iepf.gov.in',
     'bimabharosa.irdai.gov.in',
