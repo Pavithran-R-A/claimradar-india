@@ -21,8 +21,7 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
   {
     id: 'unclaimed-assets-gateway',
     title: 'Search multiple types of unclaimed assets',
-    description:
-      'Unsure whether forgotten money is in a bank, insurer, mutual fund, or shares?',
+    description: 'Unsure whether forgotten money is in a bank, insurer, mutual fund, or shares?',
     agency: 'Department of Financial Services · Ministry of Finance',
     kind: 'Search for unclaimed money',
     nextStep:
