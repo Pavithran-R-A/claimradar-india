@@ -46,9 +46,9 @@ describe('private and deterministic official recovery route guidance', () => {
   });
 
   it('matches homepage searches to relevant government recovery routes', () => {
-    expect(matchingRoutesForSearch('all', 'financial assets portal').map((route) => route.id)).toContain(
-      'unclaimed-assets-gateway',
-    );
+    expect(
+      matchingRoutesForSearch('all', 'financial assets portal').map((route) => route.id),
+    ).toContain('unclaimed-assets-gateway');
     expect(matchingRoutesForSearch('all', 'RBI').map((route) => route.id)).toEqual([
       'bank-deposits',
     ]);
