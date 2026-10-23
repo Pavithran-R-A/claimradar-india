@@ -220,7 +220,9 @@ export class OpenRouterProvider implements AIProvider {
       // Fetch exceptions can include request headers or response fragments.
       // Never retain their original text in telemetry or database records.
       const error =
-        errorCategory === 'timeout' ? 'OpenRouter request timed out' : 'OpenRouter network request failed';
+        errorCategory === 'timeout'
+          ? 'OpenRouter request timed out'
+          : 'OpenRouter network request failed';
       return { ...baseResult, durationMs: Date.now() - start, error, errorCategory };
     }
   }
