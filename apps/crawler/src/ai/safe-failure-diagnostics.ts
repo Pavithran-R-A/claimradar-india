@@ -9,7 +9,9 @@ export function safeProviderErrorMetadata(
 ): { safe_http_status: number } | null {
   if (provider !== 'openrouter' || !error) return null;
   // Require the complete, fixed error format emitted by safeFailure().
-  const matched = /^OpenRouter HTTP (4[0-9]{2}|5[0-9]{2})(?: \([a-z][a-z0-9_]{0,63}\))?$/.exec(error);
+  const matched = /^OpenRouter HTTP (4[0-9]{2}|5[0-9]{2})(?: \([a-z][a-z0-9_]{0,63}\))?$/.exec(
+    error,
+  );
   if (!matched) return null;
   const status = Number(matched[1]);
   return Number.isInteger(status) && status >= 400 && status <= 599
