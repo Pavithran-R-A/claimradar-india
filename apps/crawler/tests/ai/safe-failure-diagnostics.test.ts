@@ -12,9 +12,9 @@ describe('safe OpenRouter auth diagnostics', () => {
     expect(safeProviderErrorMetadata('openrouter', 'OpenRouter HTTP 402')).toEqual({
       safe_http_status: 402,
     });
-    expect(
-      safeProviderErrorMetadata('openrouter', 'OpenRouter HTTP 403 (access_denied)'),
-    ).toEqual({ safe_http_status: 403 });
+    expect(safeProviderErrorMetadata('openrouter', 'OpenRouter HTTP 403 (access_denied)')).toEqual({
+      safe_http_status: 403,
+    });
     expect(safeProviderErrorMetadata('other-provider', 'OpenRouter HTTP 402')).toBeNull();
     expect(safeProviderErrorMetadata('openrouter', 'OpenRouter HTTP 402 leaked-key')).toBeNull();
     expect(safeProviderErrorMetadata('openrouter', 'OpenRouter HTTP 200')).toBeNull();
