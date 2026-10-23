@@ -6,13 +6,14 @@ import {
 } from '../../lib/recovery-intent';
 
 describe('private and deterministic official recovery route guidance', () => {
-  it('shows all eight available authority routes when no choice has been made', () => {
-    expect(routesForIntent('all')).toHaveLength(8);
+  it('shows all nine available authority routes when no choice has been made', () => {
+    expect(routesForIntent('all')).toHaveLength(9);
     expect(RECOVERY_INTENT_CHOICES).toHaveLength(4);
   });
 
   it('recommends forgotten assets without pretending users qualify for payouts', () => {
     expect(routesForIntent('forgotten').map((route) => route.id)).toEqual([
+      'unclaimed-assets-gateway',
       'bank-deposits',
       'shares-dividends',
       'insurance',
@@ -45,6 +46,9 @@ describe('private and deterministic official recovery route guidance', () => {
   });
 
   it('matches homepage searches to relevant government recovery routes', () => {
+    expect(matchingRoutesForSearch('all', 'financial assets portal').map((route) => route.id)).toContain(
+      'unclaimed-assets-gateway',
+    );
     expect(matchingRoutesForSearch('all', 'RBI').map((route) => route.id)).toEqual([
       'bank-deposits',
     ]);
@@ -68,7 +72,7 @@ describe('private and deterministic official recovery route guidance', () => {
 
   it('does not invent matching official routes when nothing matches', () => {
     expect(matchingRoutesForSearch('all', 'qzxv blorf nonword')).toHaveLength(0);
-    expect(matchingRoutesForSearch('all', '')).toHaveLength(8);
-    expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(8);
+    expect(matchingRoutesForSearch('all', '')).toHaveLength(9);
+    expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(9);
   });
 });
