@@ -380,6 +380,7 @@ async function main() {
       const { decidePublication: rqDecidePub } = await import('./publication/policy.js');
       const { shouldHaltFreeBacklog, freeBacklogFailureState } =
         await import('./ai/free-backlog-policy.js');
+      const { safeProviderErrorMetadata } = await import('./ai/safe-failure-diagnostics.js');
 
       const rqProvider = rqCreateRouter({
         AI_PROVIDER: rqEnv.AI_PROVIDER,
@@ -476,7 +477,9 @@ async function main() {
               duration_ms: result.durationMs,
               result_status: result.errorCategory,
               error_category: result.errorCategory,
-              raw_output: result.rawOutput ? { raw: result.rawOutput } : null,
+              raw_output: result.rawOutput
+                ? { raw: result.rawOutput }
+                : safeProviderErrorMetadata(result.provider, result.error),
               structured_output: null,
             });
             failed++;
