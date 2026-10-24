@@ -58,12 +58,21 @@ if (freeBacklogLimit > 0) {
     process.env.NVIDIA_PRODUCTION_AUTHORIZED === 'true' &&
     Boolean(process.env.NVIDIA_API_KEY) &&
     [1, 2].includes(Number(process.env.NVIDIA_FALLBACK_LIMIT ?? '1'));
-  if (
-    (process.env.AI_PROVIDER !== 'openrouter' && !licensedDual) ||
-    process.env.OPENROUTER_MODEL !== 'openrouter/free' ||
-    !process.env.OPENROUTER_API_KEY
-  ) {
-    throw new Error('FREE_ONLY_GUARD: background AI requires active OpenRouter free routing');
+  const verifiedOpenRouter =
+    process.env.AI_PROVIDER === 'openrouter' &&
+    process.env.OPENROUTER_MODEL === 'openrouter/free' &&
+    Boolean(process.env.OPENROUTER_API_KEY);
+  const verifiedLicensedDual =
+    licensedDual &&
+    process.env.OPENROUTER_MODEL === 'openrouter/free' &&
+    Boolean(process.env.OPENROUTER_API_KEY);
+  const verifiedGroqFree =
+    process.env.AI_PROVIDER === 'groq' &&
+    process.env.GROQ_FREE_PLAN_CONFIRMED === 'true' &&
+    process.env.GROQ_MODEL === 'qwen/qwen3.8-27b' &&
+    Boolean(process.env.GROQ_API_KEY);
+  if (!verifiedOpenRouter && !verifiedLicensedDual && !verifiedGroqFree) {
+    throw new Error('FREE_ONLY_GUARD: background AI provider is not explicitly authorized');
   }
   const aiPerInvocation = Number(process.env.AI_DAILY_REQUEST_BUDGET);
   if (!Number.isInteger(aiPerInvocation) || aiPerInvocation < 3 || aiPerInvocation > 8) {
