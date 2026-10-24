@@ -62,12 +62,6 @@ jobs:
       - name: Format check
         run: pnpm format
 
-      - name: Capture exact formatter changes for Groq adapter (temporary)
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/crawler/src/ai/providers/groq-free.ts apps/crawler/src/index.ts apps/crawler/src/pipeline/index.ts apps/crawler/tests/ai/groq-free-provider.test.ts docs/optional-groq-free-provider.md
-          git diff -- apps/crawler/src/ai/providers/groq-free.ts apps/crawler/src/index.ts apps/crawler/src/pipeline/index.ts apps/crawler/tests/ai/groq-free-provider.test.ts docs/optional-groq-free-provider.md
-
       - name: Lint
         run: pnpm lint
 
