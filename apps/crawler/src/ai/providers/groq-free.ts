@@ -65,14 +65,13 @@ export class GroqFreeProvider implements AIProvider {
       if (!response.ok) {
         // Never read or persist untrusted upstream response details.
         const status = response.status;
-        const errorCategory: AIExtractionResult['errorCategory'] =
-          [401, 402, 403].includes(status)
-            ? 'auth'
-            : status === 429
-              ? 'rate_limit'
-              : [408, 504].includes(status)
-                ? 'timeout'
-                : 'provider_error';
+        const errorCategory: AIExtractionResult['errorCategory'] = [401, 402, 403].includes(status)
+          ? 'auth'
+          : status === 429
+            ? 'rate_limit'
+            : [408, 504].includes(status)
+              ? 'timeout'
+              : 'provider_error';
         return {
           ...base,
           durationMs: Date.now() - start,
@@ -155,7 +154,8 @@ export class GroqFreeProvider implements AIProvider {
       return {
         ...base,
         durationMs: Date.now() - start,
-        error: errorCategory === 'timeout' ? 'Groq request timed out' : 'Groq network request failed',
+        error:
+          errorCategory === 'timeout' ? 'Groq request timed out' : 'Groq network request failed',
         errorCategory,
       };
     }
