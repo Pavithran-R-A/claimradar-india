@@ -9,7 +9,7 @@ The existing Railway and local installations continue using their current `AI_PR
 - `GROQ_MODEL=qwen/qwen3.8-27b` (only supported model by this adapter)
 - `GROQ_API_KEY` (secret; never print or commit)
 
-No new fallback is configured; no existing credential is rotated. Before opting in, review Groq's current free-plan rate limits, model availability, pricing, and terms for production/customer data at https://console.groq.com/docs/rate-limits and https://console.groq.com/docs/models. Groq's model catalog lists nonzero *paid* per-token pricing, so an account not confirmed as free must NOT be opted in. A `401` from OpenRouter is an authorization problem; this adapter doesn't fix or reuse that key.
+No new fallback is configured; no existing credential is rotated. Before opting in, review Groq's current free-plan rate limits, model availability, pricing, and terms for production/customer data at https://console.groq.com/docs/rate-limits and https://console.groq.com/docs/models. Groq's model catalog lists nonzero _paid_ per-token pricing, so an account not confirmed as free must NOT be opted in. A `401` from OpenRouter is an authorization problem; this adapter doesn't fix or reuse that key.
 
 The adapter only contacts `https://api.groq.com/openai/v1/chat/completions`. It uses the same `AIExtractor` budgets, free-cron limit (maximum two retry candidates), Zod schema, evidence checking, and human editorial review as the existing provider. Requests with no valid free-plan confirmation fail closed. A 429 stops the current batch; no paid fallback. The 50 MiB PDF limit, crawl acceptance gates, all publication/notification/billing flags, and Supabase RLS are unchanged.
 
