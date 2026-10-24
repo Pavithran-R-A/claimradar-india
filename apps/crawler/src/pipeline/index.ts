@@ -885,9 +885,7 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
       NVIDIA_MODEL: env.NVIDIA_MODEL,
       NVIDIA_PRODUCTION_AUTHORIZED: env.NVIDIA_PRODUCTION_AUTHORIZED,
       NVIDIA_FALLBACK_LIMIT: env.NVIDIA_FALLBACK_LIMIT,
-      ...(env.GROQ_API_KEY !== undefined
-        ? { GROQ_API_KEY: env.GROQ_API_KEY }
-        : {}),
+      ...(env.GROQ_API_KEY !== undefined ? { GROQ_API_KEY: env.GROQ_API_KEY } : {}),
       ...(env.OPENROUTER_API_KEY !== undefined
         ? { OPENROUTER_API_KEY: env.OPENROUTER_API_KEY }
         : {}),
