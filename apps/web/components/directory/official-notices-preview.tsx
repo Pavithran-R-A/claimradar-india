@@ -3,10 +3,10 @@ import { rankNotices, type SourceNoticeRow } from '@/lib/official-notice-ranking
 
 const referenceNotices: SourceNoticeRow[] = [
   {
-    title: 'Citrus Check Inns and Royal Twinkle Star Club Phase-II refund notice',
+    title: 'Citrus Check Inns and Royal Twinkle Star Club Phase-II refund — final extension',
     canonical_url:
-      'https://www.sebi.gov.in/media-and-notifications/public-notices/sep-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_104402.html',
-    published_at: '2026-09-10T00:00:00.000Z',
+      'https://www.sebi.gov.in/media-and-notifications/public-notices/oct-2026/public-notice-in-the-matter-of-citrus-check-inns-limited-and-royal-twinkle-star-club-pvt-ltd-for-refund-phase-ii-_105204.html',
+    published_at: '2026-10-13T00:00:00.000Z',
   },
   {
     title: 'CRCS-Sahara refund portal — official Ministry of Cooperation notice',
@@ -57,7 +57,7 @@ export async function OfficialNoticesPreview({ search = '' }: { search?: string 
     >
       <div className="border-b border-border pb-5">
         <p className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-          0 published claimables · Publication review ongoing
+          Government notices for reference · Publication review ongoing
         </p>
         <h2
           id="official-notices-title"
@@ -66,8 +66,8 @@ export async function OfficialNoticesPreview({ search = '' }: { search?: string 
           Official refund notices under review
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-secondary">
-          ClaimKhoj has not yet approved any claimable listings. These are original government
-          notices for reference, not confirmed eligibility or open applications. Always check the
+          These are original government notices for reference, not ClaimKhoj-approved claimable
+          listings, confirmed eligibility or guaranteed open applications. Always check the
           authority's website before taking action.
         </p>
       </div>
