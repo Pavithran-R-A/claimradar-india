@@ -63,6 +63,44 @@ describe('Evidence Verification', () => {
     expect(result.results[0]!.found).toBe(true);
   });
 
+  it('verifies the SEBI long action excerpt despite one PDF-split word', () => {
+    const excerpt =
+      'Eligible investors who have not yet submitted their claims are, therefore, advised to submit their claims on the portal within the extended period.';
+    const sourceText =
+      'The Committee grants a final extension. Eligible I nvestors who have not yet submitted their claims are, therefore, advised to submit their claims on the portal within the extended period. Date: October 13, 2026';
+    const extraction = createTestExtraction({
+      action_required: 'submit claims within the extended period',
+      evidence: [{ field: 'action_required', excerpt, page: null }],
+    });
+    const result = verifyEvidence(extraction, sourceText);
+    expect(result.results[0]?.found).toBe(true);
+    expect(result.results[0]?.matchedPosition).toBeDefined();
+  });
+
+  it('does not accept a changed instruction or two broken words as evidence', () => {
+    const excerpt =
+      'Eligible investors who have not yet submitted their claims are, therefore, advised to submit their claims on the portal within the extended period.';
+    const cases = [
+      'Eligible I nvestors who have not yet submitted their claims are, therefore, advised to pay a registration fee before claiming on the portal within the extended period.',
+      'Eligible I nvestors who have not yet submitted their claims are, therefore, advised to submit their cl aims on the portal within the extended period.',
+    ];
+    for (const sourceText of cases) {
+      const extraction = createTestExtraction({
+        action_required: 'submit claims within the extended period',
+        evidence: [{ field: 'action_required', excerpt, page: null }],
+      });
+      expect(verifyEvidence(extraction, sourceText).results[0]?.found).toBe(false);
+    }
+  });
+
+  it('does not relax short legal, amount or URL evidence quotes', () => {
+    const extraction = createTestExtraction({
+      deadline: '2026-11-13',
+      evidence: [{ field: 'deadline', excerpt: '13 Novem ber 2026', page: null }],
+    });
+    expect(verifyEvidence(extraction, '13 November 2026').results[0]?.found).toBe(false);
+  });
+
   it('should report allVerified false when critical fields lack evidence', () => {
     const sourceText = 'Some unrelated content here.';
 

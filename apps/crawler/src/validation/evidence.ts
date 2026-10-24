@@ -37,6 +37,27 @@ function fuzzyFind(
     }
   }
 
+  // Some official PDF text layers split a single word across an internal
+  // space (e.g. "I nvestors" instead of "investors"). Accept exactly ONE
+  // such split, and ONLY inside a long otherwise verbatim excerpt. This
+  // keeps short legal terms, deadlines, amounts and URLs under strict checks.
+  if (needleWords.length >= 10 && normalizedNeedle.length >= 80 && normalizedNeedle.length <= 400) {
+    for (let i = 0; i < needleWords.length; i++) {
+      const word = needleWords[i]!;
+      if (!/^[a-z]{5,24}$/.test(word)) continue;
+      for (let split = 1; split <= word.length - 2; split++) {
+        const variant = [
+          ...needleWords.slice(0, i),
+          word.slice(0, split),
+          word.slice(split),
+          ...needleWords.slice(i + 1),
+        ].join(' ');
+        const at = normalizedHaystack.indexOf(variant);
+        if (at !== -1) return { found: true, start: at, end: at + variant.length };
+      }
+    }
+  }
+
   return { found: false, start: -1, end: -1 };
 }
 
