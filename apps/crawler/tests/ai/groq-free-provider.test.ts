@@ -46,10 +46,18 @@ describe('explicit Groq free-plan provider', () => {
 
   it('sends bounded no-reasoning JSON mode and validates the same extraction schema', async () => {
     const fetchMock = setup({
-      choices: [{ finish_reason: 'stop', message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' } }],
+      choices: [
+        {
+          finish_reason: 'stop',
+          message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' },
+        },
+      ],
       usage: { prompt_tokens: 25, completion_tokens: 30 },
     });
-    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt');
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      'source',
+      'prompt',
+    );
     expect(result.errorCategory).toBe('none');
     expect(result.extraction?.is_relevant).toBe(false);
     expect(result.inputTokens).toBe(25);
@@ -71,8 +79,14 @@ describe('explicit Groq free-plan provider', () => {
     [429, 'rate_limit'],
     [503, 'provider_error'],
   ] as const)('does not retry HTTP %s and records only safe status', async (status, category) => {
-    const fetchMock = setup({ error: { message: 'authorization secret must never be logged' } }, status);
-    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt');
+    const fetchMock = setup(
+      { error: { message: 'authorization secret must never be logged' } },
+      status,
+    );
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      'source',
+      'prompt',
+    );
     expect(result.errorCategory).toBe(category);
     expect(result.error).toBe(`Groq HTTP ${status}`);
     expect(result.error).not.toContain('secret');
@@ -80,17 +94,48 @@ describe('explicit Groq free-plan provider', () => {
   });
 
   it('rejects truncated, malformed or invented AI output', async () => {
-    setup({ choices: [{ finish_reason: 'length', message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' } }] });
-    expect((await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt')).errorCategory).toBe('invalid_output');
+    setup({
+      choices: [
+        {
+          finish_reason: 'length',
+          message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' },
+        },
+      ],
+    });
+    expect(
+      (await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt'))
+        .errorCategory,
+    ).toBe('invalid_output');
     setup({ choices: [{ finish_reason: 'stop', message: { content: 'not json' } }] });
-    expect((await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt')).errorCategory).toBe('invalid_output');
-    setup({ choices: [{ finish_reason: 'stop', message: { content: '{"is_relevant":"yes","confidence":5,"evidence":[]}' } }] });
-    expect((await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt')).errorCategory).toBe('invalid_output');
+    expect(
+      (await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt'))
+        .errorCategory,
+    ).toBe('invalid_output');
+    setup({
+      choices: [
+        {
+          finish_reason: 'stop',
+          message: { content: '{"is_relevant":"yes","confidence":5,"evidence":[]}' },
+        },
+      ],
+    });
+    expect(
+      (await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt'))
+        .errorCategory,
+    ).toBe('invalid_output');
   });
 
   it('scrubs network exceptions instead of storing secrets', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('Bearer secret-token'); }));
-    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('Bearer secret-token');
+      }),
+    );
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      'source',
+      'prompt',
+    );
     expect(result.errorCategory).toBe('provider_error');
     expect(result.error).toBe('Groq network request failed');
   });
