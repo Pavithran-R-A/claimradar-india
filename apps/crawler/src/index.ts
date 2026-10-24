@@ -254,9 +254,14 @@ async function main() {
       const rpProvider = createProviderRouter({
         AI_PROVIDER: rpEnv.AI_PROVIDER,
         OPENROUTER_MODEL: rpEnv.OPENROUTER_MODEL,
+        GROQ_MODEL: rpEnv.GROQ_MODEL,
+        GROQ_FREE_PLAN_CONFIRMED: rpEnv.GROQ_FREE_PLAN_CONFIRMED,
         NVIDIA_MODEL: rpEnv.NVIDIA_MODEL,
         NVIDIA_PRODUCTION_AUTHORIZED: rpEnv.NVIDIA_PRODUCTION_AUTHORIZED,
         NVIDIA_FALLBACK_LIMIT: rpEnv.NVIDIA_FALLBACK_LIMIT,
+        ...(rpEnv.GROQ_API_KEY !== undefined
+          ? { GROQ_API_KEY: rpEnv.GROQ_API_KEY }
+          : {}),
         ...(rpEnv.OPENROUTER_API_KEY !== undefined
           ? { OPENROUTER_API_KEY: rpEnv.OPENROUTER_API_KEY }
           : {}),
@@ -385,9 +390,14 @@ async function main() {
       const rqProvider = rqCreateRouter({
         AI_PROVIDER: rqEnv.AI_PROVIDER,
         OPENROUTER_MODEL: rqEnv.OPENROUTER_MODEL,
+        GROQ_MODEL: rqEnv.GROQ_MODEL,
+        GROQ_FREE_PLAN_CONFIRMED: rqEnv.GROQ_FREE_PLAN_CONFIRMED,
         NVIDIA_MODEL: rqEnv.NVIDIA_MODEL,
         NVIDIA_PRODUCTION_AUTHORIZED: rqEnv.NVIDIA_PRODUCTION_AUTHORIZED,
         NVIDIA_FALLBACK_LIMIT: rqEnv.NVIDIA_FALLBACK_LIMIT,
+        ...(rqEnv.GROQ_API_KEY !== undefined
+          ? { GROQ_API_KEY: rqEnv.GROQ_API_KEY }
+          : {}),
         ...(rqEnv.OPENROUTER_API_KEY !== undefined
           ? { OPENROUTER_API_KEY: rqEnv.OPENROUTER_API_KEY }
           : {}),
