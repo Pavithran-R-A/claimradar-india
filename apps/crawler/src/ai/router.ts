@@ -1,5 +1,6 @@
 import type { AIProvider } from './types.js';
 import { OpenRouterProvider } from './providers/openrouter.js';
+import { GroqFreeProvider, ALLOWED_GROQ_FREE_MODEL } from './providers/groq-free.js';
 import { NvidiaNimProvider } from './providers/nvidia.js';
 import { BoundedFallbackProvider } from './providers/bounded-fallback.js';
 import { NoAiProvider } from './providers/noai.js';
@@ -8,6 +9,9 @@ interface RouterEnv {
   AI_PROVIDER: string;
   OPENROUTER_API_KEY?: string;
   OPENROUTER_MODEL?: string;
+  GROQ_API_KEY?: string;
+  GROQ_MODEL?: string;
+  GROQ_FREE_PLAN_CONFIRMED?: boolean;
   NVIDIA_API_KEY?: string;
   NVIDIA_BASE_URL?: string;
   NVIDIA_MODEL?: string;
@@ -29,6 +33,19 @@ const ALLOWED_NVIDIA_MODELS = new Set(['nvidia/nemotron-3.5-lightning-30b-a3b'])
  */
 export function createProviderRouter(env: RouterEnv): AIProvider {
   if (env.AI_PROVIDER === 'none') return new NoAiProvider();
+
+  if (env.AI_PROVIDER === 'groq') {
+    if (env.GROQ_FREE_PLAN_CONFIRMED !== true) {
+      throw new Error('GROQ_FREE_PLAN_GUARD: free plan must be explicitly confirmed');
+    }
+    if (!env.GROQ_API_KEY) {
+      throw new Error('GROQ_KEY_GUARD: explicit Groq provider requires a key');
+    }
+    if ((env.GROQ_MODEL ?? ALLOWED_GROQ_FREE_MODEL) !== ALLOWED_GROQ_FREE_MODEL) {
+      throw new Error('GROQ_FREE_MODEL_GUARD: unapproved Groq model');
+    }
+    return new GroqFreeProvider(env.GROQ_API_KEY, ALLOWED_GROQ_FREE_MODEL);
+  }
 
   if (!['openrouter', 'openrouter+nvidia'].includes(env.AI_PROVIDER)) {
     throw new Error('FREE_ONLY_PROVIDER_GUARD: unknown or unauthorized provider');

@@ -880,9 +880,12 @@ export async function runPipeline(options: PipelineOptions): Promise<CrawlSummar
     const provider = createProviderRouter({
       AI_PROVIDER: env.AI_PROVIDER,
       OPENROUTER_MODEL: env.OPENROUTER_MODEL,
+      GROQ_MODEL: env.GROQ_MODEL,
+      GROQ_FREE_PLAN_CONFIRMED: env.GROQ_FREE_PLAN_CONFIRMED,
       NVIDIA_MODEL: env.NVIDIA_MODEL,
       NVIDIA_PRODUCTION_AUTHORIZED: env.NVIDIA_PRODUCTION_AUTHORIZED,
       NVIDIA_FALLBACK_LIMIT: env.NVIDIA_FALLBACK_LIMIT,
+      ...(env.GROQ_API_KEY !== undefined ? { GROQ_API_KEY: env.GROQ_API_KEY } : {}),
       ...(env.OPENROUTER_API_KEY !== undefined
         ? { OPENROUTER_API_KEY: env.OPENROUTER_API_KEY }
         : {}),
