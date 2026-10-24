@@ -407,7 +407,7 @@ async function main() {
 
       if (!rqProvider.isAvailable() || rqProvider.name === 'noai') {
         console.error(
-          'No AI provider is configured. Set AI_PROVIDER plus OPENROUTER_API_KEY or NVIDIA_API_KEY before retrying deferred candidates.',
+          'No AI provider configured. Select an authorized provider and its own API key before retrying deferred candidates.',
         );
         process.exit(2);
       }
