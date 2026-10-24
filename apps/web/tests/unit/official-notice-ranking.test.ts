@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { rankNotices } from '../../lib/official-notice-ranking';
 
@@ -6,6 +7,18 @@ const title =
   'PUBLIC NOTICE IN THE MATTER OF CITRUS CHECK INNS LIMITED AND ROYAL TWINKLE STAR CLUB PVT LTD FOR REFUND';
 
 describe('official-source review list', () => {
+  it('uses the latest SEBI extension in the offline reference without a hardcoded claim count', () => {
+    const preview = readFileSync(
+      new URL('../../components/directory/official-notices-preview.tsx', import.meta.url),
+      'utf8',
+    );
+    expect(preview).toContain('public-notices/oct-2026/');
+    expect(preview).toContain('_105204.html');
+    expect(preview).toContain('2026-10-13T00:00:00.000Z');
+    expect(preview).not.toContain('public-notices/sep-2026/');
+    expect(preview).not.toContain('0 published claimables');
+  });
+
   it('groups the same refund matter and selects the newest official publication, not newest crawl', () => {
     const rows = [
       { title, canonical_url: sebiBase + 'feb-2026/old.html', published_at: '2026-02-18' },
