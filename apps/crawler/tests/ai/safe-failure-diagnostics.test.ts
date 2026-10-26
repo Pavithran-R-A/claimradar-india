@@ -32,8 +32,9 @@ describe('safe OpenRouter auth diagnostics', () => {
     expect(safeProviderErrorMetadata('groq', 'Groq HTTP 413 secret-token')).toBeNull();
     expect(safeProviderErrorMetadata('groq', 'OpenRouter HTTP 413')).toBeNull();
     expect(safeProviderErrorMetadata('openrouter', 'Groq HTTP 413')).toBeNull();
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({ error: { message: 'sensitive message' } }), { status: 413 }),
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ error: { message: 'sensitive message' } }), { status: 413 }),
     );
     vi.stubGlobal('fetch', fetchMock);
     const result = await new GroqFreeProvider('dummy-key', ALLOWED_GROQ_FREE_MODEL).extract(
