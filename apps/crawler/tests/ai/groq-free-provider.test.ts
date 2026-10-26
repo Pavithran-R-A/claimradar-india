@@ -68,7 +68,7 @@ describe('explicit Groq free-plan provider', () => {
     expect(url).toBe('https://api.groq.com/openai/v1/chat/completions');
     expect(body.model).toBe(ALLOWED_GROQ_FREE_MODEL);
     expect(body.response_format).toEqual({ type: 'json_object' });
-    expect(body.reasoning_effort).toBe('none');
+    expect(body.reasoning_effort).toBe('low');
     expect(body.max_completion_tokens).toBe(4096);
   });
 
