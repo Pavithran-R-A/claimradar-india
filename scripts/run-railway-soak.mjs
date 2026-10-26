@@ -69,7 +69,7 @@ if (freeBacklogLimit > 0) {
   const verifiedGroqFree =
     process.env.AI_PROVIDER === 'groq' &&
     process.env.GROQ_FREE_PLAN_CONFIRMED === 'true' &&
-    process.env.GROQ_MODEL === 'qwen/qwen3.8-27b' &&
+    process.env.GROQ_MODEL === 'openai/gpt-oss-120b' &&
     Boolean(process.env.GROQ_API_KEY);
   if (!verifiedOpenRouter && !verifiedLicensedDual && !verifiedGroqFree) {
     throw new Error('FREE_ONLY_GUARD: background AI provider is not explicitly authorized');
