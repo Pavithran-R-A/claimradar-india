@@ -62,12 +62,6 @@ jobs:
       - name: Format check
         run: pnpm format
 
-      - name: Capture auth cookie formatter diff (temporary)
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/web/lib/supabase/cookie-write.ts apps/web/lib/supabase/server.ts apps/web/middleware.ts apps/web/tests/unit/server-cookie-write.test.ts
-          git diff -- apps/web/lib/supabase/cookie-write.ts apps/web/lib/supabase/server.ts apps/web/middleware.ts apps/web/tests/unit/server-cookie-write.test.ts
-
       - name: Lint
         run: pnpm lint
 
