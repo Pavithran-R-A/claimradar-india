@@ -50,7 +50,9 @@ export async function middleware(request: NextRequest) {
   // here so Set-Cookie is written in middleware instead of during SSR.
   const needsPublicDirectoryRefresh =
     pathname === '/claimables' &&
-    request.cookies.getAll().some(({ name }) => name.startsWith('sb-') && name.includes('-auth-token'));
+    request.cookies
+      .getAll()
+      .some(({ name }) => name.startsWith('sb-') && name.includes('-auth-token'));
   const needsAuth =
     authRequiredPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
     pathname.startsWith(authCallbackPrefix) ||
