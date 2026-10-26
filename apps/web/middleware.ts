@@ -45,9 +45,18 @@ export async function middleware(request: NextRequest) {
   requestHeaders.set('Content-Security-Policy', contentSecurityPolicy);
 
   // Only refresh auth session on routes that need it
+  // Personalization on the public directory calls auth.getUser() in a Server
+  // Component. Refresh only requests carrying an existing Supabase auth cookie
+  // here so Set-Cookie is written in middleware instead of during SSR.
+  const needsPublicDirectoryRefresh =
+    pathname === '/claimables' &&
+    request.cookies
+      .getAll()
+      .some(({ name }) => name.startsWith('sb-') && name.includes('-auth-token'));
   const needsAuth =
     authRequiredPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
-    pathname.startsWith(authCallbackPrefix);
+    pathname.startsWith(authCallbackPrefix) ||
+    needsPublicDirectoryRefresh;
 
   if (needsAuth) {
     const response = await updateSession(request, requestHeaders);

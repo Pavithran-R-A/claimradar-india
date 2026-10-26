@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { writeSupabaseServerCookies } from './cookie-write';
 
 export async function getSupabaseServerClient() {
   const cookieStore = await cookies();
@@ -15,7 +16,7 @@ export async function getSupabaseServerClient() {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
-        cookiesToSet.forEach(({ name, value, options }) => {
+        writeSupabaseServerCookies(cookiesToSet, (name, value, options) => {
           cookieStore.set(name, value, options as never);
         });
       },
