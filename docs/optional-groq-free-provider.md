@@ -6,7 +6,7 @@ The existing Railway and local installations continue using their current `AI_PR
 
 - `AI_PROVIDER=groq`
 - `GROQ_FREE_PLAN_CONFIRMED=true` (must only be set after verifying the account's billing status and terms)
-- `GROQ_MODEL=qwen/qwen3.8-27b` (only supported model by this adapter)
+- `GROQ_MODEL=openai/gpt-oss-120b` (only supported model by this adapter; intended for structured legal-evidence extraction)
 - `GROQ_API_KEY` (secret; never print or commit)
 
 No new fallback is configured; no existing credential is rotated. Before opting in, review Groq's current free-plan rate limits, model availability, pricing, and terms for production/customer data at https://console.groq.com/docs/rate-limits and https://console.groq.com/docs/models. Groq's model catalog lists nonzero _paid_ per-token pricing, so an account not confirmed as free must NOT be opted in. A `401` from OpenRouter is an authorization problem; this adapter doesn't fix or reuse that key.

@@ -3,7 +3,7 @@ import { ClaimableStatus, ProceduralStatus } from '@claimradar/shared-types';
 import type { AIExtractionResult, AIProvider } from '../types.js';
 
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-export const ALLOWED_GROQ_FREE_MODEL = 'qwen/qwen3.8-27b';
+export const ALLOWED_GROQ_FREE_MODEL = 'openai/gpt-oss-120b';
 
 /**
  * Opt-in Groq free-plan extraction. The router requires an explicit, verified
@@ -51,7 +51,7 @@ export class GroqFreeProvider implements AIProvider {
         body: JSON.stringify({
           model: this.model,
           response_format: { type: 'json_object' },
-          reasoning_effort: 'none',
+          reasoning_effort: 'low',
           temperature: 0,
           max_completion_tokens: 4096,
           messages: [
