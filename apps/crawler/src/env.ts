@@ -13,7 +13,7 @@ export const crawlerEnvSchema = z.object({
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().default('openrouter/free'),
   GROQ_API_KEY: z.string().optional(),
-  GROQ_MODEL: z.string().default('qwen/qwen3.8-27b'),
+  GROQ_MODEL: z.string().default('openai/gpt-oss-120b'),
   GROQ_FREE_PLAN_CONFIRMED: envBoolean(false),
   NVIDIA_API_KEY: z.string().optional(),
   NVIDIA_BASE_URL: z.string().url().optional(),
