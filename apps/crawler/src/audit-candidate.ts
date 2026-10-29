@@ -19,7 +19,10 @@ async function main() {
     : index >= 0
       ? args[index + 1]
       : undefined;
-  if (!candidateId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(candidateId)) {
+  if (
+    !candidateId ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(candidateId)
+  ) {
     throw new Error('Usage: audit:candidate --candidate=<uuid>');
   }
 
