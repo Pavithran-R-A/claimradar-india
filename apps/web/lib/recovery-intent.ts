@@ -10,7 +10,7 @@ export const RECOVERY_INTENT_CHOICES: readonly {
   {
     id: 'all',
     label: 'Show all',
-    description: 'Explore all nine official search, claim and complaint pathways.',
+    description: 'Explore all ten official search, claim and complaint pathways.',
   },
   {
     id: 'forgotten',
@@ -30,7 +30,14 @@ export const RECOVERY_INTENT_CHOICES: readonly {
 ];
 
 const ROUTE_IDS: Readonly<Record<Exclude<RecoveryIntent, 'all'>, readonly string[]>> = {
-  forgotten: ['unclaimed-assets-gateway', 'bank-deposits', 'shares-dividends', 'insurance', 'epf'],
+  forgotten: [
+    'unclaimed-assets-gateway',
+    'bank-deposits',
+    'mutual-fund-folios',
+    'shares-dividends',
+    'insurance',
+    'epf',
+  ],
   'follow-up': ['shares-dividends', 'epf', 'tax-refund', 'sahara'],
   dispute: ['consumer-dispute', 'securities-dispute'],
 };
@@ -53,6 +60,7 @@ const SEARCH_SYNONYMS: Readonly<Record<string, readonly string[]>> = {
     'financial assets',
   ],
   'bank-deposits': ['rbi', 'udgam', 'fixed deposit', 'fd', 'bank account', 'dormant'],
+  'mutual-fund-folios': ['mitra', 'mutual funds', 'folio', 'forgotten investments', 'amc'],
   'shares-dividends': ['iepf', 'shares', 'stocks', 'dividend', 'investor'],
   insurance: ['irdai', 'insurance', 'policy', 'premium'],
   epf: ['epfo', 'pf', 'provident fund', 'pension', 'uan'],

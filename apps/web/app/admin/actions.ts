@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getAdminDb } from '@/lib/admin-db';
 import { isKnownNonFilingInformationUrl } from '@/lib/official-filing-route';
+import { isPublicationDeadlineExpired } from '@/lib/editorial-publication-safety';
 import { requireRole } from '@/lib/auth';
 import { writeAuditLog } from './_lib/audit';
 import { getActionActor, unauthorized, EDITORIAL } from './_lib/roles';
@@ -121,6 +122,7 @@ export async function approveCandidate(candidateId: string) {
   const extracted = candidate.ai_extracted_data as {
     evidence?: unknown[];
     official_claim_url?: string | null;
+    deadline?: string | null;
   } | null;
   if (
     candidate.ai_extraction_status !== 'completed' ||
@@ -138,6 +140,14 @@ export async function approveCandidate(candidateId: string) {
     return {
       error:
         'This candidate links to a general IBBI downloads page, not a verified filing route. Confirm the official Form A instructions and correct the extracted route through the auditable review workflow first.',
+    };
+  }
+
+  // Historical validation results do not stay current forever: a filing
+  // window can expire between AI processing and staff approval.
+  if (isPublicationDeadlineExpired(extracted?.deadline ?? null)) {
+    return {
+      error: 'The source filing deadline has expired. Re-review the official notice before approving.',
     };
   }
 
@@ -256,6 +266,25 @@ export async function promoteCandidate(candidateId: string) {
 
   if (candidate.publication_decision !== 'approved') {
     return { error: 'Only approved candidates can be promoted to claimables.' };
+  }
+
+  // Check again at draft promotion: a previously approved filing window may
+  // have expired, or a generic regulator information URL may be misleading.
+  const reviewedExtraction = (candidate.ai_extracted_data ?? {}) as Record<string, unknown>;
+  const candidateDeadline =
+    typeof reviewedExtraction.deadline === 'string' ? reviewedExtraction.deadline : null;
+  if (isPublicationDeadlineExpired(candidateDeadline)) {
+    return {
+      error: 'The source filing deadline has expired. Do not promote this candidate.',
+    };
+  }
+  if (
+    typeof reviewedExtraction.official_claim_url === 'string' &&
+    isKnownNonFilingInformationUrl(reviewedExtraction.official_claim_url)
+  ) {
+    return {
+      error: 'The source contains an information page, not a verified filing URL.',
+    };
   }
 
   // Guard against double promotion via the publication event trail.

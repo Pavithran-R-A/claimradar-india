@@ -6,8 +6,8 @@ import {
 } from '../../lib/recovery-intent';
 
 describe('private and deterministic official recovery route guidance', () => {
-  it('shows all nine available authority routes when no choice has been made', () => {
-    expect(routesForIntent('all')).toHaveLength(9);
+  it('shows all ten available authority routes when no choice has been made', () => {
+    expect(routesForIntent('all')).toHaveLength(10);
     expect(RECOVERY_INTENT_CHOICES).toHaveLength(4);
   });
 
@@ -15,6 +15,7 @@ describe('private and deterministic official recovery route guidance', () => {
     expect(routesForIntent('forgotten').map((route) => route.id)).toEqual([
       'unclaimed-assets-gateway',
       'bank-deposits',
+      'mutual-fund-folios',
       'shares-dividends',
       'insurance',
       'epf',
@@ -49,10 +50,14 @@ describe('private and deterministic official recovery route guidance', () => {
     expect(
       matchingRoutesForSearch('all', 'financial assets portal').map((route) => route.id),
     ).toContain('unclaimed-assets-gateway');
+    expect(matchingRoutesForSearch('all', 'MITRA mutual funds').map((route) => route.id)).toContain(
+      'mutual-fund-folios',
+    );
     expect(matchingRoutesForSearch('all', 'RBI').map((route) => route.id)).toEqual([
       'bank-deposits',
     ]);
     expect(matchingRoutesForSearch('all', 'SEBI recovery').map((route) => route.id)).toEqual([
+      'mutual-fund-folios',
       'securities-dispute',
     ]);
     expect(matchingRoutesForSearch('all', 'EPFO account').map((route) => route.id)).toContain(
@@ -73,6 +78,6 @@ describe('private and deterministic official recovery route guidance', () => {
   it('does not invent matching official routes when nothing matches', () => {
     expect(matchingRoutesForSearch('all', 'qzxv blorf nonword')).toHaveLength(0);
     expect(matchingRoutesForSearch('all', '')).toHaveLength(9);
-    expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(9);
+    expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(10);
   });
 });
