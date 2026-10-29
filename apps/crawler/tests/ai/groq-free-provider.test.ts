@@ -205,13 +205,15 @@ describe('explicit Groq free-plan provider', () => {
       messages: Array<{ role: string; content: string }>;
       max_completion_tokens: number;
     };
-    const inputBytes = new TextEncoder().encode(body.messages.map((m) => m.content).join('')).length;
+    const inputBytes = new TextEncoder().encode(
+      body.messages.map((m) => m.content).join(''),
+    ).length;
     expect(inputBytes + GROQ_REQUEST_OVERHEAD_UTF8_BYTES).toBeLessThanOrEqual(
       GROQ_MAX_INPUT_UTF8_BYTES,
     );
-    expect(inputBytes + GROQ_REQUEST_OVERHEAD_UTF8_BYTES + body.max_completion_tokens).toBeLessThan(
-      8_000,
-    );
+    expect(
+      inputBytes + GROQ_REQUEST_OVERHEAD_UTF8_BYTES + body.max_completion_tokens,
+    ).toBeLessThan(8_000);
     expect(body.messages[1]?.content).toContain('SOURCE-ENDING');
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
