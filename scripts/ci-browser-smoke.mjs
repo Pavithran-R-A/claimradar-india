@@ -135,7 +135,10 @@ try {
 
       await page.goto(`${baseUrl}/claimables?search=RBI`, { waitUntil: 'networkidle' });
       await page.getByRole('button', { name: 'I need a refund or complaint resolved' }).click();
-      await verifyTitles(['Unclaimed bank deposits'], 'RBI remains visible with complaint preference');
+      await verifyTitles(
+        ['Unclaimed bank deposits'],
+        'RBI remains visible with complaint preference',
+      );
     } catch (error) {
       failures.push(`${viewport.name}: recovery preference browser QA: ${String(error)}`);
     }

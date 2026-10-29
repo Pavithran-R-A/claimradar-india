@@ -28,16 +28,16 @@ describe('private and deterministic official recovery route guidance', () => {
 
   it('prioritizes complaint or tracking routes, preserving every other pathway', () => {
     const allIds = routesForIntent('all').map((route) => route.id);
-    expect(routesForIntent('dispute').map((route) => route.id).slice(0, 2)).toEqual([
-      'consumer-dispute',
-      'securities-dispute',
-    ]);
-    expect(routesForIntent('follow-up').map((route) => route.id).slice(0, 4)).toEqual([
-      'shares-dividends',
-      'epf',
-      'tax-refund',
-      'sahara',
-    ]);
+    expect(
+      routesForIntent('dispute')
+        .map((route) => route.id)
+        .slice(0, 2),
+    ).toEqual(['consumer-dispute', 'securities-dispute']);
+    expect(
+      routesForIntent('follow-up')
+        .map((route) => route.id)
+        .slice(0, 4),
+    ).toEqual(['shares-dividends', 'epf', 'tax-refund', 'sahara']);
     for (const intent of ['forgotten', 'follow-up', 'dispute'] as const) {
       const ids = routesForIntent(intent).map((route) => route.id);
       expect(ids).toHaveLength(allIds.length);
