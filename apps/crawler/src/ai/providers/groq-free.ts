@@ -47,10 +47,10 @@ function utf8Suffix(value: string, maxBytes: number): string {
 export function boundGroqSourceText(content: string): string {
   if (utf8ByteLength(content) <= GROQ_SOURCE_MAX_UTF8_BYTES) return content;
 
-  const prefix = utf8Prefix(content, 3_200);
-  const suffix = utf8Suffix(content, 1_250);
+  const prefix = utf8Prefix(content, 3_000);
+  const suffix = utf8Suffix(content, 1_100);
   const highlights: string[] = [];
-  let remaining = 1_250;
+  let remaining = 1_100;
   let lastEnd = 0;
   const cues = /refund|claim|deadline|investor|creditor|eligib|submit|application|portal|recover|payment|दावा|आवेदन|நிதி|உரிமை/giu;
   for (const match of content.matchAll(cues)) {
