@@ -86,6 +86,28 @@ pnpm crawler:reprocess -- --document=<document-id>
 
 Re-runs AI extraction, validation, scoring, and the publication decision for one already-ingested document, and records a new `ai_runs` row.
 
+### audit:candidate (strictly read-only)
+
+Audit a preserved staging extraction with the current deterministic evidence matcher,
+validation rules, score and publication policy, **without** calling AI or changing
+any database row. Requires existing staging database credentials:
+
+```bash
+pnpm --filter @claimradar/crawler audit:candidate --candidate=04c04402-0729-42c6-b1e2-31ce7c1ba177
+```
+
+This dedicated diagnostic command requires `APP_ENV=staging` and uses only
+Supabase `SELECT` queries. Its JSON output includes field-level evidence
+**match booleans**, validation verdicts, and original rejected status, but never
+prints source text, quotations, credentials or claimant data. A technical
+pass does **not** change the candidate status, authorize promotion, constitute
+legal review or make a listing public. Preserve the original validation audit
+and require a **separate authenticated staff action and qualified legal review**
+for every next stage.
+
+Do **not** replace this with `crawler:reprocess` when investigating a historical
+rejection: that existing command repeats AI extraction and mutates candidate rows.
+
 ### retry-queued
 
 Retry all deferred/failed candidates (`ai_extraction_status` in `deferred`, `failed`).

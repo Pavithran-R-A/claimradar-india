@@ -10,7 +10,8 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "audit:candidate": "tsx src/audit-candidate.ts"
   },
   "dependencies": {
     "@claimradar/claim-schema": "workspace:*",
