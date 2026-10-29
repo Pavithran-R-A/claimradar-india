@@ -61,6 +61,15 @@ describe('stored candidate audit is deterministic and read only', () => {
     expect(result.eligibleForStaffReassessment).toBe(false);
   });
 
+  it('does not nominate irrelevant extractions for staff reassessment', () => {
+    const result = auditStoredCandidate({
+      ...input,
+      extraction: { ...extraction, is_relevant: false },
+    });
+    expect(result.eligibleForStaffReassessment).toBe(false);
+    expect(result.automaticallyApproved).toBe(false);
+  });
+
   it('rejects missing source text or malformed historical extraction', () => {
     expect(() => auditStoredCandidate({ ...input, sourceText: '' })).toThrow(
       'preserved source text',

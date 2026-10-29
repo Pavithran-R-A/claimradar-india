@@ -74,7 +74,10 @@ export function auditStoredCandidate(input: {
       allCriticalEvidenceVerified: evidence.allVerified,
       simulatedPolicyAction: policy.action,
     },
-    eligibleForStaffReassessment: validation.overallDecision !== 'reject',
+    eligibleForStaffReassessment:
+      redaction.extraction.is_relevant &&
+      validation.overallDecision !== 'reject' &&
+      policy.action === 'human_review',
     automaticallyApproved: false,
     dataWritten: false,
     aiRequestsMade: 0,
