@@ -62,12 +62,6 @@ jobs:
       - name: Format check
         run: pnpm format
 
-      - name: Capture exact source-window formatter changes (temporary)
-        if: failure()
-        run: |
-          pnpm exec prettier --write apps/crawler/src/ai/providers/groq-free.ts
-          git diff -- apps/crawler/src/ai/providers/groq-free.ts
-
       - name: Lint
         run: pnpm lint
 
