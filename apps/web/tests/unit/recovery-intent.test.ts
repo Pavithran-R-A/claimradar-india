@@ -11,8 +11,10 @@ describe('private and deterministic official recovery route guidance', () => {
     expect(RECOVERY_INTENT_CHOICES).toHaveLength(4);
   });
 
-  it('recommends forgotten assets without pretending users qualify for payouts', () => {
-    expect(routesForIntent('forgotten').map((route) => route.id)).toEqual([
+  it('ranks forgotten funds first without hiding any official routes', () => {
+    const allIds = routesForIntent('all').map((route) => route.id);
+    const rankedIds = routesForIntent('forgotten').map((route) => route.id);
+    expect(rankedIds.slice(0, 6)).toEqual([
       'unclaimed-assets-gateway',
       'bank-deposits',
       'mutual-fund-folios',
@@ -20,19 +22,27 @@ describe('private and deterministic official recovery route guidance', () => {
       'insurance',
       'epf',
     ]);
+    expect(rankedIds).toHaveLength(allIds.length);
+    expect([...rankedIds].sort()).toEqual([...allIds].sort());
   });
 
-  it('keeps complaints distinct from existing money and tracked claims', () => {
-    expect(routesForIntent('dispute').map((route) => route.id)).toEqual([
-      'consumer-dispute',
-      'securities-dispute',
-    ]);
-    expect(routesForIntent('follow-up').map((route) => route.id)).toEqual([
-      'shares-dividends',
-      'epf',
-      'tax-refund',
-      'sahara',
-    ]);
+  it('prioritizes complaint or tracking routes, preserving every other pathway', () => {
+    const allIds = routesForIntent('all').map((route) => route.id);
+    expect(
+      routesForIntent('dispute')
+        .map((route) => route.id)
+        .slice(0, 2),
+    ).toEqual(['consumer-dispute', 'securities-dispute']);
+    expect(
+      routesForIntent('follow-up')
+        .map((route) => route.id)
+        .slice(0, 4),
+    ).toEqual(['shares-dividends', 'epf', 'tax-refund', 'sahara']);
+    for (const intent of ['forgotten', 'follow-up', 'dispute'] as const) {
+      const ids = routesForIntent(intent).map((route) => route.id);
+      expect(ids).toHaveLength(allIds.length);
+      expect(new Set(ids)).toEqual(new Set(allIds));
+    }
   });
 
   it('returns official HTTPS routes, without collecting personal details', () => {
@@ -68,11 +78,31 @@ describe('private and deterministic official recovery route guidance', () => {
     );
   });
 
-  it('preserves customer-selected intent filtering when searching', () => {
-    expect(matchingRoutesForSearch('dispute', 'RBI')).toHaveLength(0);
-    expect(matchingRoutesForSearch('dispute', 'SEBI').map((route) => route.id)).toEqual([
-      'securities-dispute',
+  it('reorders SEBI recovery results instead of filtering MITRA or SCORES', () => {
+    const matching = (intent: 'all' | 'forgotten' | 'follow-up' | 'dispute') =>
+      matchingRoutesForSearch(intent, 'SEBI recovery').map((route) => route.id);
+    expect(matching('all')).toEqual(['mutual-fund-folios', 'securities-dispute']);
+    expect(matching('dispute')).toEqual(['securities-dispute', 'mutual-fund-folios']);
+    expect(matching('forgotten')).toEqual(['mutual-fund-folios', 'securities-dispute']);
+    expect(new Set(matching('dispute'))).toEqual(new Set(matching('all')));
+  });
+
+  it('never hides an RBI result when complaint preference is selected', () => {
+    expect(matchingRoutesForSearch('dispute', 'RBI').map((route) => route.id)).toEqual([
+      'bank-deposits',
     ]);
+    expect(matchingRoutesForSearch('dispute', 'MITRA').map((route) => route.id)).toEqual([
+      'mutual-fund-folios',
+    ]);
+  });
+
+  it('does not modify the official catalog or fabricate results after preference changes', () => {
+    const before = routesForIntent('all').map((route) => route.id);
+    for (const intent of ['all', 'forgotten', 'follow-up', 'dispute'] as const) {
+      expect(matchingRoutesForSearch(intent, 'qzxv blorf nonword')).toHaveLength(0);
+      expect(matchingRoutesForSearch(intent, '')).toHaveLength(before.length);
+    }
+    expect(routesForIntent('all').map((route) => route.id)).toEqual(before);
   });
 
   it('does not invent matching official routes when nothing matches', () => {

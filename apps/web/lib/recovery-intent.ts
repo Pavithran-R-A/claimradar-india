@@ -42,12 +42,19 @@ const ROUTE_IDS: Readonly<Record<Exclude<RecoveryIntent, 'all'>, readonly string
   dispute: ['consumer-dispute', 'securities-dispute'],
 };
 
-/** Guidance only, not eligibility determination; no identifiers or answers are transmitted. */
+/**
+ * Preferences are ranking hints, NEVER access controls or filters.
+ * Preserve the full, trusted catalog and its original order within each group.
+ * No personal identifiers or answers are transmitted.
+ */
 export function routesForIntent(intent: RecoveryIntent): readonly RecoveryRoute[] {
   const routes = officialRecoveryRoutes();
   if (intent === 'all') return routes;
-  const matching = new Set(ROUTE_IDS[intent]);
-  return routes.filter((route) => matching.has(route.id));
+  const preferred = new Set(ROUTE_IDS[intent]);
+  return [
+    ...routes.filter((route) => preferred.has(route.id)),
+    ...routes.filter((route) => !preferred.has(route.id)),
+  ];
 }
 
 const SEARCH_SYNONYMS: Readonly<Record<string, readonly string[]>> = {
@@ -97,9 +104,10 @@ function normaliseSearch(value: string): string {
 }
 
 /**
- * Match a public search to useful official pathways without claiming the
- * user qualifies for payment. Returning zero allows the UI to distinguish
- * "no relevant route" from the unfiltered list, without fabricating results.
+ * Match a public search against ALL official pathways before applying
+ * preference ordering. A preference must never hide a relevant route.
+ * Returning zero distinguishes a true no-match query from the full catalog
+ * without fabricating eligibility or claim opportunities.
  */
 export function matchingRoutesForSearch(
   intent: RecoveryIntent,

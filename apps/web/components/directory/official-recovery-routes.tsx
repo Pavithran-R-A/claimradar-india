@@ -35,14 +35,15 @@ export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
           Where could your money be?
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-          Select a recovery route to search or apply on the relevant official website. These
-          services are different from ClaimKhoj-approved claim opportunities. We cannot see your
-          account balances or determine your eligibility from these links.
+          Select a recovery route to search or apply on the relevant official website. Preferences
+          reorder suggested pathways but never hide relevant options. These services are different
+          from ClaimKhoj-approved claim opportunities. We cannot see your account balances or
+          determine your eligibility from these links.
         </p>
       </div>
       <div className="mt-5 rounded-md border border-border bg-surface-secondary p-4">
         <p className="text-sm font-semibold text-text-primary">
-          What best describes your situation?
+          Which situation would you like to see first?
         </p>
         <div
           role="group"
