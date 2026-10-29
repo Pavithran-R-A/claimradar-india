@@ -77,7 +77,7 @@ describe('private and deterministic official recovery route guidance', () => {
 
   it('does not invent matching official routes when nothing matches', () => {
     expect(matchingRoutesForSearch('all', 'qzxv blorf nonword')).toHaveLength(0);
-    expect(matchingRoutesForSearch('all', '')).toHaveLength(9);
+    expect(matchingRoutesForSearch('all', '')).toHaveLength(10);
     expect(matchingRoutesForSearch('all', 'claims')).toHaveLength(10);
   });
 });
