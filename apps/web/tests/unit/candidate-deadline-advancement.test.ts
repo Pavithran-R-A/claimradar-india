@@ -5,13 +5,16 @@ const actions = readFileSync(new URL('../../app/admin/actions.ts', import.meta.u
 
 describe('candidate publication cannot rely on stale extraction dates', () => {
   it('rechecks the source deadline before editorial candidate approval', () => {
-    const approval = actions.split('export async function approveCandidate')[1]?.split(
-      'export async function rejectCandidate',
-    )[0];
-    expect(approval).toContain('isPublicationDeadlineExpired(extracted?.deadline ?? null)');
-    expect(approval?.indexOf('isPublicationDeadlineExpired')).toBeLessThan(
-      approval?.indexOf("publication_decision: 'approved'"),
+    const start = actions.indexOf('export async function approveCandidate');
+    const end = actions.indexOf('export async function rejectCandidate');
+    const approval = actions.slice(start, end);
+    const deadlineCheck = approval.indexOf(
+      'isPublicationDeadlineExpired(extracted?.deadline ?? null)',
     );
+    const approvalWrite = approval.indexOf("publication_decision: 'approved'");
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(deadlineCheck).toBeGreaterThanOrEqual(0);
+    expect(approvalWrite).toBeGreaterThan(deadlineCheck);
   });
 
   it('rechecks expiration and misleading URLs before draft promotion', () => {

@@ -274,17 +274,13 @@ export async function promoteCandidate(candidateId: string) {
   const candidateDeadline =
     typeof reviewedExtraction.deadline === 'string' ? reviewedExtraction.deadline : null;
   if (isPublicationDeadlineExpired(candidateDeadline)) {
-    return {
-      error: 'The source filing deadline has expired. Do not promote this candidate.',
-    };
+    return { error: 'The source filing deadline has expired. Do not promote this candidate.' };
   }
   if (
     typeof reviewedExtraction.official_claim_url === 'string' &&
     isKnownNonFilingInformationUrl(reviewedExtraction.official_claim_url)
   ) {
-    return {
-      error: 'The source contains an information page, not a verified filing URL.',
-    };
+    return { error: 'The source contains an information page, not a verified filing URL.' };
   }
 
   // Guard against double promotion via the publication event trail.
