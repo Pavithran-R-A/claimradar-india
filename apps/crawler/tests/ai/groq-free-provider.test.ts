@@ -194,7 +194,7 @@ describe('explicit Groq free-plan provider', () => {
       ],
     });
     const source = 'தமிழ் दावा refund notice '.repeat(5_000) + ' SOURCE-ENDING';
-    const prompt = 'Required legal evidence rules and JSON schema. '.repeat(120);
+    const prompt = 'Required legal evidence rules and JSON schema. '.repeat(80);
     const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
       source,
       prompt,
