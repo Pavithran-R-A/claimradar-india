@@ -147,7 +147,8 @@ export async function approveCandidate(candidateId: string) {
   // window can expire between AI processing and staff approval.
   if (isPublicationDeadlineExpired(extracted?.deadline ?? null)) {
     return {
-      error: 'The source filing deadline has expired. Re-review the official notice before approving.',
+      error:
+        'The source filing deadline has expired. Re-review the official notice before approving.',
     };
   }
 
