@@ -6,6 +6,10 @@
 import { createAdminClient } from '@claimradar/database';
 import { auditStoredCandidate } from './validation/read-only-candidate-audit.js';
 
+// Generated DB select projections are incomplete for these source tables.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyClient = any;
+
 async function main() {
   if (process.env.APP_ENV !== 'staging') {
     throw new Error('Read-only candidate audit requires APP_ENV=staging');
@@ -26,7 +30,7 @@ async function main() {
     throw new Error('Usage: audit:candidate --candidate=<uuid>');
   }
 
-  const db = createAdminClient();
+  const db: AnyClient = createAdminClient();
   const { data: candidate, error: candidateError } = await db
     .from('candidate_documents')
     .select('id, source_document_id, ai_extracted_data, validation_status, publication_decision')
