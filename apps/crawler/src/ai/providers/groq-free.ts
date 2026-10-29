@@ -52,7 +52,8 @@ export function boundGroqSourceText(content: string): string {
   const highlights: string[] = [];
   let remaining = 1_100;
   let lastEnd = 0;
-  const cues = /refund|claim|deadline|investor|creditor|eligib|submit|application|portal|recover|payment|दावा|आवेदन|நிதி|உரிமை/giu;
+  const cues =
+    /refund|claim|deadline|investor|creditor|eligib|submit|application|portal|recover|payment|दावा|आवेदन|நிதி|உரிமை/giu;
   for (const match of content.matchAll(cues)) {
     const position = match.index;
     if (position < prefix.length + 140 || position > content.length - suffix.length - 140) {
@@ -70,12 +71,12 @@ export function boundGroqSourceText(content: string): string {
     if (remaining < 60 || highlights.length >= 4) break;
   }
 
-  const separator = '\n[Omitted source context — verify any evidence against the complete source]\n';
+  const separator =
+    '\n[Omitted source context — verify any evidence against the complete source]\n';
   const bounded = [prefix, ...highlights, suffix].join(separator);
   // Leave a hard, provider-agnostic byte budget even if the markers change.
   return utf8Prefix(bounded, GROQ_SOURCE_MAX_UTF8_BYTES);
 }
-
 
 /**
  * Opt-in Groq free-plan extraction. The router requires an explicit, verified
