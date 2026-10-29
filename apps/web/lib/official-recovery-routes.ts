@@ -40,6 +40,18 @@ export const OFFICIAL_RECOVERY_ROUTES: readonly RecoveryRoute[] = [
     linkLabel: 'Search RBI UDGAM',
   },
   {
+    id: 'mutual-fund-folios',
+    title: 'Forgotten mutual fund investments',
+    description:
+      'Trace inactive or unclaimed mutual fund folios through SEBI-backed MITRA on MFCentral.',
+    agency: 'Securities and Exchange Board of India · MITRA',
+    kind: 'Search for unclaimed money',
+    nextStep:
+      'Search for a possible folio, then contact the relevant fund company or registrar to verify ownership and request recovery. A match is not proof that money is owed.',
+    url: 'https://app.mfcentral.com/investor/signin',
+    linkLabel: 'Search MITRA on MFCentral',
+  },
+  {
     id: 'shares-dividends',
     title: 'Unclaimed shares and dividends',
     description: 'Recover company dividends or shares transferred to the IEPF.',
@@ -120,6 +132,7 @@ export function officialRecoveryRoutes(): readonly RecoveryRoute[] {
     'www.unclaimedassetsportal.in',
     'udgam.rbi.org.in',
     'www.iepf.gov.in',
+    'app.mfcentral.com',
     'bimabharosa.irdai.gov.in',
     'unifiedportal-mem.epfindia.gov.in',
     'www.incometax.gov.in',

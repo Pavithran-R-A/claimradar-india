@@ -4,13 +4,14 @@ import { officialRecoveryRoutes } from '../../lib/official-recovery-routes';
 describe('public official recovery route catalog', () => {
   const routes = officialRecoveryRoutes();
 
-  it('covers nine official recovery routes including the verified DFS gateway', () => {
-    expect(routes).toHaveLength(9);
-    expect(new Set(routes.map((route) => route.id)).size).toBe(9);
+  it('covers ten official recovery routes including the verified DFS gateway', () => {
+    expect(routes).toHaveLength(10);
+    expect(new Set(routes.map((route) => route.id)).size).toBe(10);
     expect(routes.map((route) => route.id)).toEqual(
       expect.arrayContaining([
         'unclaimed-assets-gateway',
         'bank-deposits',
+        'mutual-fund-folios',
         'shares-dividends',
         'insurance',
         'epf',
@@ -29,6 +30,14 @@ describe('public official recovery route catalog', () => {
       expect(route.nextStep.length).toBeGreaterThan(30);
       expect(route.agency.length).toBeGreaterThan(8);
     }
+  });
+
+  it('routes forgotten mutual fund folios to the SEBI MITRA platform', () => {
+    const mitra = routes.find((route) => route.id === 'mutual-fund-folios');
+    expect(mitra?.url).toBe('https://app.mfcentral.com/investor/signin');
+    expect(mitra?.agency).toContain('Securities and Exchange Board');
+    expect(mitra?.kind).toBe('Search for unclaimed money');
+    expect(mitra?.nextStep).toContain('not proof');
   });
 
   it('keeps IEPF shares and dividends on the authority portal instead of a generic redirect', () => {
