@@ -5,6 +5,79 @@ import type { AIExtractionResult, AIProvider } from '../types.js';
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 export const ALLOWED_GROQ_FREE_MODEL = 'openai/gpt-oss-120b';
 
+export const GROQ_SOURCE_MAX_UTF8_BYTES = 6_000;
+
+const encoder = new TextEncoder();
+
+function utf8ByteLength(value: string): number {
+  return encoder.encode(value).length;
+}
+
+function utf8Prefix(value: string, maxBytes: number): string {
+  let bytes = 0;
+  let result = '';
+  for (const character of value) {
+    const next = utf8ByteLength(character);
+    if (bytes + next > maxBytes) break;
+    result += character;
+    bytes += next;
+  }
+  return result;
+}
+
+function utf8Suffix(value: string, maxBytes: number): string {
+  let bytes = 0;
+  const characters: string[] = [];
+  for (const character of Array.from(value).reverse()) {
+    const next = utf8ByteLength(character);
+    if (bytes + next > maxBytes) break;
+    characters.push(character);
+    bytes += next;
+  }
+  return characters.reverse().join('');
+}
+
+/**
+ * Groq's free-tier limits and multilingual PDF text are measured in tokens
+ * and UTF-8 bytes, not JavaScript UTF-16 character counts. Select a small,
+ * deterministic *verbatim* source window. The full original remains stored
+ * for source-backed validation and human editorial review; omitted text
+ * must never be treated as proof that no recovery notice exists.
+ */
+export function boundGroqSourceText(content: string): string {
+  if (utf8ByteLength(content) <= GROQ_SOURCE_MAX_UTF8_BYTES) return content;
+
+  const prefix = utf8Prefix(content, 3_000);
+  const suffix = utf8Suffix(content, 1_100);
+  const highlights: string[] = [];
+  let remaining = 1_100;
+  let lastEnd = 0;
+  const cues =
+    /refund|claim|deadline|investor|creditor|eligib|submit|application|portal|recover|payment|दावा|आवेदन|நிதி|உரிமை/giu;
+  for (const match of content.matchAll(cues)) {
+    const position = match.index;
+    if (position < prefix.length + 140 || position > content.length - suffix.length - 140) {
+      continue;
+    }
+    const start = Math.max(prefix.length, position - 110);
+    const end = Math.min(content.length - suffix.length, position + 190);
+    if (start <= lastEnd || end <= start) continue;
+    const excerpt = content.slice(start, end);
+    const segment = utf8Prefix(excerpt, Math.min(remaining, 520));
+    if (utf8ByteLength(segment) < 30) break;
+    highlights.push(segment);
+    remaining -= utf8ByteLength(segment);
+    lastEnd = end;
+    if (remaining < 60 || highlights.length >= 4) break;
+  }
+
+  const separator =
+    '\n[Omitted source context — verify any evidence against the complete source]\n';
+  const bounded = [prefix, ...highlights, suffix].join(separator);
+  // Leave a hard, provider-agnostic byte budget even if the markers change.
+  return utf8Prefix(bounded, GROQ_SOURCE_MAX_UTF8_BYTES);
+}
+
 /**
  * Opt-in Groq free-plan extraction. The router requires an explicit, verified
  * free-plan opt-in and never silently falls back from the OpenRouter provider.
@@ -56,7 +129,7 @@ export class GroqFreeProvider implements AIProvider {
           max_completion_tokens: 4096,
           messages: [
             { role: 'system', content: prompt },
-            { role: 'user', content },
+            { role: 'user', content: boundGroqSourceText(content) },
           ],
         }),
         signal: AbortSignal.timeout(this.timeoutMs),
