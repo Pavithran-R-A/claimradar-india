@@ -89,6 +89,57 @@ try {
       }
     }
 
+    // Real browser interaction: preferences must NEVER hide a matching official
+    // recovery route. Exercise the same customer path found in production UAT.
+    try {
+      const routeSection = page.locator('section[aria-labelledby="recovery-pathways-title"]');
+      const routeTitles = async () =>
+        (await routeSection.locator('article h3').allTextContents()).map((title) => title.trim());
+      const verifyTitles = async (expected, label) => {
+        const actual = await routeTitles();
+        if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+          failures.push(
+            `${viewport.name}: ${label}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+          );
+        }
+      };
+      await page.goto(`${baseUrl}/claimables?search=SEBI%20recovery`, {
+        waitUntil: 'networkidle',
+      });
+      await verifyTitles(
+        ['Forgotten mutual fund investments', 'Investment and broker complaints'],
+        'SEBI recovery default',
+      );
+      await page.getByRole('button', { name: 'I need a refund or complaint resolved' }).click();
+      await page.waitForFunction(() => {
+        const first = document.querySelector(
+          'section[aria-labelledby="recovery-pathways-title"] article h3',
+        );
+        return first?.textContent?.includes('Investment and broker complaints');
+      });
+      await verifyTitles(
+        ['Investment and broker complaints', 'Forgotten mutual fund investments'],
+        'SEBI recovery complaint preference',
+      );
+      await page.getByRole('button', { name: 'I may have unclaimed money' }).click();
+      await page.waitForFunction(() => {
+        const first = document.querySelector(
+          'section[aria-labelledby="recovery-pathways-title"] article h3',
+        );
+        return first?.textContent?.includes('Forgotten mutual fund investments');
+      });
+      await verifyTitles(
+        ['Forgotten mutual fund investments', 'Investment and broker complaints'],
+        'SEBI recovery forgotten-money preference',
+      );
+
+      await page.goto(`${baseUrl}/claimables?search=RBI`, { waitUntil: 'networkidle' });
+      await page.getByRole('button', { name: 'I need a refund or complaint resolved' }).click();
+      await verifyTitles(['Unclaimed bank deposits'], 'RBI remains visible with complaint preference');
+    } catch (error) {
+      failures.push(`${viewport.name}: recovery preference browser QA: ${String(error)}`);
+    }
+
     if (consoleErrors.length > 0) {
       failures.push(`${viewport.name}: console errors: ${consoleErrors.join(' | ')}`);
     }
