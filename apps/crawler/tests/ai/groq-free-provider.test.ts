@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createProviderRouter } from '../../src/ai/router.js';
-import { GroqFreeProvider, ALLOWED_GROQ_FREE_MODEL } from '../../src/ai/providers/groq-free.js';
+import {
+  GroqFreeProvider,
+  ALLOWED_GROQ_FREE_MODEL,
+  GROQ_SOURCE_MAX_UTF8_BYTES,
+  boundGroqSourceText,
+} from '../../src/ai/providers/groq-free.js';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -123,6 +128,56 @@ describe('explicit Groq free-plan provider', () => {
       (await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract('source', 'prompt'))
         .errorCategory,
     ).toBe('invalid_output');
+  });
+
+  it('preserves short source text exactly, including Unicode legal evidence', () => {
+    const original = 'உரிமை கோரல் மற்றும் दावा refund deadline: 2026-11-13';
+    expect(boundGroqSourceText(original)).toBe(original);
+  });
+
+  it('bounds multilingual PDF text by UTF-8 bytes while retaining verbatim cues and tail', () => {
+    const original =
+      'HEADER-' +
+      'அறிக்கை விண்ணப்பம் ₹'.repeat(450) +
+      ' Official investor refund deadline 13 November 2026 at the claims portal. ' +
+      'அறிவிப்பு தொகை ₹'.repeat(450) +
+      '-SOURCE-END';
+    const bounded = boundGroqSourceText(original);
+    expect(new TextEncoder().encode(bounded).length).toBeLessThanOrEqual(
+      GROQ_SOURCE_MAX_UTF8_BYTES,
+    );
+    expect(bounded).toContain('HEADER-');
+    expect(bounded).toContain('investor refund deadline');
+    expect(bounded).toContain('-SOURCE-END');
+    expect(bounded).toContain('Omitted source context');
+    expect(bounded).not.toBe(original);
+  });
+
+  it('never sends a large raw PDF directly to Groq, without making a second request', async () => {
+    const fetchMock = setup({
+      choices: [
+        {
+          finish_reason: 'stop',
+          message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' },
+        },
+      ],
+    });
+    const raw = 'अधिसूचना दावा'.repeat(6_000) + ' SOURCE-ENDING';
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      raw,
+      'fixed prompt',
+    );
+    expect(result.errorCategory).toBe('none');
+    const [, request] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const payload = JSON.parse(request.body as string) as {
+      messages: Array<{ role: string; content: string }>;
+    };
+    const bounded = payload.messages.find((message) => message.role === 'user')?.content;
+    expect(new TextEncoder().encode(bounded ?? '').length).toBeLessThanOrEqual(
+      GROQ_SOURCE_MAX_UTF8_BYTES,
+    );
+    expect(bounded).toContain('SOURCE-ENDING');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('scrubs network exceptions instead of storing secrets', async () => {
