@@ -1,5 +1,8 @@
 name: Temporary Prettier diagnostic
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - fix/claimkhoj-consumer-routes-expiry-20261029
