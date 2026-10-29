@@ -5,7 +5,12 @@ import type { AIExtractionResult, AIProvider } from '../types.js';
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 export const ALLOWED_GROQ_FREE_MODEL = 'openai/gpt-oss-120b';
 
+// Combined conservative byte budget plus reserved output protects the
+// 8,000 TPM free GPT-OSS 120B account limit, not just model context size.
 export const GROQ_SOURCE_MAX_UTF8_BYTES = 6_000;
+export const GROQ_MAX_INPUT_UTF8_BYTES = 6_000;
+export const GROQ_MAX_COMPLETION_TOKENS = 1_536;
+export const GROQ_REQUEST_OVERHEAD_UTF8_BYTES = 192;
 
 const encoder = new TextEncoder();
 
@@ -44,13 +49,17 @@ function utf8Suffix(value: string, maxBytes: number): string {
  * for source-backed validation and human editorial review; omitted text
  * must never be treated as proof that no recovery notice exists.
  */
-export function boundGroqSourceText(content: string): string {
-  if (utf8ByteLength(content) <= GROQ_SOURCE_MAX_UTF8_BYTES) return content;
+export function boundGroqSourceText(
+  content: string,
+  maxBytes = GROQ_SOURCE_MAX_UTF8_BYTES,
+): string {
+  const limit = Math.max(0, Math.min(maxBytes, GROQ_SOURCE_MAX_UTF8_BYTES));
+  if (utf8ByteLength(content) <= limit) return content;
 
-  const prefix = utf8Prefix(content, 3_000);
-  const suffix = utf8Suffix(content, 1_100);
+  const prefix = utf8Prefix(content, Math.min(3_000, Math.floor(limit * 0.45)));
+  const suffix = utf8Suffix(content, Math.min(1_100, Math.floor(limit * 0.2)));
   const highlights: string[] = [];
-  let remaining = 1_100;
+  let remaining = Math.min(1_100, Math.floor(limit * 0.2));
   let lastEnd = 0;
   const cues =
     /refund|claim|deadline|investor|creditor|eligib|submit|application|portal|recover|payment|दावा|आवेदन|நிதி|உரிமை/giu;
@@ -68,14 +77,14 @@ export function boundGroqSourceText(content: string): string {
     highlights.push(segment);
     remaining -= utf8ByteLength(segment);
     lastEnd = end;
-    if (remaining < 60 || highlights.length >= 4) break;
+    if (remaining < 60 || highlights.length >= (limit < 3_000 ? 1 : 4)) break;
   }
 
   const separator =
     '\n[Omitted source context — verify any evidence against the complete source]\n';
   const bounded = [prefix, ...highlights, suffix].join(separator);
   // Leave a hard, provider-agnostic byte budget even if the markers change.
-  return utf8Prefix(bounded, GROQ_SOURCE_MAX_UTF8_BYTES);
+  return utf8Prefix(bounded, limit);
 }
 
 /**
@@ -115,6 +124,17 @@ export class GroqFreeProvider implements AIProvider {
     };
 
     try {
+      const sourceBudget =
+        GROQ_MAX_INPUT_UTF8_BYTES - GROQ_REQUEST_OVERHEAD_UTF8_BYTES - utf8ByteLength(prompt);
+      if (sourceBudget < 512) {
+        return {
+          ...base,
+          durationMs: Date.now() - start,
+          error: 'Groq prompt exceeds safe free-tier request budget',
+          errorCategory: 'invalid_output',
+        };
+      }
+      const boundedSource = boundGroqSourceText(content, sourceBudget);
       const response = await fetch(GROQ_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -126,10 +146,10 @@ export class GroqFreeProvider implements AIProvider {
           response_format: { type: 'json_object' },
           reasoning_effort: 'low',
           temperature: 0,
-          max_completion_tokens: 4096,
+          max_completion_tokens: GROQ_MAX_COMPLETION_TOKENS,
           messages: [
             { role: 'system', content: prompt },
-            { role: 'user', content: boundGroqSourceText(content) },
+            { role: 'user', content: boundedSource },
           ],
         }),
         signal: AbortSignal.timeout(this.timeoutMs),

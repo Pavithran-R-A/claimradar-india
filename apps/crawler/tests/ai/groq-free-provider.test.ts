@@ -4,6 +4,9 @@ import {
   GroqFreeProvider,
   ALLOWED_GROQ_FREE_MODEL,
   GROQ_SOURCE_MAX_UTF8_BYTES,
+  GROQ_MAX_INPUT_UTF8_BYTES,
+  GROQ_MAX_COMPLETION_TOKENS,
+  GROQ_REQUEST_OVERHEAD_UTF8_BYTES,
   boundGroqSourceText,
 } from '../../src/ai/providers/groq-free.js';
 
@@ -74,13 +77,14 @@ describe('explicit Groq free-plan provider', () => {
     expect(body.model).toBe(ALLOWED_GROQ_FREE_MODEL);
     expect(body.response_format).toEqual({ type: 'json_object' });
     expect(body.reasoning_effort).toBe('low');
-    expect(body.max_completion_tokens).toBe(4096);
+    expect(body.max_completion_tokens).toBe(GROQ_MAX_COMPLETION_TOKENS);
   });
 
   it.each([
     [401, 'auth'],
     [402, 'auth'],
     [403, 'auth'],
+    [413, 'provider_error'],
     [429, 'rate_limit'],
     [503, 'provider_error'],
   ] as const)('does not retry HTTP %s and records only safe status', async (status, category) => {
@@ -178,6 +182,47 @@ describe('explicit Groq free-plan provider', () => {
     );
     expect(bounded).toContain('SOURCE-ENDING');
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('bounds combined UTF-8 input and reserved output below the free TPM allowance', async () => {
+    const fetchMock = setup({
+      choices: [
+        {
+          finish_reason: 'stop',
+          message: { content: '{"is_relevant":false,"confidence":0.5,"evidence":[]}' },
+        },
+      ],
+    });
+    const source = 'தமிழ் दावा refund notice '.repeat(5_000) + ' SOURCE-ENDING';
+    const prompt = 'Required legal evidence rules and JSON schema. '.repeat(80);
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      source,
+      prompt,
+    );
+    expect(result.errorCategory).toBe('none');
+    const [, request] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const body = JSON.parse(request.body as string) as {
+      messages: Array<{ role: string; content: string }>;
+      max_completion_tokens: number;
+    };
+    const messageContents = body.messages.map((message) => message.content).join('');
+    const inputBytes = new TextEncoder().encode(messageContents).length;
+    const boundedInputBytes = inputBytes + GROQ_REQUEST_OVERHEAD_UTF8_BYTES;
+    expect(boundedInputBytes).toBeLessThanOrEqual(GROQ_MAX_INPUT_UTF8_BYTES);
+    expect(boundedInputBytes + body.max_completion_tokens).toBeLessThan(8_000);
+    expect(body.messages[1]?.content).toContain('SOURCE-ENDING');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses an oversized system prompt locally without contacting Groq', async () => {
+    const fetchMock = setup({ choices: [] });
+    const result = await new GroqFreeProvider('dummy', ALLOWED_GROQ_FREE_MODEL).extract(
+      'source',
+      'X'.repeat(GROQ_MAX_INPUT_UTF8_BYTES),
+    );
+    expect(result.errorCategory).toBe('invalid_output');
+    expect(result.error).toBe('Groq prompt exceeds safe free-tier request budget');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('scrubs network exceptions instead of storing secrets', async () => {
