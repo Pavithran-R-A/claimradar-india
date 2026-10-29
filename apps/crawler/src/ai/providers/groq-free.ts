@@ -49,7 +49,10 @@ function utf8Suffix(value: string, maxBytes: number): string {
  * for source-backed validation and human editorial review; omitted text
  * must never be treated as proof that no recovery notice exists.
  */
-export function boundGroqSourceText(content: string, maxBytes = GROQ_SOURCE_MAX_UTF8_BYTES): string {
+export function boundGroqSourceText(
+  content: string,
+  maxBytes = GROQ_SOURCE_MAX_UTF8_BYTES,
+): string {
   const limit = Math.max(0, Math.min(maxBytes, GROQ_SOURCE_MAX_UTF8_BYTES));
   if (utf8ByteLength(content) <= limit) return content;
 
