@@ -31,7 +31,8 @@ describe('ClaimKhoj customer-live copy', () => {
 
   it('does not invent a support inbox when none is configured', () => {
     const contact = read('../app/(public)/contact/page.tsx');
-    expect(contact).toContain('Direct email support is not currently offered');
+    expect(contact).toContain('Email support is not available');
+    expect(contact).toContain('href="/app/privacy"');
     expect(contact).toContain('official authority');
   });
 });
