@@ -15,8 +15,7 @@ describe('candidate editorial deadline presentation', () => {
   it('keeps the final Indian local deadline day open', () => {
     expect(candidateFilingStatus({ deadline: '2026-10-30' }, now).expired).toBe(false);
     expect(
-      candidateFilingStatus({ deadline: '2026-10-30' }, new Date('2026-10-30T18:31:00Z'))
-        .expired,
+      candidateFilingStatus({ deadline: '2026-10-30' }, new Date('2026-10-30T18:31:00Z')).expired,
     ).toBe(true);
   });
 
@@ -35,12 +34,20 @@ describe('candidate editorial deadline presentation', () => {
       new URL('../../app/admin/candidates/[id]/page.tsx', import.meta.url),
       'utf8',
     );
-    const reviewQueue = readFileSync(new URL('../../app/admin/reviews/page.tsx', import.meta.url), 'utf8');
-    const directory = readFileSync(new URL('../../app/admin/candidates/page.tsx', import.meta.url), 'utf8');
+    const reviewQueue = readFileSync(
+      new URL('../../app/admin/reviews/page.tsx', import.meta.url),
+      'utf8',
+    );
+    const directory = readFileSync(
+      new URL('../../app/admin/candidates/page.tsx', import.meta.url),
+      'utf8',
+    );
     expect(detail).toContain('Filing deadline expired:');
     expect(detail).toContain('filing.expired ? (');
     expect(detail).toContain('Draft promotion blocked:');
-    expect(detail.indexOf('filing.expired ? (')).toBeLessThan(detail.indexOf('label="Approve candidate"'));
+    expect(detail.indexOf('filing.expired ? (')).toBeLessThan(
+      detail.indexOf('label="Approve candidate"'),
+    );
     expect(reviewQueue).toContain('Expired:');
     expect(directory).toContain('Expired:');
   });

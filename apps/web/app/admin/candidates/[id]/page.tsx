@@ -116,9 +116,9 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         >
           <p className="font-semibold">Filing deadline expired: {filing.deadline}</p>
           <p className="mt-1">
-            Historical validation is not current permission to file. Verify the official notice
-            for a documented extension and complete an auditable reassessment. Approval and
-            draft promotion are blocked while the extracted deadline is expired.
+            Historical validation is not current permission to file. Verify the official notice for
+            a documented extension and complete an auditable reassessment. Approval and draft
+            promotion are blocked while the extracted deadline is expired.
           </p>
         </div>
       )}
@@ -131,8 +131,8 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
           <div className="mt-3 flex flex-wrap items-start gap-6">
             {filing.expired ? (
               <p className="max-w-sm text-sm text-deadline" role="status">
-                Approval blocked: the filing deadline has passed. Recheck the official notice
-                before reassessment.
+                Approval blocked: the filing deadline has passed. Recheck the official notice before
+                reassessment.
               </p>
             ) : candidate.validation_status === 'pass' &&
               candidate.ai_extraction_status === 'completed' ? (

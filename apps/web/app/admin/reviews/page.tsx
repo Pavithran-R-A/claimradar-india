@@ -55,7 +55,9 @@ export default async function ReviewsPage({
     if (queue === 'editorial' && isEditorial) {
       const { data, error: queryError } = await db
         .from('candidate_documents')
-        .select('id, validation_status, ai_confidence, ai_extracted_data, created_at, source_documents!inner(title)')
+        .select(
+          'id, validation_status, ai_confidence, ai_extracted_data, created_at, source_documents!inner(title)',
+        )
         .in('publication_decision', ['pending', 'human_review'])
         .order('validation_status', { ascending: true })
         .order('created_at', { ascending: false })
