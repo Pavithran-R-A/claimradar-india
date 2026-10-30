@@ -37,15 +37,11 @@ export default function CorrectionsPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Formal corrections intake email will be published prior to unrestricted public launch. You
-          may also consult our{' '}
-          <Link
-            href="/contact"
-            className="text-trust-primary hover:text-trust-primary-hover underline"
-          >
-            Contact page
-          </Link>
-          .
+          A corrections email inbox is not yet configured. You can{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">submit a correction while signed in</Link>.
+          If you do not have an account,{' '}
+          <Link href="/register" className="text-trust-primary underline">register first</Link>.
+          Anonymous correction intake is not currently available.
         </p>
       )}
 
@@ -68,8 +64,8 @@ export default function CorrectionsPage() {
           <strong>Action</strong> — The correction is applied and a note is added to the listing.
         </li>
         <li>
-          <strong>Notification</strong> — The reporter is notified of the outcome if contact details
-          were provided.
+          <strong>Request status</strong> — Signed-in reporters can see their request status
+          and recorded resolution in the Privacy Center. Outbound email replies are not enabled.
         </li>
       </ul>
 
@@ -105,8 +101,9 @@ export default function CorrectionsPage() {
       <div className="mt-10 rounded-lg border border-border bg-surface p-6 text-center">
         <h3 className="text-lg font-semibold text-text-primary">Found an error?</h3>
         <p className="mt-2 text-sm text-text-secondary">
-          We review correction reports as soon as practicable and verify them against the underlying
-          official source.
+          Submit a correction through your{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">signed-in Privacy Center</Link>.
+          Include the official source link and avoid sensitive identity documents.
         </p>
       </div>
     </LegalPageTemplate>

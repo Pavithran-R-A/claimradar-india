@@ -33,6 +33,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { href: '/admin/companies', label: 'Companies', roles: ALL_STAFF },
       { href: '/admin/reviews', label: 'Review Queue', roles: EDITORIAL_AND_LEGAL },
       { href: '/admin/corrections', label: 'Corrections', roles: EDITORIAL_AND_LEGAL },
+      { href: '/admin/customer-requests', label: 'Customer Requests', roles: ADMINS_ONLY },
     ],
   },
   {

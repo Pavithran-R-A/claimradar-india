@@ -66,8 +66,8 @@ export default async function PrivacyPage() {
 
       {privacy.unavailable && (
         <Alert variant="warning" title="Privacy data temporarily unavailable">
-          We could not reach the database. Your requests can still be submitted and will be recorded
-          once it is back.
+          We could not load your request history. Submissions may also fail while the
+          database is unavailable; a request is saved only after a success confirmation.
         </Alert>
       )}
 
@@ -146,9 +146,12 @@ export default async function PrivacyPage() {
               <h3 className="mb-2 text-sm font-medium text-text-secondary">Correction requests</h3>
               <RequestList
                 items={privacy.correctionRequests}
-                render={(item) =>
-                  privacy.correctionRequests.find((r) => r.id === item.id)?.target ?? 'Request'
-                }
+                render={(item) => {
+                  const request = privacy.correctionRequests.find((r) => r.id === item.id);
+                  return request?.resolution
+                    ? `${request.target} — ${request.resolution}`
+                    : (request?.target ?? 'Request');
+                }}
                 emptyLabel="No correction requests."
               />
             </div>
@@ -165,11 +168,11 @@ export default async function PrivacyPage() {
             <div className="mt-5 border-t border-border pt-4">
               <h3 className="mb-2 text-sm font-medium text-text-secondary">Your grievances</h3>
               <RequestList
-                items={privacy.grievances.map((g) => ({
-                  id: g.id,
-                  created_at: g.created_at,
-                  status: g.status,
-                }))}
+                items={privacy.grievances}
+                render={(item) => {
+                  const grievance = privacy.grievances.find((g) => g.id === item.id);
+                  return grievance?.resolution ?? grievance?.subject ?? 'Grievance';
+                }}
                 emptyLabel="No grievances logged."
               />
             </div>
@@ -206,7 +209,7 @@ export default async function PrivacyPage() {
           <EmptyState
             className="py-8"
             title="History unavailable"
-            description="Your past requests could not be loaded right now, but new submissions will still be accepted."
+            description="Your past requests could not be loaded. Confirm a success message before considering a new request saved."
           />
         </Card>
       )}

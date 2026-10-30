@@ -103,6 +103,7 @@ export interface CorrectionRequestRow {
   target: string;
   description: string;
   status: string;
+  resolution: string | null;
   created_at: string;
 }
 
@@ -118,6 +119,7 @@ export interface GrievanceRow {
   id: string;
   subject: string;
   status: string;
+  resolution: string | null;
   created_at: string;
 }
 
@@ -509,7 +511,7 @@ export async function getPrivacyData(userId: string): Promise<PrivacyData> {
         .order('created_at', { ascending: false }),
       supabase
         .from('user_correction_requests')
-        .select('id, target, description, status, created_at')
+        .select('id, target, description, status, resolution, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false }),
       supabase
@@ -519,7 +521,7 @@ export async function getPrivacyData(userId: string): Promise<PrivacyData> {
         .order('created_at', { ascending: false }),
       supabase
         .from('grievance_contacts')
-        .select('id, subject, status, created_at')
+        .select('id, subject, status, resolution, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false }),
     ]);

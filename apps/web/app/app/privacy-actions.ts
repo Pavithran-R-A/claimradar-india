@@ -43,7 +43,7 @@ export async function submitCorrectionRequest(formData: FormData): Promise<Actio
   if (error) return { ok: false, error: DB_UNAVAILABLE };
 
   revalidatePath('/app/privacy');
-  return { ok: true, message: 'Correction request submitted. Our team will review it.' };
+  return { ok: true, message: 'Correction request saved. Track its status in the Privacy Center; automatic email replies are not enabled.' };
 }
 
 /* ----------------------------- Consent withdrawal ------------------------- */
@@ -172,5 +172,5 @@ export async function submitGrievance(formData: FormData): Promise<ActionResult>
   if (error) return { ok: false, error: DB_UNAVAILABLE };
 
   revalidatePath('/app/privacy');
-  return { ok: true, message: 'Grievance logged. We will respond to your contact email.' };
+  return { ok: true, message: 'Grievance saved. Track its status in the Privacy Center; automatic email replies are not enabled.' };
 }

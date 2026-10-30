@@ -13,11 +13,11 @@ export function AccountCta() {
           <Bell className="h-5 w-5" />
         </div>
         <h2 className="text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight">
-          Save companies and receive deadline alerts.
+          Save interests for future matching.
         </h2>
         <p className="mt-3 text-sm sm:text-base leading-relaxed text-text-secondary max-w-lg mx-auto">
-          Follow companies, sectors, and keywords. We send notifications as soon as official refund
-          notices or statutory claim windows are published.
+          Save companies and sectors when directory choices become available. Automatic email,
+          in-app, and deadline alerts are not currently enabled.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -28,7 +28,7 @@ export function AccountCta() {
               'rounded-md font-bold px-6 shadow-xs',
             )}
           >
-            <span>Set up email alert</span>
+            <span>Create your free account</span>
             <ArrowRight className="ml-1.5 h-4 w-4" />
           </Link>
           <Link
