@@ -369,22 +369,29 @@ export interface DirectoryOption {
   slug: string;
 }
 
-export async function getPublishedCompanies(): Promise<DirectoryOption[]> {
+export async function getPublishedCompanies(): Promise<{
+  items: DirectoryOption[];
+  unavailable: boolean;
+}> {
   try {
     const supabase = await getSupabaseServerClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('companies')
       .select('id, display_name, slug')
       .eq('publication_status', 'published')
       .order('display_name')
       .limit(100);
-    return ((data ?? []) as { id: string; display_name: string; slug: string }[]).map((row) => ({
-      id: row.id,
-      name: row.display_name,
-      slug: row.slug,
-    }));
+    if (error) return { items: [], unavailable: true };
+    const items = ((data ?? []) as { id: string; display_name: string; slug: string }[]).map(
+      (row) => ({
+        id: row.id,
+        name: row.display_name,
+        slug: row.slug,
+      }),
+    );
+    return { items, unavailable: false };
   } catch {
-    return [];
+    return { items: [], unavailable: true };
   }
 }
 
@@ -407,13 +414,17 @@ export async function getPublishedClaimableOptions(): Promise<DirectoryOption[]>
   }
 }
 
-export async function getPublishedSectors(): Promise<DirectoryOption[]> {
+export async function getPublishedSectors(): Promise<{
+  items: DirectoryOption[];
+  unavailable: boolean;
+}> {
   try {
     const supabase = await getSupabaseServerClient();
-    const { data } = await supabase.from('sectors').select('id, name, slug').order('name');
-    return ((data ?? []) as DirectoryOption[]).length > 0 ? (data as DirectoryOption[]) : [];
+    const { data, error } = await supabase.from('sectors').select('id, name, slug').order('name');
+    if (error) return { items: [], unavailable: true };
+    return { items: (data ?? []) as DirectoryOption[], unavailable: false };
   } catch {
-    return [];
+    return { items: [], unavailable: true };
   }
 }
 
