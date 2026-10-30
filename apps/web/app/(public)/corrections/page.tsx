@@ -38,10 +38,14 @@ export default function CorrectionsPage() {
       ) : (
         <p className="text-text-secondary italic">
           A corrections email inbox is not yet configured. You can{' '}
-          <Link href="/app/privacy" className="text-trust-primary underline">submit a correction while signed in</Link>.
-          If you do not have an account,{' '}
-          <Link href="/register" className="text-trust-primary underline">register first</Link>.
-          Anonymous correction intake is not currently available.
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            submit a correction while signed in
+          </Link>
+          . If you do not have an account,{' '}
+          <Link href="/register" className="text-trust-primary underline">
+            register first
+          </Link>
+          . Anonymous correction intake is not currently available.
         </p>
       )}
 
@@ -64,8 +68,8 @@ export default function CorrectionsPage() {
           <strong>Action</strong> — The correction is applied and a note is added to the listing.
         </li>
         <li>
-          <strong>Request status</strong> — Signed-in reporters can see their request status
-          and recorded resolution in the Privacy Center. Outbound email replies are not enabled.
+          <strong>Request status</strong> — Signed-in reporters can see their request status and
+          recorded resolution in the Privacy Center. Outbound email replies are not enabled.
         </li>
       </ul>
 
@@ -102,8 +106,10 @@ export default function CorrectionsPage() {
         <h3 className="text-lg font-semibold text-text-primary">Found an error?</h3>
         <p className="mt-2 text-sm text-text-secondary">
           Submit a correction through your{' '}
-          <Link href="/app/privacy" className="text-trust-primary underline">signed-in Privacy Center</Link>.
-          Include the official source link and avoid sensitive identity documents.
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            signed-in Privacy Center
+          </Link>
+          . Include the official source link and avoid sensitive identity documents.
         </p>
       </div>
     </LegalPageTemplate>

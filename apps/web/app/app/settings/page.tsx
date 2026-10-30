@@ -26,8 +26,8 @@ export default async function SettingsPage() {
           Settings
         </h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Save notification preferences for future use. Automatic alerts and outbound delivery
-          are currently disabled; saving preferences does not send messages.
+          Save notification preferences for future use. Automatic alerts and outbound delivery are
+          currently disabled; saving preferences does not send messages.
         </p>
       </div>
 

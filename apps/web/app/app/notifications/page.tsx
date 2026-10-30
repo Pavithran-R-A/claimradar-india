@@ -19,7 +19,8 @@ export default async function NotificationsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">Notifications</h1>
           <p className="mt-1 text-sm text-text-secondary">
-            Existing account updates appear here. Automatic match alerts and deadline reminders are currently disabled.
+            Existing account updates appear here. Automatic match alerts and deadline reminders are
+            currently disabled.
           </p>
         </div>
         <a

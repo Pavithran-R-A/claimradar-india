@@ -66,8 +66,8 @@ export default async function PrivacyPage() {
 
       {privacy.unavailable && (
         <Alert variant="warning" title="Privacy data temporarily unavailable">
-          We could not load your request history. Submissions may also fail while the
-          database is unavailable; a request is saved only after a success confirmation.
+          We could not load your request history. Submissions may also fail while the database is
+          unavailable; a request is saved only after a success confirmation.
         </Alert>
       )}
 

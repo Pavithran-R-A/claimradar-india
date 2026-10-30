@@ -30,9 +30,11 @@ export default function ContactPage() {
       ) : (
         <p className="text-text-secondary italic">
           Email support is not available. For problems with ClaimKhoj, sign in and use the{' '}
-          <Link href="/app/privacy" className="text-trust-primary underline">Privacy Center</Link>
-          {' '}to submit a grievance and track its status. For official claim filing questions,
-          contact the responsible authority.
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>{' '}
+          to submit a grievance and track its status. For official claim filing questions, contact
+          the responsible authority.
         </p>
       )}
       <p>
@@ -54,8 +56,10 @@ export default function ContactPage() {
         <p className="text-text-secondary italic">
           A corrections email inbox is not configured. Signed-in customers can submit a recorded
           correction request using the{' '}
-          <Link href="/app/privacy" className="text-trust-primary underline">Privacy Center</Link>.
-          An account is required; no automatic email reply is promised.
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>
+          . An account is required; no automatic email reply is promised.
         </p>
       )}
       <p>
@@ -83,8 +87,12 @@ export default function ContactPage() {
       ) : (
         <p className="text-text-secondary italic">
           A grievance email inbox is not configured. Signed-in customers can submit a grievance in
-          the{' '}<Link href="/app/privacy" className="text-trust-primary underline">Privacy Center</Link>
-          {' '}and track its status there. For a filing dispute, contact the responsible official authority.
+          the{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>{' '}
+          and track its status there. For a filing dispute, contact the responsible official
+          authority.
         </p>
       )}
 

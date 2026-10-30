@@ -25,7 +25,7 @@ describe('customer support and notification launch contracts', () => {
     const roles = source('../../app/admin/_lib/roles.ts');
     expect(page).toContain('await requireRoles(ADMINS_ONLY)');
     expect(actions).toContain('await getActionActor(ADMINS_ONLY)');
-    expect(actions).toContain("z.string().uuid().safeParse(id)");
+    expect(actions).toContain('z.string().uuid().safeParse(id)');
     expect(actions).toContain('const audit = await writeAuditLog(');
     expect(roles).toContain("label: 'Customer Requests', roles: ADMINS_ONLY");
     expect(actions).not.toContain('sendEmail(');

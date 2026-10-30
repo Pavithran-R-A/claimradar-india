@@ -129,7 +129,9 @@ export default function HowItWorksPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-emerald-600 font-bold">✓</span>
-              <span>Saves your watchlist preferences; automatic match alerts are currently disabled.</span>
+              <span>
+                Saves your watchlist preferences; automatic match alerts are currently disabled.
+              </span>
             </li>
           </ul>
         </div>
@@ -166,7 +168,8 @@ export default function HowItWorksPage() {
           Explore Active Opportunities Now
         </h2>
         <p className="text-sm text-slate-300 max-w-xl mx-auto mb-6">
-          Browse official recovery routes or save watchlist preferences. Automatic alerts are not enabled.
+          Browse official recovery routes or save watchlist preferences. Automatic alerts are not
+          enabled.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Link
