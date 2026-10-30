@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Card, Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
+import { candidateFilingStatus } from '@/lib/candidate-filing-status';
 import { requireRoles } from '@/lib/auth';
 import type {
   CandidateDocument,
@@ -93,6 +94,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
   const promotionEvent = events.find((e) => e.action === 'candidate_promoted');
   const rejectionEvent = events.find((e) => e.action === 'candidate_rejected');
   const blockingFailures = validations.filter((v) => !v.passed);
+  const filing = candidateFilingStatus(candidate.ai_extracted_data);
 
   return (
     <div>
@@ -107,14 +109,33 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         </Badge>
       </div>
 
+      {filing.expired && (
+        <div
+          role="alert"
+          className="mt-6 rounded-lg border border-deadline/30 bg-deadline-background p-4 text-sm text-deadline"
+        >
+          <p className="font-semibold">Filing deadline expired: {filing.deadline}</p>
+          <p className="mt-1">
+            Historical validation is not current permission to file. Verify the official notice
+            for a documented extension and complete an auditable reassessment. Approval and
+            draft promotion are blocked while the extracted deadline is expired.
+          </p>
+        </div>
+      )}
+
       {/* Publication workflow */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Publication Workflow</h2>
 
         {['pending', 'human_review'].includes(candidate.publication_decision) && canDecide && (
           <div className="mt-3 flex flex-wrap items-start gap-6">
-            {candidate.validation_status === 'pass' &&
-            candidate.ai_extraction_status === 'completed' ? (
+            {filing.expired ? (
+              <p className="max-w-sm text-sm text-deadline" role="status">
+                Approval blocked: the filing deadline has passed. Recheck the official notice
+                before reassessment.
+              </p>
+            ) : candidate.validation_status === 'pass' &&
+              candidate.ai_extraction_status === 'completed' ? (
               <ActionButton
                 action={approveCandidate.bind(null, candidate.id)}
                 label="Approve candidate"
@@ -173,7 +194,12 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
               Approved. Promotion creates a <strong>draft</strong> claimable for human review —
               AUTO_VERIFY_CLAIMABLES is off, so nothing is auto-verified or auto-published.
             </p>
-            {canDecide && (
+            {filing.expired ? (
+              <p className="mt-3 text-sm text-deadline" role="status">
+                Draft promotion blocked: the extracted filing deadline has passed. Verify any
+                extension and reassess the source before continuing.
+              </p>
+            ) : canDecide ? (
               <div className="mt-3">
                 <ActionButton
                   action={promoteCandidate.bind(null, candidate.id)}
@@ -183,7 +209,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
                   confirmMessage="Promotion creates a draft claimable pre-filled from this candidate's extracted fields. The draft still needs legal review and explicit publication approval before it is ever public."
                 />
               </div>
-            )}
+            ) : null}
           </div>
         )}
 

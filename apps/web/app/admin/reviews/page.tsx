@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
 import { isLegalClearanceCurrent } from '@/lib/editorial-publication-safety';
+import { candidateFilingStatus } from '@/lib/candidate-filing-status';
 import { requireRoles } from '@/lib/auth';
 import { EDITORIAL, EDITORIAL_AND_LEGAL } from '../_lib/roles';
 import { ErrorBanner, FilterChips, PageHeader, formatDateTime, statusVariant } from '../_lib/ui';
@@ -28,6 +29,7 @@ export default async function ReviewsPage({
     id: string;
     validation_status: string;
     ai_confidence: number | null;
+    ai_extracted_data: unknown;
     created_at: string;
     source_documents: { title: string | null } | null;
   }> = [];
@@ -53,7 +55,7 @@ export default async function ReviewsPage({
     if (queue === 'editorial' && isEditorial) {
       const { data, error: queryError } = await db
         .from('candidate_documents')
-        .select('id, validation_status, ai_confidence, created_at, source_documents!inner(title)')
+        .select('id, validation_status, ai_confidence, ai_extracted_data, created_at, source_documents!inner(title)')
         .in('publication_decision', ['pending', 'human_review'])
         .order('validation_status', { ascending: true })
         .order('created_at', { ascending: false })
@@ -132,6 +134,7 @@ export default async function ReviewsPage({
               <thead className="border-b border-border text-text-secondary">
                 <tr>
                   <th className="pb-2 pr-4 font-medium">Title</th>
+                  <th className="pb-2 pr-4 font-medium">Filing deadline</th>
                   <th className="pb-2 pr-4 font-medium">Validation</th>
                   <th className="pb-2 pr-4 font-medium">Confidence</th>
                   <th className="pb-2 pr-4 font-medium">Waiting Since</th>
@@ -147,6 +150,17 @@ export default async function ReviewsPage({
                       >
                         {c.source_documents?.title ?? 'Untitled'}
                       </Link>
+                    </td>
+                    <td className="py-2 pr-4">
+                      {candidateFilingStatus(c.ai_extracted_data).expired ? (
+                        <Badge variant="danger">
+                          Expired: {candidateFilingStatus(c.ai_extracted_data).deadline}
+                        </Badge>
+                      ) : (
+                        <span className="text-text-muted">
+                          {candidateFilingStatus(c.ai_extracted_data).deadline ?? 'Not stated'}
+                        </span>
+                      )}
                     </td>
                     <td className="py-2 pr-4">
                       <Badge variant={statusVariant(c.validation_status)}>
