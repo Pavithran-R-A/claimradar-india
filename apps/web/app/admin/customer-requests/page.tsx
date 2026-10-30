@@ -6,6 +6,26 @@ import { updateCustomerRequest } from './actions';
 
 export const dynamic = 'force-dynamic';
 
+type CorrectionItem = {
+  id: string;
+  target: string;
+  description: string;
+  status: string;
+  resolution: string | null;
+  created_at: string;
+};
+
+type GrievanceItem = {
+  id: string;
+  subject: string;
+  message: string;
+  contact_email: string;
+  status: string;
+  resolution: string | null;
+  created_at: string;
+};
+
+
 /** Only administrators can view raw support submissions containing personal details. */
 export default async function CustomerRequestsPage() {
   await requireRoles(ADMINS_ONLY);
@@ -22,6 +42,8 @@ export default async function CustomerRequestsPage() {
       .order('created_at', { ascending: false })
       .limit(100),
   ]);
+  const correctionItems = (corrections.data ?? []) as CorrectionItem[];
+  const grievanceItems = (grievances.data ?? []) as GrievanceItem[];
   const inputClass = 'w-full rounded border border-border bg-surface p-2 text-text-primary';
 
   return (
@@ -39,10 +61,10 @@ export default async function CustomerRequestsPage() {
         <div className="mt-6 space-y-8">
           <section>
             <h2 className="text-lg font-semibold text-text-primary">Account corrections</h2>
-            {(corrections.data ?? []).length === 0 && (
+            {correctionItems.length === 0 && (
               <p className="mt-2 text-text-muted">No account correction requests.</p>
             )}
-            {(corrections.data ?? []).map((item) => (
+            {correctionItems.map((item) => (
               <article key={item.id} className="mt-3 rounded-lg border border-border p-4">
                 <p className="font-semibold text-text-primary">{item.target}</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm text-text-secondary">
@@ -102,10 +124,10 @@ export default async function CustomerRequestsPage() {
           </section>
           <section>
             <h2 className="text-lg font-semibold text-text-primary">Grievances</h2>
-            {(grievances.data ?? []).length === 0 && (
+            {grievanceItems.length === 0 && (
               <p className="mt-2 text-text-muted">No grievances.</p>
             )}
-            {(grievances.data ?? []).map((item) => (
+            {grievanceItems.map((item) => (
               <article key={item.id} className="mt-3 rounded-lg border border-border p-4">
                 <p className="font-semibold text-text-primary">{item.subject}</p>
                 <p className="mt-1 whitespace-pre-wrap text-sm text-text-secondary">
