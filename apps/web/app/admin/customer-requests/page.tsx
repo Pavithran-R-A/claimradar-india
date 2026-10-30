@@ -25,7 +25,6 @@ type GrievanceItem = {
   created_at: string;
 };
 
-
 /** Only administrators can view raw support submissions containing personal details. */
 export default async function CustomerRequestsPage() {
   await requireRoles(ADMINS_ONLY);
@@ -124,9 +123,7 @@ export default async function CustomerRequestsPage() {
           </section>
           <section>
             <h2 className="text-lg font-semibold text-text-primary">Grievances</h2>
-            {grievanceItems.length === 0 && (
-              <p className="mt-2 text-text-muted">No grievances.</p>
-            )}
+            {grievanceItems.length === 0 && <p className="mt-2 text-text-muted">No grievances.</p>}
             {grievanceItems.map((item) => (
               <article key={item.id} className="mt-3 rounded-lg border border-border p-4">
                 <p className="font-semibold text-text-primary">{item.subject}</p>
