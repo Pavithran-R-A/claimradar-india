@@ -62,7 +62,7 @@ export function SettingsForm({
           />
           <span>
             <span className="block font-medium text-text-primary">Email</span>
-            Match alerts and deadline reminders to your account email.
+            Email preference for future delivery; automatic messages are currently off.
           </span>
         </label>
         <label className={checkboxClass}>
@@ -74,7 +74,7 @@ export function SettingsForm({
           />
           <span>
             <span className="block font-medium text-text-primary">In-app</span>
-            Show updates in your notifications inbox.
+            In-app preference for future delivery; automatic updates are currently off.
           </span>
         </label>
         <label className={checkboxClass}>

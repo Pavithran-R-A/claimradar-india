@@ -19,7 +19,8 @@ export default async function NotificationsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">Notifications</h1>
           <p className="mt-1 text-sm text-text-secondary">
-            Match alerts, deadline reminders and account updates.
+            Existing account updates appear here. Automatic match alerts and deadline reminders are
+            currently disabled.
           </p>
         </div>
         <a
@@ -41,7 +42,7 @@ export default async function NotificationsPage() {
           <EmptyState
             icon={<Bell className="h-8 w-8" aria-hidden />}
             title="No notifications yet"
-            description="When something matches your profile or a deadline approaches, you will hear about it here."
+            description="There are no notifications to show. Automatic match alerts and deadline reminders are not currently sent."
           />
         </Card>
       ) : (

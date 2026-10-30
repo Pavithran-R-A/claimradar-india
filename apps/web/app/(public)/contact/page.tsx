@@ -29,8 +29,12 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          Direct email support is not currently offered. For a specific refund, claim or filing,
-          contact the official authority shown on that opportunity page.
+          Email support is not available. For problems with ClaimKhoj, sign in and use the{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>{' '}
+          to submit a grievance and track its status. For official claim filing questions, contact
+          the responsible authority.
         </p>
       )}
       <p>
@@ -50,9 +54,12 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          A dedicated corrections inbox is not currently configured. Use the public Corrections page
-          to understand our verification, correction and retraction process and retain the
-          official-source URL that supports your report.
+          A corrections email inbox is not configured. Signed-in customers can submit a recorded
+          correction request using the{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>
+          . An account is required; no automatic email reply is promised.
         </p>
       )}
       <p>
@@ -79,9 +86,13 @@ export default function ContactPage() {
         </p>
       ) : (
         <p className="text-text-secondary italic">
-          A dedicated grievance email is not currently configured. Claim-specific grievances must be
-          directed to the official authority or organisation responsible for the underlying notice
-          or scheme.
+          A grievance email inbox is not configured. Signed-in customers can submit a grievance in
+          the{' '}
+          <Link href="/app/privacy" className="text-trust-primary underline">
+            Privacy Center
+          </Link>{' '}
+          and track its status there. For a filing dispute, contact the responsible official
+          authority.
         </p>
       )}
 
