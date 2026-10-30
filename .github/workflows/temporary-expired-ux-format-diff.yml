@@ -1,0 +1,21 @@
+name: Temporary editorial formatting diagnostic
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Show exact formatting edits
+        run: |
+          pnpm exec prettier --write 'apps/web/app/admin/candidates/[id]/page.tsx' apps/web/app/admin/reviews/page.tsx apps/web/tests/unit/candidate-filing-status.test.ts
+          git diff -- 'apps/web/app/admin/candidates/[id]/page.tsx' apps/web/app/admin/reviews/page.tsx apps/web/tests/unit/candidate-filing-status.test.ts
