@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
+import { candidateFilingStatus } from '@/lib/candidate-filing-status';
 import { requireRoles } from '@/lib/auth';
 import { ErrorBanner, FilterChips, PageHeader, statusVariant } from '../_lib/ui';
 import { ALL_STAFF } from '../_lib/roles';
@@ -47,6 +48,7 @@ export default async function CandidatesPage({
     keyword_score: number;
     ai_extraction_status: string;
     ai_confidence: number | null;
+    ai_extracted_data: unknown;
     validation_status: string;
     publication_decision: string;
     source_document_id: string;
@@ -61,7 +63,7 @@ export default async function CandidatesPage({
     let query = supabase
       .from('candidate_documents')
       .select(
-        'id, keyword_score, ai_extraction_status, ai_confidence, validation_status, publication_decision, source_document_id, source_documents!inner(title, canonical_url)',
+        'id, keyword_score, ai_extraction_status, ai_confidence, ai_extracted_data, validation_status, publication_decision, source_document_id, source_documents!inner(title, canonical_url)',
         { count: 'exact' },
       )
       .order('created_at', { ascending: false })
@@ -142,6 +144,7 @@ export default async function CandidatesPage({
                 <th className="pb-2 pr-4 font-medium">Keyword Score</th>
                 <th className="pb-2 pr-4 font-medium">AI Status</th>
                 <th className="pb-2 pr-4 font-medium">Confidence</th>
+                <th className="pb-2 pr-4 font-medium">Filing deadline</th>
                 <th className="pb-2 pr-4 font-medium">Validation</th>
                 <th className="pb-2 pr-4 font-medium">Decision</th>
               </tr>
@@ -167,6 +170,17 @@ export default async function CandidatesPage({
                     </Badge>
                   </td>
                   <td className="py-2 pr-4">{cand.ai_confidence?.toFixed(2) ?? '—'}</td>
+                  <td className="py-2 pr-4">
+                    {candidateFilingStatus(cand.ai_extracted_data).expired ? (
+                      <Badge variant="danger">
+                        Expired: {candidateFilingStatus(cand.ai_extracted_data).deadline}
+                      </Badge>
+                    ) : (
+                      <span className="text-text-muted">
+                        {candidateFilingStatus(cand.ai_extracted_data).deadline ?? 'Not stated'}
+                      </span>
+                    )}
+                  </td>
                   <td className="py-2 pr-4">
                     <Badge variant={statusVariant(cand.validation_status)}>
                       {cand.validation_status}
