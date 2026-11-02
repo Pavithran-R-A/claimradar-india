@@ -242,6 +242,22 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     }
   });
 
+  it('keeps review and subscription policies aligned with current operations', () => {
+    const editorialPolicy = fs.readFileSync(
+      path.resolve(__dirname, '../app/(public)/editorial-policy/page.tsx'),
+      'utf8',
+    );
+    const terms = fs.readFileSync(
+      path.resolve(__dirname, '../app/(public)/terms/page.tsx'),
+      'utf8',
+    );
+
+    expect(editorialPolicy).not.toContain('within 24 hours of publication');
+    expect(editorialPolicy).toContain('before publication');
+    expect(terms).not.toContain('Subscriptions auto-renew');
+    expect(terms).toContain('Paid subscriptions and checkout are not currently available');
+  });
+
   it('ensures zero-inventory empty directory renders human consumer copy without (0) counts', () => {
     const pagePath = path.resolve(__dirname, '../app/(public)/page.tsx');
     const pageContent = fs.readFileSync(pagePath, 'utf8');

@@ -47,9 +47,9 @@ export default function TermsPage() {
 
       <h2>6. Billing and Subscriptions</h2>
       <p>
-        Certain features may require a paid subscription. Billing terms are described in our
-        Subscription Policy. You are responsible for ensuring accurate payment information.
-        Subscriptions auto-renew unless cancelled before the renewal date.
+        Paid subscriptions and checkout are not currently available. If paid plans are introduced,
+        their billing, renewal and cancellation terms will be disclosed before payment. The
+        Subscription Policy describes the current service.
       </p>
 
       <h2>7. Intellectual Property</h2>

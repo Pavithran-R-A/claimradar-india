@@ -44,7 +44,7 @@ export default function EditorialPolicyPage() {
         <li>The source document is from a verified Tier 1 URL</li>
         <li>All deterministic validation checks pass</li>
         <li>The Claimability Score exceeds 85</li>
-        <li>A human editor reviews the listing within 24 hours of publication</li>
+        <li>An authorized human editor reviews the listing before publication</li>
       </ul>
 
       <h2>Status Assignment</h2>

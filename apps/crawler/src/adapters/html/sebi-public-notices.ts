@@ -49,6 +49,37 @@ export function findOfficialSebiNoticePdf(html: string, pageUrl: string): string
   return null;
 }
 
+function parseSebiDateLabel(value: string): string | undefined {
+  const match = /^([A-Za-z]{3}) (\d{1,2}), (\d{4})$/.exec(value);
+  if (!match) return undefined;
+  const monthLabel = match[1];
+  if (!monthLabel) return undefined;
+
+  const month = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ].indexOf(monthLabel);
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  if (month < 0) return undefined;
+
+  const timestamp = Date.UTC(year, month, day);
+  const parsed = new Date(timestamp);
+  if (parsed.getUTCMonth() !== month || parsed.getUTCDate() !== day) return undefined;
+
+  return parsed.toISOString();
+}
+
 export class SebiPublicNoticesAdapter implements SourceAdapter {
   public readonly sourceKey: string;
   protected readonly source: SourceDefinition;
@@ -198,11 +229,8 @@ export class SebiPublicNoticesAdapter implements SourceAdapter {
       ? `${baseText}\n\nOfficial SEBI notice PDF: ${officialPdfUrl}\n${evidenceText}`
       : baseText;
     const dateLabel = cheerio.load(html)('.date_value h5').first().text().trim();
-    const labelDate = /^[A-Za-z]{3} \d{1,2}, \d{4}$/.test(dateLabel) ? new Date(dateLabel) : null;
-    const publishedAt =
-      document.publishedAt ??
-      extracted.dates[0] ??
-      (labelDate && !Number.isNaN(labelDate.getTime()) ? labelDate.toISOString() : undefined);
+    const labelDate = parseSebiDateLabel(dateLabel);
+    const publishedAt = document.publishedAt ?? extracted.dates[0] ?? labelDate;
 
     return {
       url: document.url,
