@@ -79,7 +79,7 @@ END; $$;
 REVOKE ALL ON FUNCTION public.toggle_source_with_audit(uuid, uuid) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.toggle_source_with_audit(uuid, uuid) TO service_role;
 REVOKE ALL ON FUNCTION public.submit_legal_review_with_audit(uuid, uuid, text, text, timestamptz) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.submit_legal_review_with_audit(uuid, uuid, text, text) TO service_role;
+GRANT EXECUTE ON FUNCTION public.submit_legal_review_with_audit(uuid, uuid, text, text, timestamptz) TO service_role;
 REVOKE ALL ON FUNCTION public.assign_review_with_audit(uuid, uuid, uuid, text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.assign_review_with_audit(uuid, uuid, uuid, text) TO service_role;
 REVOKE ALL ON FUNCTION public.complete_review_assignment_with_audit(uuid, uuid) FROM PUBLIC, anon, authenticated;

@@ -106,7 +106,20 @@ describe('atomic staff admin actions', () => {
     expect(sql).toContain('p_expected_updated_at timestamptz');
     expect(sql).toContain('FOR UPDATE');
     expect(sql).toContain('IS DISTINCT FROM p_expected_updated_at');
+    expect(sql).toContain(
+      'GRANT EXECUTE ON FUNCTION public.submit_legal_review_with_audit(uuid, uuid, text, text, timestamptz) TO service_role',
+    );
     expect((sql.match(/GRANT EXECUTE ON FUNCTION/g) ?? []).length).toBe(5);
     expect((sql.match(/FROM PUBLIC, anon, authenticated/g) ?? []).length).toBe(5);
+  });
+
+  it('submits the displayed claimable version for legal review', () => {
+    const page = readFileSync(
+      new URL('../../app/admin/claimables/[id]/page.tsx', import.meta.url),
+      'utf8',
+    );
+    expect(page).toContain(
+      '<input type="hidden" name="expected_updated_at" value={claimable.updated_at} />',
+    );
   });
 });
