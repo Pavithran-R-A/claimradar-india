@@ -10,9 +10,8 @@ describe('UI perfection contracts', () => {
     const source = read('app/(public)/page.tsx');
 
     expect(source).toContain('Find what&apos;s rightfully yours.');
-    expect(source).toContain('Official sources');
-    expect(source).toContain('Pan-India view');
-    expect(source).toContain('Your next step');
+    expect(source).toContain('We monitor official sources');
+    expect(source).toContain('Latest opportunities');
   });
 
   it('keeps the truthful empty directory editorial rather than card-heavy', () => {

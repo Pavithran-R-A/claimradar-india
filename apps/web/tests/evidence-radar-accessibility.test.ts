@@ -31,10 +31,8 @@ describe('Evidence Radar Visual Accessibility & Motion', () => {
   });
 
   it('keeps the moving radar visually meaningful without claiming live crawl state', () => {
-    expect(fileContent).toContain('Now highlighting');
-    expect(fileContent).toContain('Animated source overview');
     expect(fileContent).toContain('data-ui="radar-status"');
-    expect(fileContent).toContain('Visual scan, not live crawl status');
+    expect(fileContent).toContain('Illustrative scan. Listings are verified.');
   });
 
   it('provides an explicit pause and resume control for continuous scan motion', () => {

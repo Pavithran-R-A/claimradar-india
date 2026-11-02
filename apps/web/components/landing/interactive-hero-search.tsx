@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, Search, X } from 'lucide-react';
 import { Button } from '@claimradar/design-system';
 
-const SUGGESTIONS = ['unclaimed deposits', 'SEBI recovery', 'insolvency claim', 'telecom refund'];
-
 export function InteractiveHeroSearch() {
   const router = useRouter();
   const [query, setQuery] = React.useState('');
@@ -45,13 +43,8 @@ export function InteractiveHeroSearch() {
     }
   };
 
-  const handleLookup = (term: string) => {
-    setQuery(term);
-    router.push(`/claimables?search=${encodeURIComponent(term)}`);
-  };
-
   return (
-    <div className="w-full">
+    <div className="w-full" role="group" aria-label="Search ClaimKhoj opportunities">
       <form
         action="/claimables"
         method="get"
@@ -83,7 +76,7 @@ export function InteractiveHeroSearch() {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search refunds, claims, schemes or your situation"
+            placeholder="Search refunds and benefits"
             className="min-h-[48px] w-full rounded-[var(--public-radius-control)] border-0 bg-transparent py-3 pl-12 pr-12 text-base text-text-primary placeholder:text-text-muted focus:outline-none sm:text-[1.02rem] lg:rounded-r-none"
           />
           {query ? (
@@ -93,7 +86,7 @@ export function InteractiveHeroSearch() {
                 setQuery('');
                 inputRef.current?.focus();
               }}
-              className="search-clear-enter public-focus absolute right-2 inline-flex min-h-[36px] min-w-[36px] items-center justify-center rounded-full text-text-muted transition-colors duration-fast hover:bg-surface-strong hover:text-text-primary"
+              className="search-clear-enter public-focus absolute right-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-text-muted transition-colors duration-fast hover:bg-surface-strong hover:text-text-primary"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" aria-hidden="true" />
@@ -122,19 +115,6 @@ export function InteractiveHeroSearch() {
         </Button>
       </form>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-text-muted">
-        <span className="mr-1 text-text-secondary">Try</span>
-        {SUGGESTIONS.map((term) => (
-          <button
-            key={term}
-            type="button"
-            onClick={() => handleLookup(term)}
-            className="public-focus inline-flex min-h-[36px] items-center justify-center rounded-full border border-border bg-white px-3 text-text-secondary transition-colors duration-fast hover:border-trust-primary/25 hover:bg-surface-strong hover:text-trust-primary"
-          >
-            {term}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

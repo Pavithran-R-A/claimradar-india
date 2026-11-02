@@ -30,8 +30,8 @@ describe('truthful public copy contracts', () => {
     const search = read(heroSearchPath).replace(/\s+/g, ' ');
 
     expect(page).toContain('Find what&apos;s rightfully yours.');
-    expect(page).toContain('checks official sources for refunds, benefits, compensation');
-    expect(search).toContain('Search refunds, claims, schemes or your situation');
+    expect(page).toContain('Search official sources for refunds, benefits, and compensation.');
+    expect(search).toContain('Search refunds and benefits');
     expect(page).toContain('Latest opportunities');
 
     for (const unsupportedClaim of [

@@ -175,11 +175,10 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
 
     const normalized = content.replace(/\s+/g, ' ');
     expect(normalized).toContain('Official source scan');
-    expect(normalized).toContain('Published listings are source-verified.');
+    expect(normalized).toContain('Illustrative scan. Listings are verified.');
     expect(normalized).toContain('Monitored official sources');
     expect(normalized).toContain('Securities and Exchange Board of India');
     expect(normalized).toContain('Press Information Bureau');
-    expect(normalized).toContain('Visual scan, not live crawl status.');
     expect(normalized).toContain('Pause radar animation');
 
     // Prohibit tiny text and old AI jargon

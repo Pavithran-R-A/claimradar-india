@@ -51,10 +51,12 @@ export function EmptyDirectoryNotice({
   title = 'No notice has cleared publication review yet',
   body = `${brandConfig.siteName} publishes a listing only when its official source and next steps can be reviewed.`,
   showActions = true,
+  showProcess = true,
 }: {
   title?: string;
   body?: string;
   showActions?: boolean;
+  showProcess?: boolean;
 }) {
   return (
     <section className="rounded-md border border-border bg-surface p-6 sm:p-10 text-center max-w-3xl mx-auto">
@@ -66,7 +68,7 @@ export function EmptyDirectoryNotice({
       </p>
 
       {/* Discreet 4-Stage Verification Summary */}
-      <div className="mt-8 border-t border-border pt-6 text-left">
+      {showProcess && <div className="mt-8 border-t border-border pt-6 text-left">
         <span className="mb-3 block text-center text-xs font-semibold text-text-secondary sm:text-left">
           How a notice becomes a listing
         </span>
@@ -88,7 +90,7 @@ export function EmptyDirectoryNotice({
             </li>
           ))}
         </ol>
-      </div>
+      </div>}
 
       {showActions && (
         <div className="mt-6 pt-5 border-t border-border flex flex-wrap items-center justify-center gap-3">

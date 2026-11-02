@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ArrowRight,
-  BadgeCheck,
   BarChart3,
   Building2,
   FileText,
   Landmark,
   Radio,
 } from 'lucide-react';
-import { EvidenceFlowDiagram } from '@/components/landing/evidence-flow-diagram';
 import { EvidenceRadarVisual } from '@/components/landing/evidence-radar-visual';
 import { InteractiveHeroSearch } from '@/components/landing/interactive-hero-search';
 import { EmptyDirectoryNotice, DemoDataBanner } from '@/components/repository-states';
@@ -40,16 +38,6 @@ const SOURCE_MARKS = {
   TRAI: Radio,
   PIB: Building2,
 } as const;
-
-const JOURNEY = [
-  ['Discover', 'Find relevant records'],
-  ['Verify', 'Read the official source'],
-  ['Understand', 'See what may apply'],
-  ['Act', 'Follow the official route'],
-] as const;
-
-const JOURNEY_RAIL_PATH =
-  'M10 24 C55 11 90 14 125 14 C205 14 290 34 375 14 C455 2 545 36 625 14 C705 0 795 30 875 14 C925 14 965 20 990 26';
 
 function SourceIcon({ code }: { code: string }) {
   const Icon = SOURCE_MARKS[code as keyof typeof SOURCE_MARKS] ?? FileText;
@@ -90,10 +78,10 @@ export default async function LandingPage() {
   return (
     <div className="overflow-hidden bg-background">
       <section aria-labelledby="home-hero-heading" className="relative bg-white">
-        <div className="mx-auto max-w-[1760px] px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-7 lg:px-10 xl:pb-3 xl:pt-6 2xl:px-16">
+        <div className="mx-auto max-w-[1760px] px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-7 lg:px-10 xl:flex xl:min-h-[calc(100svh-4.5rem)] xl:flex-col xl:justify-center xl:pb-3 xl:pt-6 2xl:px-16">
           <div
             data-ui="hero-grid"
-            className="grid gap-8 xl:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)] xl:items-start xl:gap-8 2xl:gap-10"
+            className="grid gap-8 xl:grid-cols-[minmax(0,0.98fr)_minmax(0,1.02fr)] xl:items-center xl:gap-8 2xl:gap-10"
           >
             <div className="max-w-[900px] xl:pt-2">
               <span aria-hidden="true" className="block h-1.5 w-9 rounded-full bg-gold-bright" />
@@ -104,136 +92,19 @@ export default async function LandingPage() {
                 Find what&apos;s rightfully yours.
               </h1>
               <p className="enter-seq-2 mt-3 max-w-[820px] text-[1.03rem] leading-7 text-text-secondary sm:text-[1.1rem] 2xl:text-[1.14rem]">
-                {brandConfig.siteName} checks official sources for refunds, benefits, compensation,
-                and claim opportunities, so you can find what may apply to you.
+                Search official sources for refunds, benefits, and compensation.
               </p>
 
               <div className="enter-seq-3 mt-5 max-w-[850px]">
                 <InteractiveHeroSearch />
               </div>
 
-              <div className="enter-seq-4 mt-5 grid max-w-[850px] gap-4 border-t border-border pt-4 sm:grid-cols-3 sm:gap-5">
-                <div className="flex gap-3">
-                  <BadgeCheck
-                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
-                    aria-hidden="true"
-                  />
-                  <p className="text-sm leading-5 text-text-secondary">
-                    <strong className="text-text-primary">Official sources</strong>
-                    <br />
-                    Direct links to the record.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Landmark
-                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
-                    aria-hidden="true"
-                  />
-                  <p className="text-sm leading-5 text-text-secondary">
-                    <strong className="text-text-primary">Pan-India view</strong>
-                    <br />
-                    Public sources across India.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Building2
-                    className="mt-0.5 h-5 w-5 shrink-0 text-brand-bright"
-                    aria-hidden="true"
-                  />
-                  <p className="text-sm leading-5 text-text-secondary">
-                    <strong className="text-text-primary">Your next step</strong>
-                    <br />
-                    You act on the official portal.
-                  </p>
-                </div>
-              </div>
             </div>
 
             <div className="enter-seq-5 relative xl:pt-8">
-              <div
-                data-ui="hero-annotation"
-                className="pointer-events-none absolute right-3 top-0 hidden items-end gap-2 xl:flex 2xl:right-8"
-                aria-hidden="true"
-              >
-                <p className="max-w-[10rem] text-right font-display text-base italic leading-tight text-trust-primary/70">
-                  Scanning official sources for you
-                </p>
-                <svg viewBox="0 0 72 44" className="h-10 w-16 text-trust-primary/50">
-                  <path
-                    d="M4 6 C38 5 58 14 54 34"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeDasharray="4 4"
-                  />
-                  <path
-                    d="m49 29 5 6 6-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
               <EvidenceRadarVisual />
             </div>
           </div>
-
-          <div
-            data-ui="journey-notes"
-            aria-hidden="true"
-            className="mt-3 hidden min-h-5 items-center justify-between gap-8 px-1 xl:flex"
-          >
-            <p className="max-w-[13rem] font-display text-sm italic leading-tight text-trust-primary/65">
-              From official records to your next step
-            </p>
-            <p className="max-w-[15rem] text-right font-display text-sm italic leading-tight text-trust-primary/65">
-              Better information. Fairer outcomes.
-            </p>
-          </div>
-
-          <ol
-            data-ui="claim-journey"
-            aria-label="ClaimKhoj discovery journey"
-            className="journey-rail relative mt-1 grid gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:border-t-0 lg:pt-3"
-          >
-            <svg
-              viewBox="0 0 1000 70"
-              preserveAspectRatio="none"
-              className="pointer-events-none absolute left-0 top-11 hidden h-10 w-full lg:block"
-              aria-hidden="true"
-            >
-              <path
-                data-ui="journey-rail-path"
-                d={JOURNEY_RAIL_PATH}
-                fill="none"
-                stroke="#5D94BC"
-                strokeWidth="1.4"
-                strokeDasharray="5 6"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-            {JOURNEY.map(([label, description], index) => (
-              <li
-                key={label}
-                className="group relative z-10 flex items-center gap-3 rounded-xl px-2 py-3 lg:flex-col lg:gap-1.5 lg:px-4 lg:py-0 lg:text-center"
-              >
-                <span className="order-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/45 bg-deadline-background text-xs font-extrabold text-trust-primary shadow-sm lg:h-3 lg:w-3 lg:text-[0px]">
-                  {index + 1}
-                </span>
-                <span className="order-1 lg:min-h-7">
-                  <span className="block text-xs font-semibold text-trust-primary">{label}</span>
-                  <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">
-                    {description}
-                  </span>
-                </span>
-                <span className="order-3 hidden max-w-[11rem] text-[0.72rem] leading-4 text-text-muted lg:block">
-                  {description}
-                </span>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 
@@ -248,7 +119,7 @@ export default async function LandingPage() {
         className="border-y border-border bg-surface-strong/55"
         aria-labelledby="sources-strip-heading"
       >
-        <div className="mx-auto max-w-[1760px] px-4 py-4 sm:px-6 lg:px-10 2xl:px-16">
+        <div className="mx-auto max-w-[1760px] px-4 py-16 sm:px-6 lg:px-10 2xl:px-16">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
             <div className="shrink-0 lg:w-64">
               <p
@@ -256,9 +127,6 @@ export default async function LandingPage() {
                 className="font-display text-lg font-bold text-trust-primary"
               >
                 We monitor official sources
-              </p>
-              <p className="mt-1 text-xs leading-5 text-text-secondary">
-                Public source families linked directly to official domains.
               </p>
             </div>
 
@@ -277,9 +145,6 @@ export default async function LandingPage() {
                       <strong className="block text-sm text-text-primary">
                         {source.shortName}
                       </strong>
-                      <span className="block truncate text-xs leading-4 text-text-muted">
-                        Source details
-                      </span>
                     </span>
                   </Link>
                 );
@@ -302,16 +167,14 @@ export default async function LandingPage() {
 
       <Reveal
         as="section"
-        className="mx-auto max-w-[1760px] px-4 py-7 sm:px-6 lg:px-10 lg:py-8 2xl:px-16"
+        className="mx-auto max-w-[1760px] px-4 py-16 sm:px-6 lg:px-10 2xl:px-16"
         aria-labelledby="latest-opportunities-heading"
       >
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] lg:gap-10 2xl:gap-12">
-          <div>
+        <div>
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
                 id="latest-opportunities-heading"
                 title="Latest opportunities"
-                description="Recent records from official source families, with direct routes back to the source."
               />
               <Link
                 href="/claimables"
@@ -355,35 +218,15 @@ export default async function LandingPage() {
               </div>
             ) : (
               <div className="pt-4">
-                <EmptyDirectoryNotice showActions={false} />
+                <EmptyDirectoryNotice
+                  title="No opportunities yet"
+                  body="Listings appear after editorial review."
+                  showActions={false}
+                  showProcess={false}
+                />
               </div>
             )}
           </div>
-
-          <div
-            className="border-border lg:border-l lg:pl-10"
-            aria-labelledby="how-it-works-heading"
-          >
-            <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-end sm:justify-between">
-              <SectionHeading
-                id="how-it-works-heading"
-                title={`How ${brandConfig.siteName} works`}
-                description="A simple, transparent path from your search to the next official step."
-              />
-              <Link
-                href="/how-it-works"
-                className="public-focus group inline-flex min-h-[40px] shrink-0 items-center gap-1 rounded-md px-1 text-sm font-semibold text-trust-primary hover:underline"
-              >
-                Learn more
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-fast group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </Link>
-            </div>
-            <EvidenceFlowDiagram />
-          </div>
-        </div>
       </Reveal>
     </div>
   );

@@ -18,7 +18,6 @@ interface AuthorityNode {
   code: string;
   name: string;
   domain: string;
-  shortDomain: string;
   cx: number;
   cy: number;
   labelX: number;
@@ -37,7 +36,6 @@ const MONITORED_NODES: AuthorityNode[] = [
     code: 'SEBI',
     name: 'Securities and Exchange Board of India',
     domain: 'Investor Recovery & Refunds',
-    shortDomain: 'Investor Recovery',
     cx: 118,
     cy: 330,
     labelX: 86,
@@ -53,15 +51,14 @@ const MONITORED_NODES: AuthorityNode[] = [
   {
     code: 'RBI',
     name: 'Reserve Bank of India',
-    domain: 'Unclaimed Deposits & Banking Relief',
-    shortDomain: 'Unclaimed Deposits',
+    domain: 'Unclaimed deposits',
     cx: 128,
     cy: 166,
     labelX: 96,
     labelY: 160,
     textAnchor: 'end',
-    description: 'Unclaimed deposits, banking ombudsman schemes, and depositor relief circulars.',
-    monitoringType: 'Official Circulars & Press Releases',
+    description: 'Find official bank notices.',
+    monitoringType: 'Official circulars',
     delaySec: 1.1,
     accent: '#F5B940',
     pale: '#FFF7DD',
@@ -71,7 +68,6 @@ const MONITORED_NODES: AuthorityNode[] = [
     code: 'IBBI',
     name: 'Insolvency & Bankruptcy Board of India',
     domain: 'Corporate Insolvency Claims',
-    shortDomain: 'Creditor Claims',
     cx: 398,
     cy: 166,
     labelX: 430,
@@ -88,7 +84,6 @@ const MONITORED_NODES: AuthorityNode[] = [
     code: 'TRAI',
     name: 'Telecom Regulatory Authority of India',
     domain: 'Telecom Consumer Relief',
-    shortDomain: 'Consumer Relief',
     cx: 402,
     cy: 334,
     labelX: 434,
@@ -105,7 +100,6 @@ const MONITORED_NODES: AuthorityNode[] = [
     code: 'PIB',
     name: 'Press Information Bureau',
     domain: 'Union Ministry Notices',
-    shortDomain: 'Union Notices',
     cx: 260,
     cy: 82,
     labelX: 260,
@@ -139,7 +133,7 @@ function SourceSpotlight({
   return (
     <div
       data-ui="radar-status"
-      role="region"
+      role="group"
       aria-live="off"
       aria-label={`${node.code} source highlight`}
       className={cn(
@@ -155,18 +149,15 @@ function SourceSpotlight({
           <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-text-secondary">Now highlighting</p>
           <p className="mt-0.5 font-display text-lg font-bold leading-tight text-trust-primary">
             {node.code}
           </p>
-          <p className="mt-0.5 truncate text-xs text-text-muted">{node.name}</p>
         </div>
       </div>
 
       <h3 className="mt-4 font-display text-lg font-bold leading-tight text-trust-primary">
         {node.domain}
       </h3>
-      <p className="mt-2 text-sm leading-6 text-text-secondary">{node.description}</p>
 
       <div
         className="mt-4 h-1.5 overflow-hidden rounded-full bg-background-elevated"
@@ -181,14 +172,13 @@ function SourceSpotlight({
         />
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <span className="text-xs leading-4 text-text-muted">Animated source overview</span>
+      <div className="mt-2 flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={onToggleRadar}
           aria-pressed={!radarRunning}
           aria-label={radarRunning ? 'Pause radar animation' : 'Resume radar animation'}
-          className="public-focus inline-flex min-h-[32px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-trust-primary transition-colors hover:bg-surface-strong"
+          className="public-focus inline-flex min-h-[44px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-trust-primary transition-colors hover:bg-surface-strong"
         >
           {radarRunning ? (
             <Pause className="h-3 w-3" aria-hidden="true" />
@@ -199,10 +189,9 @@ function SourceSpotlight({
         </button>
       </div>
 
-      <p className="mt-0.5 truncate text-xs leading-4 text-text-secondary">{node.monitoringType}</p>
       <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-xs leading-4 text-text-muted">
         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-trust-primary" aria-hidden="true" />
-        <span>Visual scan, not live crawl status. Published listings are source-verified.</span>
+        <span>Illustrative scan. Listings are verified.</span>
       </div>
     </div>
   );
@@ -410,14 +399,6 @@ function RadarCanvas({
                 style={{ fill: isSelected ? node.accent : 'rgb(var(--c-trust-primary))' }}
               >
                 {node.code}
-              </text>
-              <text
-                x={node.labelX}
-                y={node.labelY + 15}
-                textAnchor={node.textAnchor}
-                className="select-none fill-text-muted font-sans text-[8.5px] font-medium"
-              >
-                {node.shortDomain}
               </text>
             </g>
           );
