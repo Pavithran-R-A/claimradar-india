@@ -129,7 +129,9 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">Source Breakdown</h2>
         {sourcesError ? (
-          <p role="alert" className="mt-2 text-sm text-danger">{sourcesError}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {sourcesError}
+          </p>
         ) : sources.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No source data available.</p>
         ) : (
@@ -170,10 +172,13 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       {/* Errors */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">
-          Errors <span className="text-text-muted">({errorsError ? 'unavailable' : errors.length})</span>
+          Errors{' '}
+          <span className="text-text-muted">({errorsError ? 'unavailable' : errors.length})</span>
         </h2>
         {errorsError ? (
-          <p role="alert" className="mt-2 text-sm text-danger">{errorsError}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {errorsError}
+          </p>
         ) : errors.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No errors recorded.</p>
         ) : (
@@ -201,10 +206,15 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       {/* Candidates */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">
-          Candidates <span className="text-text-muted">({candidatesError ? 'unavailable' : candidates.length})</span>
+          Candidates{' '}
+          <span className="text-text-muted">
+            ({candidatesError ? 'unavailable' : candidates.length})
+          </span>
         </h2>
         {candidatesError ? (
-          <p role="alert" className="mt-2 text-sm text-danger">{candidatesError}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {candidatesError}
+          </p>
         ) : candidates.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No candidates created.</p>
         ) : (

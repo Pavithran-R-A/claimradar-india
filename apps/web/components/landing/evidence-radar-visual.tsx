@@ -155,9 +155,7 @@ function SourceSpotlight({
           <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-text-secondary">
-            Now highlighting
-          </p>
+          <p className="text-xs font-semibold text-text-secondary">Now highlighting</p>
           <p className="mt-0.5 font-display text-lg font-bold leading-tight text-trust-primary">
             {node.code}
           </p>
@@ -170,7 +168,10 @@ function SourceSpotlight({
       </h3>
       <p className="mt-2 text-sm leading-6 text-text-secondary">{node.description}</p>
 
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-background-elevated" aria-hidden="true">
+      <div
+        className="mt-4 h-1.5 overflow-hidden rounded-full bg-background-elevated"
+        aria-hidden="true"
+      >
         <span
           key={`${node.code}-${radarRunning ? 'running' : 'paused'}`}
           className={cn(
@@ -198,9 +199,7 @@ function SourceSpotlight({
         </button>
       </div>
 
-      <p className="mt-0.5 truncate text-xs leading-4 text-text-secondary">
-        {node.monitoringType}
-      </p>
+      <p className="mt-0.5 truncate text-xs leading-4 text-text-secondary">{node.monitoringType}</p>
       <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-xs leading-4 text-text-muted">
         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-trust-primary" aria-hidden="true" />
         <span>Visual scan, not live crawl status. Published listings are source-verified.</span>
@@ -457,9 +456,7 @@ function RadarCanvas({
       >
         <BrandMark size={34} variant="light" />
         <span className="mt-1 font-display text-sm font-bold text-trust-primary">ClaimKhoj</span>
-        <span className="mt-0.5 max-w-[82px] text-xs text-text-muted">
-          Official source scan
-        </span>
+        <span className="mt-0.5 max-w-[82px] text-xs text-text-muted">Official source scan</span>
       </div>
     </div>
   );

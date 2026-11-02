@@ -310,7 +310,10 @@ export function mapClaimableRow(row: ClaimableRow, now: Date = new Date()): Publ
 /** Indian states + union territories recognised by the /states directory. */
 export const INDIAN_STATES: { name: string; slug: string }[] = INDIAN_STATE_NAMES.map((name) => ({
   name,
-  slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+  slug: name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, ''),
 }));
 function stateMatches(state: { name: string }, item: PublishedClaimable): boolean {
   const haystack = `${item.geographicScope ?? ''} ${item.jurisdiction ?? ''}`.toLowerCase();

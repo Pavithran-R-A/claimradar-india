@@ -94,124 +94,135 @@ export default async function AlertsPage() {
 
       {/* Failing sources */}
       <Card className="mt-6">
-            <h2 className="text-sm font-semibold text-text-secondary">
-              Sources With Failures{' '}
-              <span className="text-text-muted">({queryErrors.sources ? 'unavailable' : failingSources.length})</span>
-            </h2>
-            {queryErrors.sources ? (
-              <div className="mt-2"><ErrorBanner message={queryErrors.sources} /></div>
-            ) : failingSources.length === 0 ? (
-              <p className="mt-2 text-sm text-text-muted">
-                No sources currently reporting failures.
-              </p>
-            ) : (
-              <ul className="mt-3 space-y-2">
-                {failingSources.map((s) => (
-                  <li
-                    key={s.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-background p-3"
+        <h2 className="text-sm font-semibold text-text-secondary">
+          Sources With Failures{' '}
+          <span className="text-text-muted">
+            ({queryErrors.sources ? 'unavailable' : failingSources.length})
+          </span>
+        </h2>
+        {queryErrors.sources ? (
+          <div className="mt-2">
+            <ErrorBanner message={queryErrors.sources} />
+          </div>
+        ) : failingSources.length === 0 ? (
+          <p className="mt-2 text-sm text-text-muted">No sources currently reporting failures.</p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {failingSources.map((s) => (
+              <li
+                key={s.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-background p-3"
+              >
+                <div className="flex items-center gap-2">
+                  <Badge variant="danger">{s.failure_count} failures</Badge>
+                  <Link
+                    href={`/admin/sources/${s.id}`}
+                    className="text-sm font-medium text-trust-primary hover:underline"
                   >
-                    <div className="flex items-center gap-2">
-                      <Badge variant="danger">{s.failure_count} failures</Badge>
-                      <Link
-                        href={`/admin/sources/${s.id}`}
-                        className="text-sm font-medium text-trust-primary hover:underline"
-                      >
-                        {s.name}
-                      </Link>
-                    </div>
-                    <span className="text-xs text-text-muted">
-                      Last run: {formatDateTime(s.last_run_at)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+                    {s.name}
+                  </Link>
+                </div>
+                <span className="text-xs text-text-muted">
+                  Last run: {formatDateTime(s.last_run_at)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
 
-          {/* Error aggregates */}
+      {/* Error aggregates */}
       <Card className="mt-6">
-            <h2 className="text-sm font-semibold text-text-secondary">
-              Crawl Errors by Type{' '}
-              <span className="text-text-muted">({queryErrors.crawlErrors ? 'unavailable' : `last ${recentErrors.length}`})</span>
-            </h2>
-            {queryErrors.crawlErrors ? (
-              <div className="mt-2"><ErrorBanner message={queryErrors.crawlErrors} /></div>
-            ) : errorsByType.length === 0 ? (
-              <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
-            ) : (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {errorsByType.map((e) => (
-                  <span
-                    key={e.type}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary"
-                  >
-                    <span className="font-semibold text-danger">{e.count}</span> {e.type}
-                  </span>
-                ))}
-              </div>
-            )}
+        <h2 className="text-sm font-semibold text-text-secondary">
+          Crawl Errors by Type{' '}
+          <span className="text-text-muted">
+            ({queryErrors.crawlErrors ? 'unavailable' : `last ${recentErrors.length}`})
+          </span>
+        </h2>
+        {queryErrors.crawlErrors ? (
+          <div className="mt-2">
+            <ErrorBanner message={queryErrors.crawlErrors} />
+          </div>
+        ) : errorsByType.length === 0 ? (
+          <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {errorsByType.map((e) => (
+              <span
+                key={e.type}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-secondary"
+              >
+                <span className="font-semibold text-danger">{e.count}</span> {e.type}
+              </span>
+            ))}
+          </div>
+        )}
       </Card>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Health events */}
-            <Card>
-              <h2 className="text-sm font-semibold text-text-secondary">
-                Recent Health Events{' '}
-                <span className="text-text-muted">({queryErrors.health ? 'unavailable' : healthEvents.length})</span>
-              </h2>
-              {queryErrors.health ? (
-                <div className="mt-2"><ErrorBanner message={queryErrors.health} /></div>
-              ) : healthEvents.length === 0 ? (
-                <p className="mt-2 text-sm text-text-muted">No health events recorded.</p>
-              ) : (
-                <ul className="mt-3 space-y-2">
-                  {healthEvents.map((h) => (
-                    <li key={h.id} className="rounded-md border border-border bg-background p-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant={statusVariant(h.status)}>{h.status}</Badge>
-                        <span className="text-sm font-medium text-text-primary">
-                          {h.sources?.name ?? h.source_id.slice(0, 8)}
-                        </span>
-                        <span className="text-xs text-text-secondary">{h.check_type}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-text-muted">{formatDateTime(h.checked_at)}</p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Card>
+        {/* Health events */}
+        <Card>
+          <h2 className="text-sm font-semibold text-text-secondary">
+            Recent Health Events{' '}
+            <span className="text-text-muted">
+              ({queryErrors.health ? 'unavailable' : healthEvents.length})
+            </span>
+          </h2>
+          {queryErrors.health ? (
+            <div className="mt-2">
+              <ErrorBanner message={queryErrors.health} />
+            </div>
+          ) : healthEvents.length === 0 ? (
+            <p className="mt-2 text-sm text-text-muted">No health events recorded.</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {healthEvents.map((h) => (
+                <li key={h.id} className="rounded-md border border-border bg-background p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={statusVariant(h.status)}>{h.status}</Badge>
+                    <span className="text-sm font-medium text-text-primary">
+                      {h.sources?.name ?? h.source_id.slice(0, 8)}
+                    </span>
+                    <span className="text-xs text-text-secondary">{h.check_type}</span>
+                  </div>
+                  <p className="mt-1 text-xs text-text-muted">{formatDateTime(h.checked_at)}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
 
-            {/* Recent crawl errors */}
-            <Card>
-              <h2 className="text-sm font-semibold text-text-secondary">
-                Recent Crawl Errors <span className="text-text-muted">({queryErrors.crawlErrors ? 'unavailable' : recentErrors.length})</span>
-              </h2>
-              {queryErrors.crawlErrors ? (
-                <div className="mt-2"><ErrorBanner message={queryErrors.crawlErrors} /></div>
-              ) : recentErrors.length === 0 ? (
-                <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
-              ) : (
-                <ul className="mt-3 space-y-2">
-                  {recentErrors.slice(0, 20).map((e) => (
-                    <li key={e.id} className="rounded-md border border-border bg-background p-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="danger">{e.error_type}</Badge>
-                        <span className="text-xs text-text-secondary">
-                          {e.sources?.name ?? 'unknown source'}
-                        </span>
-                      </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-text-secondary">
-                        {e.error_message}
-                      </p>
-                      <p className="mt-1 text-xs text-text-muted">
-                        {formatDateTime(e.occurred_at)}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Card>
+        {/* Recent crawl errors */}
+        <Card>
+          <h2 className="text-sm font-semibold text-text-secondary">
+            Recent Crawl Errors{' '}
+            <span className="text-text-muted">
+              ({queryErrors.crawlErrors ? 'unavailable' : recentErrors.length})
+            </span>
+          </h2>
+          {queryErrors.crawlErrors ? (
+            <div className="mt-2">
+              <ErrorBanner message={queryErrors.crawlErrors} />
+            </div>
+          ) : recentErrors.length === 0 ? (
+            <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {recentErrors.slice(0, 20).map((e) => (
+                <li key={e.id} className="rounded-md border border-border bg-background p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="danger">{e.error_type}</Badge>
+                    <span className="text-xs text-text-secondary">
+                      {e.sources?.name ?? 'unknown source'}
+                    </span>
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-xs text-text-secondary">{e.error_message}</p>
+                  <p className="mt-1 text-xs text-text-muted">{formatDateTime(e.occurred_at)}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       </div>
     </div>
   );

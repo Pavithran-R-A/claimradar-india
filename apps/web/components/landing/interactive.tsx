@@ -129,7 +129,9 @@ function DemoClaimCard({
         </span>
       </div>
       <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
-        <span className={cn(urgent && 'text-deadline')}><Timer aria-hidden="true" className="mr-1 inline h-3.5 w-3.5" /> {deadline}</span>
+        <span className={cn(urgent && 'text-deadline')}>
+          <Timer aria-hidden="true" className="mr-1 inline h-3.5 w-3.5" /> {deadline}
+        </span>
         <span className="inline-flex items-center gap-1">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />
           Verified source

@@ -49,7 +49,8 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
           <>
             <h1 className="mb-2 text-xl font-semibold text-text-primary">Check your email</h1>
             <p className="text-sm text-text-secondary">
-              If you just registered, a verification message may be on its way. Check your inbox and spam folder.
+              If you just registered, a verification message may be on its way. Check your inbox and
+              spam folder.
             </p>
           </>
         )}

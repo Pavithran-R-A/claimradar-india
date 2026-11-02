@@ -159,23 +159,41 @@ export default async function CorrectionsPage({
                 >
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor={`correction-decision-${c.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label
+                        htmlFor={`correction-decision-${c.id}`}
+                        className="mb-1.5 block text-sm font-medium text-text-secondary"
+                      >
                         Decision
                       </label>
-                      <select id={`correction-decision-${c.id}`} name="decision" required className={inputCls}>
+                      <select
+                        id={`correction-decision-${c.id}`}
+                        name="decision"
+                        required
+                        className={inputCls}
+                      >
                         <option value="accepted">Accept request for follow-up</option>
                         <option value="rejected">Reject correction</option>
                       </select>
                     </div>
                     <div>
-                      <label htmlFor={`correction-resolution-${c.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label
+                        htmlFor={`correction-resolution-${c.id}`}
+                        className="mb-1.5 block text-sm font-medium text-text-secondary"
+                      >
                         Resolution note
                       </label>
-                      <input id={`correction-resolution-${c.id}`} name="resolution" required minLength={3} className={inputCls} />
+                      <input
+                        id={`correction-resolution-${c.id}`}
+                        name="resolution"
+                        required
+                        minLength={3}
+                        className={inputCls}
+                      />
                     </div>
                   </div>
                   <p className="text-xs text-text-muted">
-                    Acceptance records this request only. Verify and update claimable content separately.
+                    Acceptance records this request only. Verify and update claimable content
+                    separately.
                   </p>
                 </ActionForm>
               )}
@@ -226,19 +244,36 @@ export default async function CorrectionsPage({
                 >
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor={`takedown-decision-${t.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label
+                        htmlFor={`takedown-decision-${t.id}`}
+                        className="mb-1.5 block text-sm font-medium text-text-secondary"
+                      >
                         Decision
                       </label>
-                      <select id={`takedown-decision-${t.id}`} name="decision" required className={inputCls}>
+                      <select
+                        id={`takedown-decision-${t.id}`}
+                        name="decision"
+                        required
+                        className={inputCls}
+                      >
                         <option value="granted">Grant: archive claimable</option>
                         <option value="rejected">Reject takedown</option>
                       </select>
                     </div>
                     <div>
-                      <label htmlFor={`takedown-resolution-${t.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label
+                        htmlFor={`takedown-resolution-${t.id}`}
+                        className="mb-1.5 block text-sm font-medium text-text-secondary"
+                      >
                         Resolution note
                       </label>
-                      <input id={`takedown-resolution-${t.id}`} name="resolution" required minLength={3} className={inputCls} />
+                      <input
+                        id={`takedown-resolution-${t.id}`}
+                        name="resolution"
+                        required
+                        minLength={3}
+                        className={inputCls}
+                      />
                     </div>
                   </div>
                   <label className="flex items-start gap-2 text-xs text-text-secondary">

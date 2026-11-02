@@ -46,9 +46,7 @@ export function Footer() {
             <p className="font-display text-sm italic text-trust-primary/80">
               Better information. Fairer outcomes.
             </p>
-            <p className="mt-0.5 text-xs text-text-muted">
-              Independent public information service
-            </p>
+            <p className="mt-0.5 text-xs text-text-muted">Independent public information service</p>
           </div>
         </div>
 

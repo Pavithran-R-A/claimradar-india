@@ -86,9 +86,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="text-sm font-extrabold text-text-primary">
                 {brandConfig.shortName}
               </span>
-              <span className="text-xs font-semibold text-trust-primary">
-                Operations Desk
-              </span>
+              <span className="text-xs font-semibold text-trust-primary">Operations Desk</span>
             </div>
           </Link>
           {role && (
@@ -106,9 +104,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </Link>
             {visibleGroups.map((group) => (
               <div key={group.heading}>
-                <p className="px-3 pb-1 text-xs font-medium text-text-muted">
-                  {group.heading}
-                </p>
+                <p className="px-3 pb-1 text-xs font-medium text-text-muted">{group.heading}</p>
                 <div className="space-y-1">
                   {group.items.map((item) => (
                     <Link key={item.href} href={item.href} className={navLinkClass}>

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useActionState, type ReactNode } from "react";
-import type { CustomerRequestActionState } from "./actions";
+import { useActionState, type ReactNode } from 'react';
+import type { CustomerRequestActionState } from './actions';
 
 type BoundRequestAction = (
   state: CustomerRequestActionState,
@@ -18,8 +18,8 @@ export function RequestActionForm({
   children: ReactNode;
 }) {
   const initialState: CustomerRequestActionState = {
-    kind: "idle",
-    message: "",
+    kind: 'idle',
+    message: '',
   };
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -30,13 +30,9 @@ export function RequestActionForm({
       </fieldset>
       {state.message && (
         <p
-          role={state.kind === "error" ? "alert" : "status"}
-          aria-live={state.kind === "error" ? "assertive" : "polite"}
-          className={
-            state.kind === "error"
-              ? "text-sm text-danger"
-              : "text-sm text-success"
-          }
+          role={state.kind === 'error' ? 'alert' : 'status'}
+          aria-live={state.kind === 'error' ? 'assertive' : 'polite'}
+          className={state.kind === 'error' ? 'text-sm text-danger' : 'text-sm text-success'}
         >
           {state.message}
         </p>

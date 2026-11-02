@@ -450,10 +450,15 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Legal reviews */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">
-          Legal Reviews <span className="text-text-muted">({queryErrors.legalReviews ? 'unavailable' : legalReviews.length})</span>
+          Legal Reviews{' '}
+          <span className="text-text-muted">
+            ({queryErrors.legalReviews ? 'unavailable' : legalReviews.length})
+          </span>
         </h2>
         {queryErrors.legalReviews ? (
-          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.legalReviews}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {queryErrors.legalReviews}
+          </p>
         ) : legalReviews.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No legal reviews recorded.</p>
         ) : (
@@ -515,10 +520,15 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Review assignments */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">
-          Review Assignments <span className="text-text-muted">({queryErrors.assignments ? 'unavailable' : assignments.length})</span>
+          Review Assignments{' '}
+          <span className="text-text-muted">
+            ({queryErrors.assignments ? 'unavailable' : assignments.length})
+          </span>
         </h2>
         {queryErrors.assignments ? (
-          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.assignments}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {queryErrors.assignments}
+          </p>
         ) : assignments.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No review assignments.</p>
         ) : (
@@ -549,7 +559,9 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
           </div>
         )}
         {canEdit && queryErrors.staff && (
-          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.staff}</p>
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {queryErrors.staff}
+          </p>
         )}
         {canEdit && !queryErrors.staff && (
           <ActionForm
@@ -587,27 +599,43 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Corrections & takedowns */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Corrections & Takedowns</h2>
-        {queryErrors.corrections && <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.corrections}</p>}
-        {queryErrors.takedowns && <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.takedowns}</p>}
-        {!queryErrors.corrections && !queryErrors.takedowns && corrections.length === 0 && takedowns.length === 0 ? (
+        {queryErrors.corrections && (
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {queryErrors.corrections}
+          </p>
+        )}
+        {queryErrors.takedowns && (
+          <p role="alert" className="mt-2 text-sm text-danger">
+            {queryErrors.takedowns}
+          </p>
+        )}
+        {!queryErrors.corrections &&
+        !queryErrors.takedowns &&
+        corrections.length === 0 &&
+        takedowns.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No open requests for this claimable.</p>
-        ) : ((!queryErrors.corrections && corrections.length > 0) || (!queryErrors.takedowns && takedowns.length > 0)) && (
-          <ul className="mt-3 space-y-1 text-sm">
-            {!queryErrors.corrections && corrections.map((c) => (
-              <li key={c.id} className="flex items-center gap-2">
-                <Badge variant={statusVariant(c.status)}>{c.status}</Badge>
-                <span className="text-text-primary">Correction request</span>
-                <span className="text-xs text-text-muted">{formatDateTime(c.created_at)}</span>
-              </li>
-            ))}
-            {!queryErrors.takedowns && takedowns.map((t) => (
-              <li key={t.id} className="flex items-center gap-2">
-                <Badge variant={statusVariant(t.status)}>{t.status}</Badge>
-                <span className="text-text-primary">Takedown request</span>
-                <span className="text-xs text-text-muted">{formatDateTime(t.created_at)}</span>
-              </li>
-            ))}
-          </ul>
+        ) : (
+          ((!queryErrors.corrections && corrections.length > 0) ||
+            (!queryErrors.takedowns && takedowns.length > 0)) && (
+            <ul className="mt-3 space-y-1 text-sm">
+              {!queryErrors.corrections &&
+                corrections.map((c) => (
+                  <li key={c.id} className="flex items-center gap-2">
+                    <Badge variant={statusVariant(c.status)}>{c.status}</Badge>
+                    <span className="text-text-primary">Correction request</span>
+                    <span className="text-xs text-text-muted">{formatDateTime(c.created_at)}</span>
+                  </li>
+                ))}
+              {!queryErrors.takedowns &&
+                takedowns.map((t) => (
+                  <li key={t.id} className="flex items-center gap-2">
+                    <Badge variant={statusVariant(t.status)}>{t.status}</Badge>
+                    <span className="text-text-primary">Takedown request</span>
+                    <span className="text-xs text-text-muted">{formatDateTime(t.created_at)}</span>
+                  </li>
+                ))}
+            </ul>
+          )
         )}
         <p className="mt-3 text-sm">
           <Link href="/admin/corrections" className="text-trust-primary hover:underline">
@@ -620,10 +648,15 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <h2 className="text-sm font-semibold text-text-secondary">
-            Version History <span className="text-text-muted">({queryErrors.versions ? 'unavailable' : versions.length})</span>
+            Version History{' '}
+            <span className="text-text-muted">
+              ({queryErrors.versions ? 'unavailable' : versions.length})
+            </span>
           </h2>
           {queryErrors.versions ? (
-            <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.versions}</p>
+            <p role="alert" className="mt-2 text-sm text-danger">
+              {queryErrors.versions}
+            </p>
           ) : versions.length === 0 ? (
             <p className="mt-2 text-sm text-text-muted">No revisions recorded yet.</p>
           ) : (
@@ -640,10 +673,15 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
         </Card>
         <Card>
           <h2 className="text-sm font-semibold text-text-secondary">
-            Publication Events <span className="text-text-muted">({queryErrors.events ? 'unavailable' : events.length})</span>
+            Publication Events{' '}
+            <span className="text-text-muted">
+              ({queryErrors.events ? 'unavailable' : events.length})
+            </span>
           </h2>
           {queryErrors.events ? (
-            <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.events}</p>
+            <p role="alert" className="mt-2 text-sm text-danger">
+              {queryErrors.events}
+            </p>
           ) : events.length === 0 ? (
             <p className="mt-2 text-sm text-text-muted">No publication events.</p>
           ) : (

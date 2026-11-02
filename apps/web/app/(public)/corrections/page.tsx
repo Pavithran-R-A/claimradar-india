@@ -57,8 +57,8 @@ export default function CorrectionsPage() {
           practicable.
         </li>
         <li>
-          <strong>Investigation</strong>: Our editorial team verifies the reported error against
-          the original official order or regulatory publication.
+          <strong>Investigation</strong>: Our editorial team verifies the reported error against the
+          original official order or regulatory publication.
         </li>
         <li>
           <strong>Decision</strong>: We determine whether a factual correction, deadline update, or
@@ -80,8 +80,8 @@ export default function CorrectionsPage() {
           eligibility criteria, incorrect deadline).
         </li>
         <li>
-          <strong>Update</strong>: Listing is updated with new information (e.g., deadline
-          extended, additional eligibility groups identified).
+          <strong>Update</strong>: Listing is updated with new information (e.g., deadline extended,
+          additional eligibility groups identified).
         </li>
         <li>
           <strong>Retraction</strong>: Listing is removed because the underlying information was

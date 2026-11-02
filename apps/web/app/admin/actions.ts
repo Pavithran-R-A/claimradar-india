@@ -87,7 +87,9 @@ export async function approveCandidate(candidateId: string) {
   const db = getAdminDb();
   const { data: candidate, error: fetchError } = await db
     .from('candidate_documents')
-    .select('id, updated_at, publication_decision, validation_status, ai_extraction_status, ai_extracted_data')
+    .select(
+      'id, updated_at, publication_decision, validation_status, ai_extraction_status, ai_extracted_data',
+    )
     .eq('id', candidateId)
     .single();
 

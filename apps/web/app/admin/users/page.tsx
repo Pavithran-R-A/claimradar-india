@@ -36,7 +36,10 @@ export default async function UsersPage({
   const actor = await requireRoles(ADMINS_ONLY);
   const bootstrapEmails = parseAdminEmails();
   const sp = await searchParams;
-  const requestedPage = Number.parseInt(Array.isArray(sp.page) ? sp.page[0] ?? '1' : sp.page ?? '1', 10);
+  const requestedPage = Number.parseInt(
+    Array.isArray(sp.page) ? (sp.page[0] ?? '1') : (sp.page ?? '1'),
+    10,
+  );
   const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const offset = (page - 1) * PAGE_SIZE;
 
@@ -46,7 +49,11 @@ export default async function UsersPage({
 
   try {
     const db = getAdminDb();
-    const { data, error: queryError, count } = await db
+    const {
+      data,
+      error: queryError,
+      count,
+    } = await db
       .from('profiles')
       .select('id, email, display_name, role, subscription_tier, created_at', { count: 'exact' })
       .order('created_at', { ascending: false })
@@ -154,16 +161,28 @@ export default async function UsersPage({
       {!error && totalPages > 1 ? (
         <nav className="mt-4 flex items-center justify-between" aria-label="User pages">
           {page > 1 ? (
-            <Link className="text-sm text-trust-primary hover:underline" href={`/admin/users?page=${page - 1}`}>
+            <Link
+              className="text-sm text-trust-primary hover:underline"
+              href={`/admin/users?page=${page - 1}`}
+            >
               Previous page
             </Link>
-          ) : <span />}
-          <span className="text-sm text-text-muted">Page {page} of {totalPages}</span>
+          ) : (
+            <span />
+          )}
+          <span className="text-sm text-text-muted">
+            Page {page} of {totalPages}
+          </span>
           {page < totalPages ? (
-            <Link className="text-sm text-trust-primary hover:underline" href={`/admin/users?page=${page + 1}`}>
+            <Link
+              className="text-sm text-trust-primary hover:underline"
+              href={`/admin/users?page=${page + 1}`}
+            >
               Next page
             </Link>
-          ) : <span />}
+          ) : (
+            <span />
+          )}
         </nav>
       ) : null}
 

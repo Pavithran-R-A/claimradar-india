@@ -124,11 +124,21 @@ function BackLink() {
   );
 }
 
-function DossierSectionHeading({ id, number, title }: { id: string; number: string; title: string }) {
+function DossierSectionHeading({
+  id,
+  number,
+  title,
+}: {
+  id: string;
+  number: string;
+  title: string;
+}) {
   return (
     <div className="flex items-center gap-2.5 border-b border-border pb-2.5 mb-4">
       <span className="font-mono text-xs font-bold text-trust-primary">{number}</span>
-      <h2 id={id} className="text-base sm:text-lg font-bold text-text-primary tracking-tight">{title}</h2>
+      <h2 id={id} className="text-base sm:text-lg font-bold text-text-primary tracking-tight">
+        {title}
+      </h2>
     </div>
   );
 }
@@ -250,16 +260,16 @@ function ClaimableDossier({
           <div>
             <dt className="font-semibold text-text-muted">Last verified</dt>
             <dd className="mt-1 text-text-secondary">
-              {claim.lastVerifiedAt ? formatIstDateTime(claim.lastVerifiedAt) : 'Verification date unavailable'}
+              {claim.lastVerifiedAt
+                ? formatIstDateTime(claim.lastVerifiedAt)
+                : 'Verification date unavailable'}
             </dd>
           </div>
         </dl>
       </section>
 
       <div className="mt-6 rounded-md border border-border bg-surface p-4 shadow-xs">
-        <span className="mb-3 block text-xs font-semibold text-text-muted">
-          Verification Trail
-        </span>
+        <span className="mb-3 block text-xs font-semibold text-text-muted">Verification Trail</span>
         <EvidenceThread activeStage={4} />
       </div>
 
@@ -426,9 +436,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
   return (
     <aside className="space-y-5 lg:sticky lg:top-24">
       <div className="rounded-md border border-border bg-surface p-5 shadow-sm">
-        <span className="mb-3 block text-xs font-semibold text-text-muted">
-          Claim Summary
-        </span>
+        <span className="mb-3 block text-xs font-semibold text-text-muted">Claim Summary</span>
         <dl className="space-y-3.5 text-xs">
           <div>
             <dt className="text-text-muted">Status</dt>
@@ -487,7 +495,9 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
           <div className="flex justify-between">
             <dt className="text-text-muted">Last Verified:</dt>
             <dd className="font-mono text-text-primary">
-              {claim.lastVerifiedAt ? formatIstDateTime(claim.lastVerifiedAt) : 'Verification date unavailable'}
+              {claim.lastVerifiedAt
+                ? formatIstDateTime(claim.lastVerifiedAt)
+                : 'Verification date unavailable'}
             </dd>
           </div>
           <div className="flex justify-between">

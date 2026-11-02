@@ -156,7 +156,10 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
               variant="danger"
               className="max-w-md"
             >
-              <label htmlFor={`rejection-reason-${candidate.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
+              <label
+                htmlFor={`rejection-reason-${candidate.id}`}
+                className="mb-1.5 block text-sm font-medium text-text-secondary"
+              >
                 Rejection reason
               </label>
               <textarea

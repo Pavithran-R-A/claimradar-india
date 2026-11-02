@@ -45,14 +45,15 @@ export function EvidenceFlowDiagram() {
               className="group relative flex items-start gap-4 sm:block sm:text-center"
             >
               <div
-                className={cn('relative z-10 mx-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-full sm:mx-auto', tone)}
+                className={cn(
+                  'relative z-10 mx-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-full sm:mx-auto',
+                  tone,
+                )}
               >
                 <Icon className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
               </div>
               <div className="pt-1 sm:pt-3">
-                <p className="text-xs text-text-muted">
-                  Step {stage.number}
-                </p>
+                <p className="text-xs text-text-muted">Step {stage.number}</p>
                 <h3 className="mt-0.5 font-display text-base font-bold leading-tight text-trust-primary sm:text-[1.05rem]">
                   {stage.title}
                 </h3>

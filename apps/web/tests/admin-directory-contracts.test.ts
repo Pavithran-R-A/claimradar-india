@@ -28,7 +28,7 @@ describe('admin directory contracts', () => {
 
   it('surfaces source toggle failures and refreshes state', () => {
     const button = read('../app/admin/sources/toggle-source-button.tsx');
-    expect(button).toContain("setFeedback(");
+    expect(button).toContain('setFeedback(');
     expect(button).toContain("role={feedback.kind === 'error' ? 'alert' : 'status'}");
     expect(button).toContain('router.refresh()');
   });

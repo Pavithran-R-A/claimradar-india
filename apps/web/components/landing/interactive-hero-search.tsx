@@ -59,7 +59,7 @@ export function InteractiveHeroSearch() {
         aria-busy={isSubmitting}
         data-ui="hero-search"
         onSubmit={handleSubmit}
-          className="group grid w-full gap-2 rounded-[var(--public-radius-card)] border border-border bg-white p-2 shadow-[var(--public-shadow-control)] transition-[border-color,box-shadow] duration-ui ease-out hover:border-trust-primary/30 focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/15 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-stretch lg:gap-0"
+        className="group grid w-full gap-2 rounded-[var(--public-radius-card)] border border-border bg-white p-2 shadow-[var(--public-shadow-control)] transition-[border-color,box-shadow] duration-ui ease-out hover:border-trust-primary/30 focus-within:border-trust-primary focus-within:ring-2 focus-within:ring-trust-primary/15 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-stretch lg:gap-0"
       >
         <div className="relative flex min-w-0 items-center rounded-[var(--public-radius-control)] lg:rounded-r-none">
           <div
@@ -123,7 +123,7 @@ export function InteractiveHeroSearch() {
       </form>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-text-muted">
-          <span className="mr-1 text-text-secondary">Try</span>
+        <span className="mr-1 text-text-secondary">Try</span>
         {SUGGESTIONS.map((term) => (
           <button
             key={term}

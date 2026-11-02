@@ -236,7 +236,8 @@ export async function archiveClaimable(claimableId: string) {
     p_actor_id: actor.id,
   });
   if (error) return { error: error.message };
-  if (!archiveResult?.success) return { error: 'This claimable changed during archiving. Reload and retry.' };
+  if (!archiveResult?.success)
+    return { error: 'This claimable changed during archiving. Reload and retry.' };
 
   revalidatePath('/admin/claimables');
   revalidatePath(`/admin/claimables/${claimableId}`);

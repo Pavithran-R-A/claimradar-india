@@ -223,9 +223,7 @@ export default async function LandingPage() {
                   {index + 1}
                 </span>
                 <span className="order-1 lg:min-h-7">
-                <span className="block text-xs font-semibold text-trust-primary">
-                    {label}
-                  </span>
+                  <span className="block text-xs font-semibold text-trust-primary">{label}</span>
                   <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">
                     {description}
                   </span>
@@ -272,9 +270,7 @@ export default async function LandingPage() {
                     href={`/sources#${source.id}`}
                     className="public-focus group flex min-h-[68px] items-center gap-3 rounded-xl border border-border bg-white px-3 py-2.5 transition-[border-color,box-shadow,transform] duration-fast hover:-translate-y-0.5 hover:border-trust-primary/25 hover:shadow-sm"
                   >
-                    <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary transition-transform duration-fast group-hover:scale-105"
-                    >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary transition-transform duration-fast group-hover:scale-105">
                       <SourceIcon code={source.shortName} />
                     </span>
                     <span className="min-w-0">
