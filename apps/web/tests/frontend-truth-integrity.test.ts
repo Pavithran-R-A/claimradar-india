@@ -254,12 +254,11 @@ describe('Frontend Truth Integrity & Source Registry Parity', () => {
     const statePath = path.resolve(__dirname, '../components/repository-states.tsx');
     const stateContent = fs.readFileSync(statePath, 'utf8');
 
-    expect(stateContent).toContain('Publication status');
+    expect(stateContent).toContain('Source record identified');
     expect(stateContent).toContain('No notice has cleared publication review yet');
     expect(stateContent).toContain('How a notice becomes a listing');
-    expect(stateContent).toContain('Official notice found');
-    expect(stateContent).toContain('Source checked');
-    expect(stateContent).toContain('Editorial review');
-    expect(stateContent).toContain('Published with official link');
+    expect(stateContent).toContain('Official link checked');
+    expect(stateContent).toContain('Eligibility reviewed');
+    expect(stateContent).toContain('Listing published');
   });
 });

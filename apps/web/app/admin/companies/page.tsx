@@ -28,6 +28,7 @@ export default async function CompaniesPage({
 
   const sp = await searchParams;
   const pubFilter = (sp.publication as string) ?? 'published';
+  const includeAll = pubFilter === 'all';
 
   let companies: CompanyRow[] = [];
   const associationCounts = new Map<string, number>();
@@ -43,7 +44,7 @@ export default async function CompaniesPage({
       )
       .order('display_name', { ascending: true });
 
-    if (pubFilter) query = query.eq('publication_status', pubFilter);
+    if (!includeAll) query = query.eq('publication_status', pubFilter);
 
     const { data, error: queryError } = await query;
     if (queryError) {
@@ -55,7 +56,7 @@ export default async function CompaniesPage({
       const companyIds = companies.map((c) => c.id);
       if (companyIds.length > 0) {
         let claimQuery = db.from('claimables').select('id, company_id');
-        if (pubFilter) claimQuery = claimQuery.eq('publication_status', pubFilter);
+        if (!includeAll) claimQuery = claimQuery.eq('publication_status', pubFilter);
         const { data: claims, error: claimsError } = await claimQuery.in('company_id', companyIds);
         if (claimsError) {
           error = claimsError.message;
@@ -75,7 +76,7 @@ export default async function CompaniesPage({
     <div>
       <PageHeader
         title="Companies"
-        subtitle={`${companies.length} companies — claimable associations filtered by publication status`}
+        subtitle={`${companies.length} companies: claimable associations filtered by publication status`}
       />
 
       <div className="mt-4">
@@ -83,7 +84,7 @@ export default async function CompaniesPage({
           paramName="publication"
           currentValue={pubFilter}
           options={[
-            { value: '', label: 'All statuses' },
+            { value: 'all', label: 'All statuses' },
             ...PUBLICATION_STATUSES.map((v) => ({ value: v, label: v })),
           ]}
           basePath="/admin/companies"
@@ -98,7 +99,7 @@ export default async function CompaniesPage({
 
       {companies.length === 0 && !error ? (
         <p className="mt-6 text-sm text-text-muted">
-          No companies with publication status “{pubFilter || 'any'}”.
+          No companies with publication status “{includeAll ? 'any' : pubFilter}”.
         </p>
       ) : (
         <div className="mt-6 overflow-x-auto">
@@ -110,7 +111,7 @@ export default async function CompaniesPage({
                 <th className="pb-2 pr-4 font-medium">Domain</th>
                 <th className="pb-2 pr-4 font-medium">Publication</th>
                 <th className="pb-2 pr-4 font-medium">
-                  Claimables {pubFilter ? `(${pubFilter})` : '(all)'}
+                  Claimables {includeAll ? '(all)' : `(${pubFilter})`}
                 </th>
               </tr>
             </thead>

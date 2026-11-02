@@ -3,55 +3,58 @@
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getAdminDb } from '@/lib/admin-db';
-import { writeAuditLog } from '../_lib/audit';
 import { ADMINS_ONLY, getActionActor } from '../_lib/roles';
 
-/** Restricted staff triage; never sends email, SMS or app notifications. */
+export interface CustomerRequestActionState {
+  kind: 'idle' | 'success' | 'error';
+  message: string;
+}
+
+const allowedStatuses = {
+  correction: ['new', 'in_review', 'resolved', 'declined'],
+  grievance: ['new', 'acknowledged', 'resolved'],
+} as const;
+
+/** Staff triage is transactional and sends no outbound messages. */
 export async function updateCustomerRequest(
   kind: 'correction' | 'grievance',
   id: string,
+  _state: CustomerRequestActionState,
   formData: FormData,
-): Promise<void> {
+): Promise<CustomerRequestActionState> {
   const actor = await getActionActor(ADMINS_ONLY);
-  if (!actor || !z.string().uuid().safeParse(id).success) return;
-  const allowed =
-    kind === 'correction'
-      ? ['new', 'in_review', 'resolved', 'declined']
-      : ['new', 'acknowledged', 'resolved'];
+  if (!actor) return { kind: 'error', message: 'Unauthorized.' };
+  if (!z.string().uuid().safeParse(id).success) {
+    return { kind: 'error', message: 'Invalid request identifier.' };
+  }
+
   const status = z
     .string()
-    .refine((value) => allowed.includes(value))
+    .refine((value) => (allowedStatuses[kind] as readonly string[]).includes(value))
     .safeParse(formData.get('status'));
-  const note = z.string().trim().min(3).max(2000).safeParse(formData.get('resolution'));
-  if (!status.success || !note.success) return;
+  const resolution = z.string().trim().min(3).max(2000).safeParse(formData.get('resolution'));
+  if (!status.success || !resolution.success) {
+    return { kind: 'error', message: 'Enter a valid status and resolution note.' };
+  }
 
-  const table = kind === 'correction' ? 'user_correction_requests' : 'grievance_contacts';
-  const db = getAdminDb();
-  const { data: previous, error: readError } = await db
-    .from(table)
-    .select('id, status')
-    .eq('id', id)
-    .single();
-  if (readError || !previous) return;
-  const { data: updated, error: writeError } = await db
-    .from(table)
-    .update({ status: status.data, resolution: note.data, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .eq('status', previous.status)
-    .select('id')
-    .maybeSingle();
-  if (writeError || !updated) return;
+  try {
+    const { data, error } = await getAdminDb().rpc('triage_customer_request', {
+      p_request_kind: kind,
+      p_request_id: id,
+      p_status: status.data,
+      p_resolution: resolution.data,
+      p_actor_id: actor.id,
+    });
+    if (error) throw error;
+    const result = data as { success?: boolean; error?: string } | null;
+    if (!result?.success) {
+      return { kind: 'error', message: result?.error ?? 'The request was not saved.' };
+    }
+  } catch {
+    return { kind: 'error', message: 'Could not save this request. No changes were committed.' };
+  }
 
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: `customer_request.${kind}.triaged`,
-    entityType: table,
-    entityId: id,
-    before: { status: previous.status },
-    after: { status: status.data },
-  });
-  if (audit.error)
-    throw new Error('Request saved but audit logging failed; escalate to administrator.');
   revalidatePath('/admin/customer-requests');
   revalidatePath('/app/privacy');
+  return { kind: 'success', message: 'Request saved.' };
 }

@@ -26,7 +26,9 @@ describe('customer support and notification launch contracts', () => {
     expect(page).toContain('await requireRoles(ADMINS_ONLY)');
     expect(actions).toContain('await getActionActor(ADMINS_ONLY)');
     expect(actions).toContain('z.string().uuid().safeParse(id)');
-    expect(actions).toContain('const audit = await writeAuditLog(');
+    expect(actions).toContain("rpc('triage_customer_request'");
+    expect(actions).toContain('p_actor_id: actor.id');
+    expect(actions).not.toContain('writeAuditLog');
     expect(roles).toContain("label: 'Customer Requests', roles: ADMINS_ONLY");
     expect(actions).not.toContain('sendEmail(');
     expect(actions).not.toContain('sendNotification(');

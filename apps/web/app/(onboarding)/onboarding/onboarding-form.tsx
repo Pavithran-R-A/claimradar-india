@@ -83,7 +83,7 @@ export function OnboardingForm() {
           Which companies have you bought from or used?
         </legend>
         <p className="mb-3 text-sm text-text-muted">
-          Names only — no account numbers or documents. Add up to 20.
+          Names only: no account numbers or documents. Add up to 20.
         </p>
         <div className="flex gap-2">
           <input
@@ -158,7 +158,7 @@ export function OnboardingForm() {
         <legend className="mb-1 text-base font-semibold text-text-primary">
           Roughly when did you make these purchases?
         </legend>
-        <p className="mb-3 text-sm text-text-muted">Approximate is fine — year precision only.</p>
+        <p className="mb-3 text-sm text-text-muted">Approximate is fine: year precision only.</p>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="period-start" className={labelClass}>
@@ -228,7 +228,7 @@ export function OnboardingForm() {
           Do you usually keep purchase receipts?
         </legend>
         <p className="mb-3 text-sm text-text-muted">
-          We only ask yes/no — never upload documents here.
+          We only ask yes/no: never upload documents here.
         </p>
         <div className="flex flex-wrap gap-3">
           {AVAILABILITY_OPTIONS.map((option) => (

@@ -9,7 +9,6 @@ import {
   isLegalClearanceCurrent,
   isPublicationDeadlineExpired,
 } from '@/lib/editorial-publication-safety';
-import { writeAuditLog } from './_lib/audit';
 import { CLAIMABLE_STATUSES } from './_lib/constants';
 import { getActionActor, unauthorized, ADMINS_ONLY, EDITORIAL, LEGAL } from './_lib/roles';
 
@@ -71,32 +70,6 @@ export async function updateClaimable(claimableId: string, formData: FormData) {
     return { error: input.error.issues[0]?.message ?? 'Invalid edit payload' };
   }
 
-  const db = getAdminDb();
-  const { data: current, error: fetchError } = await db
-    .from('claimables')
-    .select('*')
-    .eq('id', claimableId)
-    .single();
-  if (fetchError || !current) return { error: 'Claimable not found' };
-
-  // Revision row: snapshot the pre-edit state (immutable history).
-  const { data: latestVersion } = await db
-    .from('claim_versions')
-    .select('version_number')
-    .eq('claimable_id', claimableId)
-    .order('version_number', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  await db.from('claim_versions').insert({
-    claimable_id: claimableId,
-    version_number: (latestVersion?.version_number ?? 0) + 1,
-    snapshot: current,
-    change_reason: input.data.change_reason,
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-  });
-
   const updates = {
     public_title: input.data.public_title,
     summary: input.data.summary || null,
@@ -107,33 +80,21 @@ export async function updateClaimable(claimableId: string, formData: FormData) {
     action_required: input.data.action_required || null,
     official_claim_url: input.data.official_claim_url || null,
     deadline: input.data.deadline || null,
-    updated_at: new Date().toISOString(),
   };
-
-  const { error } = await db.from('claimables').update(updates).eq('id', claimableId);
-  if (error) return { error: error.message };
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'claimable.updated',
-    entityType: 'claimable',
-    entityId: claimableId,
-    before: {
-      public_title: current.public_title,
-      status: current.status,
-      procedural_status: current.procedural_status,
-    },
-    after: {
-      public_title: updates.public_title,
-      status: updates.status,
-      procedural_status: updates.procedural_status,
-    },
-    details: {
-      change_reason: input.data.change_reason,
-      version: (latestVersion?.version_number ?? 0) + 1,
-    },
-  });
-  if (audit.error) return audit;
+  const db = getAdminDb();
+  try {
+    const { data, error } = await db.rpc('update_claimable_with_revision', {
+      p_claimable_id: claimableId,
+      p_updates: updates,
+      p_change_reason: input.data.change_reason,
+      p_actor_id: actor.id,
+    });
+    if (error) return { error: 'The edit was not saved. No changes were committed.' };
+    const result = data as { success?: boolean; error?: string } | null;
+    if (!result?.success) return { error: result?.error ?? 'The edit was not saved.' };
+  } catch {
+    return { error: 'The edit was not saved. No changes were committed.' };
+  }
 
   revalidatePath('/admin/claimables');
   revalidatePath(`/admin/claimables/${claimableId}`);
@@ -145,7 +106,7 @@ export async function updateClaimable(claimableId: string, formData: FormData) {
  * =========================================================================== */
 
 /**
- * Explicit publication approval — the only path to `published`.
+ * Explicit publication approval: the only path to `published`.
  * Records a publication event per the publication policy and stamps
  * first_published_at / last_verified_at.
  */
@@ -232,44 +193,15 @@ export async function approvePublication(claimableId: string) {
     };
   }
 
-  const now = new Date().toISOString();
-  // Refuse to publish if another editor changed the approved draft after our read.
-  const { data: publishedRows, error } = await db
-    .from('claimables')
-    .update({
-      publication_status: 'published',
-      first_published_at: claimable.first_published_at ?? now,
-      last_verified_at: now,
-      updated_at: now,
-    })
-    .eq('id', claimableId)
-    .eq('publication_status', 'draft')
-    .eq('updated_at', claimable.updated_at)
-    .select('id');
+  const { data: publicationResult, error } = await db.rpc('publish_claimable_with_audit', {
+    p_claimable_id: claimableId,
+    p_expected_updated_at: claimable.updated_at,
+    p_actor_id: actor.id,
+  });
   if (error) return { error: error.message };
-  if (!publishedRows?.length) {
+  if (!publicationResult?.success) {
     return { error: 'This draft changed during approval. Reopen it and repeat legal review.' };
   }
-
-  await db.from('publication_events').insert({
-    claimable_id: claimableId,
-    action: 'publication_approved',
-    previous_status: claimable.status,
-    new_status: claimable.status,
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-    reason: 'Explicit editorial publication approval',
-  });
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'claimable.published',
-    entityType: 'claimable',
-    entityId: claimableId,
-    before: { publication_status: claimable.publication_status },
-    after: { publication_status: 'published' },
-  });
-  if (audit.error) return audit;
 
   revalidatePath('/admin/claimables');
   revalidatePath(`/admin/claimables/${claimableId}`);
@@ -277,7 +209,7 @@ export async function approvePublication(claimableId: string) {
 }
 
 /**
- * Archive (unpublish) a claimable — e.g. after an upheld takedown or when a
+ * Archive (unpublish) a claimable: e.g. after an upheld takedown or when a
  * claim closes. Also explicit and audited.
  */
 export async function archiveClaimable(claimableId: string) {
@@ -290,7 +222,7 @@ export async function archiveClaimable(claimableId: string) {
   const db = getAdminDb();
   const { data: claimable, error: fetchError } = await db
     .from('claimables')
-    .select('id, status, publication_status')
+    .select('id, status, publication_status, updated_at')
     .eq('id', claimableId)
     .single();
   if (fetchError || !claimable) return { error: 'Claimable not found' };
@@ -298,32 +230,13 @@ export async function archiveClaimable(claimableId: string) {
     return { error: 'Claimable is already archived.' };
   }
 
-  const now = new Date().toISOString();
-  const { error } = await db
-    .from('claimables')
-    .update({ publication_status: 'archived', updated_at: now })
-    .eq('id', claimableId);
+  const { data: archiveResult, error } = await db.rpc('archive_claimable_with_audit', {
+    p_claimable_id: claimableId,
+    p_expected_updated_at: claimable.updated_at,
+    p_actor_id: actor.id,
+  });
   if (error) return { error: error.message };
-
-  await db.from('publication_events').insert({
-    claimable_id: claimableId,
-    action: 'publication_archived',
-    previous_status: claimable.status,
-    new_status: claimable.status,
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-    reason: 'Archived by editorial staff',
-  });
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'claimable.archived',
-    entityType: 'claimable',
-    entityId: claimableId,
-    before: { publication_status: claimable.publication_status },
-    after: { publication_status: 'archived' },
-  });
-  if (audit.error) return audit;
+  if (!archiveResult?.success) return { error: 'This claimable changed during archiving. Reload and retry.' };
 
   revalidatePath('/admin/claimables');
   revalidatePath(`/admin/claimables/${claimableId}`);
@@ -337,6 +250,7 @@ export async function archiveClaimable(claimableId: string) {
 const legalReviewSchema = z.object({
   decision: z.enum(['clear_to_publish', 'needs_changes', 'legal_risk', 'blocked']),
   findings: z.string().trim().min(3).max(5000),
+  expected_updated_at: z.string().datetime({ offset: true }),
 });
 
 export async function submitLegalReview(claimableId: string, formData: FormData) {
@@ -349,36 +263,22 @@ export async function submitLegalReview(claimableId: string, formData: FormData)
   const input = legalReviewSchema.safeParse({
     decision: fdString(formData, 'decision'),
     findings: fdString(formData, 'findings'),
+    expected_updated_at: fdString(formData, 'expected_updated_at'),
   });
   if (!input.success) {
     return { error: input.error.issues[0]?.message ?? 'Invalid legal review payload' };
   }
 
   const db = getAdminDb();
-  const { data: claimable } = await db
-    .from('claimables')
-    .select('id, public_title')
-    .eq('id', claimableId)
-    .single();
-  if (!claimable) return { error: 'Claimable not found' };
-
-  const { error } = await db.from('legal_reviews').insert({
-    claimable_id: claimableId,
-    reviewer_id: actor.id,
-    decision: input.data.decision,
-    findings: input.data.findings,
+  const { data, error } = await db.rpc('submit_legal_review_with_audit', {
+    p_actor_id: actor.id,
+    p_claimable_id: claimableId,
+    p_decision: input.data.decision,
+    p_findings: input.data.findings,
+    p_expected_updated_at: input.data.expected_updated_at,
   });
   if (error) return { error: error.message };
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'legal_review.submitted',
-    entityType: 'claimable',
-    entityId: claimableId,
-    after: { decision: input.data.decision },
-    details: { title: claimable.public_title },
-  });
-  if (audit.error) return audit;
+  if (data?.error) return { error: data.error };
 
   revalidatePath('/admin/claimables');
   revalidatePath(`/admin/claimables/${claimableId}`);
@@ -411,22 +311,14 @@ export async function assignReview(claimableId: string, formData: FormData) {
   }
 
   const db = getAdminDb();
-  const { error } = await db.from('review_assignments').insert({
-    claimable_id: claimableId,
-    assigned_to: input.data.assigned_to || null,
-    status: 'pending',
-    notes: input.data.notes || null,
+  const { data, error } = await db.rpc('assign_review_with_audit', {
+    p_actor_id: actor.id,
+    p_claimable_id: claimableId,
+    p_assigned_to: input.data.assigned_to || null,
+    p_notes: input.data.notes || null,
   });
   if (error) return { error: error.message };
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'review.assigned',
-    entityType: 'claimable',
-    entityId: claimableId,
-    after: { assigned_to: input.data.assigned_to || null, status: 'pending' },
-  });
-  if (audit.error) return audit;
+  if (data?.error) return { error: data.error };
 
   revalidatePath(`/admin/claimables/${claimableId}`);
   revalidatePath('/admin/reviews');
@@ -441,40 +333,21 @@ export async function completeReviewAssignment(assignmentId: string) {
   if (!parsedId.success) return { error: 'Invalid assignment id' };
 
   const db = getAdminDb();
-  const { data: assignment, error: fetchError } = await db
-    .from('review_assignments')
-    .select('id, claimable_id, status')
-    .eq('id', assignmentId)
-    .single();
-  if (fetchError || !assignment) return { error: 'Assignment not found' };
-  if (assignment.status === 'completed') return { error: 'Assignment already completed.' };
-
-  const { error } = await db
-    .from('review_assignments')
-    .update({ status: 'completed', completed_at: new Date().toISOString() })
-    .eq('id', assignmentId);
-  if (error) return { error: error.message };
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'review.completed',
-    entityType: 'review_assignment',
-    entityId: assignmentId,
-    before: { status: assignment.status },
-    after: { status: 'completed' },
-    details: { claimable_id: assignment.claimable_id },
+  const { data, error } = await db.rpc('complete_review_assignment_with_audit', {
+    p_actor_id: actor.id,
+    p_assignment_id: assignmentId,
   });
-  if (audit.error) return audit;
+  if (error) return { error: error.message };
+  if (data?.error) return { error: data.error };
 
-  revalidatePath(`/admin/claimables/${assignment.claimable_id}`);
+  revalidatePath(`/admin/claimables/${data.claimable_id}`);
   revalidatePath('/admin/reviews');
   return { success: true };
 }
 
 /* ===========================================================================
- * Corrections (editor + admin) — content changes follow the legal-content
- * rule: accepted corrections write a claim_versions revision row, publish a
- * correction event, and are fully audited.
+ * Correction decisions record the request and audit atomically.
+ * Claimable content edits use the separate editor action.
  * =========================================================================== */
 
 const correctionResolutionSchema = z.object({
@@ -498,76 +371,22 @@ export async function resolveCorrection(correctionId: string, formData: FormData
   }
 
   const db = getAdminDb();
-  const { data: correction, error: fetchError } = await db
-    .from('correction_requests')
-    .select('*')
-    .eq('id', correctionId)
-    .single();
-  if (fetchError || !correction) return { error: 'Correction request not found' };
-  if (correction.status !== 'new' && correction.status !== 'in_review') {
-    return { error: `Correction request already ${correction.status}.` };
+  try {
+    const { data, error } = await db.rpc('resolve_correction_request', {
+      p_correction_id: correctionId,
+      p_decision: input.data.decision,
+      p_resolution: input.data.resolution,
+      p_actor_id: actor.id,
+    });
+    if (error) return { error: 'The request was not changed. No changes were committed.' };
+    const result = data as { success?: boolean; error?: string } | null;
+    if (!result?.success) return { error: result?.error ?? 'The request was not changed.' };
+  } catch {
+    return { error: 'The request was not changed. No changes were committed.' };
   }
-
-  const now = new Date().toISOString();
-  const newStatus = input.data.decision === 'accepted' ? 'resolved' : 'rejected';
-  const { error } = await db
-    .from('correction_requests')
-    .update({ status: newStatus, resolution: input.data.resolution, updated_at: now })
-    .eq('id', correctionId);
-  if (error) return { error: error.message };
-
-  if (input.data.decision === 'accepted') {
-    // Legal-content rule: snapshot current claimable state as a revision row
-    // before the correction notice is applied.
-    const { data: claimable } = await db
-      .from('claimables')
-      .select('*')
-      .eq('id', correction.claimable_id)
-      .single();
-
-    if (claimable) {
-      const { data: latestVersion } = await db
-        .from('claim_versions')
-        .select('version_number')
-        .eq('claimable_id', correction.claimable_id)
-        .order('version_number', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      await db.from('claim_versions').insert({
-        claimable_id: correction.claimable_id,
-        version_number: (latestVersion?.version_number ?? 0) + 1,
-        snapshot: claimable,
-        change_reason: `Correction accepted: ${input.data.resolution}`,
-        actor_type: 'staff_user',
-        actor_id: actor.id,
-      });
-
-      await db.from('publication_events').insert({
-        claimable_id: correction.claimable_id,
-        action: 'correction_notice_published',
-        previous_status: claimable.status,
-        new_status: claimable.status,
-        actor_type: 'staff_user',
-        actor_id: actor.id,
-        reason: input.data.resolution,
-      });
-    }
-  }
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: `correction.${input.data.decision}`,
-    entityType: 'correction_request',
-    entityId: correctionId,
-    before: { status: correction.status },
-    after: { status: newStatus },
-    details: { claimable_id: correction.claimable_id, resolution: input.data.resolution },
-  });
-  if (audit.error) return audit;
 
   revalidatePath('/admin/corrections');
-  revalidatePath(`/admin/claimables/${correction.claimable_id}`);
+  revalidatePath('/admin/claimables/[id]', 'page');
   return { success: true };
 }
 
@@ -596,66 +415,22 @@ export async function resolveTakedown(takedownId: string, formData: FormData) {
   }
 
   const db = getAdminDb();
-  const { data: takedown, error: fetchError } = await db
-    .from('takedown_requests')
-    .select('*')
-    .eq('id', takedownId)
-    .single();
-  if (fetchError || !takedown) return { error: 'Takedown request not found' };
-  if (takedown.status !== 'new' && takedown.status !== 'in_review') {
-    return { error: `Takedown request already ${takedown.status}.` };
+  try {
+    const { data, error } = await db.rpc('resolve_takedown_request', {
+      p_takedown_id: takedownId,
+      p_decision: input.data.decision,
+      p_resolution: input.data.resolution,
+      p_actor_id: actor.id,
+    });
+    if (error) return { error: 'The request was not changed. Retry or contact an administrator.' };
+    const result = data as { success?: boolean; error?: string } | null;
+    if (!result?.success) return { error: result?.error ?? 'The request was not changed.' };
+  } catch {
+    return { error: 'The request was not changed. Retry or contact an administrator.' };
   }
-
-  const now = new Date().toISOString();
-  const { error } = await db
-    .from('takedown_requests')
-    .update({
-      status: input.data.decision,
-      resolution: input.data.resolution,
-      updated_at: now,
-    })
-    .eq('id', takedownId);
-  if (error) return { error: error.message };
-
-  if (input.data.decision === 'granted') {
-    // Upheld takedown: archive the claimable so it leaves the public site.
-    const { data: claimable } = await db
-      .from('claimables')
-      .select('id, status, publication_status')
-      .eq('id', takedown.claimable_id)
-      .single();
-
-    if (claimable) {
-      await db
-        .from('claimables')
-        .update({ publication_status: 'archived', updated_at: now })
-        .eq('id', takedown.claimable_id);
-
-      await db.from('publication_events').insert({
-        claimable_id: takedown.claimable_id,
-        action: 'takedown_granted',
-        previous_status: claimable.status,
-        new_status: claimable.status,
-        actor_type: 'staff_user',
-        actor_id: actor.id,
-        reason: input.data.resolution,
-      });
-    }
-  }
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: `takedown.${input.data.decision}`,
-    entityType: 'takedown_request',
-    entityId: takedownId,
-    before: { status: takedown.status },
-    after: { status: input.data.decision },
-    details: { claimable_id: takedown.claimable_id, resolution: input.data.resolution },
-  });
-  if (audit.error) return audit;
 
   revalidatePath('/admin/corrections');
-  revalidatePath(`/admin/claimables/${takedown.claimable_id}`);
+  revalidatePath('/admin/customer-requests');
   return { success: true };
 }
 
@@ -687,46 +462,13 @@ export async function updateUserRole(userId: string, formData: FormData) {
   }
 
   const db = getAdminDb();
-  const { data: target, error: fetchError } = await db
-    .from('profiles')
-    .select('id, email, role')
-    .eq('id', userId)
-    .single();
-  if (fetchError || !target) return { error: 'User not found' };
-
-  if (target.role === input.data.role) {
-    return { error: 'User already has this role.' };
-  }
-
-  // Last-admin lockout guard: never let the final admin lose the role,
-  // including via self-demotion.
-  if (target.role === 'admin' && input.data.role !== 'admin') {
-    const { count: adminCount, error: countError } = await db
-      .from('profiles')
-      .select('id', { count: 'exact', head: true })
-      .eq('role', 'admin');
-    if (countError) return { error: `Could not verify admin count: ${countError.message}` };
-    if ((adminCount ?? 0) <= 1) {
-      return { error: 'Cannot demote the last remaining admin — promote another admin first.' };
-    }
-  }
-
-  const { error } = await db
-    .from('profiles')
-    .update({ role: input.data.role, updated_at: new Date().toISOString() })
-    .eq('id', userId);
-  if (error) return { error: error.message };
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'profile.role_changed',
-    entityType: 'profile',
-    entityId: userId,
-    before: { role: target.role },
-    after: { role: input.data.role },
-    details: { email: target.email },
+  const { data, error } = await db.rpc('update_user_role_with_audit', {
+    p_actor_id: actor.id,
+    p_user_id: userId,
+    p_role: input.data.role,
   });
-  if (audit.error) return audit;
+  if (error) return { error: error.message };
+  if (data?.error) return { error: data.error };
 
   revalidatePath('/admin/users');
   return { success: true };

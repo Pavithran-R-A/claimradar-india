@@ -65,15 +65,23 @@ export default async function ReviewsPage({
       if (queryError) error = queryError.message;
       else pendingCandidates = (data ?? []) as typeof pendingCandidates;
     } else if (queue === 'legal') {
-      const { data, error: queryError } = await db
-        .from('claimables')
-        .select('id, public_title, status, updated_at, legal_reviews(decision, reviewed_at)')
-        .eq('publication_status', 'draft')
-        .order('updated_at', { ascending: false })
-        .limit(100);
-      if (queryError) error = queryError.message;
-      else {
-        const rows = (data ?? []) as typeof awaitingLegal;
+      let rows: typeof awaitingLegal = [];
+      const batchSize = 500;
+      for (let offset = 0; ; offset += batchSize) {
+        const { data, error: queryError } = await db
+          .from('claimables')
+          .select('id, public_title, status, updated_at, legal_reviews(decision, reviewed_at)')
+          .eq('publication_status', 'draft')
+          .order('updated_at', { ascending: false })
+          .range(offset, offset + batchSize - 1);
+        if (queryError) {
+          error = 'Legal review queue is unavailable.';
+          break;
+        }
+        rows = [...rows, ...((data ?? []) as typeof awaitingLegal)];
+        if ((data?.length ?? 0) < batchSize) break;
+      }
+      if (!error) {
         // A review older than the latest content edit is NOT clearance.
         // Keep revised drafts in the queue until a fresh legal decision exists.
         awaitingLegal = rows.filter((r) => {

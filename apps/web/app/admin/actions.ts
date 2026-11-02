@@ -7,7 +7,6 @@ import { getAdminDb } from '@/lib/admin-db';
 import { isKnownNonFilingInformationUrl } from '@/lib/official-filing-route';
 import { isPublicationDeadlineExpired } from '@/lib/editorial-publication-safety';
 import { requireRole } from '@/lib/auth';
-import { writeAuditLog } from './_lib/audit';
 import { getActionActor, unauthorized, EDITORIAL } from './_lib/roles';
 import { slugify } from './_lib/ui';
 
@@ -17,7 +16,7 @@ import { slugify } from './_lib/ui';
  *
  * Crawl triggering is intentionally CLI-only: a full crawl takes minutes and
  * would block the request path with no run-lock. A web-triggered crawl with
- * locking is future work and out of scope for now — these stubs document the
+ * locking is future work and out of scope for now: these stubs document the
  * real CLI commands instead of pretending to run anything.
  */
 
@@ -39,34 +38,15 @@ export async function toggleSource(sourceId: string) {
 
   const supabase = getAdminDb();
 
-  const { data: source, error: fetchError } = await supabase
-    .from('sources')
-    .select('id, name, enabled')
-    .eq('id', sourceId)
-    .single();
-
-  if (fetchError || !source) return { error: 'Source not found' };
-
-  const { error } = await supabase
-    .from('sources')
-    .update({ enabled: !source.enabled })
-    .eq('id', sourceId);
-
-  if (error) return { error: error.message };
-
-  // Privileged state change — record it in the audit trail.
-  await writeAuditLog({
-    actorId: actor.id,
-    action: source.enabled ? 'source.disabled' : 'source.enabled',
-    entityType: 'source',
-    entityId: sourceId,
-    before: { enabled: source.enabled },
-    after: { enabled: !source.enabled },
-    details: { name: source.name },
+  const { data, error } = await supabase.rpc('toggle_source_with_audit', {
+    p_actor_id: actor.id,
+    p_source_id: sourceId,
   });
-
   revalidatePath('/admin/sources');
   revalidatePath(`/admin/sources/${sourceId}`);
+  if (error) return { error: error.message };
+  if (data?.error) return { error: data.error };
+
   return { success: true };
 }
 
@@ -94,7 +74,7 @@ export async function retryDeferred() {
 
 /**
  * Approve a candidate for promotion. Editorial roles only.
- * Approval alone does not publish anything — it marks the candidate ready to
+ * Approval alone does not publish anything: it marks the candidate ready to
  * be promoted into a draft claimable.
  */
 export async function approveCandidate(candidateId: string) {
@@ -107,13 +87,13 @@ export async function approveCandidate(candidateId: string) {
   const db = getAdminDb();
   const { data: candidate, error: fetchError } = await db
     .from('candidate_documents')
-    .select('id, publication_decision, validation_status, ai_extraction_status, ai_extracted_data')
+    .select('id, updated_at, publication_decision, validation_status, ai_extraction_status, ai_extracted_data')
     .eq('id', candidateId)
     .single();
 
   if (fetchError || !candidate) return { error: 'Candidate not found' };
   if (!['pending', 'human_review'].includes(candidate.publication_decision)) {
-    return { error: `Candidate already ${candidate.publication_decision} — nothing to approve.` };
+    return { error: `Candidate already ${candidate.publication_decision}: nothing to approve.` };
   }
 
   // Editors may not bypass AI evidence validation by approving a merely
@@ -152,31 +132,13 @@ export async function approveCandidate(candidateId: string) {
     };
   }
 
-  const { error } = await db
-    .from('candidate_documents')
-    .update({ publication_decision: 'approved' })
-    .eq('id', candidateId);
+  const { data: result, error } = await db.rpc('approve_candidate_with_event', {
+    p_candidate_id: candidateId,
+    p_actor_id: actor.id,
+    p_expected_updated_at: candidate.updated_at,
+  });
   if (error) return { error: error.message };
-
-  await db.from('publication_events').insert({
-    candidate_document_id: candidateId,
-    action: 'candidate_approved',
-    previous_status: null,
-    new_status: null,
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-    reason: 'Approved by editorial staff for promotion to draft claimable',
-  });
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'candidate.approved',
-    entityType: 'candidate_document',
-    entityId: candidateId,
-    before: { publication_decision: candidate.publication_decision },
-    after: { publication_decision: 'approved' },
-  });
-  if (audit.error) return audit;
+  if (!result?.success) return { error: result?.error ?? 'Unable to approve candidate.' };
 
   revalidatePath('/admin/candidates');
   revalidatePath(`/admin/candidates/${candidateId}`);
@@ -207,35 +169,16 @@ export async function rejectCandidate(candidateId: string, formData: FormData) {
 
   if (fetchError || !candidate) return { error: 'Candidate not found' };
   if (!['pending', 'human_review'].includes(candidate.publication_decision)) {
-    return { error: `Candidate already ${candidate.publication_decision} — nothing to reject.` };
+    return { error: `Candidate already ${candidate.publication_decision}: nothing to reject.` };
   }
 
-  const { error } = await db
-    .from('candidate_documents')
-    .update({ publication_decision: 'rejected' })
-    .eq('id', candidateId);
+  const { data: result, error } = await db.rpc('reject_candidate_with_event', {
+    p_candidate_id: candidateId,
+    p_actor_id: actor.id,
+    p_reason: input.data.reason,
+  });
   if (error) return { error: error.message };
-
-  await db.from('publication_events').insert({
-    candidate_document_id: candidateId,
-    action: 'candidate_rejected',
-    previous_status: null,
-    new_status: null,
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-    reason: input.data.reason,
-  });
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'candidate.rejected',
-    entityType: 'candidate_document',
-    entityId: candidateId,
-    before: { publication_decision: candidate.publication_decision },
-    after: { publication_decision: 'rejected' },
-    details: { reason: input.data.reason },
-  });
-  if (audit.error) return audit;
+  if (!result?.success) return { error: result?.error ?? 'Unable to reject candidate.' };
 
   revalidatePath('/admin/candidates');
   revalidatePath(`/admin/candidates/${candidateId}`);
@@ -246,7 +189,7 @@ export async function rejectCandidate(candidateId: string, formData: FormData) {
  * Promote an approved candidate into a claimable.
  *
  * Honors the publication policy: AUTO_VERIFY_CLAIMABLES=false means promotion
- * ALWAYS creates a draft claimable under human review — never
+ * ALWAYS creates a draft claimable under human review: never
  * `verified_claimable`, never published. The claimable only reaches the
  * public via explicit publication approval on /admin/claimables.
  */
@@ -284,29 +227,18 @@ export async function promoteCandidate(candidateId: string) {
     return { error: 'The source contains an information page, not a verified filing URL.' };
   }
 
-  // Guard against double promotion via the publication event trail.
-  const { data: existingPromotion } = await db
-    .from('publication_events')
-    .select('claimable_id')
-    .eq('candidate_document_id', candidateId)
-    .eq('action', 'candidate_promoted')
-    .maybeSingle();
-  if (existingPromotion?.claimable_id) {
-    return { error: 'Candidate was already promoted to a claimable.' };
-  }
-
-  const { data: sourceDoc } = await db
-    .from('source_documents')
-    .select('title, canonical_url')
-    .eq('id', candidate.source_document_id)
-    .single();
-
   // Best-effort mapping of AI-extracted fields; missing data stays null and
   // is filled in during editorial review.
   const ext = (candidate.ai_extracted_data ?? {}) as Record<string, unknown>;
   const str = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null);
   const num = (v: unknown): number | null =>
     typeof v === 'number' && Number.isFinite(v) ? v : null;
+
+  const { data: sourceDoc } = await db
+    .from('source_documents')
+    .select('title')
+    .eq('id', candidate.source_document_id)
+    .single();
 
   const publicTitle =
     str(ext.legal_case_title) ??
@@ -318,9 +250,12 @@ export async function promoteCandidate(candidateId: string) {
     Math.max(0, Math.min(100, rawConfidence <= 1 ? rawConfidence * 100 : rawConfidence)),
   );
 
-  const { data: claimable, error: insertError } = await db
-    .from('claimables')
-    .insert({
+  const { data: result, error: promoteError } = await db.rpc('promote_candidate_with_source', {
+    p_candidate_id: candidateId,
+    p_actor_id: actor.id,
+    p_slug: slug,
+    p_public_title: publicTitle,
+    p_payload: {
       slug,
       public_title: publicTitle,
       legal_case_title: str(ext.legal_case_title),
@@ -344,49 +279,14 @@ export async function promoteCandidate(candidateId: string) {
       confidence: confidencePercent,
       publication_status: 'draft',
       updated_at: new Date().toISOString(),
-    })
-    .select('id, slug')
-    .single();
-
-  if (insertError || !claimable) {
-    return { error: insertError?.message ?? 'Failed to create claimable' };
+    },
+  });
+  if (promoteError) return { error: promoteError.message };
+  if (!result?.success || !result.claimable_id) {
+    return { error: result?.error ?? 'Failed to create claimable.' };
   }
-
-  // Publication requires an auditable primary official source.
-  const { error: sourceLinkError } = await db.from('claim_sources').insert({
-    claimable_id: claimable.id,
-    source_document_id: candidate.source_document_id,
-    source_role: 'primary',
-    is_primary: true,
-  });
-  if (sourceLinkError) {
-    await db.from('claimables').delete().eq('id', claimable.id).eq('publication_status', 'draft');
-    return { error: `Unable to attach official source: ${sourceLinkError.message}` };
-  }
-
-  await db.from('publication_events').insert({
-    claimable_id: claimable.id,
-    candidate_document_id: candidateId,
-    action: 'candidate_promoted',
-    previous_status: null,
-    new_status: 'detected',
-    actor_type: 'staff_user',
-    actor_id: actor.id,
-    reason:
-      'Candidate promoted to draft claimable — human review required (AUTO_VERIFY_CLAIMABLES=false)',
-  });
-
-  const audit = await writeAuditLog({
-    actorId: actor.id,
-    action: 'candidate.promoted',
-    entityType: 'claimable',
-    entityId: claimable.id,
-    before: { candidate_document_id: candidateId, publication_decision: 'approved' },
-    after: { slug: claimable.slug, status: 'detected', publication_status: 'draft' },
-  });
-  if (audit.error) return audit;
 
   revalidatePath('/admin/claimables');
   revalidatePath('/admin/candidates');
-  redirect(`/admin/claimables/${claimable.id}`);
+  redirect(`/admin/claimables/${result.claimable_id}`);
 }

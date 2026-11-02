@@ -5,12 +5,12 @@ import { FaqAccordion } from '@/components/landing/interactive';
 export const metadata: Metadata = {
   title: 'FAQ | ClaimKhoj India',
   description:
-    'Answers to common questions about ClaimKhoj India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+    'Answers to common questions about ClaimKhoj India: how we find opportunities, our independence, data safety, plans, statuses and corrections.',
   alternates: { canonical: '/faq' },
   openGraph: {
     title: 'FAQ | ClaimKhoj India',
     description:
-      'Answers to common questions about ClaimKhoj India — how we find opportunities, our independence, data safety, plans, statuses and corrections.',
+      'Answers to common questions about ClaimKhoj India: how we find opportunities, our independence, data safety, plans, statuses and corrections.',
     url: '/faq',
     type: 'website',
   },
@@ -40,7 +40,7 @@ const faqItems = [
   {
     question: 'Is my personal data safe?',
     answer:
-      'Yes. We collect minimal data required to operate the platform — your email for account access and alerts, and anonymised usage data for improvements. We do not collect Aadhaar numbers, bank details or other sensitive identifiers. We do not sell your data to third parties. See our Privacy Policy for full details.',
+      'Yes. We collect minimal data required to operate the platform: your email for account access and alerts, and anonymised usage data for improvements. We do not collect Aadhaar numbers, bank details or other sensitive identifiers. We do not sell your data to third parties. See our Privacy Policy for full details.',
   },
   {
     question: 'What does the free plan include?',
@@ -87,7 +87,7 @@ export default function FaqPage() {
           Frequently Asked Questions
         </h1>
         <p className="mt-3 text-base text-text-secondary">
-          Everything you need to know about ClaimKhoj India.
+          Answers about sources, notices, accounts, and corrections.
         </p>
       </header>
       <FaqAccordion items={faqItems} />

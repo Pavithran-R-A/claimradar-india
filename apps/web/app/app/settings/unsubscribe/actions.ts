@@ -11,7 +11,7 @@ export type UnsubscribeResult = { ok: true; message: string } | { ok: false; err
  * One-click email unsubscribe. The HMAC token in the link binds the request to
  * a specific user; the signed-in session must match that user, so a leaked
  * link can never disable somebody else's email. Disabling email only touches
- * notification_preferences (RLS: own row) — never auth or billing state.
+ * notification_preferences (RLS: own row): never auth or billing state.
  */
 export async function unsubscribeFromEmail(formData: FormData): Promise<UnsubscribeResult> {
   const uid = typeof formData.get('uid') === 'string' ? (formData.get('uid') as string) : '';

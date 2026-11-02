@@ -143,7 +143,7 @@ function SourceSpotlight({
       aria-live="off"
       aria-label={`${node.code} source highlight`}
       className={cn(
-        'relative overflow-hidden rounded-[var(--public-radius-card)] border border-[#d3e1e8] bg-white shadow-[0_14px_34px_rgba(13,33,72,0.075)]',
+        'relative overflow-hidden rounded-[var(--public-radius-card)] border border-border bg-white shadow-sm',
         compact ? 'p-4' : 'p-4 xl:p-[1.125rem]',
       )}
     >
@@ -155,7 +155,7 @@ function SourceSpotlight({
           <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[0.61rem] font-extrabold uppercase tracking-[0.16em] text-[#2B648F]">
+          <p className="text-xs font-semibold text-text-secondary">
             Now highlighting
           </p>
           <p className="mt-0.5 font-display text-lg font-bold leading-tight text-trust-primary">
@@ -170,24 +170,24 @@ function SourceSpotlight({
       </h3>
       <p className="mt-2 text-sm leading-6 text-text-secondary">{node.description}</p>
 
-      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#DDECF2]" aria-hidden="true">
+      <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-background-elevated" aria-hidden="true">
         <span
           key={`${node.code}-${radarRunning ? 'running' : 'paused'}`}
           className={cn(
-            'radar-status-progress block h-full rounded-full bg-[#0F8B8D]',
+            'radar-status-progress block h-full rounded-full bg-success',
             !radarRunning && '[animation-play-state:paused]',
           )}
         />
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-2">
-        <span className="text-[0.67rem] leading-4 text-text-muted">Animated source overview</span>
+        <span className="text-xs leading-4 text-text-muted">Animated source overview</span>
         <button
           type="button"
           onClick={onToggleRadar}
           aria-pressed={!radarRunning}
           aria-label={radarRunning ? 'Pause radar animation' : 'Resume radar animation'}
-          className="public-focus inline-flex min-h-[32px] items-center gap-1 rounded-md px-2 text-[0.67rem] font-semibold text-trust-primary transition-colors hover:bg-surface-strong"
+          className="public-focus inline-flex min-h-[32px] items-center gap-1 rounded-md px-2 text-xs font-semibold text-trust-primary transition-colors hover:bg-surface-strong"
         >
           {radarRunning ? (
             <Pause className="h-3 w-3" aria-hidden="true" />
@@ -198,10 +198,10 @@ function SourceSpotlight({
         </button>
       </div>
 
-      <p className="mt-0.5 truncate text-[0.66rem] leading-4 text-text-secondary">
+      <p className="mt-0.5 truncate text-xs leading-4 text-text-secondary">
         {node.monitoringType}
       </p>
-      <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-[0.65rem] leading-4 text-text-muted">
+      <div className="mt-3 flex items-start gap-1.5 border-t border-border/80 pt-3 text-xs leading-4 text-text-muted">
         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0 text-trust-primary" aria-hidden="true" />
         <span>Visual scan, not live crawl status. Published listings are source-verified.</span>
       </div>
@@ -408,7 +408,7 @@ function RadarCanvas({
                 y={node.labelY}
                 textAnchor={node.textAnchor}
                 className="select-none font-display text-[12px] font-bold"
-                style={{ fill: isSelected ? node.accent : '#0D2148' }}
+                style={{ fill: isSelected ? node.accent : 'rgb(var(--c-trust-primary))' }}
               >
                 {node.code}
               </text>
@@ -436,7 +436,7 @@ function RadarCanvas({
               aria-pressed={isSelected}
               aria-label={`Inspect ${node.code}: ${node.name}`}
               onClick={() => onSelect(index)}
-              className="public-focus group/node absolute flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
+              className="public-focus group/node absolute flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
               style={{ left: `${(node.cx / 520) * 100}%`, top: `${(node.cy / 520) * 100}%` }}
             >
               <span
@@ -453,11 +453,11 @@ function RadarCanvas({
 
       <div
         data-ui="radar-hub"
-        className="pointer-events-none absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-[#c5dbe7] bg-white/95 text-center shadow-[0_14px_34px_rgba(13,33,72,0.12),0_0_0_7px_rgba(255,255,255,0.58)] backdrop-blur-sm"
+        className="pointer-events-none absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-border bg-white/95 text-center shadow-sm"
       >
         <BrandMark size={34} variant="light" />
         <span className="mt-1 font-display text-sm font-bold text-trust-primary">ClaimKhoj</span>
-        <span className="mt-0.5 max-w-[82px] text-[0.42rem] font-bold uppercase tracking-[0.15em] text-text-muted">
+        <span className="mt-0.5 max-w-[82px] text-xs text-text-muted">
           Official source scan
         </span>
       </div>
@@ -468,15 +468,25 @@ function RadarCanvas({
 export function EvidenceRadarVisual({ className }: { className?: string }) {
   const [selectedIndex, setSelectedIndex] = React.useState(DEFAULT_NODE_INDEX);
   const [radarRunning, setRadarRunning] = React.useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
+  const motionEnabled = radarRunning && !prefersReducedMotion;
   const selectedNode = MONITORED_NODES[selectedIndex] ?? MONITORED_NODES[DEFAULT_NODE_INDEX]!;
 
   React.useEffect(() => {
-    if (!radarRunning) return undefined;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener('change', updatePreference);
+    return () => mediaQuery.removeEventListener('change', updatePreference);
+  }, []);
+
+  React.useEffect(() => {
+    if (!motionEnabled) return undefined;
     const timer = window.setTimeout(() => {
       setSelectedIndex((current) => (current + 1) % MONITORED_NODES.length);
     }, SCAN_INTERVAL_MS);
     return () => window.clearTimeout(timer);
-  }, [selectedIndex, radarRunning]);
+  }, [selectedIndex, motionEnabled]);
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -500,21 +510,21 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
         <RadarCanvas
           selectedIndex={selectedIndex}
           onSelect={setSelectedIndex}
-          radarRunning={radarRunning}
+          radarRunning={motionEnabled}
         />
         <SourceSpotlight
           node={selectedNode}
-          radarRunning={radarRunning}
+          radarRunning={motionEnabled}
           onToggleRadar={toggleRadar}
         />
       </div>
 
       <div data-ui="radar-mobile" className="xl:hidden">
-        <div className="rounded-[var(--public-radius-card)] border border-border/80 bg-[#FBFDFE] p-2 shadow-[0_12px_32px_rgba(13,33,72,0.05)] sm:p-3">
+        <div className="rounded-[var(--public-radius-card)] border border-border/80 bg-background p-2 shadow-sm sm:p-3">
           <RadarCanvas
             selectedIndex={selectedIndex}
             onSelect={setSelectedIndex}
-            radarRunning={radarRunning}
+            radarRunning={motionEnabled}
             compact
           />
         </div>
@@ -522,7 +532,7 @@ export function EvidenceRadarVisual({ className }: { className?: string }) {
           <SourceSpotlight
             node={selectedNode}
             compact
-            radarRunning={radarRunning}
+            radarRunning={motionEnabled}
             onToggleRadar={toggleRadar}
           />
         </div>

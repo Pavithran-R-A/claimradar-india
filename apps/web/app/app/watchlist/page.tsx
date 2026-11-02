@@ -34,7 +34,7 @@ export default async function WatchlistPage() {
 
       {watchlist.unavailable && (
         <Alert variant="warning" title="Watchlist temporarily unavailable">
-          We could not reach the database. Your watchlist is safe — try again shortly.
+          We could not reach the database. Your watchlist is safe: try again shortly.
         </Alert>
       )}
 

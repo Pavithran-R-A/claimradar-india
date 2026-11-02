@@ -41,7 +41,7 @@ export default function PrivacyPage() {
       <h2>3. How We Use Your Data</h2>
       <ul>
         <li>To provide and maintain the Platform</li>
-        <li>To send you alerts about opportunities matching your watchlist</li>
+        <li>To provide account features and respond to your requests</li>
         <li>To process subscription payments</li>
         <li>To improve Platform features and user experience</li>
         <li>To detect and prevent abuse or security issues</li>

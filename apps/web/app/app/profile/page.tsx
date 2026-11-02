@@ -113,7 +113,7 @@ export default async function ProfilePage() {
                 <dt className="text-text-muted">Purchase period</dt>
                 <dd className="mt-1 font-medium text-text-primary">
                   {onboarding.purchase_period_start || onboarding.purchase_period_end
-                    ? `${onboarding.purchase_period_start ?? 'any'} – ${onboarding.purchase_period_end ?? 'now'}`
+                    ? `${onboarding.purchase_period_start ?? 'any'}  to  ${onboarding.purchase_period_end ?? 'now'}`
                     : 'Not specified'}
                 </dd>
               </div>

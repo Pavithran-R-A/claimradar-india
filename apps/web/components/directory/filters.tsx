@@ -23,7 +23,7 @@ export const STATUS_OPTIONS = [
 export const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest first' },
   { value: 'deadline', label: 'Deadline (soonest)' },
-  { value: 'title', label: 'Title (A–Z)' },
+  { value: 'title', label: 'Title (A to Z)' },
 ] as const;
 
 const fieldClass =
@@ -152,7 +152,7 @@ function chipHref(current: DirectoryParams, remove: keyof DirectoryParams): stri
   return qs ? `/claimables?${qs}` : '/claimables';
 }
 
-/** Removable chips summarising active filters — text labels, never colour-only. */
+/** Removable chips summarising active filters: text labels, never colour-only. */
 export function ActiveFilterChips({
   params,
   sectors,
@@ -180,7 +180,7 @@ export function ActiveFilterChips({
           key={chip.key}
           href={chipHref(params, chip.key)}
           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors duration-fast hover:border-danger hover:text-danger"
-          aria-label={`Remove filter — ${chip.label}`}
+          aria-label={`Remove filter: ${chip.label}`}
         >
           {chip.label}
           <X aria-hidden className="h-3 w-3" />

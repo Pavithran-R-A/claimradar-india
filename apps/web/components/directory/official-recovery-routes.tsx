@@ -27,10 +27,9 @@ export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
   return (
     <section aria-labelledby="recovery-pathways-title" className="mt-9">
       <div className="max-w-3xl">
-        <p className="editorial-kicker">Start with your situation</p>
         <h2
           id="recovery-pathways-title"
-          className="mt-1 font-display text-2xl font-bold tracking-tight text-text-primary"
+          className="font-display text-2xl font-bold tracking-tight text-text-primary"
         >
           Where could your money be?
         </h2>
@@ -59,8 +58,8 @@ export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
               title={option.description}
               className={
                 intent === option.id
-                  ? 'min-h-10 rounded-md bg-trust-primary px-3 py-2 text-xs font-semibold text-white'
-                  : 'min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-xs font-semibold text-text-primary hover:bg-surface-secondary'
+                  ? 'min-h-10 rounded-md bg-trust-primary px-3 py-2 text-xs font-semibold text-white active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60'
+                  : 'min-h-10 rounded-md border border-border bg-surface px-3 py-2 text-xs font-semibold text-text-primary hover:bg-surface-secondary active:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-60'
               }
             >
               {option.label}
@@ -82,12 +81,10 @@ export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
             key={route.id}
             className="flex flex-col rounded-md border border-border bg-surface p-5"
           >
-            <p className="text-[11px] font-bold uppercase tracking-wide text-text-secondary">
-              {labels[route.kind]}
-            </p>
-            <h3 className="mt-2 text-base font-semibold leading-snug text-text-primary">
+            <h3 className="text-base font-semibold leading-snug text-text-primary">
               {route.title}
             </h3>
+            <p className="mt-1 text-xs font-semibold text-text-secondary">{labels[route.kind]}</p>
             <p className="mt-2 text-sm leading-relaxed text-text-secondary">{route.description}</p>
             <p className="mt-3 text-xs leading-relaxed text-text-secondary">
               <span className="font-semibold">Next:</span> {route.nextStep}
@@ -98,7 +95,7 @@ export function OfficialRecoveryRoutes({ search = '' }: { search?: string }) {
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className="inline-flex min-h-10 items-center rounded-md border border-trust-primary px-3 py-2 text-xs font-semibold text-trust-primary hover:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trust-primary"
-                aria-label={route.linkLabel + ' — opens the official website in a new tab'}
+                aria-label={route.linkLabel + ': opens the official website in a new tab'}
               >
                 {route.linkLabel} ↗
               </a>

@@ -20,7 +20,7 @@ export function Reveal({
   as: Component = 'div',
   ...props
 }: RevealProps) {
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -60,7 +60,7 @@ export function Reveal({
         opacity: isVisible ? 1 : 0,
       }}
       className={cn(
-        'transition-all ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!opacity-100 motion-reduce:!transform-none',
+        'transition-opacity transition-transform ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:!opacity-100 motion-reduce:!transform-none',
         className,
       )}
       {...props}

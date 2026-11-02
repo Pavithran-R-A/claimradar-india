@@ -42,12 +42,25 @@ function formatDateInTimezone(date: Date, timezone: string): string {
  * Parses various deadline string formats (DD-MM-YYYY, DD/MM/YYYY, YYYY-MM-DD, ISO, or Date instances) into YYYY-MM-DD.
  * Returns null for missing, null, undefined, empty, or unparseable input.
  */
-export function parseDeadlineDate(raw: string | Date | null | undefined): string | null {
+function validCalendarDate(year: number, month: number, day: number): boolean {
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+}
+
+export function parseDeadlineDate(
+  raw: string | Date | null | undefined,
+  timezone = DEFAULT_DEADLINE_TIMEZONE,
+): string | null {
   if (raw === null || raw === undefined) return null;
 
   if (raw instanceof Date) {
     if (isNaN(raw.getTime())) return null;
-    return raw.toISOString().slice(0, 10);
+    return formatDateInTimezone(raw, timezone);
   }
 
   if (typeof raw !== 'string') return null;
@@ -70,22 +83,21 @@ export function parseDeadlineDate(raw: string | Date | null | undefined): string
     const day = dmyMatch[1].padStart(2, '0');
     const month = dmyMatch[2].padStart(2, '0');
     const year = dmyMatch[3];
-    // Validate reasonable range
     const d = parseInt(day, 10);
     const m = parseInt(month, 10);
-    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+    if (!validCalendarDate(Number(year), m, d)) return null;
     return `${year}-${month}-${day}`;
   }
 
   // 2. YYYY-MM-DD
-  const ymdMatch = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+  const ymdMatch = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:$|T|\s)/);
   if (ymdMatch && ymdMatch[1] && ymdMatch[2] && ymdMatch[3]) {
     const year = ymdMatch[1];
     const month = ymdMatch[2].padStart(2, '0');
     const day = ymdMatch[3].padStart(2, '0');
     const d = parseInt(day, 10);
     const m = parseInt(month, 10);
-    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+    if (!validCalendarDate(Number(year), m, d)) return null;
     return `${year}-${month}-${day}`;
   }
 
@@ -93,7 +105,7 @@ export function parseDeadlineDate(raw: string | Date | null | undefined): string
   const parsed = new Date(str);
   if (!isNaN(parsed.getTime())) {
     // Only return if year is reasonable
-    const iso = parsed.toISOString().slice(0, 10);
+    const iso = formatDateInTimezone(parsed, timezone);
     const year = parseInt(iso.slice(0, 4), 10);
     if (year >= 1900 && year <= 2200) {
       return iso;
@@ -125,7 +137,7 @@ export function calculateDeadlineStatus(
     : new Date();
 
   const todayStr = formatDateInTimezone(clock, timezone);
-  const deadlineStr = parseDeadlineDate(deadlineInput);
+  const deadlineStr = parseDeadlineDate(deadlineInput, timezone);
 
   if (!deadlineStr) {
     return {

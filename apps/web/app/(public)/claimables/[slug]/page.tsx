@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
   }
   const claim = outcome.data;
   return {
-    title: `${claim.title} — Official Claim Dossier | ClaimKhoj`,
+    title: `${claim.title}: Official Claim Dossier | ClaimKhoj`,
     description: `${claim.statusExplanation} Verification and official source links for ${claim.companyName}.`,
     alternates: {
       canonical: `${brandConfig.url}/claimables/${claim.slug}`,
@@ -124,11 +124,11 @@ function BackLink() {
   );
 }
 
-function DossierSectionHeading({ number, title }: { number: string; title: string }) {
+function DossierSectionHeading({ id, number, title }: { id: string; number: string; title: string }) {
   return (
     <div className="flex items-center gap-2.5 border-b border-border pb-2.5 mb-4">
       <span className="font-mono text-xs font-bold text-trust-primary">{number}</span>
-      <h2 className="text-base sm:text-lg font-bold text-text-primary tracking-tight">{title}</h2>
+      <h2 id={id} className="text-base sm:text-lg font-bold text-text-primary tracking-tight">{title}</h2>
     </div>
   );
 }
@@ -152,11 +152,15 @@ function ClaimableDossier({
             <StatusBadge status={claim.status} />
             <SourceStamp authority={authorityCode.slice(0, 16)} status="VERIFIED" />
             {isClosingSoon && <DeadlineTick label="CLOSING SOON" />}
-            <span className="font-mono text-xs text-text-muted">REF: {claim.slug}</span>
+            <span className="text-xs text-text-muted">Reference: {claim.slug}</span>
           </div>
           <span className="text-text-muted">
             Verified:{' '}
-            <time dateTime={claim.lastVerifiedAt}>{formatIstDate(claim.lastVerifiedAt)}</time>
+            {claim.lastVerifiedAt ? (
+              <time dateTime={claim.lastVerifiedAt}>{formatIstDate(claim.lastVerifiedAt)}</time>
+            ) : (
+              <span>Verification date unavailable</span>
+            )}
           </span>
         </div>
 
@@ -245,13 +249,15 @@ function ClaimableDossier({
           </div>
           <div>
             <dt className="font-semibold text-text-muted">Last verified</dt>
-            <dd className="mt-1 text-text-secondary">{formatIstDateTime(claim.lastVerifiedAt)}</dd>
+            <dd className="mt-1 text-text-secondary">
+              {claim.lastVerifiedAt ? formatIstDateTime(claim.lastVerifiedAt) : 'Verification date unavailable'}
+            </dd>
           </div>
         </dl>
       </section>
 
       <div className="mt-6 rounded-md border border-border bg-surface p-4 shadow-xs">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">
+        <span className="mb-3 block text-xs font-semibold text-text-muted">
           Verification Trail
         </span>
         <EvidenceThread activeStage={4} />
@@ -272,7 +278,7 @@ function ClaimableDossier({
 
       <div className="mt-8 space-y-8">
         <section aria-labelledby="who-qualifies">
-          <DossierSectionHeading number="01" title="Who May Qualify" />
+          <DossierSectionHeading id="who-qualifies" number="01" title="Who may qualify" />
           <div className="rounded-md border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary">
             <p>{claim.affectedGroup}</p>
           </div>
@@ -283,7 +289,7 @@ function ClaimableDossier({
         </section>
 
         <section aria-labelledby="relief">
-          <DossierSectionHeading number="02" title="Relief Stated in Official Record" />
+          <DossierSectionHeading id="relief" number="02" title="Relief stated in official record" />
           <div className="rounded-md border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary">
             <p className="font-semibold text-text-primary">
               {claim.reliefAmount ||
@@ -291,13 +297,13 @@ function ClaimableDossier({
             </p>
           </div>
           <p className="mt-2 text-xs text-text-muted">
-            ClaimKhoj only publishes figures explicitly stated in the regulatory order — never
+            ClaimKhoj only publishes figures explicitly stated in the regulatory order: never
             estimates.
           </p>
         </section>
 
         <section aria-labelledby="proof">
-          <DossierSectionHeading number="03" title="Evidentiary Proof & Documents Required" />
+          <DossierSectionHeading id="proof" number="03" title="Proof and documents required" />
           {claim.proofRequirements.length > 0 ? (
             <ul className="space-y-2">
               {claim.proofRequirements.map((req, idx) => (
@@ -321,7 +327,7 @@ function ClaimableDossier({
         </section>
 
         <section aria-labelledby="action-route">
-          <DossierSectionHeading number="04" title="Official Action Pathway" />
+          <DossierSectionHeading id="action-route" number="04" title="Official action pathway" />
           <div className="rounded-md border border-border bg-surface p-5 text-sm leading-relaxed text-text-secondary">
             <p>{claim.actionRoute}</p>
             {claim.officialRouteUrl ? (
@@ -350,7 +356,7 @@ function ClaimableDossier({
         </section>
 
         <section aria-labelledby="sources">
-          <DossierSectionHeading number="05" title="Authenticated Regulatory Documents" />
+          <DossierSectionHeading id="sources" number="05" title="Official source documents" />
           {claim.officialSources.length === 0 ? (
             <p className="text-xs text-text-muted">Source documents are undergoing indexing.</p>
           ) : (
@@ -386,7 +392,7 @@ function ClaimableDossier({
         </section>
 
         <section aria-labelledby="verification">
-          <DossierSectionHeading number="06" title="Editorial Verification Statement" />
+          <DossierSectionHeading id="verification" number="06" title="Editorial verification" />
           <div className="rounded-md border border-border bg-surface-strong/50 p-4 text-xs text-text-secondary leading-relaxed">
             <p className="flex items-center gap-1.5 font-bold text-text-primary mb-1">
               <ShieldCheck className="h-4 w-4 text-trust-primary" />
@@ -398,9 +404,9 @@ function ClaimableDossier({
 
         {related.length > 0 && (
           <section aria-labelledby="related" className="pt-6 border-t border-border">
-            <h3 id="related" className="text-base font-bold text-text-primary mb-3">
-              Related Opportunities
-            </h3>
+            <h2 id="related" className="mb-3 text-base font-bold text-text-primary">
+              Related opportunities
+            </h2>
             <div className="space-y-3">
               {related.map((item) => (
                 <ClaimableRow key={item.id} claim={item} />
@@ -420,7 +426,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
   return (
     <aside className="space-y-5 lg:sticky lg:top-24">
       <div className="rounded-md border border-border bg-surface p-5 shadow-sm">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-3">
+        <span className="mb-3 block text-xs font-semibold text-text-muted">
           Claim Summary
         </span>
         <dl className="space-y-3.5 text-xs">
@@ -470,8 +476,8 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
       </div>
 
       <div className="rounded-md border border-border bg-surface p-4 text-xs">
-        <span className="font-bold uppercase tracking-wider text-text-muted block mb-2.5 text-xs">
-          Record Provenance
+        <span className="mb-2.5 block text-xs font-semibold text-text-muted">
+          Record provenance
         </span>
         <dl className="space-y-2 text-xs">
           <div className="flex justify-between">
@@ -481,7 +487,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
           <div className="flex justify-between">
             <dt className="text-text-muted">Last Verified:</dt>
             <dd className="font-mono text-text-primary">
-              {formatIstDateTime(claim.lastVerifiedAt)}
+              {claim.lastVerifiedAt ? formatIstDateTime(claim.lastVerifiedAt) : 'Verification date unavailable'}
             </dd>
           </div>
           <div className="flex justify-between">
@@ -498,7 +504,7 @@ function DossierSidebar({ claim }: { claim: PublishedClaimable }) {
           href="/corrections"
           className="text-xs text-text-muted hover:text-trust-primary hover:underline transition-colors duration-fast"
         >
-          Found an error? Submit an editorial correction →
+          Submit an editorial correction
         </Link>
       </div>
     </aside>

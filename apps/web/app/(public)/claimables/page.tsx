@@ -133,7 +133,6 @@ export default async function ClaimablesPage({ searchParams }: ClaimablesPagePro
     <div className="mx-auto max-w-content px-4 py-10 sm:px-6 lg:px-8">
       <JsonLd data={structuredData} />
       <header className="max-w-3xl">
-        <p className="editorial-kicker">India money recovery guide</p>
         <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight text-text-primary">
           Find refunds and unclaimed money
         </h1>
@@ -265,7 +264,7 @@ function DirectoryResults({
       <p aria-live="polite" className="mb-4 text-sm text-text-muted">
         Showing{' '}
         <span className="font-semibold text-text-secondary">
-          {start}–{end}
+          {start} to {end}
         </span>{' '}
         of <span className="font-semibold text-text-secondary">{pageData.total}</span> published{' '}
         {pageData.total === 1 ? 'record' : 'records'}

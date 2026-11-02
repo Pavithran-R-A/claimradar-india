@@ -26,13 +26,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const outcome = await getPublishedCompanyBySlug(slug);
   if (!outcome.ok || !outcome.data) {
     return {
-      title: 'Company Not Found — ClaimKhoj India',
+      title: 'Company Not Found: ClaimKhoj India',
       robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `${outcome.data.name} — Published Refund & Claim Records | ClaimKhoj India`,
+    title: `${outcome.data.name}: Published Refund & Claim Records | ClaimKhoj India`,
     description: `Published refund, compensation and claim records referencing ${outcome.data.name}, verified from official sources.`,
     alternates: { canonical: `${brandConfig.url}/companies/${outcome.data.slug}` },
   };
@@ -107,7 +107,7 @@ export default async function CompanyDetailPage({ params, searchParams }: PagePr
         <div className="flex items-center gap-4">
           <span
             aria-hidden
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-card bg-ink-900 text-lg font-bold text-trust-primary"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-ink-900 text-lg font-bold text-trust-primary"
           >
             {company.name.substring(0, 2).toUpperCase()}
           </span>

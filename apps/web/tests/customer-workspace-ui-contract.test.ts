@@ -9,7 +9,8 @@ function source(relativePath: string): string {
 describe('Customer-facing UI release guardrails', () => {
   it('provides card padding but allows explicit zero-padding containers', () => {
     const system = source('../../../packages/design-system/src/index.tsx');
-    expect(system).toContain('rounded-lg border p-5 transition-all duration-fast');
+    expect(system).toContain('rounded-lg border p-5');
+    expect(system).not.toContain('transition-all');
     const listPage = source('../app/app/matches/page.tsx');
     expect(listPage).toContain('className="p-0"');
   });

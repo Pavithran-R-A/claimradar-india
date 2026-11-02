@@ -9,7 +9,6 @@ interface AuthoritySource {
   name: string;
   domain: string;
   statutoryRole: string;
-  frequency: string;
   noticeTypes: string;
   officialPortal: string;
 }
@@ -19,7 +18,6 @@ export const SOURCES: AuthoritySource[] = publicSourceFamilies.map((source) => (
   name: source.name,
   domain: source.domain,
   statutoryRole: source.description,
-  frequency: 'Scheduled every 6 hours',
   noticeTypes: source.scope,
   officialPortal: `https://${source.domain}`,
 }));
@@ -70,7 +68,6 @@ export function MonitoredSourcesNetwork() {
               <th className="py-3 px-4">Authority</th>
               <th className="py-3 px-4">Statutory Domain</th>
               <th className="py-3 px-4 hidden md:table-cell">Monitored Notice Types</th>
-              <th className="py-3 px-4 hidden lg:table-cell">Ingestion Cadence</th>
               <th className="py-3 px-4 text-right">Portal</th>
             </tr>
           </thead>
@@ -89,7 +86,7 @@ export function MonitoredSourcesNetwork() {
                   </div>
                 </td>
                 <td className="py-3.5 px-4 text-xs text-text-secondary">
-                  <span className="block font-medium">{source.domain}</span>
+                  <span className="block">{source.domain}</span>
                   <span className="text-text-muted text-xs mt-0.5 block">
                     {source.statutoryRole}
                   </span>
@@ -97,18 +94,12 @@ export function MonitoredSourcesNetwork() {
                 <td className="py-3.5 px-4 text-xs text-text-muted hidden md:table-cell">
                   {source.noticeTypes}
                 </td>
-                <td className="py-3.5 px-4 text-xs text-text-muted hidden lg:table-cell font-mono">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-trust-primary" />
-                    {source.frequency}
-                  </span>
-                </td>
                 <td className="py-3.5 px-4 text-right">
                   <a
                     href={source.officialPortal}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-text-muted hover:text-trust-primary transition-colors duration-fast"
+                    className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-trust-primary transition-colors duration-fast"
                   >
                     <span>Visit</span>
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -121,12 +112,12 @@ export function MonitoredSourcesNetwork() {
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-text-muted px-1">
-        <span className="flex items-center gap-1.5 font-medium">
+        <span className="flex items-center gap-1.5">
           <ShieldCheck className="h-4 w-4 text-trust-primary shrink-0" />
           Each notice links to its official source for review.
         </span>
-        <span className="font-mono text-[11px] text-text-secondary">
-          COVERAGE CONFIGURATION · LIVE HEALTH MONITORED SEPARATELY
+        <span className="text-xs text-text-secondary">
+          Coverage settings are listed with each source.
         </span>
       </div>
     </div>

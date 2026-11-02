@@ -86,7 +86,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="text-sm font-extrabold text-text-primary">
                 {brandConfig.shortName}
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
+              <span className="text-xs font-semibold text-trust-primary">
                 Operations Desk
               </span>
             </div>
@@ -106,7 +106,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </Link>
             {visibleGroups.map((group) => (
               <div key={group.heading}>
-                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                <p className="px-3 pb-1 text-xs font-medium text-text-muted">
                   {group.heading}
                 </p>
                 <div className="space-y-1">

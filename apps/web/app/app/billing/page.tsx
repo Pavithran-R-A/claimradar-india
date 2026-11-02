@@ -74,7 +74,7 @@ export default async function BillingPage() {
         </Card>
       ) : (
         <Alert variant="info" title="Preview mode">
-          Billing is flagged on in this environment, but only a mock provider is wired — no real
+          Billing is flagged on in this environment, but only a mock provider is wired: no real
           payments are processed.
         </Alert>
       )}

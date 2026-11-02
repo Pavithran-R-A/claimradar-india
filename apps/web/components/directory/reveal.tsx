@@ -7,7 +7,7 @@ import { cn } from '@claimradar/design-system';
  * Progressive-enhancement scroll reveal.
  *
  * Server HTML always renders fully visible (immediate-content fallback). Only
- * after mount — and only when the user has no reduced-motion preference — do
+ * after mount: and only when the user has no reduced-motion preference: do
  * we hide the element and reveal it on intersection. Without JS or with
  * reduced motion the content is simply always there. No layout dimensions are
  * animated, so CLS stays 0.

@@ -93,7 +93,7 @@ export default async function AuditPage({
     <div>
       <PageHeader
         title="Audit Log"
-        subtitle={`${totalCount} privileged actions recorded — immutable trail`}
+        subtitle={`${totalCount} privileged actions recorded: immutable trail`}
       />
 
       <div className="mt-4 space-y-3">

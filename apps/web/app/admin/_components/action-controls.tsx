@@ -38,7 +38,7 @@ function ResultMessage({ state }: { state: ActionResult | null }) {
 /**
  * Inline impact-confirmation panel. Destructive and publication actions must
  * pass through this second step: the operator reads the impact message and
- * explicitly confirms before the server action runs. Deliberately calm — no
+ * explicitly confirms before the server action runs. Deliberately calm: no
  * modal focus trap, no animation beyond colour transitions.
  */
 function ConfirmationPanel({

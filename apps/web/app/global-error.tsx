@@ -5,7 +5,7 @@ import './globals.css';
 /**
  * Root error boundary for the entire app shell. Required by Next.js for
  * uncaught root layout errors; also provides the static 500 fallback.
- * Keeps the calm, token-only visual language — no marketing motion.
+ * Keeps the calm, token-only visual language: no marketing motion.
  */
 export default function GlobalError({
   error,
@@ -21,13 +21,9 @@ export default function GlobalError({
           role="alert"
           className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-            Something went wrong
-          </p>
           <h1 className="text-2xl font-semibold">An unexpected error occurred</h1>
           <p className="max-w-md text-sm text-text-secondary">
-            Your data is safe. If the problem persists, use the grievance contact in the privacy
-            center.
+            We could not finish loading this page. Try again, or contact support if this continues.
             {error.digest ? ` Reference: ${error.digest}` : ''}
           </p>
           <button

@@ -5,7 +5,7 @@ import { GLOSSARY_TERMS } from '@/lib/glossary-content';
 export const metadata: Metadata = {
   title: 'Glossary | ClaimKhoj India',
   description:
-    'Plain-language definitions of core consumer and investor claim terms — settlement, refund scheme, compensation fund, claim window and more.',
+    'Plain-language definitions of core consumer and investor claim terms: settlement, refund scheme, compensation fund, claim window and more.',
   alternates: { canonical: '/glossary' },
 };
 

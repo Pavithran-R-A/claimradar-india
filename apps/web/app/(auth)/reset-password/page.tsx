@@ -14,25 +14,42 @@ export const dynamic = 'force-dynamic';
 export default async function ResetPasswordPage() {
   // A valid reset link is exchanged by /auth/callback, which establishes a
   // recovery session before redirecting here. If no session is present the
-  // link is missing, expired or invalid — render an honest error state.
+  // link is missing, expired or invalid: render an honest error state.
   let hasRecoverySession = false;
+  let sessionCheckUnavailable = false;
   try {
     const supabase = await getSupabaseServerClient();
-    const { data } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
+    sessionCheckUnavailable = Boolean(error);
     hasRecoverySession = Boolean(data.session);
   } catch {
-    hasRecoverySession = false;
+    sessionCheckUnavailable = true;
+  }
+
+  if (sessionCheckUnavailable) {
+    return (
+      <div>
+        <h1 className="mb-2 text-center text-xl font-semibold text-text-primary">
+          Reset link check unavailable
+        </h1>
+        <p className="mb-6 text-center text-sm text-text-secondary">
+          We could not check this reset link. Please try again shortly.
+        </p>
+        <Link href="/forgot-password" className="text-trust-primary hover:underline">
+          Request a new reset link
+        </Link>
+      </div>
+    );
   }
 
   if (!hasRecoverySession) {
     return (
       <div>
-        <h2 className="mb-2 text-center text-xl font-semibold text-text-primary">
-          Reset Link Unavailable
-        </h2>
+        <h1 className="mb-2 text-center text-xl font-semibold text-text-primary">
+          Reset link unavailable
+        </h1>
         <p className="mb-6 text-center text-sm text-text-secondary">
-          This password reset link is invalid or has expired. For your security, reset links can
-          only be used once and for a limited time.
+          This reset link cannot establish a recovery session. Request a new one to continue.
         </p>
 
         <div className="mb-6 rounded-md border border-danger/20 bg-danger/10 p-3 text-sm text-danger">

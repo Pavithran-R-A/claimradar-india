@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { toggleSource } from '../actions';
 
 /**
@@ -11,16 +12,34 @@ import { toggleSource } from '../actions';
 export function ToggleSourceButton({ sourceId, enabled }: { sourceId: string; enabled: boolean }) {
   const [isPending, startTransition] = useTransition();
   const [confirmingDisable, setConfirmingDisable] = useState(false);
+  const [feedback, setFeedback] = useState<{ kind: 'error' | 'success'; message: string } | null>(
+    null,
+  );
+  const router = useRouter();
 
   function runToggle() {
     setConfirmingDisable(false);
     startTransition(async () => {
-      await toggleSource(sourceId);
+      const result = await toggleSource(sourceId);
+      setFeedback(
+        'error' in result
+          ? { kind: 'error', message: result.error }
+          : { kind: 'success', message: 'Source updated.' },
+      );
+      router.refresh();
     });
   }
 
   return (
     <div className="flex flex-col items-start gap-1.5">
+      {feedback ? (
+        <p
+          className="text-xs text-text-secondary"
+          role={feedback.kind === 'error' ? 'alert' : 'status'}
+        >
+          {feedback.message}
+        </p>
+      ) : null}
       <button
         type="button"
         role="switch"

@@ -4,7 +4,7 @@ import { ADMINS_ONLY } from '../_lib/roles';
 import { PageHeader } from '../_lib/ui';
 
 /**
- * Admin settings — read-only visibility of feature flags and source defaults.
+ * Admin settings: read-only visibility of feature flags and source defaults.
  * Flags are deployment-time configuration; changing them requires an env
  * change + redeploy, never a runtime toggle in the admin UI.
  */
@@ -23,7 +23,7 @@ export default async function SettingsPage() {
       <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <div className="flex items-center justify-between">
-            <p className="font-mono text-sm text-text-primary">ENABLE_BILLING</p>
+            <p className="text-sm text-text-primary">Billing</p>
             <Badge variant={enableBilling ? 'success' : 'neutral'}>
               {enableBilling ? 'enabled' : 'disabled'}
             </Badge>
@@ -35,9 +35,9 @@ export default async function SettingsPage() {
         </Card>
         <Card>
           <div className="flex items-center justify-between">
-            <p className="font-mono text-sm text-text-primary">AUTO_VERIFY_CLAIMABLES</p>
+            <p className="text-sm text-text-primary">Automatic verification</p>
             <Badge variant={autoVerifyClaimables ? 'danger' : 'success'}>
-              {autoVerifyClaimables ? 'enabled — review policy' : 'disabled (required)'}
+              {autoVerifyClaimables ? 'enabled: review policy' : 'disabled (required)'}
             </Badge>
           </div>
           <p className="mt-2 text-sm text-text-secondary">
@@ -73,7 +73,7 @@ export default async function SettingsPage() {
         <ul className="space-y-2 text-sm text-text-secondary">
           <li>
             <strong className="text-text-primary">Crawls</strong> run from the CLI only:{' '}
-            <code>pnpm crawler:daily</code>. Web-triggered crawling with a run-lock is future work —
+            <code>pnpm crawler:daily</code>. Web-triggered crawling with a run-lock is future work.
             the admin panel deliberately never executes long crawl jobs in a request path.
           </li>
           <li>

@@ -75,7 +75,7 @@ export default async function ClaimablesPage({
     <div>
       <PageHeader
         title="Claimables"
-        subtitle={`${totalCount} total — publication approval is always an explicit editorial action`}
+        subtitle={`${totalCount} total: publication approval is always an explicit editorial action`}
       />
 
       <div className="mt-4 space-y-2">

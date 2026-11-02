@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { SOURCES } from '../components/landing/monitored-sources-network';
+import { publicSourceFamilies } from '@claimradar/source-registry';
 
 const landingPath = path.resolve(__dirname, '../app/(public)/page.tsx');
 const editorialPath = path.resolve(__dirname, '../components/landing/editorial-principles.tsx');
@@ -15,57 +16,13 @@ const read = (filePath: string) => fs.readFileSync(filePath, 'utf8');
 
 describe('truthful public copy contracts', () => {
   it('keeps the monitored-source network bounded to configured public families', () => {
-    expect(SOURCES).toEqual([
-      {
-        code: 'SEBI',
-        name: 'Securities and Exchange Board of India',
-        domain: 'sebi.gov.in',
-        statutoryRole: 'Investor compensation schemes, refund orders, and recovery distributions.',
-        frequency: 'Scheduled every 6 hours',
-        noticeTypes: 'Securities notices & refund orders',
-        officialPortal: 'https://sebi.gov.in',
-      },
-      {
-        code: 'RBI',
-        name: 'Reserve Bank of India',
-        domain: 'rbi.org.in',
-        statutoryRole:
-          'Banking directives, ombudsman resolutions, and depositor protection guidelines.',
-        frequency: 'Scheduled every 6 hours',
-        noticeTypes: 'Banking & ombudsman directives',
-        officialPortal: 'https://rbi.org.in',
-      },
-      {
-        code: 'IBBI',
-        name: 'Insolvency and Bankruptcy Board of India',
-        domain: 'ibbi.gov.in',
-        statutoryRole:
-          'Corporate insolvency resolution announcements and creditor claim filing notices.',
-        frequency: 'Scheduled every 6 hours',
-        noticeTypes: 'Insolvency creditor claim notices',
-        officialPortal: 'https://ibbi.gov.in',
-      },
-      {
-        code: 'PIB',
-        name: 'Press Information Bureau',
-        domain: 'pib.gov.in',
-        statutoryRole:
-          'Central government compensation packages, press announcements, and ministry notifications.',
-        frequency: 'Scheduled every 6 hours',
-        noticeTypes: 'Government compensation press releases',
-        officialPortal: 'https://pib.gov.in',
-      },
-      {
-        code: 'TRAI',
-        name: 'Telecom Regulatory Authority of India',
-        domain: 'trai.gov.in',
-        statutoryRole:
-          'Telecom tariff directives, overcharge refunds, and consumer protection notices.',
-        frequency: 'Scheduled every 6 hours',
-        noticeTypes: 'Telecom refund & consumer directives',
-        officialPortal: 'https://trai.gov.in',
-      },
-    ]);
+    expect(SOURCES.map((source) => source.code)).toEqual(
+      publicSourceFamilies.map((source) => source.shortName),
+    );
+    expect(SOURCES.every((source) => source.officialPortal === `https://${source.domain}`)).toBe(
+      true,
+    );
+    expect(SOURCES.every((source) => !('frequency' in source))).toBe(true);
   });
 
   it('keeps landing copy search-first and source-bounded', () => {
@@ -96,7 +53,8 @@ describe('truthful public copy contracts', () => {
     expect(editorial).toContain('Public financial notices');
     expect(editorial).toContain('configured official source families');
     expect(editorial).toContain('official route named in the source record');
-    expect(sources).toContain('COVERAGE CONFIGURATION · LIVE HEALTH MONITORED SEPARATELY');
+    expect(sources).toContain('Coverage settings are listed with each source.');
+    expect(sources).not.toMatch(/\b(?:every|each)\s+\d+\s+(?:minutes|hours|days)\b/i);
 
     for (const unsupportedClaim of [
       'AI-hallucinated',

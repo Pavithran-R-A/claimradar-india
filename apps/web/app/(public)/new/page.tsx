@@ -11,7 +11,7 @@ import {
 import { formatIstDate } from '@/lib/dates';
 
 export const metadata: Metadata = {
-  title: 'Newly Published Claimables — ClaimKhoj India',
+  title: 'Newly Published Claimables: ClaimKhoj India',
   description:
     'Recently published refund, compensation and claim opportunities verified from official Indian sources.',
   alternates: { canonical: '/new' },
@@ -72,10 +72,10 @@ export default async function NewPage() {
 
       <div className="mt-10 text-center">
         <Link
-          href="/register"
+          href="/claimables"
           className="inline-flex h-11 items-center rounded-field bg-trust-primary px-6 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
         >
-          Get notified about new records
+          Browse all opportunities
         </Link>
       </div>
     </div>

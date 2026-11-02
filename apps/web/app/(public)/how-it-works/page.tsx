@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
             </span>
             <div>
               <h2 className="text-xl font-bold text-text-primary">
-                Direct Official Action — No Middlemen, No Fees
+                Direct Official Action: No Middlemen, No Fees
               </h2>
               <p className="mt-2 text-sm text-text-secondary leading-relaxed">
                 Every listing surfaces the authentic official submission route. You submit your
@@ -109,26 +109,26 @@ export default function HowItWorksPage() {
 
       {/* What ClaimKhoj Does and Does NOT Do */}
       <section className="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 p-6 sm:p-8">
-          <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold mb-4">
+        <div className="rounded-md border border-success/20 bg-success/5 p-6 sm:p-8">
+          <div className="mb-4 flex items-center gap-2 font-bold text-success">
             <CheckCircle2 className="h-5 w-5" />
             <h2 className="text-lg">What ClaimKhoj Does</h2>
           </div>
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">✓</span>
+              <span className="font-bold text-success">✓</span>
               <span>Monitors configured official source families on a scheduled basis.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">✓</span>
+              <span className="font-bold text-success">✓</span>
               <span>Translates complex legal notices into plain, clear English.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">✓</span>
+              <span className="font-bold text-success">✓</span>
               <span>Links directly to authentic authority portals where you submit for free.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-emerald-600 font-bold">✓</span>
+              <span className="font-bold text-success">✓</span>
               <span>
                 Saves your watchlist preferences; automatic match alerts are currently disabled.
               </span>
@@ -143,19 +143,19 @@ export default function HowItWorksPage() {
           </div>
           <ul className="space-y-3 text-sm text-text-secondary">
             <li className="flex items-start gap-2">
-              <span className="text-rose-600 font-bold">✗</span>
+              <span className="text-danger font-bold">✗</span>
               <span>We do NOT file claims, collect fees, or take cuts of refunds.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-rose-600 font-bold">✗</span>
-              <span>We do NOT decide your legal eligibility — only the official scheme does.</span>
+              <span className="text-danger font-bold">✗</span>
+              <span>We do NOT decide your legal eligibility: only the official scheme does.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-rose-600 font-bold">✗</span>
+              <span className="text-danger font-bold">✗</span>
               <span>We do NOT collect Aadhaar, PAN, bank credentials, or private IDs.</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-rose-600 font-bold">✗</span>
+              <span className="text-danger font-bold">✗</span>
               <span>We are NOT affiliated with any government agency or law firm.</span>
             </li>
           </ul>
@@ -167,7 +167,7 @@ export default function HowItWorksPage() {
         <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
           Explore Active Opportunities Now
         </h2>
-        <p className="text-sm text-slate-300 max-w-xl mx-auto mb-6">
+        <p className="mx-auto mb-6 max-w-xl text-sm text-text-muted">
           Browse official recovery routes or save watchlist preferences. Automatic alerts are not
           enabled.
         </p>

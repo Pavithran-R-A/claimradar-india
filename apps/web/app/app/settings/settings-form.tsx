@@ -58,7 +58,7 @@ export function SettingsForm({
             type="checkbox"
             checked={email}
             onChange={(event) => setEmail(event.target.checked)}
-            className="mt-0.5 accent-[#7387FF]"
+            className="mt-0.5 accent-trust-primary"
           />
           <span>
             <span className="block font-medium text-text-primary">Email</span>
@@ -70,7 +70,7 @@ export function SettingsForm({
             type="checkbox"
             checked={browser}
             onChange={(event) => setBrowser(event.target.checked)}
-            className="mt-0.5 accent-[#7387FF]"
+            className="mt-0.5 accent-trust-primary"
           />
           <span>
             <span className="block font-medium text-text-primary">In-app</span>
@@ -83,7 +83,7 @@ export function SettingsForm({
             checked={whatsapp}
             onChange={(event) => setWhatsapp(event.target.checked)}
             disabled
-            className="mt-0.5 accent-[#7387FF]"
+            className="mt-0.5 accent-trust-primary"
           />
           <span>
             <span className="block font-medium text-text-primary">WhatsApp (coming soon)</span>

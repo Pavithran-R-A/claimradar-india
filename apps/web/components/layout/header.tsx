@@ -50,6 +50,24 @@ export function Header() {
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') handleClose();
+      if (event.key !== 'Tab') return;
+      const dialog = document.getElementById('mobile-navigation-drawer');
+      if (!dialog) return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.getAttribute('aria-hidden') !== 'true');
+      const firstFocusable = focusable[0];
+      const lastFocusable = focusable.at(-1);
+      if (!firstFocusable || !lastFocusable) return;
+      if (event.shiftKey && document.activeElement === firstFocusable) {
+        event.preventDefault();
+        lastFocusable.focus();
+      } else if (!event.shiftKey && document.activeElement === lastFocusable) {
+        event.preventDefault();
+        firstFocusable.focus();
+      }
     };
 
     document.addEventListener('keydown', onKeyDown);
@@ -71,10 +89,8 @@ export function Header() {
 
       <header
         className={cn(
-          'sticky top-0 z-50 h-16 border-b transition-all duration-ui ease-out lg:h-[72px]',
-          scrolled
-            ? 'border-border bg-white/95 shadow-[0_8px_28px_rgba(13,33,72,0.06)] backdrop-blur-md'
-            : 'border-border/80 bg-white/92 backdrop-blur-sm',
+          'sticky top-0 z-50 h-16 border-b transition-colors duration-ui ease-out lg:h-[72px]',
+          scrolled ? 'border-border bg-white shadow-sm' : 'border-border/80 bg-white',
         )}
       >
         <div className="mx-auto flex h-full max-w-[1760px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 2xl:px-16">
@@ -112,7 +128,7 @@ export function Header() {
             <Link
               href="/claimables"
               aria-label="Search all opportunities"
-              className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-transparent text-text-secondary transition-all duration-fast hover:border-border hover:bg-surface-strong hover:text-text-primary"
+              className="public-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-transparent text-text-secondary transition-colors duration-fast hover:border-border hover:bg-surface-strong hover:text-text-primary"
             >
               <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             </Link>
@@ -177,7 +193,7 @@ export function Header() {
 
           <div
             className={cn(
-              'fixed inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-border bg-white p-5 shadow-2xl transition-all sm:p-6',
+              'fixed inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-border bg-white p-5 shadow-2xl transition-transform sm:p-6',
               isClosing ? 'drawer-panel-exit' : 'drawer-panel-enter',
             )}
           >

@@ -109,7 +109,7 @@ export default async function DashboardPage() {
 
       {dbUnavailable && (
         <Alert variant="warning" title="Data temporarily unavailable">
-          We could not reach the database just now. Nothing below is stale on purpose — please check
+          We could not reach the database just now. Nothing below is stale on purpose: please check
           back shortly.
         </Alert>
       )}
@@ -233,7 +233,7 @@ export default async function DashboardPage() {
             <div className="space-y-4">
               {watchlist.companies.length > 0 && (
                 <div>
-                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-text-muted">
+                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-text-muted">
                     <Building2 className="h-3.5 w-3.5" aria-hidden />
                     Companies
                   </p>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
               )}
               {watchlist.sectors.length > 0 && (
                 <div>
-                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-text-muted">
+                  <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-text-muted">
                     <Layers className="h-3.5 w-3.5" aria-hidden />
                     Sectors
                   </p>

@@ -1,21 +1,23 @@
+/* Hallmark | ClaimKhoj: source-led consumer service, restrained editorial tone. */
+/* Critique: mixed motion hid useful content; keep journeys visible by default. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ==========================================================================
-   ClaimKhoj design tokens — Editorial Public-Benefit Finance
+   ClaimKhoj design tokens: Editorial Public-Benefit Finance
    --------------------------------------------------------------------------
    Light-first consumer identity with warm paper canvas, deep editorial blue,
    and crisp hairline rules.
    ========================================================================== */
 
 :root {
-  --c-background: 255 255 255;
+  --c-background: 252 251 247;
   --c-background-elevated: 255 255 255;
-  --c-surface: 255 255 255;
+  --c-surface: 255 254 251;
   --c-surface-strong: 241 247 248;
-  --c-border: #d9e2e6;
-  --c-border-strong: #b5c7cf;
+  --c-border: 217 226 230;
+  --c-border-strong: 181 199 207;
   --c-text-primary: 13 33 72;
   --c-text-secondary: 61 79 111;
   --c-text-muted: 88 105 132;
@@ -25,8 +27,8 @@
   --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
-  --c-verified-background: rgba(35, 112, 90, 0.08);
-  --c-deadline-background: rgba(180, 95, 6, 0.08);
+  --c-verified-background: 35 112 90 / 0.08;
+  --c-deadline-background: 180 95 6 / 0.08;
 
   /* Composition tokens */
   --content-measure: 68ch;
@@ -51,12 +53,12 @@
 }
 
 .theme-light {
-  --c-background: 255 255 255;
+  --c-background: 252 251 247;
   --c-background-elevated: 255 255 255;
-  --c-surface: 255 255 255;
+  --c-surface: 255 254 251;
   --c-surface-strong: 241 247 248;
-  --c-border: #d9e2e6;
-  --c-border-strong: #b5c7cf;
+  --c-border: 217 226 230;
+  --c-border-strong: 181 199 207;
   --c-text-primary: 13 33 72;
   --c-text-secondary: 61 79 111;
   --c-text-muted: 88 105 132;
@@ -66,8 +68,8 @@
   --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
-  --c-verified-background: rgba(35, 112, 90, 0.08);
-  --c-deadline-background: rgba(180, 95, 6, 0.08);
+  --c-verified-background: 35 112 90 / 0.08;
+  --c-deadline-background: 180 95 6 / 0.08;
 }
 
 .theme-dark {
@@ -75,8 +77,8 @@
   --c-background-elevated: 30 36 45;
   --c-surface: 30 36 45;
   --c-surface-strong: 38 45 56;
-  --c-border: rgba(255, 255, 255, 0.1);
-  --c-border-strong: rgba(255, 255, 255, 0.24);
+  --c-border: 255 255 255 / 0.1;
+  --c-border-strong: 255 255 255 / 0.24;
   --c-text-primary: 247 246 242;
   --c-text-secondary: 161 174 195;
   --c-text-muted: 112 119 130;
@@ -86,16 +88,18 @@
   --c-deadline: 251 191 36;
   --c-danger: 248 113 113;
   --c-info: 96 165 250;
-  --c-verified-background: rgba(52, 211, 153, 0.12);
-  --c-deadline-background: rgba(251, 191, 36, 0.12);
+  --c-verified-background: 52 211 153 / 0.12;
+  --c-deadline-background: 251 191 36 / 0.12;
 }
 
 html {
+  overflow-x: clip;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
+  overflow-x: clip;
   background-color: rgb(var(--c-background));
   color: rgb(var(--c-text-primary));
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -121,9 +125,9 @@ body {
   color: rgb(var(--c-trust-primary));
   font-size: 0.6875rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
-  line-height: 1.2;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-transform: none;
 }
 
 .editorial-kicker::before {
@@ -145,7 +149,6 @@ body {
   border: 1px solid var(--c-border);
   border-radius: var(--public-radius-card);
   background: rgb(var(--c-surface));
-  box-shadow: var(--public-shadow-card);
 }
 
 .public-section {

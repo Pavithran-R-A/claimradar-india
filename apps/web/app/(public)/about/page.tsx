@@ -17,7 +17,7 @@ export default function AboutPage() {
       <h2>Our Mission</h2>
       <p>
         Every year, crores of rupees in refunds, compensation payouts and consumer claim
-        opportunities go unclaimed in India — not because people are ineligible, but because they
+        opportunities go unclaimed in India: not because people are ineligible, but because they
         never learn about them. Court orders are published in legal databases. Regulatory circulars
         appear on government portals. Company notices are buried in annual reports. ClaimKhoj exists
         to change this.
@@ -40,8 +40,8 @@ export default function AboutPage() {
         Our technology stack monitors verified official sources across statutory categories:
         securities regulators (SEBI), banking authorities (RBI), insolvency boards (IBBI), telecom
         regulation (TRAI), and government press releases (PIB). Extraction pipelines parse
-        structured parameters — authority names, eligibility criteria, deadlines, and official
-        process links — directly from official documents.
+        structured parameters: authority names, eligibility criteria, deadlines, and official
+        process links: directly from official documents.
       </p>
 
       <h2>Human Safeguards</h2>
@@ -50,13 +50,13 @@ export default function AboutPage() {
         ClaimKhoj passes through editorial review before going live. Our editorial team checks:
       </p>
       <ul>
-        <li>Source authenticity — is the source legitimate and official?</li>
-        <li>Accuracy — does the extraction match the original document?</li>
+        <li>Source authenticity: is the source legitimate and official?</li>
+        <li>Accuracy: does the extraction match the original document?</li>
         <li>
-          Eligibility clarity — is the &quot;who may qualify&quot; description clear and accurate?
+          Eligibility clarity: is the &quot;who may qualify&quot; description clear and accurate?
         </li>
-        <li>Deadline verification — are dates correct and current?</li>
-        <li>Status classification — does the listing meet our publication criteria?</li>
+        <li>Deadline verification: are dates correct and current?</li>
+        <li>Status classification: does the listing meet our publication criteria?</li>
       </ul>
 
       <h2>What We Don&apos;t Do</h2>

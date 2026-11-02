@@ -3,7 +3,6 @@ import Link from 'next/link';
 export function PublicNotFound() {
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wider text-trust-primary">404</p>
       <h1 className="mt-3 text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
         Page not found
       </h1>

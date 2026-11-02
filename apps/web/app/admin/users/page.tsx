@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Card, Badge } from '@claimradar/design-system';
 import { getAdminDb } from '@/lib/admin-db';
 import { requireRoles } from '@/lib/auth';
@@ -16,6 +17,8 @@ interface ProfileRow {
   created_at: string;
 }
 
+const PAGE_SIZE = 100;
+
 /** Parse ADMIN_EMAILS (comma-separated) used for bootstrap admin display. */
 function parseAdminEmails(): string[] {
   const raw = process.env.ADMIN_EMAILS ?? '';
@@ -25,25 +28,39 @@ function parseAdminEmails(): string[] {
     .filter(Boolean);
 }
 
-export default async function UsersPage() {
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string | string[] }>;
+}) {
   const actor = await requireRoles(ADMINS_ONLY);
   const bootstrapEmails = parseAdminEmails();
+  const sp = await searchParams;
+  const requestedPage = Number.parseInt(Array.isArray(sp.page) ? sp.page[0] ?? '1' : sp.page ?? '1', 10);
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const offset = (page - 1) * PAGE_SIZE;
 
   let profiles: ProfileRow[] = [];
+  let totalProfiles = 0;
   let error: string | null = null;
 
   try {
     const db = getAdminDb();
-    const { data, error: queryError } = await db
+    const { data, error: queryError, count } = await db
       .from('profiles')
-      .select('id, email, display_name, role, subscription_tier, created_at')
-      .order('created_at', { ascending: true })
-      .limit(200);
+      .select('id, email, display_name, role, subscription_tier, created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + PAGE_SIZE - 1);
     if (queryError) error = queryError.message;
-    else profiles = (data ?? []) as ProfileRow[];
+    else {
+      profiles = (data ?? []) as ProfileRow[];
+      totalProfiles = count ?? 0;
+    }
   } catch (e) {
     error = e instanceof Error ? e.message : 'Failed to load users';
   }
+
+  const totalPages = Math.ceil(totalProfiles / PAGE_SIZE);
 
   const inputCls =
     'w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary focus:border-trust-primary focus:outline-none focus:ring-1 focus:ring-trust-primary';
@@ -52,7 +69,7 @@ export default async function UsersPage() {
     <div>
       <PageHeader
         title="Users & Roles"
-        subtitle={`${profiles.length} profiles — role changes are audited; the last admin can never be demoted`}
+        subtitle={`${totalProfiles} profiles: role changes are audited; the last admin can never be demoted`}
       />
 
       {bootstrapEmails.length > 0 && (
@@ -134,22 +151,38 @@ export default async function UsersPage() {
         </div>
       )}
 
+      {!error && totalPages > 1 ? (
+        <nav className="mt-4 flex items-center justify-between" aria-label="User pages">
+          {page > 1 ? (
+            <Link className="text-sm text-trust-primary hover:underline" href={`/admin/users?page=${page - 1}`}>
+              Previous page
+            </Link>
+          ) : <span />}
+          <span className="text-sm text-text-muted">Page {page} of {totalPages}</span>
+          {page < totalPages ? (
+            <Link className="text-sm text-trust-primary hover:underline" href={`/admin/users?page=${page + 1}`}>
+              Next page
+            </Link>
+          ) : <span />}
+        </nav>
+      ) : null}
+
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Role Matrix</h2>
         <ul className="mt-2 space-y-1 text-sm text-text-secondary">
           <li>
-            <strong className="text-text-primary">researcher</strong> — view candidates and sources
+            <strong className="text-text-primary">researcher</strong>: view candidates and sources
           </li>
           <li>
-            <strong className="text-text-primary">editor</strong> — claim editing, review
+            <strong className="text-text-primary">editor</strong>: claim editing, review
             assignments, publication approval, corrections
           </li>
           <li>
-            <strong className="text-text-primary">legal_reviewer</strong> — legal reviews and
+            <strong className="text-text-primary">legal_reviewer</strong>: legal reviews and
             takedown decisions
           </li>
           <li>
-            <strong className="text-text-primary">admin</strong> — everything, including this page
+            <strong className="text-text-primary">admin</strong>: everything, including this page
           </li>
         </ul>
       </Card>

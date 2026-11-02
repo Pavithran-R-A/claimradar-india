@@ -21,7 +21,7 @@ export default function CorrectionsPage() {
         <li>The URL or title of the listing in question</li>
         <li>A description of the error</li>
         <li>A link or citation to the authentic official source supporting the correction</li>
-        <li>Your name or contact details (optional — used for acknowledgment only)</li>
+        <li>Your name or contact details (optional: used for acknowledgment only)</li>
       </ul>
 
       {contactConfig.correctionsEmail ? (
@@ -53,22 +53,22 @@ export default function CorrectionsPage() {
       <p>Once a correction report is received:</p>
       <ul>
         <li>
-          <strong>Acknowledgment</strong> — We log and acknowledge received reports as soon as
+          <strong>Acknowledgment</strong>: We log and acknowledge received reports as soon as
           practicable.
         </li>
         <li>
-          <strong>Investigation</strong> — Our editorial team verifies the reported error against
+          <strong>Investigation</strong>: Our editorial team verifies the reported error against
           the original official order or regulatory publication.
         </li>
         <li>
-          <strong>Decision</strong> — We determine whether a factual correction, deadline update, or
+          <strong>Decision</strong>: We determine whether a factual correction, deadline update, or
           full retraction is needed.
         </li>
         <li>
-          <strong>Action</strong> — The correction is applied and a note is added to the listing.
+          <strong>Action</strong>: The correction is applied and a note is added to the listing.
         </li>
         <li>
-          <strong>Request status</strong> — Signed-in reporters can see their request status and
+          <strong>Request status</strong>: Signed-in reporters can see their request status and
           recorded resolution in the Privacy Center. Outbound email replies are not enabled.
         </li>
       </ul>
@@ -76,15 +76,15 @@ export default function CorrectionsPage() {
       <h2>Types of Corrections</h2>
       <ul>
         <li>
-          <strong>Correction</strong> — Factual error in the listing is fixed (e.g., wrong
+          <strong>Correction</strong>: Factual error in the listing is fixed (e.g., wrong
           eligibility criteria, incorrect deadline).
         </li>
         <li>
-          <strong>Update</strong> — Listing is updated with new information (e.g., deadline
+          <strong>Update</strong>: Listing is updated with new information (e.g., deadline
           extended, additional eligibility groups identified).
         </li>
         <li>
-          <strong>Retraction</strong> — Listing is removed because the underlying information was
+          <strong>Retraction</strong>: Listing is removed because the underlying information was
           found to be inaccurate or the source was not legitimate.
         </li>
       </ul>

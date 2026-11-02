@@ -11,7 +11,7 @@ describe('candidate publication cannot rely on stale extraction dates', () => {
     const deadlineCheck = approval.indexOf(
       'isPublicationDeadlineExpired(extracted?.deadline ?? null)',
     );
-    const approvalWrite = approval.indexOf("publication_decision: 'approved'");
+    const approvalWrite = approval.indexOf("'approve_candidate_with_event'");
     expect(start).toBeGreaterThanOrEqual(0);
     expect(deadlineCheck).toBeGreaterThanOrEqual(0);
     expect(approvalWrite).toBeGreaterThan(deadlineCheck);
@@ -19,7 +19,7 @@ describe('candidate publication cannot rely on stale extraction dates', () => {
 
   it('rechecks expiration and misleading URLs before draft promotion', () => {
     const promotion = actions.split('export async function promoteCandidate')[1] ?? '';
-    const insert = promotion.indexOf(".from('claimables')");
+    const insert = promotion.indexOf("'promote_candidate_with_source'");
     expect(promotion).toContain('isPublicationDeadlineExpired(candidateDeadline)');
     expect(promotion).toContain(
       'isKnownNonFilingInformationUrl(reviewedExtraction.official_claim_url)',

@@ -160,7 +160,7 @@ export function WatchlistClient({
       {/* Restore hint */}
       <p className="flex items-start gap-2 rounded-md border border-border bg-background-elevated p-3 text-xs text-text-muted">
         <RotateCcw className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-        Removed items are never deleted from the directory — watch them again any time using the
+        Removed items are never deleted from the directory: watch them again any time using the
         selectors above.
       </p>
     </div>

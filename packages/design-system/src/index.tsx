@@ -58,7 +58,7 @@ export function BrandMark({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={cn(
-        'shrink-0 select-none transition-transform duration-fast hover:scale-[1.02]',
+        'shrink-0 select-none motion-safe:transition-transform motion-safe:duration-fast motion-safe:hover:scale-[1.02]',
         className,
       )}
       aria-hidden="true"
@@ -98,7 +98,7 @@ export function BrandMark({
 /* -------------------------------------------------------------------------- */
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-all duration-fast ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.985] active:translate-y-0 [&_svg]:transition-transform [&_svg]:duration-fast',
+  'inline-flex items-center justify-center rounded-lg text-sm font-semibold transition-[color,background-color,border-color,box-shadow,transform,opacity] duration-fast ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-trust-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.985] active:translate-y-0 [&_svg]:transition-transform [&_svg]:duration-fast',
   {
     variants: {
       variant: {
@@ -198,7 +198,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-lg border p-5 transition-all duration-fast',
+          'rounded-lg border p-5 transition-[color,background-color,border-color,box-shadow] duration-fast',
           variant === 'default' && 'bg-surface border-border shadow-card',
           variant === 'elevated' && 'bg-surface border-border shadow-lift',
           variant === 'sunken' && 'bg-background-elevated border-border/60 shadow-none',
@@ -433,11 +433,6 @@ export function Section({
     <section className={cn('py-12 sm:py-16 lg:py-20', className)} {...props}>
       {(heading || subheading || eyebrow) && (
         <div className="mb-8 sm:mb-12">
-          {eyebrow && (
-            <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-              {eyebrow}
-            </span>
-          )}
           {heading && (
             <h2 className="mt-1 text-2xl font-bold tracking-tight text-text-primary sm:text-3xl lg:text-4xl">
               {heading}
@@ -446,6 +441,7 @@ export function Section({
           {subheading && (
             <p className="mt-2.5 max-w-2xl text-base text-text-secondary">{subheading}</p>
           )}
+          {eyebrow && <p className="mt-2 text-xs text-text-muted">{eyebrow}</p>}
         </div>
       )}
       {children}
@@ -589,13 +585,13 @@ export function AuthorityBadge({
             : 'default';
 
   const style = authorityStyles[matchedKey] || authorityStyles.default;
-  const label = shortName || authority.toUpperCase();
+  const label = shortName || authority;
 
   return (
     <span
       className={cn(
-        'inline-flex items-center font-mono font-bold tracking-wider uppercase rounded border transition-colors',
-        size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs',
+        'inline-flex items-center rounded border font-semibold text-xs transition-colors',
+        size === 'sm' ? 'px-2 py-0.5' : 'px-2.5 py-1',
         style,
         className,
       )}
@@ -670,7 +666,7 @@ export function EvidenceThread({ className, activeStage = 4, ...props }: Evidenc
     >
       <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-border pointer-events-none" />
       <div
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-trust-primary transition-all duration-ui pointer-events-none"
+        className="absolute left-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-trust-primary pointer-events-none"
         style={{ width: `${(activeStage / 4) * 100}%` }}
       />
       {[
@@ -693,7 +689,7 @@ export function EvidenceThread({ className, activeStage = 4, ...props }: Evidenc
           />
           <span
             className={cn(
-              'text-[10px] sm:text-xs font-semibold uppercase tracking-wider',
+              'text-xs font-semibold',
               s.stage <= activeStage ? 'text-trust-primary' : 'text-text-muted',
             )}
           >
@@ -713,7 +709,7 @@ export interface SourceStampProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function SourceStamp({
   authority,
-  status = 'SOURCE CHECKED',
+  status = 'Source checked',
   date,
   className,
   ...props

@@ -156,10 +156,11 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
               variant="danger"
               className="max-w-md"
             >
-              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+              <label htmlFor={`rejection-reason-${candidate.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
                 Rejection reason
               </label>
               <textarea
+                id={`rejection-reason-${candidate.id}`}
                 name="reason"
                 required
                 minLength={3}
@@ -191,7 +192,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         {candidate.publication_decision === 'approved' && !promotionEvent && (
           <div className="mt-3">
             <p className="text-sm text-text-secondary">
-              Approved. Promotion creates a <strong>draft</strong> claimable for human review —
+              Approved. Promotion creates a <strong>draft</strong> claimable for human review.
               AUTO_VERIFY_CLAIMABLES is off, so nothing is auto-verified or auto-published.
             </p>
             {filing.expired ? (

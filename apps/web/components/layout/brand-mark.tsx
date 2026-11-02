@@ -39,7 +39,7 @@ export function BrandLockup({
       <div className="flex flex-col leading-none">
         <span
           className={cn(
-            'font-extrabold tracking-tight',
+            'font-bold tracking-tight',
             isSm ? 'text-base' : isLg ? 'text-xl' : 'text-lg',
           )}
         >
@@ -48,7 +48,7 @@ export function BrandLockup({
         {showDescriptor && (
           <span
             className={cn(
-              'text-xs font-bold uppercase tracking-widest',
+              'text-xs font-semibold',
               theme === 'dark' ? 'text-trust-primary' : 'text-trust-primary',
             )}
           >

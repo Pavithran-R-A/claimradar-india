@@ -73,6 +73,15 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
   let versions: VersionRow[] = [];
   let events: EventRow[] = [];
   let staffOptions: { id: string; email: string; role: string }[] = [];
+  const queryErrors: Record<string, string | null> = {
+    legalReviews: null,
+    assignments: null,
+    corrections: null,
+    takedowns: null,
+    versions: null,
+    events: null,
+    staff: null,
+  };
   let error: string | null = null;
 
   try {
@@ -85,7 +94,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       .single();
 
     if (claimRes.error) {
-      error = claimRes.error.message;
+      error = 'Unable to load this claimable.';
     } else {
       const row = claimRes.data as Claimable & { companies: { display_name: string } | null };
       companyName = row.companies?.display_name ?? null;
@@ -131,19 +140,26 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
               .select('id, email, role')
               .in('role', ['editor', 'legal_reviewer', 'admin'])
               .order('email')
-          : Promise.resolve({ data: [] }),
+          : Promise.resolve({ data: [], error: null }),
       ]);
 
-      legalReviews = legalRes.data ?? [];
-      assignments = assignRes.data ?? [];
-      corrections = corrRes.data ?? [];
-      takedowns = takeRes.data ?? [];
-      versions = verRes.data ?? [];
-      events = evRes.data ?? [];
-      staffOptions = staffRes.data ?? [];
+      if (legalRes.error) queryErrors.legalReviews = 'Legal reviews are unavailable.';
+      else legalReviews = legalRes.data ?? [];
+      if (assignRes.error) queryErrors.assignments = 'Review assignments are unavailable.';
+      else assignments = assignRes.data ?? [];
+      if (corrRes.error) queryErrors.corrections = 'Correction requests are unavailable.';
+      else corrections = corrRes.data ?? [];
+      if (takeRes.error) queryErrors.takedowns = 'Takedown requests are unavailable.';
+      else takedowns = takeRes.data ?? [];
+      if (verRes.error) queryErrors.versions = 'Version history is unavailable.';
+      else versions = verRes.data ?? [];
+      if (evRes.error) queryErrors.events = 'Publication events are unavailable.';
+      else events = evRes.data ?? [];
+      if (staffRes.error) queryErrors.staff = 'Reviewer options are unavailable.';
+      else staffOptions = staffRes.data ?? [];
     }
-  } catch (e) {
-    error = e instanceof Error ? e.message : 'Failed to load claimable';
+  } catch {
+    error = 'Unable to load this claimable.';
   }
 
   if (error || !claimable) {
@@ -153,7 +169,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
           &larr; Back to Claimables
         </Link>
         <div className="mt-4">
-          <ErrorBanner message={error ?? 'Claimable not found'} />
+          <ErrorBanner message={error ?? 'Claimable not found.'} />
         </div>
       </div>
     );
@@ -184,7 +200,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Publication</h2>
         <p className="mt-2 text-sm text-text-muted">
-          Publishing is an explicit editorial approval — nothing is auto-published or auto-verified
+          Publishing is an explicit editorial approval: nothing is auto-published or auto-verified
           (AUTO_VERIFY_CLAIMABLES=false). Every approval is recorded as a publication event and in
           the audit log.
         </p>
@@ -252,7 +268,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
           <dt className="text-text-muted">Relief</dt>
           <dd className="text-text-primary">
             {claimable.relief_type
-              ? `${claimable.relief_type}${claimable.official_amount ? ` — ${claimable.official_amount} ${claimable.amount_currency}` : ''}`
+              ? `${claimable.relief_type}${claimable.official_amount ? `: ${claimable.official_amount} ${claimable.amount_currency}` : ''}`
               : '—'}
           </dd>
           <dt className="text-text-muted">Deadline</dt>
@@ -289,7 +305,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
           <p className="mt-1 text-xs text-text-muted">
             Edits create a claim_versions revision row (legal-content rule) and are audited. Setting{' '}
             <code>verified_claimable</code> is a manual editorial assertion of the full publication
-            pipeline — use only when every requirement is satisfied.
+            pipeline: use only when every requirement is satisfied.
           </p>
           <ActionForm
             action={updateClaimable.bind(null, claimable.id)}
@@ -434,9 +450,11 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Legal reviews */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">
-          Legal Reviews <span className="text-text-muted">({legalReviews.length})</span>
+          Legal Reviews <span className="text-text-muted">({queryErrors.legalReviews ? 'unavailable' : legalReviews.length})</span>
         </h2>
-        {legalReviews.length === 0 ? (
+        {queryErrors.legalReviews ? (
+          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.legalReviews}</p>
+        ) : legalReviews.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No legal reviews recorded.</p>
         ) : (
           <div className="mt-3 space-y-2">
@@ -464,6 +482,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
             pendingLabel="Recording…"
             className="mt-4 space-y-3 border-t border-border pt-4"
           >
+            <input type="hidden" name="expected_updated_at" value={claimable.updated_at} />
             <div>
               <label className={labelCls} htmlFor="legal-decision">
                 Decision
@@ -496,9 +515,11 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Review assignments */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">
-          Review Assignments <span className="text-text-muted">({assignments.length})</span>
+          Review Assignments <span className="text-text-muted">({queryErrors.assignments ? 'unavailable' : assignments.length})</span>
         </h2>
-        {assignments.length === 0 ? (
+        {queryErrors.assignments ? (
+          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.assignments}</p>
+        ) : assignments.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No review assignments.</p>
         ) : (
           <div className="mt-3 space-y-2">
@@ -513,7 +534,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
                     {a.profiles?.email ?? 'Unassigned'}
                   </span>
                   <span className="text-xs text-text-muted">{formatDateTime(a.assigned_at)}</span>
-                  {a.notes && <span className="text-xs text-text-secondary">— {a.notes}</span>}
+                  {a.notes && <span className="text-xs text-text-secondary">({a.notes})</span>}
                 </div>
                 {canEdit && a.status === 'pending' && (
                   <ActionButton
@@ -527,7 +548,10 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
             ))}
           </div>
         )}
-        {canEdit && (
+        {canEdit && queryErrors.staff && (
+          <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.staff}</p>
+        )}
+        {canEdit && !queryErrors.staff && (
           <ActionForm
             action={assignReview.bind(null, claimable.id)}
             submitLabel="Assign reviewer"
@@ -563,18 +587,20 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       {/* Corrections & takedowns */}
       <Card className="mt-6">
         <h2 className="text-sm font-semibold text-text-secondary">Corrections & Takedowns</h2>
-        {corrections.length === 0 && takedowns.length === 0 ? (
+        {queryErrors.corrections && <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.corrections}</p>}
+        {queryErrors.takedowns && <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.takedowns}</p>}
+        {!queryErrors.corrections && !queryErrors.takedowns && corrections.length === 0 && takedowns.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No open requests for this claimable.</p>
-        ) : (
+        ) : ((!queryErrors.corrections && corrections.length > 0) || (!queryErrors.takedowns && takedowns.length > 0)) && (
           <ul className="mt-3 space-y-1 text-sm">
-            {corrections.map((c) => (
+            {!queryErrors.corrections && corrections.map((c) => (
               <li key={c.id} className="flex items-center gap-2">
                 <Badge variant={statusVariant(c.status)}>{c.status}</Badge>
                 <span className="text-text-primary">Correction request</span>
                 <span className="text-xs text-text-muted">{formatDateTime(c.created_at)}</span>
               </li>
             ))}
-            {takedowns.map((t) => (
+            {!queryErrors.takedowns && takedowns.map((t) => (
               <li key={t.id} className="flex items-center gap-2">
                 <Badge variant={statusVariant(t.status)}>{t.status}</Badge>
                 <span className="text-text-primary">Takedown request</span>
@@ -585,7 +611,7 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
         )}
         <p className="mt-3 text-sm">
           <Link href="/admin/corrections" className="text-trust-primary hover:underline">
-            Manage in Corrections →
+            Manage corrections
           </Link>
         </p>
       </Card>
@@ -594,9 +620,11 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <h2 className="text-sm font-semibold text-text-secondary">
-            Version History <span className="text-text-muted">({versions.length})</span>
+            Version History <span className="text-text-muted">({queryErrors.versions ? 'unavailable' : versions.length})</span>
           </h2>
-          {versions.length === 0 ? (
+          {queryErrors.versions ? (
+            <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.versions}</p>
+          ) : versions.length === 0 ? (
             <p className="mt-2 text-sm text-text-muted">No revisions recorded yet.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">
@@ -612,9 +640,11 @@ export default async function ClaimableDetailPage({ params }: { params: Promise<
         </Card>
         <Card>
           <h2 className="text-sm font-semibold text-text-secondary">
-            Publication Events <span className="text-text-muted">({events.length})</span>
+            Publication Events <span className="text-text-muted">({queryErrors.events ? 'unavailable' : events.length})</span>
           </h2>
-          {events.length === 0 ? (
+          {queryErrors.events ? (
+            <p role="alert" className="mt-2 text-sm text-danger">{queryErrors.events}</p>
+          ) : events.length === 0 ? (
             <p className="mt-2 text-sm text-text-muted">No publication events.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">

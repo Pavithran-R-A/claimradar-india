@@ -13,6 +13,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
       <div className="mx-auto max-w-md">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-surface">
           <svg
+            aria-hidden="true"
             className="h-8 w-8 text-text-muted"
             fill="none"
             viewBox="0 0 24 24"
@@ -49,7 +50,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
 
 export function generateLegacyComingSoonMetadata(title: string, description: string): Metadata {
   return {
-    title: `${title} — Coming Soon — ${brandConfig.siteName}`,
+    title: `${title}: Coming Soon: ${brandConfig.siteName}`,
     description,
     robots: { index: false, follow: false },
   };
@@ -57,7 +58,7 @@ export function generateLegacyComingSoonMetadata(title: string, description: str
 
 export function generateComingSoonMetadata(title: string, description: string): Metadata {
   return {
-    title: `${title} — Coming Soon — ${brandConfig.siteName}`,
+    title: `${title}: Coming Soon: ${brandConfig.siteName}`,
     description,
     robots: { index: false, follow: false },
   };

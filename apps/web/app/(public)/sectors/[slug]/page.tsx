@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const outcome = await getPublishedSectorBySlug(slug);
   if (!outcome.ok || !outcome.data) {
-    return { title: 'Sector Not Found — ClaimKhoj India', robots: { index: false, follow: false } };
+    return { title: 'Sector Not Found: ClaimKhoj India', robots: { index: false, follow: false } };
   }
 
   return {
-    title: `${outcome.data.name} Sector — Refund & Claim Records | ClaimKhoj India`,
+    title: `${outcome.data.name} Sector: Refund & Claim Records | ClaimKhoj India`,
     description: `Published refund, compensation and claim records in the ${outcome.data.name} sector in India, verified from official sources.`,
     alternates: { canonical: `${brandConfig.url}/sectors/${outcome.data.slug}` },
   };

@@ -26,7 +26,8 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
     const flowSource = fs.readFileSync(flowPath, 'utf8');
 
     expect(flowSource).toContain('sm:grid-cols-4');
-    expect(flowSource).toContain('prefers-reduced-motion: reduce');
+    expect(flowSource).not.toContain('opacity-0');
+    expect(flowSource).not.toContain('IntersectionObserver');
   });
 
   it('D. Monitored sources network provides dedicated mobile layout without table scrolling', () => {
@@ -42,7 +43,7 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
     expect(sourcesSource).toContain('hidden sm:block');
   });
 
-  it('E. Reduced motion directives remain enforced on radar and flow diagram', () => {
+  it('E. Motion respects user preferences and flow stays visible', () => {
     const cssPath = path.resolve(__dirname, '../app/globals.css');
     const css = fs.readFileSync(cssPath, 'utf8');
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
@@ -50,7 +51,7 @@ describe('Visual Composition & SVG Integrity Regressions', () => {
     expect(css).toContain('animation: none !important;');
     const flowPath = path.resolve(__dirname, '../components/landing/evidence-flow-diagram.tsx');
     const flowSource = fs.readFileSync(flowPath, 'utf8');
-    expect(flowSource).toContain('prefers-reduced-motion: reduce');
-    expect(flowSource).toContain('translate-y-0 opacity-100');
+    expect(radarSource).toContain('prefers-reduced-motion: reduce');
+    expect(flowSource).not.toContain('opacity-0');
   });
 });

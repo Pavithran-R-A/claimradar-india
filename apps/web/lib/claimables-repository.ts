@@ -23,6 +23,7 @@ import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 import { calculateDeadlineStatus } from '@claimradar/shared-types';
 import { DEMO_CLAIMABLES } from './demo-claimables';
+import { INDIAN_STATES as INDIAN_STATE_NAMES } from './constants';
 
 /* -------------------------------------------------------------------------- */
 /*  Public types                                                               */
@@ -52,7 +53,7 @@ export interface PublishedClaimable {
   officialSources: { name: string; url: string; publishedAt: string }[];
   evidenceSummary: string;
   lastCheckedAt: string;
-  lastVerifiedAt: string;
+  lastVerifiedAt: string | null;
   freshnessWarning?: string | undefined;
   publishedAt: string;
   geographicScope?: string | undefined;
@@ -294,7 +295,7 @@ export function mapClaimableRow(row: ClaimableRow, now: Date = new Date()): Publ
       .filter((src) => src.url.length > 0),
     evidenceSummary: row.summary ?? '',
     lastCheckedAt: row.updated_at,
-    lastVerifiedAt: row.last_verified_at ?? row.updated_at,
+    lastVerifiedAt: row.last_verified_at,
     freshnessWarning: buildFreshnessWarning(row, now),
     publishedAt: row.first_published_at ?? row.updated_at,
     geographicScope: row.geographic_scope ?? undefined,
@@ -307,31 +308,10 @@ export function mapClaimableRow(row: ClaimableRow, now: Date = new Date()): Publ
 /* -------------------------------------------------------------------------- */
 
 /** Indian states + union territories recognised by the /states directory. */
-export const INDIAN_STATES: { name: string; slug: string }[] = [
-  { name: 'Andhra Pradesh', slug: 'andhra-pradesh' },
-  { name: 'Assam', slug: 'assam' },
-  { name: 'Bihar', slug: 'bihar' },
-  { name: 'Chhattisgarh', slug: 'chhattisgarh' },
-  { name: 'Delhi', slug: 'delhi' },
-  { name: 'Goa', slug: 'goa' },
-  { name: 'Gujarat', slug: 'gujarat' },
-  { name: 'Haryana', slug: 'haryana' },
-  { name: 'Himachal Pradesh', slug: 'himachal-pradesh' },
-  { name: 'Jharkhand', slug: 'jharkhand' },
-  { name: 'Karnataka', slug: 'karnataka' },
-  { name: 'Kerala', slug: 'kerala' },
-  { name: 'Madhya Pradesh', slug: 'madhya-pradesh' },
-  { name: 'Maharashtra', slug: 'maharashtra' },
-  { name: 'Odisha', slug: 'odisha' },
-  { name: 'Punjab', slug: 'punjab' },
-  { name: 'Rajasthan', slug: 'rajasthan' },
-  { name: 'Tamil Nadu', slug: 'tamil-nadu' },
-  { name: 'Telangana', slug: 'telangana' },
-  { name: 'Uttar Pradesh', slug: 'uttar-pradesh' },
-  { name: 'Uttarakhand', slug: 'uttarakhand' },
-  { name: 'West Bengal', slug: 'west-bengal' },
-];
-
+export const INDIAN_STATES: { name: string; slug: string }[] = INDIAN_STATE_NAMES.map((name) => ({
+  name,
+  slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+}));
 function stateMatches(state: { name: string }, item: PublishedClaimable): boolean {
   const haystack = `${item.geographicScope ?? ''} ${item.jurisdiction ?? ''}`.toLowerCase();
   return haystack.includes(state.name.toLowerCase());
@@ -372,7 +352,11 @@ export function applyClaimableFilters(
   if (filter.newOnly) {
     list = list.filter((c) => {
       const publishedMs = new Date(c.publishedAt).getTime();
-      return !Number.isNaN(publishedMs) && now.getTime() - publishedMs <= NEW_WINDOW_MS;
+      return (
+        !Number.isNaN(publishedMs) &&
+        publishedMs <= now.getTime() &&
+        now.getTime() - publishedMs <= NEW_WINDOW_MS
+      );
     });
   }
   if (filter.stateSlug) {

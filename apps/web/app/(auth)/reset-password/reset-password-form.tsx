@@ -23,9 +23,9 @@ export function ResetPasswordForm() {
 
   return (
     <div>
-      <h2 className="mb-2 text-center text-xl font-semibold text-text-primary">
+      <h1 className="mb-2 text-center text-xl font-semibold text-text-primary">
         Set a New Password
-      </h2>
+      </h1>
       <p className="mb-6 text-center text-sm text-text-secondary">
         Choose a strong password of at least 8 characters.
       </p>

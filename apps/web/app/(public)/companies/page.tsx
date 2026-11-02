@@ -9,7 +9,7 @@ import {
 } from '@/components/repository-states';
 
 export const metadata: Metadata = {
-  title: 'Company Directory — ClaimKhoj India',
+  title: 'Company Directory: ClaimKhoj India',
   description:
     'Explore companies referenced in published refund, compensation and claim records verified from official Indian sources.',
   alternates: { canonical: '/companies' },

@@ -25,7 +25,7 @@ export function LoginForm({ next }: LoginFormProps) {
 
   return (
     <div>
-      <h2 className="mb-6 text-center text-xl font-semibold text-text-primary">Sign In</h2>
+      <h1 className="mb-6 text-center text-xl font-semibold text-text-primary">Sign in</h1>
 
       {error && (
         <div className="mb-4 rounded-md border border-danger/20 bg-danger/10 p-3 text-sm text-danger">

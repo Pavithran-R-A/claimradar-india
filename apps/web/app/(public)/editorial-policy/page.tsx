@@ -20,18 +20,18 @@ export default function EditorialPolicyPage() {
       </p>
       <ul>
         <li>
-          <strong>Automated discovery</strong> — AI crawlers extract data from official sources
+          <strong>Automated discovery</strong>: AI crawlers extract data from official sources
         </li>
         <li>
-          <strong>Deterministic validation</strong> — Automated checks verify dates, URLs and entity
+          <strong>Deterministic validation</strong>: Automated checks verify dates, URLs and entity
           matches
         </li>
         <li>
-          <strong>Editorial review</strong> — A human editor reviews the extraction against the
+          <strong>Editorial review</strong>: A human editor reviews the extraction against the
           original source document
         </li>
         <li>
-          <strong>Publication</strong> — Only after editorial sign-off is the listing published
+          <strong>Publication</strong>: Only after editorial sign-off is the listing published
         </li>
       </ul>
 
@@ -51,26 +51,26 @@ export default function EditorialPolicyPage() {
       <p>Editors assign one of four statuses based on source tier and verification level:</p>
       <ul>
         <li>
-          <strong>Verified</strong> — Tier 1 source confirmed
+          <strong>Verified</strong>: Tier 1 source confirmed
         </li>
         <li>
-          <strong>Open</strong> — Tier 2 source, appears legitimate
+          <strong>Open</strong>: Tier 2 source, appears legitimate
         </li>
         <li>
-          <strong>Under Review</strong> — Pending editorial sign-off or additional corroboration
+          <strong>Under Review</strong>: Pending editorial sign-off or additional corroboration
         </li>
         <li>
-          <strong>Closed</strong> — Deadline passed, scheme concluded, or withdrawn
+          <strong>Closed</strong>: Deadline passed, scheme concluded, or withdrawn
         </li>
       </ul>
 
       <h2>Re-Verification Schedule</h2>
       <p>Published listings are re-verified at regular intervals:</p>
       <ul>
-        <li>Verified listings — re-verified every 7 days</li>
-        <li>Open listings — re-verified every 14 days</li>
+        <li>Verified listings: re-verified every 7 days</li>
+        <li>Open listings: re-verified every 14 days</li>
         <li>
-          Listings approaching deadline — re-verified every 48 hours when within 7 days of deadline
+          Listings approaching deadline: re-verified every 48 hours when within 7 days of deadline
         </li>
       </ul>
 
@@ -81,15 +81,15 @@ export default function EditorialPolicyPage() {
       </p>
       <ul>
         <li>
-          <strong>Minor corrections</strong> (typos, formatting) — Applied immediately with a
+          <strong>Minor corrections</strong> (typos, formatting): Applied immediately with a
           &quot;corrected&quot; timestamp
         </li>
         <li>
-          <strong>Substantive corrections</strong> (eligibility, dates, amounts) — Applied within 24
+          <strong>Substantive corrections</strong> (eligibility, dates, amounts): Applied within 24
           hours with a visible correction note
         </li>
         <li>
-          <strong>Retractions</strong> (listing found to be inaccurate or misleading) — Listing
+          <strong>Retractions</strong> (listing found to be inaccurate or misleading): Listing
           removed immediately with a retraction notice published
         </li>
       </ul>

@@ -15,6 +15,7 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
       <div className="mb-6 text-center">
         <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-trust-primary/10">
           <svg
+            aria-hidden="true"
             className="h-6 w-6 text-trust-primary"
             fill="none"
             viewBox="0 0 24 24"
@@ -31,15 +32,14 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
 
         {linkExpired ? (
           <>
-            <h2 className="mb-2 text-xl font-semibold text-text-primary">Link Expired</h2>
+            <h1 className="mb-2 text-xl font-semibold text-text-primary">Link expired</h1>
             <p className="text-sm text-text-secondary">
-              That verification link has expired for security reasons. Request a fresh one below —
-              it takes just a moment.
+              That verification link has expired. Request a fresh one below.
             </p>
           </>
         ) : linkInvalid ? (
           <>
-            <h2 className="mb-2 text-xl font-semibold text-text-primary">Link Not Valid</h2>
+            <h1 className="mb-2 text-xl font-semibold text-text-primary">Link not valid</h1>
             <p className="text-sm text-text-secondary">
               That verification link could not be verified (it may have already been used). Request
               a new one below.
@@ -47,10 +47,9 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
           </>
         ) : (
           <>
-            <h2 className="mb-2 text-xl font-semibold text-text-primary">Check Your Email</h2>
+            <h1 className="mb-2 text-xl font-semibold text-text-primary">Check your email</h1>
             <p className="text-sm text-text-secondary">
-              We&apos;ve sent you a verification link. Please check your email and click the link to
-              verify your account.
+              If you just registered, a verification message may be on its way. Check your inbox and spam folder.
             </p>
           </>
         )}

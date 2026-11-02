@@ -28,7 +28,9 @@ export default async function AiRunsPage() {
   let todayRuns = 0;
   let totalTokens = 0;
   let failedRuns = 0;
-  let error: string | null = null;
+  let runsError: string | null = null;
+  let countError: string | null = null;
+  let todayError: string | null = null;
 
   const dailyBudgetRaw = process.env.AI_DAILY_REQUEST_BUDGET;
   const dailyBudget = dailyBudgetRaw ? Number.parseInt(dailyBudgetRaw, 10) : null;
@@ -51,15 +53,19 @@ export default async function AiRunsPage() {
         .gte('created_at', new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString()),
     ]);
 
-    if (runsRes.error) error = runsRes.error.message;
+    if (runsRes.error) runsError = 'AI run details are unavailable.';
     else runs = (runsRes.data ?? []) as AiRunRow[];
 
-    totalRuns = countRes.count ?? 0;
-    todayRuns = todayRes.count ?? 0;
+    if (countRes.error) countError = 'Total run count is unavailable.';
+    else totalRuns = countRes.count ?? 0;
+    if (todayRes.error) todayError = 'Today’s run count is unavailable.';
+    else todayRuns = todayRes.count ?? 0;
     totalTokens = runs.reduce((sum, r) => sum + (r.input_tokens ?? 0) + (r.output_tokens ?? 0), 0);
     failedRuns = runs.filter((r) => r.result_status !== 'success').length;
-  } catch (e) {
-    error = e instanceof Error ? e.message : 'Failed to load AI runs';
+  } catch {
+    runsError = 'AI run details are unavailable.';
+    countError = 'Total run count is unavailable.';
+    todayError = 'Today’s run count is unavailable.';
   }
 
   const budgetPct =
@@ -74,29 +80,23 @@ export default async function AiRunsPage() {
         subtitle="Per-invocation log of extraction and second-pass AI calls"
       />
 
-      {error && (
-        <div className="mt-4">
-          <ErrorBanner message={error} />
-        </div>
-      )}
-
-      {!error && (
-        <>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
               <p className="text-sm text-text-secondary">Total Runs</p>
-              <p className="mt-2 text-3xl font-bold text-text-primary">{totalRuns}</p>
+              <p className="mt-2 text-3xl font-bold text-text-primary">{countError ? 'Unavailable' : totalRuns}</p>
+              {countError && <p role="alert" className="mt-2 text-xs text-danger">{countError}</p>}
             </Card>
             <Card>
               <p className="text-sm text-text-secondary">Today (UTC)</p>
-              <p className="mt-2 text-3xl font-bold text-text-primary">{todayRuns}</p>
+              <p className="mt-2 text-3xl font-bold text-text-primary">{todayError ? 'Unavailable' : todayRuns}</p>
+              {todayError && <p role="alert" className="mt-2 text-xs text-danger">{todayError}</p>}
               {dailyBudget !== null && !Number.isNaN(dailyBudget) && (
                 <p className="mt-1 text-xs text-text-muted">
                   Budget: {dailyBudget} requests/day
-                  {budgetPct !== null && ` — ${budgetPct}% used`}
+                  {todayError ? ': unavailable' : budgetPct !== null ? `: ${budgetPct}% used` : ''}
                 </p>
               )}
-              {dailyBudget !== null && !Number.isNaN(dailyBudget) && budgetPct !== null && (
+              {!todayError && dailyBudget !== null && !Number.isNaN(dailyBudget) && budgetPct !== null && (
                 <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-strong">
                   <div
                     className={`h-full rounded-full ${budgetPct >= 90 ? 'bg-danger' : 'bg-trust-primary'}`}
@@ -108,16 +108,20 @@ export default async function AiRunsPage() {
             <Card>
               <p className="text-sm text-text-secondary">Tokens (last 50 runs)</p>
               <p className="mt-2 text-3xl font-bold text-text-primary">
-                {totalTokens.toLocaleString('en-IN')}
+                {runsError ? 'Unavailable' : totalTokens.toLocaleString('en-IN')}
               </p>
+              {runsError && <p role="alert" className="mt-2 text-xs text-danger">{runsError}</p>}
             </Card>
             <Card>
               <p className="text-sm text-text-secondary">Non-success (last 50)</p>
-              <p className="mt-2 text-3xl font-bold text-text-primary">{failedRuns}</p>
+              <p className="mt-2 text-3xl font-bold text-text-primary">{runsError ? 'Unavailable' : failedRuns}</p>
+              {runsError && <p role="alert" className="mt-2 text-xs text-danger">{runsError}</p>}
             </Card>
           </div>
 
-          {runs.length === 0 ? (
+          {runsError ? (
+            <div className="mt-6"><ErrorBanner message={runsError} /></div>
+          ) : runs.length === 0 ? (
             <p className="mt-6 text-sm text-text-muted">No AI runs recorded.</p>
           ) : (
             <div className="mt-6 overflow-x-auto">
@@ -173,8 +177,6 @@ export default async function AiRunsPage() {
               </table>
             </div>
           )}
-        </>
-      )}
     </div>
   );
 }

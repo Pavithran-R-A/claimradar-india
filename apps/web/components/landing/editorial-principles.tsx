@@ -11,10 +11,7 @@ export function EditorialPrinciples() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Manifesto Headline */}
         <div className="lg:col-span-5">
-          <span className="text-xs font-bold uppercase tracking-wider text-trust-primary">
-            Our Standard
-          </span>
-          <h2 className="mt-2 text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight leading-snug">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-text-primary tracking-tight leading-snug">
             Why {brandConfig.siteName} Publishes Less, Not More.
           </h2>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-text-secondary">

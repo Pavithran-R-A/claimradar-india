@@ -11,7 +11,7 @@ import {
 import { daysUntil, formatIstDate } from '@/lib/dates';
 
 export const metadata: Metadata = {
-  title: 'Filing Deadlines Schedule — ClaimKhoj India',
+  title: 'Filing Deadlines Schedule: ClaimKhoj India',
   description:
     'Chronological schedule of official filing deadlines for published claim records. Dates shown in Indian Standard Time.',
   alternates: { canonical: '/deadlines' },
@@ -81,7 +81,7 @@ export default async function DeadlinesPage() {
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-text-secondary sm:text-base">
           Every published record with a recorded filing deadline, grouped by how far away it is. All
-          dates are in Indian Standard Time and come from the official sources we checked — confirm
+          dates are in Indian Standard Time and come from the official sources we checked: confirm
           on the official website before relying on any date.
         </p>
       </header>
@@ -130,7 +130,7 @@ export default async function DeadlinesPage() {
                               <time dateTime={claim.deadlineDate!}>
                                 {formatIstDate(claim.deadlineDate)}
                               </time>
-                              {group.id === 'expired' && ' — deadline passed'}
+                              {group.id === 'expired' && ': deadline passed'}
                             </p>
                             <ClaimableRow claim={claim} />
                           </div>
@@ -152,10 +152,10 @@ export default async function DeadlinesPage() {
           See what closes within 7 days
         </Link>
         <Link
-          href="/register"
+          href="/claimables"
           className="inline-flex h-11 items-center rounded-field bg-trust-primary px-6 text-sm font-semibold text-white transition-colors duration-fast hover:bg-trust-primary-hover"
         >
-          Get deadline reminders
+          Browse all opportunities
         </Link>
       </div>
     </div>

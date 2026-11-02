@@ -133,7 +133,7 @@ export function DeletionForm() {
           name="confirmed"
           value="true"
           required
-          className="mt-0.5 accent-[#EF4444]"
+          className="mt-0.5 accent-danger"
         />
         I understand my account will be permanently deleted after the 30-day grace period.
       </label>

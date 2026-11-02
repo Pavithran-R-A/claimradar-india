@@ -41,19 +41,11 @@ const SOURCE_MARKS = {
   PIB: Building2,
 } as const;
 
-const SOURCE_TONES = {
-  SEBI: { accent: '#3B82F6', pale: '#EAF3FF' },
-  RBI: { accent: '#D99A18', pale: '#FFF5D6' },
-  IBBI: { accent: '#0F8B8D', pale: '#E5F7F4' },
-  TRAI: { accent: '#0B7F86', pale: '#E6F6F6' },
-  PIB: { accent: '#2563EB', pale: '#EAF1FF' },
-} as const;
-
 const JOURNEY = [
-  ['DISCOVER', 'Find relevant records'],
-  ['VERIFY', 'Read the official source'],
-  ['UNDERSTAND', 'See what may apply'],
-  ['ACT', 'Follow the official route'],
+  ['Discover', 'Find relevant records'],
+  ['Verify', 'Read the official source'],
+  ['Understand', 'See what may apply'],
+  ['Act', 'Follow the official route'],
 ] as const;
 
 const JOURNEY_RAIL_PATH =
@@ -66,22 +58,15 @@ function SourceIcon({ code }: { code: string }) {
 
 function SectionHeading({
   id,
-  eyebrow,
   title,
   description,
 }: {
   id?: string;
-  eyebrow?: string;
   title: string;
   description?: string;
 }) {
   return (
     <div>
-      {eyebrow ? (
-        <p className="text-[0.64rem] font-extrabold uppercase tracking-[0.16em] text-trust-primary/65">
-          {eyebrow}
-        </p>
-      ) : null}
       <h2
         id={id}
         className="mt-1 font-display text-[1.7rem] font-bold tracking-[-0.02em] text-trust-primary sm:text-[1.9rem]"
@@ -114,13 +99,13 @@ export default async function LandingPage() {
               <span aria-hidden="true" className="block h-1.5 w-9 rounded-full bg-gold-bright" />
               <h1
                 id="home-hero-heading"
-                className="enter-seq-1 mt-4 max-w-[920px] font-display text-[clamp(3rem,4.6vw,4rem)] font-bold leading-[0.98] tracking-[-0.045em] text-trust-primary xl:text-[3.8rem] 2xl:whitespace-nowrap 2xl:text-[4.1rem]"
+                className="enter-seq-1 mt-4 max-w-[920px] font-display text-balance text-[clamp(3rem,4.6vw,4rem)] font-bold leading-[0.98] tracking-[-0.045em] text-trust-primary xl:text-[3.8rem] 2xl:whitespace-nowrap 2xl:text-[4.1rem]"
               >
                 Find what&apos;s rightfully yours.
               </h1>
               <p className="enter-seq-2 mt-3 max-w-[820px] text-[1.03rem] leading-7 text-text-secondary sm:text-[1.1rem] 2xl:text-[1.14rem]">
                 {brandConfig.siteName} checks official sources for refunds, benefits, compensation,
-                and claim opportunities — so you can find what you may be eligible for.
+                and claim opportunities, so you can find what may apply to you.
               </p>
 
               <div className="enter-seq-3 mt-5 max-w-[850px]">
@@ -234,11 +219,11 @@ export default async function LandingPage() {
                 key={label}
                 className="group relative z-10 flex items-center gap-3 rounded-xl px-2 py-3 lg:flex-col lg:gap-1.5 lg:px-4 lg:py-0 lg:text-center"
               >
-                <span className="order-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/45 bg-[#FFF7DD] text-xs font-extrabold text-trust-primary shadow-[0_0_0_5px_rgba(255,255,255,0.95)] lg:h-3 lg:w-3 lg:text-[0px]">
+                <span className="order-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold-bright/45 bg-deadline-background text-xs font-extrabold text-trust-primary shadow-sm lg:h-3 lg:w-3 lg:text-[0px]">
                   {index + 1}
                 </span>
                 <span className="order-1 lg:min-h-7">
-                  <span className="block text-[0.64rem] font-extrabold tracking-[0.16em] text-trust-primary">
+                <span className="block text-xs font-semibold text-trust-primary">
                     {label}
                   </span>
                   <span className="mt-1 block text-sm leading-5 text-text-secondary lg:hidden">
@@ -281,20 +266,14 @@ export default async function LandingPage() {
 
             <div className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
               {publicSourceFamilies.map((source) => {
-                const tone = SOURCE_TONES[source.shortName as keyof typeof SOURCE_TONES] ?? {
-                  accent: '#214E80',
-                  pale: '#EEF4F8',
-                };
-
                 return (
                   <Link
                     key={source.id}
                     href={`/sources#${source.id}`}
-                    className="public-focus group flex min-h-[68px] items-center gap-3 rounded-xl border border-border bg-white px-3 py-2.5 transition-all duration-fast hover:-translate-y-0.5 hover:border-trust-primary/25 hover:shadow-[0_10px_24px_rgba(13,33,72,0.06)]"
+                    className="public-focus group flex min-h-[68px] items-center gap-3 rounded-xl border border-border bg-white px-3 py-2.5 transition-[border-color,box-shadow,transform] duration-fast hover:-translate-y-0.5 hover:border-trust-primary/25 hover:shadow-sm"
                   >
                     <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-fast group-hover:scale-105"
-                      style={{ backgroundColor: tone.pale, color: tone.accent }}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary transition-transform duration-fast group-hover:scale-105"
                     >
                       <SourceIcon code={source.shortName} />
                     </span>
@@ -302,8 +281,8 @@ export default async function LandingPage() {
                       <strong className="block text-sm text-text-primary">
                         {source.shortName}
                       </strong>
-                      <span className="block truncate text-[0.66rem] leading-4 text-text-muted">
-                        {source.scope}
+                      <span className="block truncate text-xs leading-4 text-text-muted">
+                        Source details
                       </span>
                     </span>
                   </Link>
@@ -335,7 +314,6 @@ export default async function LandingPage() {
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
                 id="latest-opportunities-heading"
-                eyebrow="Recently verified"
                 title="Latest opportunities"
                 description="Recent records from official source families, with direct routes back to the source."
               />
@@ -357,10 +335,10 @@ export default async function LandingPage() {
                   <Link
                     key={item.id}
                     href={`/claimables/${item.slug}`}
-                    className="public-focus group flex min-h-[62px] items-center gap-3 rounded-lg px-2 py-2.5 transition-all duration-fast hover:bg-surface-strong/55 motion-safe:animate-rise"
+                    className="public-focus group flex min-h-[62px] items-center gap-3 rounded-lg px-2 py-2.5 transition-colors duration-fast hover:bg-surface-strong/55 motion-safe:animate-rise"
                     style={{ animationDelay: `${index * 60}ms` }}
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#2563EB] transition-transform duration-fast group-hover:scale-105">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-trust-primary/10 text-trust-primary transition-transform duration-fast group-hover:scale-105">
                       <FileText className="h-4 w-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
@@ -393,7 +371,6 @@ export default async function LandingPage() {
             <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
                 id="how-it-works-heading"
-                eyebrow="From search to action"
                 title={`How ${brandConfig.siteName} works`}
                 description="A simple, transparent path from your search to the next official step."
               />

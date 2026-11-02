@@ -105,7 +105,7 @@ export function TrackerItem({ tracker }: { tracker: TrackerRow }) {
             htmlFor={`ref-${tracker.id}`}
             className="mb-1 block text-xs font-medium text-text-secondary"
           >
-            External reference (your own filing ID — optional)
+            External reference (your own filing ID: optional)
           </label>
           <input
             id={`ref-${tracker.id}`}

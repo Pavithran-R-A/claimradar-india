@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: StatePageProps): Promise<Meta
     return { title: 'State not found | ClaimKhoj India', robots: { index: false, follow: false } };
   }
   return {
-    title: `${outcome.data.name} — Claim Opportunities | ClaimKhoj India`,
+    title: `${outcome.data.name}: Claim Opportunities | ClaimKhoj India`,
     description: `Published claim and refund opportunities related to ${outcome.data.name}, sourced from official records.`,
     alternates: { canonical: `/states/${outcome.data.slug}` },
   };
@@ -48,12 +48,12 @@ export default async function StateDetailPage({ params }: StatePageProps) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-      <Link href="/states" className="text-sm text-blue-600 hover:text-blue-800">
+      <Link href="/states" className="text-sm text-trust-primary hover:text-trust-primary-hover">
         &larr; All states
       </Link>
       <header className="mt-4 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{state.name}</h1>
-        <p className="mt-2 text-base text-slate-600">
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">{state.name}</h1>
+        <p className="mt-2 text-base text-text-secondary">
           Published opportunities related to {state.name}, derived from the geographic scope of
           official records.
         </p>
@@ -74,21 +74,21 @@ export default async function StateDetailPage({ params }: StatePageProps) {
               {claimablesOutcome.data.items.map((claim) => (
                 <div
                   key={claim.id}
-                  className="p-6 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+                  className="rounded-xl border border-border bg-surface p-6 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                    <span className="rounded-full bg-background-elevated px-2.5 py-1 text-xs font-medium text-text-secondary">
                       {claim.sector}
                     </span>
                     <span
                       className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                         claim.status === 'closing_soon'
-                          ? 'bg-amber-100 text-amber-800'
+                          ? 'bg-deadline-background text-deadline'
                           : claim.status === 'under_review'
-                            ? 'bg-sky-100 text-sky-800'
+                            ? 'bg-info/10 text-info'
                             : claim.status === 'closed'
-                              ? 'bg-slate-200 text-slate-700'
-                              : 'bg-emerald-100 text-emerald-800'
+                              ? 'bg-background-elevated text-text-secondary'
+                              : 'bg-verified-background text-success'
                       }`}
                     >
                       {claim.status === 'closing_soon'
@@ -101,29 +101,29 @@ export default async function StateDetailPage({ params }: StatePageProps) {
                     </span>
                   </div>
 
-                  <h2 className="text-xl font-bold text-slate-900 mb-2">
+                  <h2 className="mb-2 text-xl font-bold text-text-primary">
                     <Link
                       href={`/claimables/${claim.slug}`}
-                      className="hover:text-blue-600 transition-colors"
+                      className="transition-colors hover:text-trust-primary"
                     >
                       {claim.title}
                     </Link>
                   </h2>
 
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                  <p className="mb-4 line-clamp-2 text-sm text-text-secondary">
                     {claim.statusExplanation}
                   </p>
 
-                  <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 pt-3 border-t border-slate-100">
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-3 text-xs text-text-muted">
                     <div>
-                      <span className="font-semibold text-slate-700">Company:</span>{' '}
+                      <span className="font-semibold text-text-secondary">Company:</span>{' '}
                       {claim.companyName}
                     </div>
                     <Link
                       href={`/claimables/${claim.slug}`}
-                      className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                      className="font-semibold text-trust-primary transition-colors hover:text-trust-primary-hover"
                     >
-                      View Details &rarr;
+                      View details
                     </Link>
                   </div>
                 </div>

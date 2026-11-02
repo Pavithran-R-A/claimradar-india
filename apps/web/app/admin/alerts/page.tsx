@@ -38,7 +38,11 @@ export default async function AlertsPage() {
   let healthEvents: HealthRow[] = [];
   let recentErrors: ErrorRow[] = [];
   let errorsByType: { type: string; count: number }[] = [];
-  let error: string | null = null;
+  const queryErrors: Record<'sources' | 'health' | 'crawlErrors', string | null> = {
+    sources: null,
+    health: null,
+    crawlErrors: null,
+  };
 
   try {
     const db = getAdminDb();
@@ -62,11 +66,14 @@ export default async function AlertsPage() {
         .limit(200),
     ]);
 
-    if (failingRes.error) error = failingRes.error.message;
+    if (failingRes.error) queryErrors.sources = 'Source failure data is unavailable.';
     else failingSources = (failingRes.data ?? []) as FailingSourceRow[];
 
-    healthEvents = (healthRes.data ?? []) as HealthRow[];
-    recentErrors = (errorsRes.data ?? []) as ErrorRow[];
+    if (healthRes.error) queryErrors.health = 'Source health events are unavailable.';
+    else healthEvents = (healthRes.data ?? []) as HealthRow[];
+
+    if (errorsRes.error) queryErrors.crawlErrors = 'Crawl error data is unavailable.';
+    else recentErrors = (errorsRes.data ?? []) as ErrorRow[];
 
     const counts = new Map<string, number>();
     for (const e of recentErrors) {
@@ -75,29 +82,25 @@ export default async function AlertsPage() {
     errorsByType = Array.from(counts.entries())
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count);
-  } catch (e) {
-    error = e instanceof Error ? e.message : 'Failed to load alerts';
+  } catch {
+    queryErrors.sources = 'Source failure data is unavailable.';
+    queryErrors.health = 'Source health events are unavailable.';
+    queryErrors.crawlErrors = 'Crawl error data is unavailable.';
   }
 
   return (
     <div>
       <PageHeader title="Alerts" subtitle="Source health failures and crawl error aggregates" />
 
-      {error && (
-        <div className="mt-4">
-          <ErrorBanner message={error} />
-        </div>
-      )}
-
-      {!error && (
-        <>
-          {/* Failing sources */}
-          <Card className="mt-6">
+      {/* Failing sources */}
+      <Card className="mt-6">
             <h2 className="text-sm font-semibold text-text-secondary">
               Sources With Failures{' '}
-              <span className="text-text-muted">({failingSources.length})</span>
+              <span className="text-text-muted">({queryErrors.sources ? 'unavailable' : failingSources.length})</span>
             </h2>
-            {failingSources.length === 0 ? (
+            {queryErrors.sources ? (
+              <div className="mt-2"><ErrorBanner message={queryErrors.sources} /></div>
+            ) : failingSources.length === 0 ? (
               <p className="mt-2 text-sm text-text-muted">
                 No sources currently reporting failures.
               </p>
@@ -124,15 +127,17 @@ export default async function AlertsPage() {
                 ))}
               </ul>
             )}
-          </Card>
+      </Card>
 
           {/* Error aggregates */}
-          <Card className="mt-6">
+      <Card className="mt-6">
             <h2 className="text-sm font-semibold text-text-secondary">
               Crawl Errors by Type{' '}
-              <span className="text-text-muted">(last {recentErrors.length})</span>
+              <span className="text-text-muted">({queryErrors.crawlErrors ? 'unavailable' : `last ${recentErrors.length}`})</span>
             </h2>
-            {errorsByType.length === 0 ? (
+            {queryErrors.crawlErrors ? (
+              <div className="mt-2"><ErrorBanner message={queryErrors.crawlErrors} /></div>
+            ) : errorsByType.length === 0 ? (
               <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
             ) : (
               <div className="mt-3 flex flex-wrap gap-2">
@@ -146,16 +151,18 @@ export default async function AlertsPage() {
                 ))}
               </div>
             )}
-          </Card>
+      </Card>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Health events */}
             <Card>
               <h2 className="text-sm font-semibold text-text-secondary">
                 Recent Health Events{' '}
-                <span className="text-text-muted">({healthEvents.length})</span>
+                <span className="text-text-muted">({queryErrors.health ? 'unavailable' : healthEvents.length})</span>
               </h2>
-              {healthEvents.length === 0 ? (
+              {queryErrors.health ? (
+                <div className="mt-2"><ErrorBanner message={queryErrors.health} /></div>
+              ) : healthEvents.length === 0 ? (
                 <p className="mt-2 text-sm text-text-muted">No health events recorded.</p>
               ) : (
                 <ul className="mt-3 space-y-2">
@@ -178,9 +185,11 @@ export default async function AlertsPage() {
             {/* Recent crawl errors */}
             <Card>
               <h2 className="text-sm font-semibold text-text-secondary">
-                Recent Crawl Errors <span className="text-text-muted">({recentErrors.length})</span>
+                Recent Crawl Errors <span className="text-text-muted">({queryErrors.crawlErrors ? 'unavailable' : recentErrors.length})</span>
               </h2>
-              {recentErrors.length === 0 ? (
+              {queryErrors.crawlErrors ? (
+                <div className="mt-2"><ErrorBanner message={queryErrors.crawlErrors} /></div>
+              ) : recentErrors.length === 0 ? (
                 <p className="mt-2 text-sm text-text-muted">No recent crawl errors.</p>
               ) : (
                 <ul className="mt-3 space-y-2">
@@ -203,9 +212,7 @@ export default async function AlertsPage() {
                 </ul>
               )}
             </Card>
-          </div>
-        </>
-      )}
+      </div>
     </div>
   );
 }

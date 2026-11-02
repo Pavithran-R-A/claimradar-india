@@ -23,7 +23,7 @@ export function ClaimableCard({ claim }: { claim: PublishedClaimable }) {
   const authorityCode = claim.authority || 'Issuing authority';
 
   return (
-    <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
+    <article className="group relative flex h-full flex-col justify-between rounded-md border border-border bg-surface p-5 transition-[color,background-color,border-color,box-shadow,transform] duration-fast ease-out hover:border-trust-primary/60 hover:shadow-xs hover:-translate-y-[1px]">
       <div>
         {/* Top Badges: Status + Sector + Deadline Tick if closing soon */}
         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -108,7 +108,7 @@ export function ClaimableRow({ claim }: { claim: PublishedClaimable }) {
   const authorityCode = claim.authority || 'Issuing authority';
 
   return (
-    <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-all duration-fast ease-out hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">
+    <article className="group relative rounded-md border border-border bg-surface p-4 sm:p-5 transition-[color,background-color,border-color,transform] duration-fast ease-out hover:border-trust-primary/60 hover:translate-x-[2px] hover:bg-surface-strong/40">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2 mb-1.5">

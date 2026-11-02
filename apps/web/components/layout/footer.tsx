@@ -33,7 +33,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="public-focus inline-flex min-h-[32px] items-center rounded px-1 text-xs font-medium text-text-secondary transition-colors duration-fast hover:text-trust-primary focus-visible:text-trust-primary"
+                    className="public-focus inline-flex min-h-[32px] items-center rounded px-1 text-xs text-text-secondary transition-colors duration-fast hover:text-trust-primary focus-visible:text-trust-primary"
                   >
                     {link.label}
                   </Link>
@@ -46,13 +46,13 @@ export function Footer() {
             <p className="font-display text-sm italic text-trust-primary/80">
               Better information. Fairer outcomes.
             </p>
-            <p className="mt-0.5 text-[0.68rem] text-text-muted">
+            <p className="mt-0.5 text-xs text-text-muted">
               Independent public information service
             </p>
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3 text-[0.67rem] text-text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-2 border-t border-border pt-3 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
             ClaimKhoj points to official sources; claims and filings are completed on official
             portals.

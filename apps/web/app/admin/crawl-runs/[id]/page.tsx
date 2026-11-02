@@ -36,6 +36,9 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
   let errors: CrawlError[] = [];
   let candidates: CandidateDocument[] = [];
   let error: string | null = null;
+  let sourcesError: string | null = null;
+  let errorsError: string | null = null;
+  let candidatesError: string | null = null;
 
   try {
     const supabase = getAdminDb();
@@ -57,15 +60,18 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
     ]);
 
     if (runRes.error) {
-      error = runRes.error.message;
+      error = 'Unable to load this crawl run.';
     } else {
       run = runRes.data;
     }
-    sources = sourcesRes.data ?? [];
-    errors = errorsRes.data ?? [];
-    candidates = candidatesRes.data ?? [];
-  } catch (e) {
-    error = e instanceof Error ? e.message : 'Failed to load crawl run';
+    if (sourcesRes.error) sourcesError = 'Source results are unavailable.';
+    else sources = sourcesRes.data ?? [];
+    if (errorsRes.error) errorsError = 'Crawl errors are unavailable.';
+    else errors = errorsRes.data ?? [];
+    if (candidatesRes.error) candidatesError = 'Candidate results are unavailable.';
+    else candidates = candidatesRes.data ?? [];
+  } catch {
+    error = 'Unable to load this crawl run.';
   }
 
   if (error || !run) {
@@ -75,7 +81,7 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
           &larr; Back to Crawl Runs
         </Link>
         <div className="mt-4 rounded-lg border border-danger/20 bg-danger/5 p-4 text-danger">
-          <p className="text-sm">{error ?? 'Crawl run not found'}</p>
+          <p className="text-sm">{error ?? 'Crawl run not found.'}</p>
         </div>
       </div>
     );
@@ -122,7 +128,9 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       {/* Source-by-source breakdown */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">Source Breakdown</h2>
-        {sources.length === 0 ? (
+        {sourcesError ? (
+          <p role="alert" className="mt-2 text-sm text-danger">{sourcesError}</p>
+        ) : sources.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No source data available.</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
@@ -162,9 +170,11 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       {/* Errors */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">
-          Errors <span className="text-text-muted">({errors.length})</span>
+          Errors <span className="text-text-muted">({errorsError ? 'unavailable' : errors.length})</span>
         </h2>
-        {errors.length === 0 ? (
+        {errorsError ? (
+          <p role="alert" className="mt-2 text-sm text-danger">{errorsError}</p>
+        ) : errors.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No errors recorded.</p>
         ) : (
           <div className="mt-4 space-y-2">
@@ -191,9 +201,11 @@ export default async function CrawlRunDetailPage({ params }: { params: Promise<{
       {/* Candidates */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-text-primary">
-          Candidates <span className="text-text-muted">({candidates.length})</span>
+          Candidates <span className="text-text-muted">({candidatesError ? 'unavailable' : candidates.length})</span>
         </h2>
-        {candidates.length === 0 ? (
+        {candidatesError ? (
+          <p role="alert" className="mt-2 text-sm text-danger">{candidatesError}</p>
+        ) : candidates.length === 0 ? (
           <p className="mt-2 text-sm text-text-muted">No candidates created.</p>
         ) : (
           <div className="mt-4 overflow-x-auto">

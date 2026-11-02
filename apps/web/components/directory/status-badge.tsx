@@ -59,7 +59,11 @@ export function StatusBadge({
   status: ExtendedStatus | string;
   className?: string;
 }) {
-  const config = (STATUS_CONFIGS[status] ?? STATUS_CONFIGS.open)!;
+  const config = STATUS_CONFIGS[status] ?? {
+    label: 'Status unavailable',
+    icon: HelpCircle,
+    className: 'border-border bg-surface-strong text-text-secondary',
+  };
   const Icon = config.icon;
 
   return (
@@ -86,7 +90,7 @@ export function MetaPill({
   className?: string;
 }) {
   const base =
-    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-all duration-fast hover:border-trust-primary hover:text-trust-primary';
+    'inline-flex items-center rounded-md border border-border bg-surface-strong px-2.5 py-1 text-xs font-medium text-text-secondary transition-colors duration-fast hover:border-trust-primary hover:text-trust-primary';
 
   if (href) {
     return (

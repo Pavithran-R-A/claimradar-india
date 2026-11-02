@@ -25,13 +25,13 @@ export default async function TrackerPage() {
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">Claim tracker</h1>
         <p className="mt-1 max-w-2xl text-sm text-text-secondary">
           Track your own progress on claimables you believe you may be affected by. All statuses are
-          user-reported — ClaimKhoj never files claims with any company or authority on your behalf.
+          user-reported: ClaimKhoj never files claims with any company or authority on your behalf.
         </p>
       </div>
 
       {trackers.unavailable && (
         <Alert variant="warning" title="Tracker temporarily unavailable">
-          We could not reach the database. Your tracker entries are safe — try again shortly.
+          We could not reach the database. Your tracker entries are safe: try again shortly.
         </Alert>
       )}
 
@@ -48,7 +48,7 @@ export default async function TrackerPage() {
         ) : claimableOptions.length === 0 ? (
           <p className="text-sm text-text-muted">
             {trackers.unavailable
-              ? 'Directory unavailable right now — try again shortly.'
+              ? 'Directory unavailable right now: try again shortly.'
               : 'No published claimables are available to track yet.'}
           </p>
         ) : (

@@ -32,14 +32,14 @@ export function ForgotPasswordForm({ linkExpired, linkInvalid }: ForgotPasswordF
 
   return (
     <div>
-      <h2 className="mb-2 text-center text-xl font-semibold text-text-primary">Forgot Password</h2>
+      <h1 className="mb-2 text-center text-xl font-semibold text-text-primary">Forgot password</h1>
       <p className="mb-6 text-center text-sm text-text-secondary">
         Enter your email and we&apos;ll send you a reset link.
       </p>
 
       {linkExpired && (
         <div className="mb-4 rounded-md border border-deadline/20 bg-deadline-background p-3 text-sm text-deadline">
-          Your previous reset link expired. Request a new one below — reset links are only valid for
+          Your previous reset link expired. Request a new one below: reset links are only valid for
           a short window.
         </div>
       )}

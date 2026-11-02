@@ -90,7 +90,7 @@ export default async function CorrectionsPage({
     <div>
       <PageHeader
         title="Corrections & Takedowns"
-        subtitle="Accepted corrections write a revision row and publish a correction notice; granted takedowns archive the claimable."
+        subtitle="Correction decisions do not edit listings. Granted takedowns archive listings."
       />
 
       <div className="mt-4 space-y-2">
@@ -159,21 +159,24 @@ export default async function CorrectionsPage({
                 >
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label htmlFor={`correction-decision-${c.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
                         Decision
                       </label>
-                      <select name="decision" required className={inputCls}>
-                        <option value="accepted">Accept — apply correction + notice</option>
+                      <select id={`correction-decision-${c.id}`} name="decision" required className={inputCls}>
+                        <option value="accepted">Accept request for follow-up</option>
                         <option value="rejected">Reject correction</option>
                       </select>
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label htmlFor={`correction-resolution-${c.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
                         Resolution note
                       </label>
-                      <input name="resolution" required minLength={3} className={inputCls} />
+                      <input id={`correction-resolution-${c.id}`} name="resolution" required minLength={3} className={inputCls} />
                     </div>
                   </div>
+                  <p className="text-xs text-text-muted">
+                    Acceptance records this request only. Verify and update claimable content separately.
+                  </p>
                 </ActionForm>
               )}
             </article>
@@ -223,19 +226,19 @@ export default async function CorrectionsPage({
                 >
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label htmlFor={`takedown-decision-${t.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
                         Decision
                       </label>
-                      <select name="decision" required className={inputCls}>
-                        <option value="granted">Grant — archive claimable</option>
+                      <select id={`takedown-decision-${t.id}`} name="decision" required className={inputCls}>
+                        <option value="granted">Grant: archive claimable</option>
                         <option value="rejected">Reject takedown</option>
                       </select>
                     </div>
                     <div>
-                      <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                      <label htmlFor={`takedown-resolution-${t.id}`} className="mb-1.5 block text-sm font-medium text-text-secondary">
                         Resolution note
                       </label>
-                      <input name="resolution" required minLength={3} className={inputCls} />
+                      <input id={`takedown-resolution-${t.id}`} name="resolution" required minLength={3} className={inputCls} />
                     </div>
                   </div>
                   <label className="flex items-start gap-2 text-xs text-text-secondary">

@@ -60,7 +60,7 @@ export default async function PrivacyPage() {
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-text-secondary">
           Everything we hold about you, and every control you have over it. We only ever collect the
-          low-risk answers you give us — never documents, IDs or payment details.
+          low-risk answers you give us: never documents, IDs or payment details.
         </p>
       </div>
 
@@ -149,7 +149,7 @@ export default async function PrivacyPage() {
                 render={(item) => {
                   const request = privacy.correctionRequests.find((r) => r.id === item.id);
                   return request?.resolution
-                    ? `${request.target} — ${request.resolution}`
+                    ? `${request.target}: ${request.resolution}`
                     : (request?.target ?? 'Request');
                 }}
                 emptyLabel="No correction requests."

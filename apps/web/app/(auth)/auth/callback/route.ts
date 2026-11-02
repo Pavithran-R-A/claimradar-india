@@ -31,6 +31,6 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}${failureBase}?error=${failureKind}`);
   }
 
-  // No code at all — treat the link as invalid.
+  // No code at all: treat the link as invalid.
   return NextResponse.redirect(`${origin}${failureBase}?error=link_invalid`);
 }

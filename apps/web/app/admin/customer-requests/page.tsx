@@ -3,6 +3,7 @@ import { getAdminDb } from '@/lib/admin-db';
 import { ADMINS_ONLY } from '../_lib/roles';
 import { ErrorBanner, PageHeader, formatDateTime } from '../_lib/ui';
 import { updateCustomerRequest } from './actions';
+import { RequestActionForm } from './request-action-form';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,7 +76,7 @@ export default async function CustomerRequestsPage() {
                 {item.resolution && (
                   <p className="mt-2 text-sm text-text-secondary">Resolution: {item.resolution}</p>
                 )}
-                <form
+                <RequestActionForm
                   action={updateCustomerRequest.bind(null, 'correction', item.id)}
                   className="mt-3 space-y-2"
                 >
@@ -117,7 +118,7 @@ export default async function CustomerRequestsPage() {
                   >
                     Save decision
                   </button>
-                </form>
+                </RequestActionForm>
               </article>
             ))}
           </section>
@@ -137,7 +138,7 @@ export default async function CustomerRequestsPage() {
                 {item.resolution && (
                   <p className="mt-2 text-sm text-text-secondary">Resolution: {item.resolution}</p>
                 )}
-                <form
+                <RequestActionForm
                   action={updateCustomerRequest.bind(null, 'grievance', item.id)}
                   className="mt-3 space-y-2"
                 >
@@ -178,7 +179,7 @@ export default async function CustomerRequestsPage() {
                   >
                     Save decision
                   </button>
-                </form>
+                </RequestActionForm>
               </article>
             ))}
           </section>
