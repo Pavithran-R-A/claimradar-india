@@ -23,7 +23,7 @@
   --c-text-muted: 88 105 132;
   --c-trust-primary: 13 33 72;
   --c-trust-primary-hover: 7 23 54;
-  --c-success: 15 139 141;
+  --c-success: 0 104 108;
   --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
@@ -64,7 +64,7 @@
   --c-text-muted: 88 105 132;
   --c-trust-primary: 13 33 72;
   --c-trust-primary-hover: 7 23 54;
-  --c-success: 15 139 141;
+  --c-success: 0 104 108;
   --c-deadline: 122 62 0;
   --c-danger: 180 35 24;
   --c-info: 33 78 128;
@@ -81,7 +81,7 @@
   --c-border-strong: 255 255 255 / 0.24;
   --c-text-primary: 247 246 242;
   --c-text-secondary: 161 174 195;
-  --c-text-muted: 112 119 130;
+  --c-text-muted: 164 177 196;
   --c-trust-primary: 59 130 246;
   --c-trust-primary-hover: 96 165 250;
   --c-success: 52 211 153;

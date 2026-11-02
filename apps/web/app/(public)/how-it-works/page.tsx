@@ -167,7 +167,7 @@ export default function HowItWorksPage() {
         <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
           Explore Active Opportunities Now
         </h2>
-        <p className="mx-auto mb-6 max-w-xl text-sm text-text-muted">
+        <p className="mx-auto mb-6 max-w-xl text-sm text-white/80">
           Browse official recovery routes or save watchlist preferences. Automatic alerts are not
           enabled.
         </p>

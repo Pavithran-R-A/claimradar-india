@@ -6,8 +6,18 @@ const read = (...parts: string[]) =>
   fs.readFileSync(path.resolve(__dirname, '..', ...parts), 'utf8');
 
 describe('Final accessibility and security contracts', () => {
-  it('uses an AA-safe muted text token on light surfaces', () => {
-    expect(read('app', 'globals.css')).toContain('--c-text-muted: 88 105 132;');
+  it('keeps success and muted text tokens readable', () => {
+    const styles = read('app', 'globals.css');
+    const light = styles.match(/\.theme-light\s*\{([^}]+)\}/)?.[1] ?? '';
+    const dark = styles.match(/\.theme-dark\s*\{([^}]+)\}/)?.[1] ?? '';
+    expect(light).toContain('--c-success: 0 104 108;');
+    expect(dark).toContain('--c-text-muted: 164 177 196;');
+  });
+
+  it('keeps the how-it-works CTA readable on dark', () => {
+    const page = read('app', '(public)', 'how-it-works', 'page.tsx');
+    expect(page).toContain('max-w-xl text-sm text-white/80');
+    expect(page).not.toContain('max-w-xl text-sm text-text-muted');
   });
 
   it('keeps the visible logo name as its accessible name', () => {
