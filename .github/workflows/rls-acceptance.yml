@@ -1,0 +1,41 @@
+name: Isolated Supabase RLS acceptance
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - 'supabase/config.toml'
+      - '.github/workflows/rls-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rls:
+    name: Disposable local DB and pgTAP
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # No hosted project link, credentials, network test accounts or live DB.
+      # Docker containers belong exclusively to the ephemeral GitHub runner.
+      - name: Start disposable local Supabase
+        run: supabase start
+
+      - name: Run all RLS and migration pgTAP suites
+        run: supabase test db
+
+      - name: Stop disposable containers
+        if: always()
+        run: supabase stop --no-backup || true
