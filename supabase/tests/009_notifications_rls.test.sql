@@ -11,10 +11,11 @@ SELECT col_is_pk('public', 'notification_delivery_log', 'id', 'notification_deli
 SET LOCAL ROLE anon;
 
 -- Test 3: Anonymous cannot read notification_delivery_log
-SELECT results_eq(
+SELECT throws_ok(
   'SELECT count(*)::int FROM notification_delivery_log',
-  ARRAY[0],
-  'Anonymous users cannot read notification delivery log'
+  '42501',
+  NULL,
+  'Anonymous users have no SELECT grant on internal delivery log'
 );
 
 -- Test 4: Anonymous cannot read notifications
