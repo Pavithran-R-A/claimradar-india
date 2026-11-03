@@ -145,12 +145,12 @@ SELECT is((SELECT count(*)::int FROM public.grievance_contacts
               'dddddddd-0000-4000-8000-000000000002')), 2,
  'admin reads both customers grievances');
 SELECT results_eq($$UPDATE public.user_correction_requests
- SET status='reviewing' WHERE id='cccccccc-0000-4000-8000-000000000001'
+ SET status='in_review' WHERE id='cccccccc-0000-4000-8000-000000000001'
  RETURNING id$$,
  ARRAY['cccccccc-0000-4000-8000-000000000001'::uuid],
  'admin updates customer correction');
 SELECT results_eq($$UPDATE public.grievance_contacts
- SET status='reviewing' WHERE id='dddddddd-0000-4000-8000-000000000001'
+ SET status='acknowledged' WHERE id='dddddddd-0000-4000-8000-000000000001'
  RETURNING id$$,
  ARRAY['dddddddd-0000-4000-8000-000000000001'::uuid],
  'admin updates customer grievance');
