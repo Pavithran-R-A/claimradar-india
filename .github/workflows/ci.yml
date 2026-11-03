@@ -59,9 +59,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Show formatter output for new local-only QA script
-        run: pnpm exec prettier scripts/local-customer-request-postgrest-qa.mjs
-
       - name: Format check
         run: pnpm format
 
