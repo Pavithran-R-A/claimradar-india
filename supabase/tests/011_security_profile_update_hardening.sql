@@ -48,7 +48,7 @@ SELECT is_definer(
 
 -- SECURITY DEFINER helpers use an empty search_path.
 SELECT results_eq(
-  $$SELECT p.proconfig @> ARRAY['search_path=']::text[]
+  $$SELECT p.proconfig @> ARRAY['search_path=""']::text[]
       FROM pg_proc AS p
       JOIN pg_namespace AS n ON n.oid = p.pronamespace
      WHERE n.nspname = 'private' AND p.proname = 'is_admin' AND p.pronargs = 0$$,
@@ -57,7 +57,7 @@ SELECT results_eq(
 );
 
 SELECT results_eq(
-  $$SELECT p.proconfig @> ARRAY['search_path=']::text[]
+  $$SELECT p.proconfig @> ARRAY['search_path=""']::text[]
       FROM pg_proc AS p
       JOIN pg_namespace AS n ON n.oid = p.pronamespace
      WHERE n.nspname = 'private' AND p.proname = 'is_staff' AND p.pronargs = 0$$,
@@ -66,7 +66,7 @@ SELECT results_eq(
 );
 
 SELECT results_eq(
-  $$SELECT p.proconfig @> ARRAY['search_path=']::text[]
+  $$SELECT p.proconfig @> ARRAY['search_path=""']::text[]
       FROM pg_proc AS p
       JOIN pg_namespace AS n ON n.oid = p.pronamespace
      WHERE n.nspname = 'public' AND p.proname = 'handle_new_user' AND p.pronargs = 0$$,
@@ -75,7 +75,7 @@ SELECT results_eq(
 );
 
 SELECT results_eq(
-  $$SELECT p.proconfig @> ARRAY['search_path=']::text[]
+  $$SELECT p.proconfig @> ARRAY['search_path=""']::text[]
       FROM pg_proc AS p
       JOIN pg_namespace AS n ON n.oid = p.pronamespace
      WHERE n.nspname = 'public' AND p.proname = 'prevent_role_escalation' AND p.pronargs = 0$$,
