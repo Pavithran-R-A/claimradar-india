@@ -75,51 +75,51 @@ SELECT results_eq(
 );
 
 SELECT results_eq(
-  $SELECT EXISTS (
+  $$SELECT EXISTS (
     SELECT 1 FROM pg_index
      WHERE indexrelid = to_regclass('public.idx_claim_evidence_source_document')
        AND indisvalid
-  )$,
+  )$$,
   ARRAY[true],
   'claim_evidence source_document_id index exists'
 );
 
 SELECT results_eq(
-  $SELECT EXISTS (
+  $$SELECT EXISTS (
     SELECT 1 FROM pg_index
      WHERE indexrelid = to_regclass('public.idx_claim_sources_source_document')
        AND indisvalid
-  )$,
+  )$$,
   ARRAY[true],
   'claim_sources source_document_id index exists'
 );
 
 SELECT results_eq(
-  $SELECT EXISTS (
+  $$SELECT EXISTS (
     SELECT 1 FROM pg_index
      WHERE indexrelid = to_regclass('public.idx_notification_delivery_log_notification_id')
        AND indisvalid
-  )$,
+  )$$,
   ARRAY[true],
   'notification_id index exists'
 );
 
 SELECT results_eq(
-  $SELECT EXISTS (
+  $$SELECT EXISTS (
     SELECT 1 FROM pg_index
      WHERE indexrelid = to_regclass('public.idx_correction_requests_submitted_by')
        AND indisvalid
-  )$,
+  )$$,
   ARRAY[true],
   'correction_requests submitted_by index exists'
 );
 
 SELECT results_eq(
-  $SELECT EXISTS (
+  $$SELECT EXISTS (
     SELECT 1 FROM pg_index
      WHERE indexrelid = to_regclass('public.idx_editorial_notes_author_id')
        AND indisvalid
-  )$,
+  )$$,
   ARRAY[true],
   'editorial_notes author_id index exists'
 );
